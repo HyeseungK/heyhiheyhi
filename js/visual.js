@@ -89,7 +89,7 @@ export function renderVisual(root) {
       .map((g) => {
         const photoHTML = g.photos.map((p) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j++}" style="--r:${p.ratio || 1.5}">
           ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
-          <span class="spread-cap">${esc(p.caption)}</span>
+          <span class="spread-cap">${esc(p.caption)}${p.year ? ` · ${esc(p.year)}` : ''}</span>
         </button>`);
         // diary scraps slot in after every few photos
         const noteHTML = (g.notes || []).map((n, k) => `<div class="diary" style="--tilt:${k % 2 ? 2.5 : -2}deg">
@@ -108,7 +108,7 @@ export function renderVisual(root) {
         return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
       })
       .join('');
-    place.allPhotos = groups.flatMap((g) => g.photos.map((p) => ({ ...p, camera: [g.title || place.name, g.kind].filter(Boolean).join(' · ') })));
+    place.allPhotos = groups.flatMap((g) => g.photos.map((p) => ({ ...p, camera: [g.title || place.name, g.kind, p.year].filter(Boolean).join(' · ') })));
     const from = origin(id);
     openModal(spread, {
       from: { opacity: 1 },
