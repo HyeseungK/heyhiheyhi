@@ -406,7 +406,7 @@ img { display: block; max-width: 100%; }
 .stack-label { display: flex; flex-direction: column; gap: 2px; }
 /* desktop: piles a little larger */
 @media (min-width: 861px) {
-  .photo-table { max-width: 1520px; column-gap: clamp(18px, 2.2vw, 32px); }
+  .photo-table { max-width: 1760px; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(28px, 4vw, 72px); }
   .print {
     width: calc(min(100%, 100% * var(--r)) * .98);
     margin-left: calc(min(100%, 100% * var(--r)) * -.49); margin-top: calc(min(100%, 100% * var(--r)) * -.49 / var(--r));
