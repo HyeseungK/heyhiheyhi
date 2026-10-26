@@ -11,14 +11,14 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 | **Frames** | 지구본 + 지역별 사진 | 점으로 된 지구본을 끌어서 돌리고 핀(New York, Seoul · Euljiro, Lisbon 등)을 누르면, 지구본이 그 지역으로 돌아간 뒤 사진이 핀에서 쏟아져 나와 사진첩처럼 펼쳐집니다. 닫으면 다시 핀으로 빨려 들어갑니다. 아래에 영상(Moving)과 Inspiration(좋아하는 사진작가·디렉터·뮤비·앨범 콘셉트 무드보드, 카드를 누르면 뒤집혀 이유와 링크가 나옴)가 있습니다. |
 | **Music** | 앨범 진열대 + 티켓 북 + 브릭 기타 | 앨범을 누르면 케이스가 열리고 CD가 돕니다(←→로 다음 앨범). 티켓은 절취선을 뜯어 뒷면 메모를 봅니다. 기타를 누르면 코드가 울리고 공연·SoundCloud 서랍이 열립니다. |
 
-상단 바의 색 점을 누르면 포인트 컬러 팔레트(Cobalt · Red · Ink · Film orange · Pink)가 열립니다.
+포인트 컬러는 Cobalt입니다. `site.accents`에 색을 두 개 이상 넣으면 상단 바에 색 팔레트 버튼이 생깁니다(Red · Ink · Film orange · Pink가 주석으로 준비돼 있음).
 
 ## 내용 수정
 
 모든 텍스트와 링크는 **`js/content.js`** 한 파일에 있습니다. `[PLACEHOLDER]` 표시가 있는 곳을 바꾸면 됩니다.
 
 - **레이아웃**: `site.layout`을 `'compact'`(한 줄 소개, 기본값)나 `'wordy'`(큰 제목 + 소개 문단, 예전 버전)로 바꿉니다.
-- **포인트 컬러**: `site.accents`의 순서와 색을 바꿉니다. 첫 번째가 기본입니다.
+- **포인트 컬러**: `site.accents`. 첫 번째가 기본이고, 두 개 이상이면 방문자가 고를 수 있는 팔레트가 생깁니다.
 - **명함**: `profile.card`. 실제 명함 스캔이 있으면 `image: 'assets/card.jpg'`로 넣으면 "Save card"가 그 파일을 내려받습니다.
 - **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
 - **영상**: `visual.videos`의 `url`에 YouTube나 Vimeo 링크를 넣습니다.
@@ -26,6 +26,14 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **Inspiration**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고, 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
 - **티켓**: `music.tickets`.
 - **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`. 전환 화면 문구("Hey Hi, I’m listening" 등)는 `site.greeting`에서 바꿉니다.
+
+## 파일 수정 후 (캐시)
+
+브라우저와 GitHub Pages가 JS/CSS를 저장해 두기 때문에, 파일을 고친 뒤에는 커밋 전에 아래를 실행해 주세요. `index.html`의 파일 주소에 내용 기반 버전(`?v=…`)이 붙어서 방문자가 바로 새 파일을 받습니다.
+
+```bash
+python3 scripts/version.py
+```
 
 ## 로컬 실행
 

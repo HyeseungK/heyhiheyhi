@@ -8,8 +8,7 @@ export const site = {
   // 'compact': one-line intro on each tab, more room for the content.
   // 'wordy':   the earlier version with a big title and a lead paragraph.
   layout: 'compact',
-  // Accent colours visitors can switch between with the dot in the top bar.
-  // The first one is the default.
+  // Accent colour. The first one is the default.
   // What the page-transition screen says on the way to each tab: "Hey Hi, I'm …"
   greeting: {
     lead: 'Hey Hi, I’m',
@@ -18,12 +17,13 @@ export const site = {
     visual: 'looking',
     music: 'listening',
   },
+  // With more than one entry, a colour dot in the top bar lets visitors switch.
   accents: [
     { name: 'Cobalt', hex: '#2f4cff' },
-    { name: 'Red', hex: '#c8102e' },
-    { name: 'Ink', hex: '#0f0f0f' },
-    { name: 'Film orange', hex: '#ff6a1f' },
-    { name: 'Pink', hex: '#ff4f8b' },
+    // { name: 'Red', hex: '#c8102e' },
+    // { name: 'Ink', hex: '#0f0f0f' },
+    // { name: 'Film orange', hex: '#ff6a1f' },
+    // { name: 'Pink', hex: '#ff4f8b' },
   ],
 };
 
