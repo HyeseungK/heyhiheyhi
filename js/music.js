@@ -25,7 +25,7 @@ export function renderMusic(root) {
           const i = r * perRow + j;
           const rnd = mulberry32(hashString(a.title));
           const tilt = (rnd() - 0.5) * 5;
-          return `<button class="sleeve" data-i="${i}" style="--tilt:${tilt.toFixed(2)}deg" aria-label="${esc(a.title)} by ${esc(a.artist)}">
+          return `<button class="sleeve" data-i="${i}" data-tilt="${tilt.toFixed(2)}" aria-label="${esc(a.title)} by ${esc(a.artist)}">
               <img src="${esc(coverSrc(a))}" alt="" loading="lazy" />
             </button>`;
         })
@@ -37,6 +37,32 @@ export function renderMusic(root) {
   shelf.addEventListener('click', (e) => {
     const s = e.target.closest('.sleeve');
     if (s) openAlbum(+s.dataset.i);
+  });
+
+  // hover like a dock: the record under the cursor rises most, its neighbours a little
+  const gsap = window.gsap;
+  shelf.querySelectorAll('.sleeve').forEach((el) => gsap.set(el, { rotation: +el.dataset.tilt, transformOrigin: '50% 100%' }));
+  function wave(row, x) {
+    row.querySelectorAll('.sleeve').forEach((el) => {
+      if (current === +el.dataset.i) return;
+      const r = el.getBoundingClientRect();
+      const d = x === null ? Infinity : (x - (r.left + r.width / 2)) / r.width;
+      const k = Math.exp(-d * d * 1.6); // 1 under the cursor, fading out to the sides
+      gsap.to(el, {
+        y: -20 * k, scale: 1 + 0.07 * k, rotation: +el.dataset.tilt * (1 - k),
+        x: x === null ? 0 : -Math.sign(d) * 10 * k * (1 - k) * 4, // neighbours lean away
+        zIndex: Math.round(k * 10), duration: 0.6, ease: 'power3.out', overwrite: 'auto',
+      });
+    });
+  }
+  shelf.querySelectorAll('.shelf-row').forEach((row) => {
+    row.addEventListener('pointermove', (e) => e.pointerType === 'mouse' && wave(row, e.clientX));
+    row.addEventListener('pointerleave', () => wave(row, null));
+    row.addEventListener('focusin', (e) => {
+      const r = e.target.getBoundingClientRect();
+      wave(row, r.left + r.width / 2);
+    });
+    row.addEventListener('focusout', () => wave(row, null));
   });
 
   renderTickets(root);
