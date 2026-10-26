@@ -233,7 +233,7 @@ export const visual = {
   places: [
     {
       id: 'new-york',
-      cover: 'assets/photos/new-york/07.jpg',
+      cover: 'assets/photos/new-york/01.jpg',
       name: 'New York City',
       lat: 40.71, lon: -74.0,
       kind: '35mm film',
