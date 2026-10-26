@@ -236,14 +236,11 @@ export const visual = {
       kind: '35mm film',
       year: '2023', // [PLACEHOLDER]
       photos: [
-        { src: '', caption: 'Canal St, 8am', ratio: 1.5, tone: '#e9d8c4' },
-        { src: '', caption: 'Bodega cat', ratio: 0.667, tone: '#ead9c0' },
-        { src: '', caption: 'Brooklyn rooftops', ratio: 1.5, tone: '#d7dfe3' },
-        { src: '', caption: 'Subway, F train', ratio: 1.5, tone: '#dcd4e6' },
-        { src: '', caption: 'Washington Sq', ratio: 0.667, tone: '#e6dccf' },
-        { src: '', caption: 'Fire escape', ratio: 1.5, tone: '#f0d2c2' },
-        { src: '', caption: 'Chinatown', ratio: 1.5, tone: '#e3d3e0' },
-        { src: '', caption: 'Last light, Hudson', ratio: 0.667, tone: '#f2e3c9' },
+        { src: 'assets/photos/new-york/01.jpg', caption: 'Still life, lighter', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/02.jpg', caption: 'Sunday sign', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/03.jpg', caption: 'Middle Village, Queens', ratio: 1.5 },
+        { src: 'assets/photos/new-york/04.jpg', caption: '42 St, the dance', ratio: 1.5 },
+        { src: 'assets/photos/new-york/05.jpg', caption: '42 St, the band', ratio: 1.5 },
       ],
       notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
