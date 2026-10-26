@@ -27,7 +27,7 @@ export function renderVisual(root) {
   if (!globe) root.querySelector('.globe-wrap').hidden = true;
 
   root.querySelector('.place-chips').innerHTML = places
-    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${p.photos.length}</span></button>`)
+    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${(p.projects || [p]).reduce((n, g) => n + g.photos.length, 0)}</span></button>`)
     .join('');
   root.querySelector('.place-chips').addEventListener('click', (e) => {
     const b = e.target.closest('.place-chip');
@@ -78,23 +78,37 @@ export function renderVisual(root) {
     if (!place) return;
     await globe?.focus(id);
     spread.querySelector('.spread-title').textContent = place.name;
-    spread.querySelector('.spread-meta').textContent = `${place.kind} · ${place.year} · ${place.photos.length} frames`;
-    const photoHTML = place.photos.map((p, j) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j}" style="--r:${p.ratio || 1.5}">
+    // a place is either one set of photos, or several projects (e.g. Seoul → The Closet)
+    const groups = place.projects || [{ title: '', kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }];
+    const total = groups.reduce((n, g) => n + g.photos.length, 0);
+    spread.querySelector('.spread-meta').textContent = place.projects
+      ? `${groups.length} ${groups.length > 1 ? 'projects' : 'project'} · ${total} frames`
+      : `${place.kind} · ${place.year} · ${total} frames`;
+    let j = 0;
+    grid.innerHTML = groups
+      .map((g) => {
+        const photoHTML = g.photos.map((p) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j++}" style="--r:${p.ratio || 1.5}">
           ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
           <span class="spread-cap">${esc(p.caption)}</span>
         </button>`);
-    // diary scraps slot in after every few photos
-    const noteHTML = (place.notes || []).map((n, k) => `<div class="diary" style="--tilt:${k % 2 ? 2.5 : -2}deg">
-        <span class="tape" aria-hidden="true"></span>
-        ${n.src ? `<img src="${esc(n.src)}" alt="Diary, ${esc(n.date || place.name)}" decoding="async" />` : `<p class="diary-text">${esc(n.text || '')}</p>`}
-        ${n.date ? `<span class="diary-date">${esc(n.date)}</span>` : ''}
-      </div>`);
-    const mixed = [];
-    photoHTML.forEach((h, j) => {
-      mixed.push(h);
-      if ((j + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
-    });
-    grid.innerHTML = [...mixed, ...noteHTML].join('');
+        // diary scraps slot in after every few photos
+        const noteHTML = (g.notes || []).map((n, k) => `<div class="diary" style="--tilt:${k % 2 ? 2.5 : -2}deg">
+          <span class="tape" aria-hidden="true"></span>
+          ${n.src ? `<img src="${esc(n.src)}" alt="Diary, ${esc(n.date || place.name)}" decoding="async" />` : `<p class="diary-text">${esc(n.text || '')}</p>`}
+          ${n.date ? `<span class="diary-date">${esc(n.date)}</span>` : ''}
+        </div>`);
+        const mixed = [];
+        photoHTML.forEach((h, k) => {
+          mixed.push(h);
+          if ((k + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
+        });
+        const head = g.title
+          ? `<div class="project-head"><h4>${esc(g.title)}</h4><p>${esc([g.kind, g.year, g.credit].filter(Boolean).join(' · '))}</p></div>`
+          : '';
+        return head + [...mixed, ...noteHTML].join('');
+      })
+      .join('');
+    place.allPhotos = groups.flatMap((g) => g.photos.map((p) => ({ ...p, camera: [g.title || place.name, g.kind].filter(Boolean).join(' · ') })));
     const from = origin(id);
     openModal(spread, {
       from: { opacity: 1 },
@@ -131,7 +145,7 @@ export function renderVisual(root) {
   spread.querySelector('.spread-back').addEventListener('click', () => closeModal(spread));
   grid.addEventListener('click', (e) => {
     const it = e.target.closest('.spread-item');
-    if (it && place) openLightbox(place.photos.map((p) => ({ ...p, camera: `${place.name} · ${place.kind}` })), +it.dataset.j);
+    if (it && place) openLightbox(place.allPhotos, +it.dataset.j);
   });
 }
 

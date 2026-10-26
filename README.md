@@ -20,7 +20,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **레이아웃**: `site.layout`을 `'compact'`(한 줄 소개, 기본값)나 `'wordy'`(큰 제목 + 소개 문단, 예전 버전)로 바꿉니다.
 - **포인트 컬러**: `site.accents`. 첫 번째가 기본이고, 두 개 이상이면 방문자가 고를 수 있는 팔레트가 생깁니다.
 - **명함**: `profile.card`. 실제 명함 스캔이 있으면 `image: 'assets/card.jpg'`로 넣으면 "Save card"가 그 파일을 내려받습니다.
-- **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
+- **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 (서울처럼 `projects`로 프로젝트별 묶음도 가능) `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
 - **영상**: `visual.videos`의 `url`에 YouTube나 Vimeo 링크를 넣습니다.
 - **앨범 커버**: `assets/albums/`에 넣고 `cover`에 경로를 적습니다. 비어 있으면 제목을 시드로 한 플로우 필드 아트가 그려집니다.
 - **Inspiration**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고(Photographers · Directors · Videos · Other Artwork, 이름과 순서는 `visual.museTypes`), 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.

@@ -428,6 +428,10 @@ img { display: block; max-width: 100%; }
 .spread-item img, .spread-item .ph { width: 100%; aspect-ratio: var(--r); object-fit: cover; display: grid; place-items: center; transition: transform .8s var(--ease); }
 .spread-item:hover img { transform: scale(1.02); }
 .spread-cap { font-size: 13px; color: var(--muted); }
+.project-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding: 18px 0 2px; border-top: 1px solid var(--line); }
+.project-head:first-child { border-top: 0; padding-top: 0; }
+.project-head h4 { margin: 0; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(26px, 3vw, 38px); }
+.project-head p { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: .04em; }
 .diary {
   position: relative; align-self: start; rotate: var(--tilt); margin: 14px 6px;
   background: #fbf8f0; padding: 26px 22px 30px; will-change: transform;

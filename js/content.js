@@ -256,20 +256,25 @@ export const visual = {
     },
     {
       id: 'seoul',
-      name: 'Seoul · Euljiro',
+      name: 'Seoul',
       lat: 37.566, lon: 126.99,
-      kind: 'Fashion film',
-      year: '2024', // [PLACEHOLDER]
-      photos: [
-        { src: '', caption: 'Look 01', ratio: 0.667, tone: '#d9d9d6' },
-        { src: '', caption: 'Look 02', ratio: 0.667, tone: '#dededa' },
-        { src: '', caption: 'Printing alley', ratio: 1.5, tone: '#e3e6df' },
-        { src: '', caption: 'Look 03', ratio: 0.667, tone: '#d6dcef' },
-        { src: '', caption: 'Neon, 11pm', ratio: 1.5, tone: '#e0dce8' },
-        { src: '', caption: 'Look 04', ratio: 0.667, tone: '#ece4dc' },
-        { src: '', caption: 'Stairwell', ratio: 0.667, tone: '#d9e2e4' },
+      // Seoul is organised by project rather than by neighbourhood.
+      projects: [
+        {
+          title: 'The Closet',
+          kind: 'Fashion shoot · Euljiro',
+          year: '', // [YEAR?]
+          credit: '', // e.g. 'Photography by Helen · Styling by …'
+          photos: [
+            { src: 'assets/photos/seoul/the-closet/01.jpg', caption: 'The Closet 01', ratio: 1.5 },
+            { src: 'assets/photos/seoul/the-closet/02.jpg', caption: 'The Closet 02', ratio: 1.5 },
+            { src: 'assets/photos/seoul/the-closet/03.jpg', caption: 'The Closet 03', ratio: 1.5 },
+            { src: 'assets/photos/seoul/the-closet/04.jpg', caption: 'The Closet 04', ratio: 1.5 },
+            { src: 'assets/photos/seoul/the-closet/05.jpg', caption: 'The Closet 05', ratio: 1.5 },
+          ],
+          notes: [],
+        },
       ],
-      notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
     {
       id: 'lisbon',
