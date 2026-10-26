@@ -235,7 +235,8 @@ export function createHero(canvas, words, getCard) {
       arr[i * 3 + 1] = cy + y + (r() - 0.5) * 0.05;
       arr[i * 3 + 2] = (r() - 0.5) * 0.1;
     }
-    geometry.setAttribute('aP4', new THREE.BufferAttribute(arr, 3));
+    // the card fills every slot after the last word (the shader has five)
+    for (let k = words.length; k <= 4; k++) geometry.setAttribute(`aP${k}`, new THREE.BufferAttribute(arr, 3));
   }
 
   function resize() {

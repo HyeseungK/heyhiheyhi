@@ -6,6 +6,8 @@
   <title>Hyeseung Kim — Helen</title>
   <meta name="description" content="Hyeseung (Helen) Kim. Work, visual work and music." />
   <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet" />
@@ -22,11 +24,12 @@
       <span class="brand-mark">H</span><span class="brand-name">Hyeseung&nbsp;Kim</span>
     </button>
     <nav class="tabs" aria-label="Sections">
-      <button class="tab-btn" data-go="home" data-fx="ripple"><img class="tab-ico" data-icon="home" alt="" />Home</button>
-      <button class="tab-btn" data-go="work" data-fx="pixel"><img class="tab-ico" data-icon="work" alt="" /><span class="num">01</span>Work</button>
-      <button class="tab-btn" data-go="visual" data-fx="pixel"><img class="tab-ico" data-icon="visual" alt="" /><span class="num">02</span>Visual</button>
-      <button class="tab-btn" data-go="music" data-fx="ripple"><img class="tab-ico" data-icon="music" alt="" /><span class="num">03</span>Music</button>
+      <button class="tab-btn" data-go="home" data-fx="ripple"><img class="tab-ico" data-icon="home" alt="" /><span class="lbl">Home</span></button>
+      <button class="tab-btn" data-go="work" data-fx="pixel"><img class="tab-ico" data-icon="work" alt="" /><span class="num">01</span><span class="lbl">Work</span></button>
+      <button class="tab-btn" data-go="visual" data-fx="pixel"><img class="tab-ico" data-icon="visual" alt="" /><span class="num">02</span><span class="lbl">Frames</span></button>
+      <button class="tab-btn" data-go="music" data-fx="ripple"><img class="tab-ico" data-icon="music" alt="" /><span class="num">03</span><span class="lbl">Music</span></button>
     </nav>
+    <button class="accent-dot" aria-label="Change accent colour"><i></i></button>
   </header>
 
   <main id="main">
@@ -44,7 +47,7 @@
             </button>
             <button class="chapter" data-go="visual" data-fx="pixel" style="--x:63%;--y:13%">
               <img class="chapter-ico" data-icon="visual" alt="" />
-              <span class="chapter-num">02</span><span class="chapter-word">Visual&nbsp;Work</span>
+              <span class="chapter-num">02</span><span class="chapter-word">Frames</span>
             </button>
             <button class="chapter" data-go="music" data-fx="ripple" style="--x:58%;--y:76%">
               <img class="chapter-ico" data-icon="music" alt="" />
@@ -56,18 +59,21 @@
             <div class="bcard" role="button" tabindex="0" aria-label="Business card. Press to flip">
               <span class="bcard-inner">
               <span class="bcard-face bcard-front">
-                <span class="bc-top"><span class="bc-mark">H</span><span class="bc-hi">Hey Hi</span></span>
+                <span class="bc-top"><span class="bc-mark">H</span></span>
                 <span class="bc-name" data-fill="profile.name"></span>
                 <span class="bc-nick">Helen</span>
                 <span class="bc-bottom"><span class="bc-title"></span><span class="bc-flip">flip ↻</span></span>
               </span>
               <span class="bcard-face bcard-back">
-                <span class="bc-rows"></span>
+                <span class="bc-backbody"><span class="bc-rows"></span><span class="bc-qr" aria-label="QR code to this site"></span></span>
                 <span class="bc-bottom"><span class="bc-loc"></span><span class="bc-flip">↺</span></span>
               </span>
               </span>
             </div>
-            <a class="bc-save" download="Hyeseung-Kim.vcf">Save contact (.vcf) ↓</a>
+            <span class="bc-actions">
+              <a class="bc-save bc-vcf" download="Hyeseung-Kim.vcf">Save contact ↓</a>
+              <a class="bc-save bc-img" download="Hyeseung-Kim-card.png">Save card ↓</a>
+            </span>
           </div>
 
           <div class="scroll-hint"><span>Scroll</span><i></i></div>
@@ -87,7 +93,7 @@
     <!-- ── WORK ───────────────────────────────────────────── -->
     <section class="tab" id="tab-work" data-tab="work" hidden>
       <div class="page-head">
-        <p class="eyebrow">01 — Professional</p>
+        <p class="eyebrow"><span class="ey-wordy">01 — Professional</span><span class="ey-compact">01 · Work</span></p>
         <h2 class="page-title">Work</h2>
         <p class="page-lead" data-fill="work.lead"></p>
       </div>
@@ -135,8 +141,8 @@
     <!-- ── VISUAL ─────────────────────────────────────────── -->
     <section class="tab" id="tab-visual" data-tab="visual" hidden>
       <div class="page-head">
-        <p class="eyebrow">02 — Creative</p>
-        <h2 class="page-title">Visual Work</h2>
+        <p class="eyebrow"><span class="ey-wordy">02 — Creative</span><span class="ey-compact">02 · Frames</span></p>
+        <h2 class="page-title">Frames</h2>
         <p class="page-lead" data-fill="visual.lead"></p>
         <div class="chips">
           <a href="#v-moving" class="chip">Moving</a>
@@ -168,7 +174,7 @@
     <!-- ── MUSIC ──────────────────────────────────────────── -->
     <section class="tab" id="tab-music" data-tab="music" hidden>
       <div class="page-head">
-        <p class="eyebrow">03 — Creative</p>
+        <p class="eyebrow"><span class="ey-wordy">03 — Creative</span><span class="ey-compact">03 · Music</span></p>
         <h2 class="page-title">Music</h2>
         <p class="page-lead" data-fill="music.lead"></p>
       </div>
@@ -176,7 +182,7 @@
       <div class="room">
         <div class="shelf-wrap">
           <div class="shelf" aria-label="Album shelf"></div>
-          <p class="hint">Pull an album off the shelf</p>
+          <p class="hint">Pick a record</p>
         </div>
         <div class="guitar-wrap">
           <button class="guitar" aria-label="Guitar: strum it, and see performances and SoundCloud"><canvas class="guitar-canvas"></canvas></button>
@@ -220,6 +226,9 @@
 
   <div class="modal album-modal" hidden role="dialog" aria-modal="true" aria-label="Album">
     <button class="modal-x" aria-label="Close">Close</button>
+    <button class="album-nav album-prev" aria-label="Previous album">←</button>
+    <button class="album-nav album-next" aria-label="Next album">→</button>
+    <span class="album-count"></span>
     <div class="album-view">
       <div class="case-stage">
         <div class="case">
@@ -244,6 +253,7 @@
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/qrcode.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

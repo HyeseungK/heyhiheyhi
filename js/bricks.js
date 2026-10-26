@@ -7,7 +7,10 @@ const studGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.22, 18).rotateX(Math.PI /
 const plastic = new THREE.MeshStandardMaterial({ roughness: 0.38, metalness: 0 });
 
 export const INK = '#151515';
-export const COBALT = '#2f4cff';
+export const COBALT = '#2f4cff'; // stands for "the accent colour" in maps; swapped at render time
+
+const accentNow = () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || COBALT;
+const resolve = (hex) => (hex === COBALT ? accentNow() : hex);
 
 // `map`: rows of characters, '.' = empty. `colors`: char → hex.
 // `depthOf(ch)`: bricks deep. `liftOf(ch)`: bricks pushed toward the viewer.
@@ -24,7 +27,7 @@ export function buildBricks(map, colors, depthOf = () => 2, liftOf = () => 0) {
   cells.forEach((cell, s) => {
     const x = cell.c - (w - 1) / 2, y = (h - 1) / 2 - cell.r;
     const d = depthOf(cell.ch), lift = liftOf(cell.ch);
-    col.set(colors[cell.ch]);
+    col.set(resolve(colors[cell.ch]));
     for (let z = 0; z < d; z++) {
       m.makeTranslation(x, y, lift - z);
       bricks.setMatrixAt(i, m);
@@ -36,8 +39,23 @@ export function buildBricks(map, colors, depthOf = () => 2, liftOf = () => 0) {
   });
   const g = new THREE.Group();
   g.add(bricks, studs);
-  g.userData.size = { w, h };
+  g.userData = { size: { w, h }, cells, colors, depthOf };
   return g;
+}
+
+// re-applies colours (e.g. after the accent changes)
+export function recolorBricks(g) {
+  const [bricks, studs] = g.children;
+  const { cells, colors, depthOf } = g.userData;
+  const col = new THREE.Color();
+  let i = 0;
+  cells.forEach((cell, s) => {
+    col.set(resolve(colors[cell.ch]));
+    for (let z = 0; z < depthOf(cell.ch); z++) bricks.setColorAt(i++, col);
+    studs.setColorAt(s, col);
+  });
+  bricks.instanceColor.needsUpdate = true;
+  studs.instanceColor.needsUpdate = true;
 }
 
 export function addLights(scene) {

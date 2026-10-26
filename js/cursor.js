@@ -3,7 +3,7 @@ const LABELS = [
   ['.sheet-wrap', null], // the loupe is the cursor there
   ['.frame, .wall-item, .lb-media', 'view'],
   ['.video-card', 'play'],
-  ['.spine', 'pull'],
+  ['.sleeve', 'open'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
   ['.bcard', 'flip'],
@@ -28,7 +28,9 @@ export function initCursor() {
     qy(e.clientY);
     el.classList.add('is-on');
     let text;
-    for (const [sel, t] of LABELS) {
+    const custom = e.target.closest?.('[data-cursor]');
+    if (custom) text = custom.dataset.cursor;
+    else for (const [sel, t] of LABELS) {
       if (e.target.closest?.(sel)) { text = t; break; }
     }
     el.classList.toggle('is-hidden', text === null);

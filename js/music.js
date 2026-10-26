@@ -14,32 +14,29 @@ function coverSrc(a) {
 }
 
 export function renderMusic(root) {
+  // album covers face out on two picture ledges
   const shelf = root.querySelector('.shelf');
   const perRow = Math.ceil(music.albums.length / 2);
   const rows = [music.albums.slice(0, perRow), music.albums.slice(perRow)];
   shelf.innerHTML = rows
     .map((row, r) => {
-      const spines = row
+      const sleeves = row
         .map((a, j) => {
           const i = r * perRow + j;
           const rnd = mulberry32(hashString(a.title));
-          const h = 215 + Math.round(rnd() * 50);
-          const w = 30 + Math.round(rnd() * 12);
-          const c = a.color || '#ddd';
-          const lean = r === 1 && j === row.length - 1 ? ' lean' : '';
-          return `<button class="spine${lean}" data-i="${i}" style="--c:${esc(c)};--fg:${isDark(c) ? '#fff' : '#111'};--h:${h}px;--w:${w}px" aria-label="${esc(a.title)} by ${esc(a.artist)}">
-              <span>${esc(a.title)} <em>${esc(a.artist)}</em></span>
+          const tilt = (rnd() - 0.5) * 5;
+          return `<button class="sleeve" data-i="${i}" style="--tilt:${tilt.toFixed(2)}deg" aria-label="${esc(a.title)} by ${esc(a.artist)}">
+              <img src="${esc(coverSrc(a))}" alt="" loading="lazy" />
             </button>`;
         })
         .join('');
-      const decor = r === 0 ? '<span class="shelf-obj" aria-hidden="true"></span>' : '<span class="bookend" aria-hidden="true"></span>';
-      return `<div class="shelf-row">${spines}${decor}</div>`;
+      return `<div class="shelf-row">${sleeves}</div>`;
     })
     .join('');
 
   shelf.addEventListener('click', (e) => {
-    const s = e.target.closest('.spine');
-    if (s) openAlbum(s, music.albums[+s.dataset.i]);
+    const s = e.target.closest('.sleeve');
+    if (s) openAlbum(+s.dataset.i);
   });
 
   renderTickets(root);
@@ -55,6 +52,7 @@ export function renderMusic(root) {
 }
 
 let guitar3d = null;
+window.addEventListener('accentchange', () => guitar3d?.recolor());
 export const guitarLoop = {
   start: () => guitar3d?.start(),
   stop: () => guitar3d?.stop(),
@@ -120,20 +118,19 @@ function renderTickets(root) {
 // ── album ───────────────────────────────────────────────────
 const modal = document.querySelector('.album-modal');
 
-function openAlbum(spine, a) {
+let current = -1;
+let spin = null;
+const sleeveOf = (i) => document.querySelector(`.sleeve[data-i="${i}"]`);
+
+function paintAlbum(a) {
   const gsap = window.gsap;
   const src = coverSrc(a);
-  const caseEl = modal.querySelector('.case');
-  const cover = modal.querySelector('.case-cover');
-  const cd = modal.querySelector('.cd');
-  const art = modal.querySelector('.cd-art');
   const info = modal.querySelector('.album-info');
-  const small = window.matchMedia('(max-width: 860px)').matches;
-
   modal.style.setProperty('--c', a.color || '#ddd');
   modal.querySelector('.cover-face').innerHTML = `<img src="${esc(src)}" alt="${esc(a.title)} cover" />`;
   modal.querySelector('.cover-back').innerHTML = `${esc(a.artist)}<br>${esc(a.title)}<br>${esc(a.year)}`;
-  art.innerHTML = `<img src="${esc(src)}" alt="" />`;
+  modal.querySelector('.cd-art').innerHTML = `<img src="${esc(src)}" alt="" />`;
+  modal.querySelector('.album-count').textContent = `${String(current + 1).padStart(2, '0')} / ${String(music.albums.length).padStart(2, '0')}`;
   info.innerHTML = `
     <p class="year">${esc(a.year)}</p>
     <h3>${esc(a.title)}</h3>
@@ -158,32 +155,91 @@ function openAlbum(spine, a) {
       gsap.to(li.querySelector('.note'), { height: open ? 'auto' : 0, duration: 0.45, ease: 'power3.inOut' });
     })
   );
+}
 
-  gsap.set([cover, cd, caseEl, art], { clearProps: 'all' });
-  let spin;
-  const tl = gsap
-    .timeline({ paused: true })
-    .to(spine, { y: -60, opacity: 0, duration: 0.45, ease: 'power3.in' })
-    .from(caseEl, { y: 90, rotateX: 28, rotateZ: -6, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0.2)
-    .to(cover, { rotateY: -128, duration: 1.1, ease: 'power3.inOut' }, 0.95)
-    .to(cd, { x: small ? '42%' : '56%', duration: 0.9, ease: 'power3.out' }, 1.6)
+// case slides in, cover swings open, CD rolls out and spins
+function playIn(dir = 0) {
+  const gsap = window.gsap;
+  const caseEl = modal.querySelector('.case');
+  const cover = modal.querySelector('.case-cover');
+  const cd = modal.querySelector('.cd');
+  const art = modal.querySelector('.cd-art');
+  const info = modal.querySelector('.album-info');
+  const small = window.matchMedia('(max-width: 860px)').matches;
+  gsap.killTweensOf([caseEl, cover, cd]);
+  gsap.set([cover, cd], { clearProps: 'transform' });
+  const tl = gsap.timeline();
+  if (dir) tl.fromTo(caseEl, { x: dir * 80, opacity: 0, y: 0, rotateX: 0, rotateZ: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'power3.out' });
+  else tl.fromTo(caseEl, { y: 90, x: 0, rotateX: 28, rotateZ: -6, opacity: 0 }, { y: 0, rotateX: 0, rotateZ: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);
+  tl.to(cover, { rotateY: -128, duration: dir ? 0.8 : 1.1, ease: 'power3.inOut' }, dir ? 0.25 : 0.95)
+    .to(cd, { x: small ? '42%' : '56%', duration: 0.8, ease: 'power3.out' }, dir ? 0.75 : 1.6)
     .add(() => {
       spin?.kill();
       spin = gsap.to(art, { rotation: '+=360', duration: 2.6, ease: 'none', repeat: -1 });
-    }, 1.75)
-    .from(info.children, { y: 26, opacity: 0, stagger: 0.07, duration: 0.6, ease: 'power3.out' }, 0.7);
+    }, '<0.1')
+    .fromTo(info.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power3.out' }, dir ? 0.15 : 0.7);
+  return tl;
+}
 
+// CD goes back in, cover closes, case leaves
+function playOut(dir = 0) {
+  const gsap = window.gsap;
+  spin?.kill();
+  return gsap
+    .timeline()
+    .to(modal.querySelector('.album-info').children, { opacity: 0, y: -10, duration: 0.2, stagger: 0.02 }, 0)
+    .to(modal.querySelector('.cd'), { x: 0, duration: 0.35, ease: 'power2.in' }, 0)
+    .to(modal.querySelector('.case-cover'), { rotateY: 0, duration: 0.4, ease: 'power2.inOut' }, 0.2)
+    .to(modal.querySelector('.case'), dir ? { x: -dir * 80, opacity: 0, duration: 0.3, ease: 'power2.in' } : { y: 60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0.5);
+}
+
+function liftSleeve(i, out) {
+  const el = sleeveOf(i);
+  if (el) window.gsap.to(el, out ? { y: -40, opacity: 0, duration: 0.4, ease: 'power3.in' } : { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' });
+}
+
+let switching = false;
+async function step(d) {
+  if (switching || current < 0) return;
+  switching = true;
+  const next = (current + d + music.albums.length) % music.albums.length;
+  await playOut(d);
+  liftSleeve(current, false);
+  current = next;
+  liftSleeve(current, true);
+  paintAlbum(music.albums[current]);
+  await playIn(d);
+  switching = false;
+}
+
+function openAlbum(i) {
+  current = i;
+  paintAlbum(music.albums[i]);
+  liftSleeve(i, true);
   openModal(modal, {
-    onClose: () =>
-      new Promise((resolve) => {
-        spin?.kill();
-        tl.eventCallback('onReverseComplete', resolve);
-        tl.timeScale(1.8).reverse();
-      }),
+    onKey: (e) => {
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    },
+    onClose: async () => {
+      await playOut(0);
+      liftSleeve(current, false);
+      current = -1;
+    },
   });
-  tl.play();
+  playIn(0);
   modal.scrollTop = 0;
 }
+modal.querySelector('.album-prev').addEventListener('click', () => step(-1));
+modal.querySelector('.album-next').addEventListener('click', () => step(1));
+let touchX = null;
+modal.addEventListener('touchstart', (e) => (touchX = e.touches[0].clientX), { passive: true });
+modal.addEventListener('touchend', (e) => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 60) step(dx < 0 ? 1 : -1);
+  touchX = null;
+});
 
 // ── guitar ──────────────────────────────────────────────────
 let audio;
@@ -255,7 +311,7 @@ export function initMusicScroll(root) {
     scrollTrigger: { trigger: root.querySelector('.ticket-book'), start: 'top 85%' },
   });
   root.querySelectorAll('.shelf-row').forEach((row) => {
-    gsap.from(row.querySelectorAll('.spine'), {
+    gsap.from(row.querySelectorAll('.sleeve'), {
       y: 50, opacity: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out',
       scrollTrigger: { trigger: row, start: 'top 90%' },
     });

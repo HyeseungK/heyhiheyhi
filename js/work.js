@@ -128,13 +128,13 @@ function makeDeck(host, p, onBack) {
     <div class="deck-view">
       <div class="deck-bar">
         <button class="deck-back">← All projects</button>
-        <div class="deck-steps">${list.map(() => '<i></i>').join('')}</div>
+        <div class="deck-steps">${list.map((_, i) => `<button aria-label="Slide ${i + 1}"><i></i></button>`).join('')}</div>
         <div class="deck-nav"><button class="prev" aria-label="Previous slide">‹</button><button class="next" aria-label="Next slide">›</button></div>
       </div>
       <div class="deck-stage">${list.map((html, i) => `<section class="slide" aria-label="Slide ${i + 1} of ${list.length}">${html}</section>`).join('')}</div>
     </div>`;
   const els = [...host.querySelectorAll('.slide')];
-  const steps = [...host.querySelectorAll('.deck-steps i')];
+  const steps = [...host.querySelectorAll('.deck-steps button')];
   const prev = host.querySelector('.prev'), next = host.querySelector('.next');
   let idx = 0;
   gsap.set(els, { xPercent: 100, autoAlpha: 0 });
@@ -157,11 +157,23 @@ function makeDeck(host, p, onBack) {
     next.disabled = idx === els.length - 1;
   }
   paint();
+  steps.forEach((b, i) => b.addEventListener('click', () => go(i)));
+  // click the left / right part of a slide to move; the cursor says which way
+  const stage = host.querySelector('.deck-stage');
+  const side = (e) => (e.clientX - stage.getBoundingClientRect().left) / stage.offsetWidth > 0.35 ? 1 : -1;
+  stage.addEventListener('pointermove', (e) => {
+    const d = side(e);
+    stage.dataset.cursor = d > 0 ? (idx < els.length - 1 ? 'next →' : '') : idx > 0 ? '← prev' : '';
+  });
+  stage.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) return;
+    go(idx + side(e));
+    stage.dispatchEvent(new PointerEvent('pointermove', { clientX: e.clientX, clientY: e.clientY }));
+  });
   prev.addEventListener('click', () => go(idx - 1));
   next.addEventListener('click', () => go(idx + 1));
   host.querySelector('.deck-back').addEventListener('click', onBack);
   let sx = null;
-  const stage = host.querySelector('.deck-stage');
   stage.addEventListener('touchstart', (e) => (sx = e.touches[0].clientX), { passive: true });
   stage.addEventListener('touchend', (e) => {
     if (sx === null) return;

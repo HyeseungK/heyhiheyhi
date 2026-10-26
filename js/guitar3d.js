@@ -1,6 +1,6 @@
 // A brick-built electric guitar leaning on an amp, rendered with Three.js.
 import * as THREE from 'three';
-import { buildBricks, addLights } from './bricks.js';
+import { buildBricks, addLights, recolorBricks, COBALT } from './bricks.js';
 
 // Pixel maps, top row first. One character = one brick.
 // H head · P peg · F fret · N neck · B body · W pickguard · G pickup · K bridge/knob
@@ -46,7 +46,7 @@ const AMP = [
 ];
 
 const COLORS = {
-  H: '#2f4cff', B: '#2f4cff', A: '#2f4cff',
+  H: COBALT, B: COBALT, A: COBALT,
   P: '#e9e9e6', W: '#f7f7f4',
   F: '#9a9a96', G: '#8c8c88', E: '#7d7d7a',
   N: '#151515', K: '#151515', C: '#151515', D: '#4a4a48',
@@ -171,5 +171,10 @@ export function createGuitar(canvas) {
     stop() { running = false; },
     strum() { strumT = clock.getElapsedTime(); },
     nudge() { hoverT = clock.getElapsedTime(); },
+    recolor() {
+      recolorBricks(guitar);
+      recolorBricks(amp);
+      if (!running) renderer.render(scene, camera);
+    },
   };
 }

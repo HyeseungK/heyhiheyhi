@@ -2,7 +2,6 @@
 // "ripple" (a wavy ink drop spreads from the click, then opens again).
 
 const INK = '#0f0f0f';
-const ACCENT = '#2f4cff';
 
 const canvas = document.querySelector('.fx-canvas');
 const labelEl = document.querySelector('.fx-label');
@@ -46,6 +45,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ── pixel ───────────────────────────────────────────────────
 async function pixel(x, y, label, onCovered) {
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const size = Math.round(Math.max(26, Math.min(58, W / 22)));
   const cols = Math.ceil(W / size), rows = Math.ceil(H / size);
   const maxD = Math.hypot(Math.max(x, W - x), Math.max(y, H - y));
@@ -71,7 +71,7 @@ async function pixel(x, y, label, onCovered) {
       if (s <= 0) continue;
       const k = easeOut(s);
       const inset = (size * (1 - k)) / 2;
-      ctx.fillStyle = cell.accent && k < 1 ? ACCENT : INK;
+      ctx.fillStyle = cell.accent && k < 1 ? accent : INK;
       ctx.fillRect(cell.x + inset, cell.y + inset, size * k + 0.5, size * k + 0.5);
     }
   };

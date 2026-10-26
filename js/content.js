@@ -3,6 +3,20 @@
 //  Everything marked [PLACEHOLDER] is sample text to replace.
 // ─────────────────────────────────────────────────────────────
 
+// Site-wide settings.
+export const site = {
+  // 'compact': one-line intro on each tab, more room for the content.
+  // 'wordy':   the earlier version with a big title and a lead paragraph.
+  layout: 'compact',
+  // Accent colours visitors can switch between with the dot in the top bar.
+  // The first one is the default.
+  accents: [
+    { name: 'Cobalt', hex: '#2f4cff' },
+    { name: 'Pink', hex: '#ff4f8b' },
+    { name: 'Ink', hex: '#0f0f0f' },
+  ],
+};
+
 export const profile = {
   nameKo: '김혜승',
   name: 'Hyeseung Kim',
@@ -14,10 +28,13 @@ export const profile = {
   // business card (end of the home screen) + downloadable contact file
   card: {
     title: 'Strategy Consultant', // [PLACEHOLDER]
-    org: 'Consulting Firm A', // [PLACEHOLDER]
+    org: 'Kearney',
     email: 'hello@example.com', // [PLACEHOLDER]
     phone: '', // optional, e.g. '+82 10 0000 0000'
     website: 'https://hyeseungk.github.io/heyhiheyhi/',
+    // Optional: a scan of your real card (e.g. 'assets/card.jpg').
+    // If set, "Save card" downloads it; otherwise a card image with a QR code is drawn.
+    image: '',
   },
   links: [
     { label: 'Email', href: 'mailto:hello@example.com' }, // [PLACEHOLDER]
@@ -28,7 +45,6 @@ export const profile = {
 
 // Hero words, morphed in order as you scroll; the last morph becomes the business card.
 export const heroWords = [
-  '김혜승',
   'Hyeseung',
   'Helen',
   'Hey Hi',
@@ -42,7 +58,7 @@ export const work = {
     // [PLACEHOLDER] newest first
     {
       period: '2024 — Now',
-      org: 'Consulting Firm A',
+      org: 'Kearney',
       role: 'Consultant',
       text:
         'Strategy and operations projects across consumer, tech and financial services. I usually own the problem structuring and the final storyline, from the first hypothesis tree to the deck the CEO reads.',

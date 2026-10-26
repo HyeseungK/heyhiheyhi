@@ -1,4 +1,4 @@
-import { profile, work, visual, music, heroWords } from './content.js';
+import { site, profile, work, visual, music, heroWords } from './content.js';
 import { createHero } from './hero.js';
 import { transition, isBusy } from './fx.js';
 import { renderWork, initWorkScroll } from './work.js';
@@ -12,6 +12,8 @@ const ScrollTrigger = window.ScrollTrigger;
 gsap.registerPlugin(ScrollTrigger);
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 ScrollTrigger.clearScrollMemory?.('manual');
+
+document.body.classList.add(`layout-${site.layout}`);
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r = document) => r.querySelector(s);
@@ -60,7 +62,26 @@ function setupCard() {
     ...profile.links.filter((l) => /^https?:/.test(l.href)).map((l) => `X-SOCIALPROFILE;TYPE=${l.label.toLowerCase()}:${l.href}`),
     'END:VCARD',
   ].filter(Boolean).join('\r\n');
-  $('.bc-save').href = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' }));
+  $('.bc-vcf').href = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' }));
+
+  // QR code to the site, on the back of the card and on the saved image
+  let qr = null;
+  try {
+    qr = window.qrcode(0, 'M');
+    qr.addData(c.website);
+    qr.make();
+    $('.bc-qr').innerHTML = qr.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
+  } catch (e) { $('.bc-qr').remove(); }
+
+  const saveImg = $('.bc-img');
+  if (c.image) saveImg.href = c.image;
+  else saveImg.addEventListener('click', (e) => {
+    if (saveImg.dataset.ready) return;
+    e.preventDefault();
+    saveImg.href = drawCardPNG(qr);
+    saveImg.dataset.ready = '1';
+    saveImg.click();
+  });
 
   const card = $('.bcard');
   const flip = () => card.classList.toggle('flipped');
@@ -70,6 +91,36 @@ function setupCard() {
   });
 }
 setupCard();
+
+// 1050 × 600 PNG of the card front, with the QR code
+function drawCardPNG(qr) {
+  const W = 1050, H = 600, c = profile.card;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = '#0f0f0f';
+  g.beginPath(); g.arc(96, 96, 30, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#fff'; g.font = '600 28px "Inter Tight", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('H', 96, 97);
+  g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+  g.fillStyle = '#0f0f0f'; g.font = '600 76px "Inter Tight", sans-serif';
+  g.fillText(profile.name, 66, 300);
+  g.fillStyle = '#3a3a3a'; g.font = 'italic 44px "Instrument Serif", serif';
+  g.fillText(profile.nickname, 66, 356);
+  g.fillStyle = '#8b8b88'; g.font = '500 22px "Inter Tight", sans-serif';
+  g.fillText(`${c.title} · ${c.org}`.toUpperCase(), 66, 500);
+  g.fillText([c.email, c.phone].filter(Boolean).join('  ·  '), 66, 540);
+  if (qr) {
+    const n = qr.getModuleCount(), size = 170, cell = size / n, x0 = W - 66 - size, y0 = H - 66 - size;
+    g.fillStyle = '#0f0f0f';
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) g.fillRect(x0 + k * cell, y0 + r * cell, cell + 0.5, cell + 0.5);
+  }
+  g.fillStyle = accent; g.fillRect(0, H - 10, W, 10);
+  return cv.toDataURL('image/png');
+}
 
 // ── sections ────────────────────────────────────────────────
 const tabs = Object.fromEntries($$('.tab').map((el) => [el.dataset.tab, el]));
@@ -125,16 +176,21 @@ function initHomeScroll() {
 const chapters = $$('.chapter');
 if (!reduceMotion) {
   chapters.forEach((el, i) => {
+    // wander around a wide area, the brick icon bobbing on its own
     const drift = () =>
       gsap.to(el, {
-        x: gsap.utils.random(-40, 40),
-        y: gsap.utils.random(-30, 30),
-        rotation: gsap.utils.random(-3, 3),
-        duration: gsap.utils.random(3.5, 6),
+        x: gsap.utils.random(-0.14, 0.14) * window.innerWidth,
+        y: gsap.utils.random(-0.11, 0.11) * window.innerHeight,
+        rotation: gsap.utils.random(-6, 6),
+        duration: gsap.utils.random(5, 9),
         ease: 'sine.inOut',
         onComplete: drift,
       });
     drift();
+    gsap.to(el.querySelector('.chapter-ico'), {
+      rotation: gsap.utils.random(-16, 16), y: gsap.utils.random(-10, -4),
+      duration: gsap.utils.random(1.6, 2.6), ease: 'sine.inOut', yoyo: true, repeat: -1, delay: i * 0.4,
+    });
     const qx = gsap.quickTo(el.querySelector('.chapter-word'), 'xPercent', { duration: 1.2, ease: 'power3' });
     const qy = gsap.quickTo(el.querySelector('.chapter-word'), 'yPercent', { duration: 1.2, ease: 'power3' });
     const depth = [10, -14, 8][i] || 8;
@@ -148,7 +204,7 @@ if (!reduceMotion) {
 
 // ── router ──────────────────────────────────────────────────
 const inits = { home: initHomeScroll, work: initWorkScroll, visual: initVisualScroll, music: initMusicScroll };
-const labels = { home: 'Hey Hi', work: 'Work', visual: 'Visual Work', music: 'Music' };
+const labels = { home: 'Hey Hi', work: 'Work', visual: 'Frames', music: 'Music' };
 let current = null;
 let ctx = null;
 
@@ -213,10 +269,35 @@ new IntersectionObserver(([entry]) => {
   entry.isIntersecting ? hero.start() : hero.stop();
 }).observe($('.hero'));
 
+// ── accent colour (dot in the top bar) ──────────────────────
+const accents = site.accents;
+let accentIdx = 0;
+try {
+  const saved = localStorage.getItem('accent');
+  const k = accents.findIndex((a) => a.name === saved);
+  if (k >= 0) accentIdx = k;
+} catch (e) { /* storage blocked */ }
+function applyAccent() {
+  const a = accents[accentIdx];
+  document.documentElement.style.setProperty('--accent', a.hex);
+  $('.accent-dot').style.setProperty('--next', accents[(accentIdx + 1) % accents.length].hex);
+  $('.accent-dot').setAttribute('aria-label', `Accent colour: ${a.name}. Change`);
+  window.dispatchEvent(new CustomEvent('accentchange', { detail: a }));
+}
+applyAccent();
+$('.accent-dot').addEventListener('click', () => {
+  accentIdx = (accentIdx + 1) % accents.length;
+  try { localStorage.setItem('accent', accents[accentIdx].name); } catch (e) { /* ignore */ }
+  applyAccent();
+  gsap.fromTo('.accent-dot i', { scale: 0.4 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+});
+window.addEventListener('accentchange', () => icons && paintIcons());
+
 // brick icons for the nav and the floating chapters
 (window.requestIdleCallback || ((f) => setTimeout(f, 300)))(paintIcons);
+let icons = null;
 function paintIcons() {
-  const icons = renderBrickIcons();
+  icons = renderBrickIcons();
   if (!icons) return;
   $$('[data-icon]').forEach((img) => (img.src = icons[img.dataset.icon]));
 }
