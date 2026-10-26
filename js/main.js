@@ -34,9 +34,6 @@ $$('[data-fill]').forEach((el) => {
 });
 $('.year').textContent = new Date().getFullYear();
 
-$('.hero-captions').innerHTML = heroWords
-  .map((w, i) => `<p class="hero-caption" data-i="${i}"><b>0${i + 1} / 0${heroWords.length}</b>${w.caption}</p>`)
-  .join('');
 
 // ── business card ───────────────────────────────────────────
 function setupCard() {
@@ -92,7 +89,7 @@ async function bootHero() {
       new Promise((r) => setTimeout(r, 2500)),
     ]);
   } catch (e) { /* fall back to system fonts */ }
-  hero = createHero($('#hero-canvas'), heroWords.map((w) => w.word), () => $('.bcard').getBoundingClientRect());
+  hero = createHero($('#hero-canvas'), heroWords, () => $('.bcard').getBoundingClientRect());
   if (hero && current === 'home') {
     hero.start();
     ctx.add(() => initHomeScroll());
@@ -102,24 +99,18 @@ async function bootHero() {
 function initHomeScroll() {
   if (!hero) return;
   const u = hero.uniforms.uProgress;
-  const caps = $$('.hero-caption');
   const n = heroWords.length - 1;
   const tl = gsap.timeline({
     scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom bottom', scrub: 0.9 },
   });
-  gsap.set(caps[0], { opacity: 1 });
   tl.to({}, { duration: 0.35 });
   for (let i = 1; i <= n; i++) {
-    tl.to(u, { value: i, duration: 1, ease: 'none' })
-      .to(caps[i - 1], { opacity: 0, y: -10, duration: 0.25 }, '<')
-      .fromTo(caps[i], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, '<0.6')
-      .to({}, { duration: 0.35 });
+    tl.to(u, { value: i, duration: 1, ease: 'none' }).to({}, { duration: 0.35 });
   }
   // chapters grow in as the last word lands
   tl.fromTo('.chapter-word', { scale: 0.86 }, { scale: 1.12, duration: n, ease: 'none', transformOrigin: 'left center' }, 0);
   // finally the particles gather into a business card
   tl.to(u, { value: n + 1, duration: 1, ease: 'none' })
-    .to(caps[n], { opacity: 0, y: -10, duration: 0.25 }, '<')
     .to(hero.uniforms.uFade, { value: 0.35, duration: 0.3 }, '>-0.15')
     .fromTo('.card-wrap', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, '<')
     .fromTo('.bcard', { rotateX: 25, rotateY: -12 }, { rotateX: 0, rotateY: 0, duration: 0.35 }, '<')

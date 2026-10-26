@@ -26,12 +26,12 @@ export const profile = {
   ],
 };
 
-// Hero words, morphed in order as you scroll.
+// Hero words, morphed in order as you scroll; the last morph becomes the business card.
 export const heroWords = [
-  { word: '김혜승', caption: 'the name I was given' },
-  { word: 'Hyeseung', caption: 'the same name, spelled out' },
-  { word: 'Helen', caption: 'the name most people call me' },
-  { word: 'Hey Hi', caption: 'a song I love, and how I say hello' },
+  '김혜승',
+  'Hyeseung',
+  'Helen',
+  'Hey Hi',
 ];
 
 // ── WORK ─────────────────────────────────────────────────────
