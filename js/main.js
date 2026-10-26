@@ -4,6 +4,8 @@ import { transition, isBusy } from './fx.js';
 import { renderWork, initWorkScroll } from './work.js';
 import { renderVisual, initVisualScroll } from './visual.js';
 import { renderMusic, initMusicScroll, guitarLoop } from './music.js';
+import { renderBrickIcons } from './bricks.js';
+import { initCursor } from './cursor.js';
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
@@ -36,6 +38,42 @@ $('.hero-captions').innerHTML = heroWords
   .map((w, i) => `<p class="hero-caption" data-i="${i}"><b>0${i + 1} / 0${heroWords.length}</b>${w.caption}</p>`)
   .join('');
 
+// ── business card ───────────────────────────────────────────
+function setupCard() {
+  const c = profile.card;
+  $('.bc-title').textContent = `${c.title} · ${c.org}`;
+  $('.bc-loc').textContent = profile.location;
+  const rows = [
+    ['Email', c.email && `mailto:${c.email}`, c.email],
+    ['Phone', c.phone && `tel:${c.phone.replace(/\s/g, '')}`, c.phone],
+    ...profile.links.filter((l) => l.label !== 'Email').map((l) => [l.label, l.href, l.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')]),
+    ['Web', c.website, c.website.replace(/^https?:\/\//, '').replace(/\/$/, '')],
+  ].filter((r) => r[1]);
+  $('.bc-rows').innerHTML = rows
+    .map(([k, href, v]) => `<a class="bc-row" href="${href}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ''}><span class="k">${k}</span><span class="v">${v}</span></a>`)
+    .join('');
+
+  const vcf = [
+    'BEGIN:VCARD', 'VERSION:3.0',
+    `N:Kim;Hyeseung;;;`, `FN:${profile.name}`, `NICKNAME:${profile.nickname}`,
+    `TITLE:${c.title}`, `ORG:${c.org}`,
+    c.email && `EMAIL;TYPE=INTERNET:${c.email}`,
+    c.phone && `TEL;TYPE=CELL:${c.phone}`,
+    `URL:${c.website}`,
+    ...profile.links.filter((l) => /^https?:/.test(l.href)).map((l) => `X-SOCIALPROFILE;TYPE=${l.label.toLowerCase()}:${l.href}`),
+    'END:VCARD',
+  ].filter(Boolean).join('\r\n');
+  $('.bc-save').href = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' }));
+
+  const card = $('.bcard');
+  const flip = () => card.classList.toggle('flipped');
+  card.addEventListener('click', (e) => { if (!e.target.closest('a')) flip(); });
+  card.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); flip(); }
+  });
+}
+setupCard();
+
 // ── sections ────────────────────────────────────────────────
 const tabs = Object.fromEntries($$('.tab').map((el) => [el.dataset.tab, el]));
 const workApi = renderWork(tabs.work);
@@ -54,7 +92,7 @@ async function bootHero() {
       new Promise((r) => setTimeout(r, 2500)),
     ]);
   } catch (e) { /* fall back to system fonts */ }
-  hero = createHero($('#hero-canvas'), heroWords.map((w) => w.word));
+  hero = createHero($('#hero-canvas'), heroWords.map((w) => w.word), () => $('.bcard').getBoundingClientRect());
   if (hero && current === 'home') {
     hero.start();
     ctx.add(() => initHomeScroll());
@@ -79,6 +117,13 @@ function initHomeScroll() {
   }
   // chapters grow in as the last word lands
   tl.fromTo('.chapter-word', { scale: 0.86 }, { scale: 1.12, duration: n, ease: 'none', transformOrigin: 'left center' }, 0);
+  // finally the particles gather into a business card
+  tl.to(u, { value: n + 1, duration: 1, ease: 'none' })
+    .to(caps[n], { opacity: 0, y: -10, duration: 0.25 }, '<')
+    .to(hero.uniforms.uFade, { value: 0.35, duration: 0.3 }, '>-0.15')
+    .fromTo('.card-wrap', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, '<')
+    .fromTo('.bcard', { rotateX: 25, rotateY: -12 }, { rotateX: 0, rotateY: 0, duration: 0.35 }, '<')
+    .to({}, { duration: 0.6 });
   gsap.to('.scroll-hint', {
     opacity: 0,
     scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=200', scrub: true },
@@ -176,6 +221,15 @@ new IntersectionObserver(([entry]) => {
   if (!hero || current !== 'home') return;
   entry.isIntersecting ? hero.start() : hero.stop();
 }).observe($('.hero'));
+
+// brick icons for the nav and the floating chapters
+(window.requestIdleCallback || ((f) => setTimeout(f, 300)))(paintIcons);
+function paintIcons() {
+  const icons = renderBrickIcons();
+  if (!icons) return;
+  $$('[data-icon]').forEach((img) => (img.src = icons[img.dataset.icon]));
+}
+initCursor();
 
 // first paint
 const initial = tabs[location.hash.slice(1)] ? location.hash.slice(1) : 'home';

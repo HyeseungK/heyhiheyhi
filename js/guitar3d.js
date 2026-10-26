@@ -1,5 +1,6 @@
-// A brick-built (voxel) electric guitar leaning on an amp, rendered with Three.js.
+// A brick-built electric guitar leaning on an amp, rendered with Three.js.
 import * as THREE from 'three';
+import { buildBricks, addLights } from './bricks.js';
 
 // Pixel maps, top row first. One character = one brick.
 // H head · P peg · F fret · N neck · B body · W pickguard · G pickup · K bridge/knob
@@ -65,50 +66,10 @@ export function createGuitar(canvas) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, 1, 400);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d8d2, 1.6));
-  const key = new THREE.DirectionalLight(0xffffff, 2.2);
-  key.position.set(30, 50, 60);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.8);
-  rim.position.set(-40, 20, -30);
-  scene.add(rim);
+  addLights(scene);
 
-  const brickGeo = new THREE.BoxGeometry(0.94, 0.94, 0.94);
-  const studGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.22, 18).rotateX(Math.PI / 2);
-  const plastic = new THREE.MeshStandardMaterial({ roughness: 0.38, metalness: 0 });
-
-  // builds a brick group from a map; `depthOf(ch)` says how many bricks deep each cell is
-  function build(map, depthOf) {
-    const cells = [];
-    map.forEach((row, r) => [...row].forEach((ch, c) => ch !== '.' && cells.push({ ch, c, r })));
-    const total = cells.reduce((n, cell) => n + depthOf(cell.ch), 0);
-    const bricks = new THREE.InstancedMesh(brickGeo, plastic, total);
-    const studs = new THREE.InstancedMesh(studGeo, plastic, cells.length);
-    const m = new THREE.Matrix4();
-    const col = new THREE.Color();
-    const w = map[0].length, h = map.length;
-    let i = 0;
-    cells.forEach((cell, s) => {
-      const x = cell.c - (w - 1) / 2, y = (h - 1) / 2 - cell.r;
-      const d = depthOf(cell.ch);
-      col.set(COLORS[cell.ch]);
-      for (let z = 0; z < d; z++) {
-        m.makeTranslation(x, y, -z);
-        bricks.setMatrixAt(i, m);
-        bricks.setColorAt(i++, col);
-      }
-      m.makeTranslation(x, y, 0.56);
-      studs.setMatrixAt(s, m);
-      studs.setColorAt(s, col);
-    });
-    const g = new THREE.Group();
-    g.add(bricks, studs);
-    g.userData.size = { w, h };
-    return g;
-  }
-
-  const guitar = build(GUITAR, (ch) => ('BWGK'.includes(ch) ? 3 : ch === 'P' ? 1 : 2));
-  const amp = build(AMP, () => 6);
+  const guitar = buildBricks(GUITAR, COLORS, (ch) => ('BWGK'.includes(ch) ? 3 : ch === 'P' ? 1 : 2));
+  const amp = buildBricks(AMP, COLORS, () => 6);
 
   // strings: thin bars from the nut to the bridge, sitting above the studs
   const strings = new THREE.Group();

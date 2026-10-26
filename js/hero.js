@@ -7,6 +7,7 @@ const vertex = /* glsl */ `
   attribute vec3 aP1;
   attribute vec3 aP2;
   attribute vec3 aP3;
+  attribute vec3 aP4;
   attribute vec3 aDir;
   attribute float aRand;
 
@@ -16,6 +17,7 @@ const vertex = /* glsl */ `
   uniform float uPixelRatio;
   uniform vec2 uMouse;
   uniform vec3 uRipple;
+  uniform float uFade;
 
   varying float vAlpha;
 
@@ -41,13 +43,15 @@ const vertex = /* glsl */ `
     float t1 = stage(uProgress, 0.0, d);
     float t2 = stage(uProgress, 1.0, d);
     float t3 = stage(uProgress, 2.0, d);
+    float t4 = stage(uProgress, 3.0, d);
 
     vec3 pos = mix(aP0, aP1, t1);
     pos = mix(pos, aP2, t2);
     pos = mix(pos, aP3, t3);
+    pos = mix(pos, aP4, t4);
 
     // in-between: particles leave the letters and ride a flow field
-    float travel = sin(t1 * 3.14159) + sin(t2 * 3.14159) + sin(t3 * 3.14159);
+    float travel = sin(t1 * 3.14159) + sin(t2 * 3.14159) + sin(t3 * 3.14159) + sin(t4 * 3.14159);
     pos.xy += flow(pos.xy, uTime, aRand) * 0.22 * travel;
     pos += aDir * travel * 0.55;
 
@@ -74,7 +78,7 @@ const vertex = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = uSize * uPixelRatio * (0.65 + aRand * 0.7) * (10.0 / -mv.z);
-    vAlpha = 0.55 + 0.45 * (1.0 - travel / 3.0) * (0.6 + aRand * 0.4);
+    vAlpha = (0.55 + 0.45 * (1.0 - min(travel, 1.0)) * (0.6 + aRand * 0.4)) * uFade;
   }
 `;
 
@@ -110,7 +114,8 @@ function sampleWord(word, font, W, H, gap) {
   return { pts, width: ctx.measureText(word).width };
 }
 
-export function createHero(canvas, words) {
+// `getCard()` returns the business card's screen rect; particles end on its outline.
+export function createHero(canvas, words, getCard) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
@@ -136,6 +141,7 @@ export function createHero(canvas, words) {
     uPixelRatio: { value: pr },
     uMouse: { value: new THREE.Vector2(99, 99) },
     uRipple: { value: new THREE.Vector3(0, 0, -99) },
+    uFade: { value: 1 },
     uColor: { value: new THREE.Color('#0f0f0f') },
     uAccent: { value: new THREE.Color('#2f4cff') },
   };
@@ -191,6 +197,44 @@ export function createHero(canvas, words) {
       }
       geometry.setAttribute(`aP${idx}`, new THREE.BufferAttribute(arr, 3));
     });
+    layoutCard(r);
+  }
+
+  // final shape: the outline of the business card
+  function layoutCard(r) {
+    const arr = new Float32Array(COUNT * 3);
+    const cv = canvas.getBoundingClientRect();
+    const rect = getCard?.();
+    const perPx = view.h / (cv.height || window.innerHeight);
+    const w = (rect ? rect.width : cv.width * 0.6) * perPx * 1.03;
+    const h = (rect ? rect.height : cv.width * 0.34) * perPx * 1.03;
+    const cx = rect ? (rect.left + rect.width / 2 - cv.left - cv.width / 2) * perPx : 0;
+    const cy = rect ? -(rect.top + rect.height / 2 - cv.top - cv.height / 2) * perPx : 0;
+    const rad = Math.min(w, h) * 0.06;
+    const straight = 2 * (w - 2 * rad) + 2 * (h - 2 * rad);
+    const per = straight + 2 * Math.PI * rad;
+    for (let i = 0; i < COUNT; i++) {
+      let s = r() * per, x, y;
+      const sw = w - 2 * rad, sh = h - 2 * rad;
+      if (s < sw) { x = -sw / 2 + s; y = h / 2; }
+      else if ((s -= sw) < sh) { x = w / 2; y = sh / 2 - s; }
+      else if ((s -= sh) < sw) { x = sw / 2 - s; y = -h / 2; }
+      else if ((s -= sw) < sh) { x = -w / 2; y = -sh / 2 + s; }
+      else {
+        s -= sh;
+        const a = (s / rad), q = Math.floor(a / (Math.PI / 2));
+        const ang = a - q * (Math.PI / 2);
+        const corners = [[sw / 2, sh / 2, 0], [sw / 2, -sh / 2, -Math.PI / 2], [-sw / 2, -sh / 2, Math.PI], [-sw / 2, sh / 2, Math.PI / 2]];
+        const [ox, oy, base] = corners[q % 4];
+        x = ox + Math.cos(base + Math.PI / 2 - ang) * rad;
+        y = oy + Math.sin(base + Math.PI / 2 - ang) * rad;
+      }
+      const jit = (r() - 0.5) * 0.05;
+      arr[i * 3] = cx + x + jit;
+      arr[i * 3 + 1] = cy + y + (r() - 0.5) * 0.05;
+      arr[i * 3 + 2] = (r() - 0.5) * 0.1;
+    }
+    geometry.setAttribute('aP4', new THREE.BufferAttribute(arr, 3));
   }
 
   function resize() {

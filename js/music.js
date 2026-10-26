@@ -42,6 +42,8 @@ export function renderMusic(root) {
     if (s) openAlbum(s, music.albums[+s.dataset.i]);
   });
 
+  renderTickets(root);
+
   const guitar = root.querySelector('.guitar');
   guitar3d = createGuitar(guitar.querySelector('canvas'));
   if (!guitar3d) guitar.innerHTML = '<span class="guitar-fallback">♪ Guitar</span>';
@@ -57,6 +59,63 @@ export const guitarLoop = {
   start: () => guitar3d?.start(),
   stop: () => guitar3d?.stop(),
 };
+
+// ── ticket book ─────────────────────────────────────────────
+function renderTickets(root) {
+  const gsap = window.gsap;
+  const book = root.querySelector('.ticket-book');
+  book.innerHTML = music.tickets
+    .map((t, i) => {
+      const c = t.color || '#2f4cff';
+      const dark = isDark(c);
+      return `<button class="ticket${dark ? '' : ' light'}" data-type="${esc(t.type)}" data-i="${i}" style="--c:${esc(c)};--fg:${dark ? '#fff' : '#111'}" aria-label="${esc(t.name)} ticket. Press to tear the stub" aria-pressed="false">
+        <span class="t-main">
+          <span class="t-face">
+            <span class="t-type">${esc(t.type)} · ${esc(t.city)}</span>
+            <span><span class="t-name" style="display:block">${esc(t.name)}</span><span class="t-line">${esc(t.lineup)}</span></span>
+            <span class="t-meta"><span>${esc(t.date)}</span><span>${esc(t.venue)}</span>${t.seat ? `<span>${esc(t.seat)}</span>` : ''}</span>
+          </span>
+          <span class="t-back">
+            <span class="t-type">${esc(t.date)} · ${esc(t.venue)}</span>
+            <span class="t-memo">“${esc(t.memo)}”</span>
+            <span class="t-type">Tap to put it back</span>
+          </span>
+        </span>
+        <span class="t-stub"><span class="admit">ADMIT ONE</span><span>No. ${String(i + 1).padStart(4, '0')}</span></span>
+      </button>`;
+    })
+    .join('');
+
+  book.addEventListener('click', (e) => {
+    const t = e.target.closest('.ticket');
+    if (!t) return;
+    const stub = t.querySelector('.t-stub');
+    const torn = !t.classList.contains('torn');
+    t.setAttribute('aria-pressed', torn);
+    if (torn) {
+      gsap.timeline()
+        .to(stub, { rotation: 6, x: 4, duration: 0.12, ease: 'power1.out', transformOrigin: '0% 100%' })
+        .to(stub, { rotation: 32, x: 40, y: 70, opacity: 0, duration: 0.55, ease: 'power2.in' })
+        .add(() => t.classList.add('torn'), 0.2);
+    } else {
+      t.classList.remove('torn');
+      gsap.fromTo(stub, { rotation: -12, x: 30, y: -20, opacity: 0 }, { rotation: 0, x: 0, y: 0, opacity: 1, duration: 0.6, delay: 0.3, ease: 'back.out(1.6)' });
+    }
+  });
+
+  root.querySelector('.ticket-filter').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    root.querySelectorAll('.ticket-filter .chip').forEach((c) => c.classList.toggle('is-on', c === chip));
+    const shown = [];
+    book.querySelectorAll('.ticket').forEach((t) => {
+      t.hidden = chip.dataset.t !== 'all' && t.dataset.type !== chip.dataset.t;
+      if (!t.hidden) shown.push(t);
+    });
+    gsap.fromTo(shown, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.45, ease: 'power3.out' });
+    window.ScrollTrigger.refresh();
+  });
+}
 
 // ── album ───────────────────────────────────────────────────
 const modal = document.querySelector('.album-modal');
@@ -191,6 +250,10 @@ function openStage() {
 
 export function initMusicScroll(root) {
   const gsap = window.gsap;
+  gsap.from(root.querySelectorAll('.ticket'), {
+    y: 40, rotation: () => gsap.utils.random(-4, 4), opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: root.querySelector('.ticket-book'), start: 'top 85%' },
+  });
   root.querySelectorAll('.shelf-row').forEach((row) => {
     gsap.from(row.querySelectorAll('.spine'), {
       y: 50, opacity: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out',

@@ -11,6 +11,14 @@ export const profile = {
   intro:
     'Hi, I’m Helen. I work on strategy problems with consulting teams, and spend the rest of my time with a camera, an editing timeline, or a guitar. This page is my business card, an archive of both sides.', // [PLACEHOLDER]
   location: 'Seoul', // [PLACEHOLDER]
+  // business card (end of the home screen) + downloadable contact file
+  card: {
+    title: 'Strategy Consultant', // [PLACEHOLDER]
+    org: 'Consulting Firm A', // [PLACEHOLDER]
+    email: 'hello@example.com', // [PLACEHOLDER]
+    phone: '', // optional, e.g. '+82 10 0000 0000'
+    website: 'https://hyeseungk.github.io/heyhiheyhi/',
+  },
   links: [
     { label: 'Email', href: 'mailto:hello@example.com' }, // [PLACEHOLDER]
     { label: 'LinkedIn', href: 'https://www.linkedin.com/' }, // [PLACEHOLDER]
@@ -54,52 +62,70 @@ export const work = {
         'Split my time between economics classes and the film club. Ran the school’s music society for two years.',
     },
   ],
+  // Each project opens as a small deck on the laptop:
+  // Exec summary → Issue tree → Approach → Impact. Keep client names anonymous.
   projects: [
-    // [PLACEHOLDER] each one opens on the laptop screen
+    // [PLACEHOLDER]
     {
       year: '2025',
       client: 'Global consumer brand',
       title: 'Growth strategy for the Korean market',
       tags: ['Strategy', 'Consumer'],
-      challenge: 'Growth had stalled after three years of double-digit gains, and the team disagreed on why.',
-      approach: 'Customer segmentation from 4,000 survey responses, channel economics, and a competitor teardown.',
-      impact: 'Three prioritised growth bets, one of which is now in pilot across 40 stores.',
+      summary: 'Growth had stalled after three years of double-digit gains. We found that the slowdown came from lapsed repeat buyers, not from new-customer acquisition, and re-focused the plan on retention.',
+      issueTree: {
+        question: 'How can the brand return to 10%+ growth in Korea?',
+        branches: [
+          { label: 'Win new customers', items: ['Under-served segments', 'Channel gaps'] },
+          { label: 'Keep existing ones', items: ['Repeat-purchase drivers', 'Loyalty economics'] },
+          { label: 'Grow basket size', items: ['Pricing & bundles', 'Range extension'] },
+        ],
+      },
+      approach: ['Segmentation from 4,000 survey responses', 'Channel economics by store format', 'Competitor teardown of five rival brands'],
+      impact: [
+        { value: '3', label: 'growth bets prioritised' },
+        { value: '40', label: 'stores in the pilot' },
+        { value: '+8%', label: 'repeat rate in pilot stores' },
+      ],
     },
     {
       year: '2025',
       client: 'Fintech scale-up',
       title: 'Pricing redesign',
       tags: ['Pricing', 'Fintech'],
-      challenge: 'A flat fee structure was leaving value on the table with power users.',
-      approach: 'Willingness-to-pay research, cohort analysis, and a tiered pricing simulator.',
-      impact: 'New tiered plans projected to lift revenue per user by about 12%.',
+      summary: 'A flat fee left value on the table with power users and pushed light users away. A three-tier model fits willingness to pay much better.',
+      issueTree: {
+        question: 'What pricing model maximises revenue without hurting growth?',
+        branches: [
+          { label: 'Who values what?', items: ['Usage cohorts', 'Willingness to pay'] },
+          { label: 'Which structure?', items: ['Tiers vs. usage-based', 'Free tier limits'] },
+          { label: 'How to roll out?', items: ['Migration path', 'Churn risk'] },
+        ],
+      },
+      approach: ['Van Westendorp survey with 1,200 users', 'Cohort analysis of 18 months of usage', 'Interactive pricing simulator for leadership'],
+      impact: [
+        { value: '+12%', label: 'projected revenue per user' },
+        { value: '3', label: 'tiers launched' },
+      ],
     },
     {
       year: '2024',
       client: 'Conglomerate',
       title: 'Digital transformation roadmap',
       tags: ['Digital', 'Operations'],
-      challenge: 'Twenty-plus digital initiatives with no shared priorities.',
-      approach: 'Value-versus-feasibility scoring workshops with 12 business units.',
-      impact: 'A three-year roadmap and governance model adopted by the board.',
-    },
-    {
-      year: '2024',
-      client: 'Retail bank',
-      title: 'Branch network optimisation',
-      tags: ['Operations', 'FS'],
-      challenge: 'Branch footfall fell 30% while costs stayed flat.',
-      approach: 'Geospatial demand modelling and a branch format playbook.',
-      impact: 'A consolidation plan saving an estimated ₩8bn a year.',
-    },
-    {
-      year: '2023',
-      client: 'Entertainment company',
-      title: 'Fan platform business case',
-      tags: ['Media', 'New business'],
-      challenge: 'Should the company build its own fan platform or partner with one?',
-      approach: 'Build / partner / buy assessment with a P&L for each scenario.',
-      impact: 'A go decision on the partner model, with launch the following year.',
+      summary: 'Twenty-plus digital initiatives competed for the same budget. A shared scoring model and governance turned them into one three-year roadmap.',
+      issueTree: {
+        question: 'Which digital initiatives should the group fund, and in what order?',
+        branches: [
+          { label: 'Value', items: ['Revenue upside', 'Cost savings'] },
+          { label: 'Feasibility', items: ['Data readiness', 'Talent & vendors'] },
+          { label: 'Governance', items: ['Decision rights', 'Funding model'] },
+        ],
+      },
+      approach: ['Scoring workshops with 12 business units', 'Value-vs-feasibility matrix', 'Governance design benchmarked on 4 peers'],
+      impact: [
+        { value: '24→7', label: 'initiatives, prioritised' },
+        { value: '3-yr', label: 'roadmap adopted by the board' },
+      ],
     },
   ],
 };
@@ -116,16 +142,31 @@ export const visual = {
     { title: 'Live session — Band X', year: '2023', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]
     { title: 'Travel log — Lisbon', year: '2023', role: 'Shot on phone', url: '' }, // [PLACEHOLDER]
   ],
+  // Film frames appear on a contact sheet. `stock` drives the film-canister filter,
+  // `pick: true` gets a red grease-pencil circle.
   film: [
-    // [PLACEHOLDER] 35mm frames
-    { src: '', caption: 'Morning, Jeju', camera: 'Pentax MX · Portra 400', tone: '#e9d8c4' },
-    { src: '', caption: 'Bus stop', camera: 'Pentax MX · Gold 200', tone: '#d7dfe3' },
-    { src: '', caption: 'Grandmother’s kitchen', camera: 'Olympus mju II · Superia', tone: '#efe2cf' },
-    { src: '', caption: 'Han River, 6pm', camera: 'Pentax MX · Portra 400', tone: '#f0d2c2' },
-    { src: '', caption: 'Rehearsal room', camera: 'Olympus mju II · HP5', tone: '#d9d9d6' },
-    { src: '', caption: 'Seaside, Gangneung', camera: 'Pentax MX · Ektar 100', tone: '#cfe0e6' },
-    { src: '', caption: 'Late tram', camera: 'Olympus mju II · Cinestill 800T', tone: '#e3d3e0' },
+    // [PLACEHOLDER]
+    { src: '', caption: 'Morning, Jeju', camera: 'Pentax MX', stock: 'Portra 400', tone: '#e9d8c4', pick: true },
+    { src: '', caption: 'Bus stop', camera: 'Pentax MX', stock: 'Gold 200', tone: '#d7dfe3' },
+    { src: '', caption: 'Grandmother’s kitchen', camera: 'Olympus mju II', stock: 'Portra 400', tone: '#efe2cf' },
+    { src: '', caption: 'Han River, 6pm', camera: 'Pentax MX', stock: 'Gold 200', tone: '#f0d2c2', pick: true },
+    { src: '', caption: 'Rehearsal room', camera: 'Olympus mju II', stock: 'HP5 Plus', tone: '#d9d9d6' },
+    { src: '', caption: 'Seaside, Gangneung', camera: 'Pentax MX', stock: 'Portra 400', tone: '#cfe0e6' },
+    { src: '', caption: 'Late tram', camera: 'Olympus mju II', stock: 'Cinestill 800T', tone: '#e3d3e0', pick: true },
+    { src: '', caption: 'Brooklyn rooftops', camera: 'Pentax MX', stock: 'Gold 200', tone: '#ead9c0' },
+    { src: '', caption: 'Shibuya at night', camera: 'Olympus mju II', stock: 'Cinestill 800T', tone: '#dcd4e6' },
+    { src: '', caption: 'Market stall', camera: 'Pentax MX', stock: 'HP5 Plus', tone: '#dededa' },
+    { src: '', caption: 'Rain, Kyoto', camera: 'Olympus mju II', stock: 'Portra 400', tone: '#d6e1dc' },
+    { src: '', caption: 'Last frame', camera: 'Pentax MX', stock: 'Gold 200', tone: '#f2e3c9' },
   ],
+  // film canister colours for the filter
+  stocks: {
+    'Portra 400': '#f2c14e',
+    'Gold 200': '#e8a33d',
+    'HP5 Plus': '#3b3b3b',
+    'Cinestill 800T': '#c94f3d',
+  },
+
   digital: [
     // [PLACEHOLDER] `ratio` is width / height, used for placeholder shape
     { src: '', caption: 'Concrete & sky', ratio: 0.8, tone: '#dde3ea' },
@@ -220,6 +261,15 @@ export const music = {
       why: '[PLACEHOLDER]',
       tracks: [{ name: 'Track 4', why: '' }],
     },
+  ],
+  // Ticket book: festivals and concerts. Click a ticket to tear the stub and read the back.
+  tickets: [
+    // [PLACEHOLDER]
+    { type: 'Festival', name: 'Pentaport Rock Festival', lineup: 'Day 2', date: '2024.08.03', venue: 'Songdo Moonlight Park', city: 'Incheon', color: '#2f4cff', memo: 'Rain all afternoon, then the headliner played under clear sky.' },
+    { type: 'Concert', name: 'Artist B — World Tour', lineup: 'Live in Seoul', date: '2023.11.18', venue: 'KSPO Dome', city: 'Seoul', seat: 'Floor B · 12', color: '#111111', memo: 'Cried at the encore. Went with my sister.' },
+    { type: 'Festival', name: 'Fuji Rock', lineup: 'Friday', date: '2023.07.28', venue: 'Naeba Ski Resort', city: 'Niigata', color: '#7a8b6f', memo: 'Mountain air, mud boots, and the best set of my life.' },
+    { type: 'Concert', name: 'Artist C', lineup: 'Club show', date: '2022.05.12', venue: 'Rolling Hall', city: 'Seoul', seat: 'Standing', color: '#c94f3d', memo: 'Two hundred people and a band I had loved for ten years.' },
+    { type: 'Concert', name: 'Artist D', lineup: 'Live at the Garden', date: '2024.10.02', venue: 'Madison Square Garden', city: 'New York', seat: 'Sec 112 · Row 8', color: '#e8dccb', memo: 'My first concert in New York.' },
   ],
   stage: {
     intro: 'Bands, open mics and recordings. Click a line to go there.', // [PLACEHOLDER]

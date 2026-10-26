@@ -22,10 +22,10 @@
       <span class="brand-mark">H</span><span class="brand-name">Hyeseung&nbsp;Kim</span>
     </button>
     <nav class="tabs" aria-label="Sections">
-      <button class="tab-btn" data-go="home" data-fx="ripple">Home</button>
-      <button class="tab-btn" data-go="work" data-fx="pixel"><span class="num">01</span>Work</button>
-      <button class="tab-btn" data-go="visual" data-fx="pixel"><span class="num">02</span>Visual</button>
-      <button class="tab-btn" data-go="music" data-fx="ripple"><span class="num">03</span>Music</button>
+      <button class="tab-btn" data-go="home" data-fx="ripple"><img class="tab-ico" data-icon="home" alt="" />Home</button>
+      <button class="tab-btn" data-go="work" data-fx="pixel"><img class="tab-ico" data-icon="work" alt="" /><span class="num">01</span>Work</button>
+      <button class="tab-btn" data-go="visual" data-fx="pixel"><img class="tab-ico" data-icon="visual" alt="" /><span class="num">02</span>Visual</button>
+      <button class="tab-btn" data-go="music" data-fx="ripple"><img class="tab-ico" data-icon="music" alt="" /><span class="num">03</span>Music</button>
     </nav>
   </header>
 
@@ -41,14 +41,35 @@
 
           <div class="chapters" aria-label="Chapters">
             <button class="chapter" data-go="work" data-fx="pixel" style="--x:9%;--y:17%">
+              <img class="chapter-ico" data-icon="work" alt="" />
               <span class="chapter-num">01</span><span class="chapter-word">Work</span>
             </button>
             <button class="chapter" data-go="visual" data-fx="pixel" style="--x:63%;--y:13%">
+              <img class="chapter-ico" data-icon="visual" alt="" />
               <span class="chapter-num">02</span><span class="chapter-word">Visual&nbsp;Work</span>
             </button>
             <button class="chapter" data-go="music" data-fx="ripple" style="--x:58%;--y:76%">
+              <img class="chapter-ico" data-icon="music" alt="" />
               <span class="chapter-num">03</span><span class="chapter-word">Music</span>
             </button>
+          </div>
+
+          <div class="card-wrap">
+            <div class="bcard" role="button" tabindex="0" aria-label="Business card. Press to flip">
+              <span class="bcard-inner">
+              <span class="bcard-face bcard-front">
+                <span class="bc-top"><span class="bc-mark">H</span><span class="bc-hi">Hey Hi</span></span>
+                <span class="bc-name" data-fill="profile.name"></span>
+                <span class="bc-nick">Helen</span>
+                <span class="bc-bottom"><span class="bc-title"></span><span class="bc-flip">flip ↻</span></span>
+              </span>
+              <span class="bcard-face bcard-back">
+                <span class="bc-rows"></span>
+                <span class="bc-bottom"><span class="bc-loc"></span><span class="bc-flip">↺</span></span>
+              </span>
+              </span>
+            </div>
+            <a class="bc-save" download="Hyeseung-Kim.vcf">Save contact (.vcf) ↓</a>
           </div>
 
           <div class="scroll-hint"><span>Scroll</span><i></i></div>
@@ -131,10 +152,12 @@
         <div class="video-grid"></div>
       </div>
 
-      <div class="v-block film-block" id="v-film">
-        <div class="film-pin">
-          <div class="block-head"><p class="label">Film · 35mm</p><p class="hint">Scroll to advance the roll</p></div>
-          <div class="film-strip"><div class="film-track"></div></div>
+      <div class="v-block" id="v-film">
+        <div class="block-head"><p class="label">Film · 35mm contact sheet</p><p class="hint">Move the loupe over the sheet, click a frame</p></div>
+        <div class="canisters" role="group" aria-label="Filter by film stock"></div>
+        <div class="sheet-wrap">
+          <div class="sheet"></div>
+          <div class="loupe" aria-hidden="true"><div class="loupe-inner"></div></div>
         </div>
       </div>
 
@@ -162,6 +185,16 @@
           <p class="hint">Strum me</p>
         </div>
       </div>
+
+      <div class="tickets-block">
+        <div class="block-head"><p class="label">Ticket book · festivals &amp; concerts</p><p class="hint">Tear a stub to read the back</p></div>
+        <div class="chips ticket-filter">
+          <button class="chip is-on" data-t="all">All</button>
+          <button class="chip" data-t="Festival">Festivals</button>
+          <button class="chip" data-t="Concert">Concerts</button>
+        </div>
+        <div class="ticket-book"></div>
+      </div>
     </section>
   </main>
 
@@ -171,6 +204,7 @@
   </footer>
 
   <!-- overlays -->
+  <div class="cursor" aria-hidden="true"><span class="cursor-label"></span></div>
   <canvas class="fx-canvas" aria-hidden="true"></canvas>
   <div class="fx-label" aria-hidden="true"></div>
 
@@ -198,6 +232,11 @@
       </div>
       <div class="album-info"></div>
     </div>
+  </div>
+
+  <div class="modal deck-modal" hidden role="dialog" aria-modal="true" aria-label="Project deck">
+    <button class="modal-x" aria-label="Close">Close</button>
+    <div class="deck-host"></div>
   </div>
 
   <aside class="drawer stage-drawer" hidden aria-label="Performances">
