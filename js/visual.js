@@ -1,6 +1,5 @@
 import { visual } from './content.js';
 import { openModal, closeModal } from './modal.js';
-import { createGlobe } from './globe.js';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -13,48 +12,77 @@ function parseVideo(url) {
   return { embed: url, thumb: '' };
 }
 
-// Frames: a globe of places. Pick one and its photos spill out of the pin.
-let globe = null;
-export const globeLoop = { start: () => globe?.start(), stop: () => globe?.stop() };
+// Frames: a white table of photo piles, one per series. The cover print sits on top;
+// hover fans the pile out, click spills the whole series across the screen.
+
+// every project (or place without projects) becomes one series
+function buildSeries() {
+  const out = [];
+  for (const place of visual.places) {
+    const vids = (place.videos || []).filter((v) => parseVideo(v.url));
+    if (vids.length) out.push({ id: place.id, title: place.name, place: place.name, kind: place.kind, year: place.year, photos: [], videos: vids, notes: [] });
+    const groups = place.projects || (place.photos?.length ? [{ title: place.name, kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }] : []);
+    groups.forEach((g, k) => {
+      const photos = g.photos.filter((ph) => ph.src);
+      if (!photos.length) return;
+      out.push({ id: `${place.id}-${k}`, title: g.title, place: place.projects ? place.name : '', kind: g.kind, year: g.year, credit: g.credit, photos, notes: g.notes || [], videos: [] });
+    });
+  }
+  return out;
+}
 
 export function renderVisual(root) {
   const gsap = window.gsap;
-  // only places that have something to show: a real photo or a video
-  const hasContent = (p) => (p.videos || []).some((v) => v.url) || (p.projects || [p]).some((g) => g.photos.some((ph) => ph.src));
-  const places = visual.places.filter(hasContent);
-  const countLabel = (p) => {
-    const n = (p.projects || [p]).reduce((k, g) => k + g.photos.length, 0);
-    const v = (p.videos || []).length;
-    return [n && `${n}`, v && `${v} film${v > 1 ? 's' : ''}`].filter(Boolean).join(' · ');
-  };
+  const series = buildSeries();
+  const table = root.querySelector('.photo-table');
 
-  globe = createGlobe(root.querySelector('.globe-canvas'), root.querySelector('.pin-layer'), places, {
-    onPick: (id) => openPlace(id),
-  });
-  if (!globe) root.querySelector('.globe-wrap').hidden = true;
-
-  root.querySelector('.place-chips').innerHTML = places
-    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${countLabel(p)}</span></button>`)
+  table.innerHTML = series
+    .map((s, i) => {
+      const covers = s.videos.length
+        ? [{ src: parseVideo(s.videos[0].url).thumb, ratio: 16 / 9, video: true }]
+        : s.photos.slice(0, 3);
+      const prints = covers
+        .map((c, k) => `<span class="print" style="--r:${c.ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
+        .reverse() // first photo ends up on top
+        .join('');
+      const count = s.videos.length ? `${s.videos.length} film${s.videos.length > 1 ? 's' : ''}` : `${s.photos.length}`;
+      return `<button class="stack" data-i="${i}" style="--seed:${(i * 37) % 7 - 3}" aria-label="${esc(s.title)}: open">
+        <span class="pile">${prints}</span>
+        <span class="stack-label"><b>${esc(s.title)}</b><span>${esc([s.place, s.year, count].filter(Boolean).join(' · '))}</span></span>
+      </button>`;
+    })
     .join('');
-  root.querySelector('.place-chips').addEventListener('click', (e) => {
-    const b = e.target.closest('.place-chip');
-    if (b) openPlace(b.dataset.id);
+
+  // each pile gets its own slight disorder
+  table.querySelectorAll('.stack').forEach((st) => {
+    const seed = +st.style.getPropertyValue('--seed');
+    const prints = [...st.querySelectorAll('.print')].reverse(); // top first
+    prints.forEach((p, k) => gsap.set(p, { rotation: k === 0 ? seed * 0.6 : seed * 0.6 + (k % 2 ? 5 : -6) * k * 0.7, x: k * (k % 2 ? 6 : -5), y: k * 3 }));
+    st.addEventListener('pointerenter', () => {
+      prints.forEach((p, k) => gsap.to(p, { rotation: [0, -9, 9][k] ?? 0, x: [0, -26, 26][k] ?? 0, y: [-8, 0, 0][k] ?? 0, duration: 0.55, ease: 'power3.out', overwrite: 'auto' }));
+    });
+    st.addEventListener('pointerleave', () => {
+      prints.forEach((p, k) => gsap.to(p, { rotation: k === 0 ? seed * 0.6 : seed * 0.6 + (k % 2 ? 5 : -6) * k * 0.7, x: k * (k % 2 ? 6 : -5), y: k * 3, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
+    });
+  });
+  table.addEventListener('click', (e) => {
+    const st = e.target.closest('.stack');
+    if (st) openSeries(+st.dataset.i);
   });
 
   // ── the spread ──
   const spread = document.querySelector('.spread');
   const grid = spread.querySelector('.spread-grid');
-  let place = null;
+  let current = null;
 
-  // where the photos fly from / back to: the pin if visible, else the chip
-  function origin(id) {
-    const r = globe?.pinRect(id);
-    if (r && r.width && r.top > 0 && r.bottom < window.innerHeight) return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-    const chip = root.querySelector(`.place-chip[data-id="${id}"]`).getBoundingClientRect();
-    return { x: chip.left + chip.width / 2, y: chip.top + chip.height / 2 };
+  // where the photos fly from / back to: the top print of the pile
+  function origin(i) {
+    const top = table.querySelector(`.stack[data-i="${i}"] .print:last-child`) || table.querySelector(`.stack[data-i="${i}"]`);
+    const r = top.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
 
-  // offsets that put each photo back inside the pin
+  // offsets that put each photo back onto the pile
   function fly(items, from) {
     return items.map((el) => {
       const r = el.getBoundingClientRect();
@@ -62,38 +90,31 @@ export function renderVisual(root) {
     });
   }
 
-  async function openPlace(id) {
-    place = places.find((p) => p.id === id);
-    if (!place) return;
-    await globe?.focus(id);
-    spread.querySelector('.spread-title').textContent = place.name;
-    // a place is either one set of photos, or several projects (e.g. Seoul → The Closet)
-    const groups = (place.projects || [{ title: '', kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }]).filter((g) => g.photos.length);
-    const total = groups.reduce((n, g) => n + g.photos.length, 0);
-    spread.querySelector('.spread-meta').textContent = place.projects
-      ? `${groups.length} ${groups.length > 1 ? 'projects' : 'project'} · ${total} frames`
-      : [place.kind, place.year, total && `${total} frames`].filter(Boolean).join(' · ');
+  function openSeries(i) {
+    const place = (current = series[i]);
+    spread.querySelector('.spread-title').textContent = place.title;
+    const total = place.photos.length;
+    spread.querySelector('.spread-meta').textContent = [place.place, place.kind, place.year, total && `${total} frames`, place.credit].filter(Boolean).join(' · ');
     // films play right in the spread
-    const films = (place.videos || [])
+    const films = place.videos
       .map((v) => {
         const pv = parseVideo(v.url);
-        if (!pv) return '';
         return `<section class="project"><div class="project-head"><h4>${esc(v.title)}</h4><p>${esc(v.role || '')}</p></div>
           <div class="spread-film"><iframe src="${esc(pv.embed.replace('autoplay=1', 'autoplay=0'))}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(v.title)}" loading="lazy"></iframe></div></section>`;
       })
       .join('');
+    const groups = total ? [{ title: '', photos: place.photos, notes: place.notes }] : [];
     let j = 0;
     grid.innerHTML = films + groups
-      .filter((g) => g.photos.length)
       .map((g) => {
         const photoHTML = g.photos.map((p) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j++}" style="--r:${p.ratio || 1.5}">
-          ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
+          <img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />
           <span class="spread-cap">${esc(p.caption)}${p.year ? ` · ${esc(p.year)}` : ''}</span>
         </button>`);
         // diary scraps slot in after every few photos
         const noteHTML = (g.notes || []).map((n, k) => `<div class="diary" style="--tilt:${k % 2 ? 2.5 : -2}deg">
           <span class="tape" aria-hidden="true"></span>
-          ${n.src ? `<img src="${esc(n.src)}" alt="Diary, ${esc(n.date || place.name)}" decoding="async" />` : `<p class="diary-text">${esc(n.text || '')}</p>`}
+          ${n.src ? `<img src="${esc(n.src)}" alt="Diary, ${esc(n.date || place.title)}" decoding="async" />` : `<p class="diary-text">${esc(n.text || '')}</p>`}
           ${n.date ? `<span class="diary-date">${esc(n.date)}</span>` : ''}
         </div>`);
         const mixed = [];
@@ -101,13 +122,11 @@ export function renderVisual(root) {
           mixed.push(h);
           if ((k + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
         });
-        const head = g.title
-          ? `<div class="project-head"><h4>${esc(g.title)}</h4><p>${esc([g.kind, g.year, g.credit].filter(Boolean).join(' · '))}</p></div>`
-          : '';
-        return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
+        return `<section class="project"><div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
       })
       .join('');
-    place.allPhotos = groups.flatMap((g) => g.photos.map((p) => ({ ...p, camera: [g.title || place.name, g.kind, p.year].filter(Boolean).join(' · ') })));
+    place.allPhotos = place.photos.map((p) => ({ ...p, camera: [place.title, place.kind, p.year].filter(Boolean).join(' · ') }));
+    const id = i;
     const from = origin(id);
     openModal(spread, {
       from: { opacity: 1 },
@@ -145,7 +164,7 @@ export function renderVisual(root) {
   spread.querySelector('.spread-back').addEventListener('click', () => closeModal(spread));
   grid.addEventListener('click', (e) => {
     const it = e.target.closest('.spread-item');
-    if (it && place) openLightbox(place.allPhotos, +it.dataset.j);
+    if (it && current) openLightbox(current.allPhotos, +it.dataset.j);
   });
 }
 
@@ -284,14 +303,12 @@ lb.addEventListener('click', (e) => {
 // ── scroll animations ───────────────────────────────────────
 export function initVisualScroll(root) {
   const gsap = window.gsap;
-  gsap.from(root.querySelector('.globe-wrap'), { scale: 0.85, opacity: 0, duration: 1.2, ease: 'power3.out' });
-  gsap.from(root.querySelectorAll('.place-chip'), { y: 14, opacity: 0, stagger: 0.06, duration: 0.6, delay: 0.4, ease: 'power3.out' });
+  gsap.from(root.querySelectorAll('.stack'), {
+    y: 60, rotation: () => gsap.utils.random(-8, 8), opacity: 0, stagger: 0.06, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: root.querySelector('.photo-table'), start: 'top 90%' },
+  });
   gsap.from(root.querySelectorAll('.muse'), {
     y: 50, opacity: 0, stagger: 0.07, duration: 0.8, ease: 'power3.out',
     scrollTrigger: { trigger: root.querySelector('.muse-board'), start: 'top 85%' },
-  });
-  window.ScrollTrigger.create({
-    trigger: root.querySelector('.globe-wrap'), start: 'top bottom', end: 'bottom top',
-    onToggle: (self) => (self.isActive ? globeLoop.start() : globeLoop.stop()),
   });
 }

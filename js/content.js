@@ -221,7 +221,7 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, a trip through Europe, black and white in Busan, the road in Mongolia, a short film in Suncheon.',
+  lead: 'Film in New York, shoots and days in Seoul, a trip through Europe, black and white in Busan, the road in Mongolia, a short film in Suncheon. Pick up a pile.',
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
@@ -310,6 +310,20 @@ export const visual = {
             { src: 'assets/photos/seoul/my-kind-of-woman/08.jpg', caption: 'Jieun', year: '2023', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/09.jpg', caption: 'Michelle 2', year: '2023', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/10.jpg', caption: 'Freda', year: '2023', ratio: 0.663 },
+          ],
+          notes: [],
+        },
+        {
+          title: 'Daily Life',
+          kind: '35mm film',
+          year: '', // [YEAR?]
+          credit: '',
+          photos: [
+            { src: 'assets/photos/seoul/daily-life/01.jpg', caption: 'Bukchon, N Tower in the back', ratio: 0.663 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/02.jpg', caption: 'Brick wall, long shadow', ratio: 0.663 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/03.jpg', caption: 'Peace signs, neon', ratio: 1.508 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/04.jpg', caption: 'Flowers after graduation', ratio: 1.508 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/05.jpg', caption: 'Dance shoes in the window', ratio: 1.508 }, // [CAPTION?]
           ],
           notes: [],
         },

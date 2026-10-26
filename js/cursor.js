@@ -1,8 +1,7 @@
 // A small ink dot that follows the mouse and says what a click will do.
 const LABELS = [
   ['.spread-item, .lb-media', 'view'],
-  ['.pin, .place-chip', 'open'],
-  ['.globe-canvas', 'spin'],
+  ['.stack', 'open'],
   ['.sleeve', 'open'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
