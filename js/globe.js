@@ -105,10 +105,17 @@ export function createGlobe(canvas, layer, places, { onPick } = {}) {
       toCam.copy(camera.position).sub(tmp).normalize();
       const facing = normal.dot(toCam);
       tmp.project(camera);
-      const x = (tmp.x * 0.5 + 0.5) * w, y = (-tmp.y * 0.5 + 0.5) * h;
-      pin.btn.style.transform = `translate(${x}px, ${y}px)`;
-      pin.btn.style.opacity = facing > 0.15 ? Math.min(1, (facing - 0.15) * 4) : 0;
+      pin.x = (tmp.x * 0.5 + 0.5) * w;
+      pin.y = (-tmp.y * 0.5 + 0.5) * h;
+      pin.visible = facing > 0.15;
+      pin.btn.style.opacity = pin.visible ? Math.min(1, (facing - 0.15) * 4) : 0;
       pin.btn.style.pointerEvents = facing > 0.3 ? 'auto' : 'none';
+    }
+    // pins close together on screen (Seoul / Suncheon): the lower one puts its label on the left
+    for (const pin of pins) {
+      pin.flip = pins.some((o) => o !== pin && o.visible && pin.visible && o.y < pin.y && pin.y - o.y < 26 && Math.abs(pin.x - o.x) < 140);
+      pin.btn.classList.toggle('flip', pin.flip);
+      pin.btn.style.transform = `translate(${pin.x}px, ${pin.y}px)${pin.flip ? ' translateX(calc(-100% + 14px))' : ''}`;
     }
   }
 

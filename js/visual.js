@@ -19,7 +19,14 @@ export const globeLoop = { start: () => globe?.start(), stop: () => globe?.stop(
 
 export function renderVisual(root) {
   const gsap = window.gsap;
-  const places = visual.places;
+  // only places that have something to show: a real photo or a video
+  const hasContent = (p) => (p.videos || []).some((v) => v.url) || (p.projects || [p]).some((g) => g.photos.some((ph) => ph.src));
+  const places = visual.places.filter(hasContent);
+  const countLabel = (p) => {
+    const n = (p.projects || [p]).reduce((k, g) => k + g.photos.length, 0);
+    const v = (p.videos || []).length;
+    return [n && `${n}`, v && `${v} film${v > 1 ? 's' : ''}`].filter(Boolean).join(' · ');
+  };
 
   globe = createGlobe(root.querySelector('.globe-canvas'), root.querySelector('.pin-layer'), places, {
     onPick: (id) => openPlace(id),
@@ -27,28 +34,11 @@ export function renderVisual(root) {
   if (!globe) root.querySelector('.globe-wrap').hidden = true;
 
   root.querySelector('.place-chips').innerHTML = places
-    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${(p.projects || [p]).reduce((n, g) => n + g.photos.length, 0)}</span></button>`)
+    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${countLabel(p)}</span></button>`)
     .join('');
   root.querySelector('.place-chips').addEventListener('click', (e) => {
     const b = e.target.closest('.place-chip');
     if (b) openPlace(b.dataset.id);
-  });
-
-  root.querySelector('.video-row').innerHTML = visual.videos
-    .map((v, i) => {
-      const p = parseVideo(v.url);
-      return `<button class="video-card" data-v="${i}" ${p ? '' : 'aria-disabled="true"'}>
-        <span class="video-screen">
-          ${p && p.thumb ? `<img src="${p.thumb}" alt="" loading="lazy" />` : '<span class="noise"></span>'}
-          ${p ? '<span class="play"></span>' : '<span class="soon">COMING SOON</span>'}
-        </span>
-        <span class="video-meta"><span class="t">${esc(v.title)}</span><span class="r">${esc(v.year)} · ${esc(v.role)}</span></span>
-      </button>`;
-    })
-    .join('');
-  root.querySelector('.video-row').addEventListener('click', (e) => {
-    const card = e.target.closest('.video-card');
-    if (card) playVideo(visual.videos[+card.dataset.v].url);
   });
 
   // ── the spread ──
@@ -83,9 +73,19 @@ export function renderVisual(root) {
     const total = groups.reduce((n, g) => n + g.photos.length, 0);
     spread.querySelector('.spread-meta').textContent = place.projects
       ? `${groups.length} ${groups.length > 1 ? 'projects' : 'project'} · ${total} frames`
-      : `${place.kind} · ${place.year} · ${total} frames`;
+      : [place.kind, place.year, total && `${total} frames`].filter(Boolean).join(' · ');
+    // films play right in the spread
+    const films = (place.videos || [])
+      .map((v) => {
+        const pv = parseVideo(v.url);
+        if (!pv) return '';
+        return `<section class="project"><div class="project-head"><h4>${esc(v.title)}</h4><p>${esc(v.role || '')}</p></div>
+          <div class="spread-film"><iframe src="${esc(pv.embed.replace('autoplay=1', 'autoplay=0'))}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(v.title)}" loading="lazy"></iframe></div></section>`;
+      })
+      .join('');
     let j = 0;
-    grid.innerHTML = groups
+    grid.innerHTML = films + groups
+      .filter((g) => g.photos.length)
       .map((g) => {
         const photoHTML = g.photos.map((p) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j++}" style="--r:${p.ratio || 1.5}">
           ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
@@ -113,7 +113,8 @@ export function renderVisual(root) {
     openModal(spread, {
       from: { opacity: 1 },
       onClose: () => {
-        const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary')].reverse();
+        const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary, .spread-film')].reverse();
+        grid.querySelectorAll('.spread-film iframe').forEach((f) => f.remove()); // stop the film
         const back = origin(id);
         const targets = fly(items, back);
         return new Promise((resolve) => {
@@ -128,7 +129,7 @@ export function renderVisual(root) {
       },
     });
     spread.scrollTop = 0;
-    const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary')];
+    const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary, .spread-film')];
     const starts = fly(items, from);
     gsap.fromTo(spread, { backgroundColor: 'rgba(255,255,255,0)' }, { backgroundColor: 'rgba(255,255,255,1)', duration: 0.5 });
     gsap.fromTo(spread.querySelector('.spread-head'), { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: 0.3, ease: 'power3.out' });

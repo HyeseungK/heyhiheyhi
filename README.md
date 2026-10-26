@@ -8,7 +8,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 | --- | --- | --- |
 | **Home** | Hyeseung → Helen → Hey Hi → 명함 | Three.js 파티클 글자가 스크롤에 따라 바뀌고 마지막에 명함 테두리로 모입니다. 명함은 눌러서 뒤집고(뒷면에 연락처와 QR), 연락처(.vcf)나 명함 이미지(.png)로 저장할 수 있습니다. 떠다니는 챕터는 끌어서 아무 데나 놓을 수 있고(살짝 던지면 미끄러짐), 놓은 자리 근처에서 다시 떠다닙니다. |
 | **Work** | 커리어 패스 + 프로젝트 | CSS 3D 노트북을 열면 프로젝트 목록이 나오고, 프로젝트는 장표(Exec summary → Issue tree → Approach → Impact)로 넘겨 봅니다. 슬라이드 좌우 클릭, 진행 막대, ←→, 스와이프로 이동합니다. |
-| **Frames** | 지구본 + 지역별 사진 | 점으로 된 지구본을 끌어서 돌리고 핀(New York, Seoul · Euljiro, Lisbon 등)을 누르면, 지구본이 그 지역으로 돌아간 뒤 사진이 핀에서 쏟아져 나와 사진첩처럼 펼쳐집니다. 닫으면 다시 핀으로 빨려 들어갑니다. 아래에 영상(Moving)과 Inspiration(좋아하는 사진작가·디렉터·뮤비·앨범 콘셉트 무드보드, 카드를 누르면 뒤집혀 이유와 링크가 나옴)가 있습니다. |
+| **Frames** | 지구본 + 지역별 사진·영상 | 점으로 된 지구본을 돌리고 핀(New York, Seoul, Mongolia, Suncheon)을 누르면 사진이 핀에서 쏟아져 나와 펼쳐집니다. 서울처럼 프로젝트별로 묶을 수 있고, 순천처럼 영상을 넣으면 그 자리에서 재생됩니다. 사진·영상이 없는 지역은 지구본에 나타나지 않습니다. 아래에 Inspiration 무드보드가 있습니다. |
 | **Music** | 앨범 진열대 + 티켓 북 + 브릭 기타 | 앨범을 누르면 케이스가 열리고 CD가 돕니다(←→로 다음 앨범). 티켓은 절취선을 뜯어 뒷면 메모를 봅니다. 기타를 누르면 코드가 울리고 공연·SoundCloud 서랍이 열립니다. |
 
 포인트 컬러는 Cobalt입니다. `site.accents`에 색을 두 개 이상 넣으면 상단 바에 색 팔레트 버튼이 생깁니다(Red · Ink · Film orange · Pink가 주석으로 준비돼 있음).
@@ -21,7 +21,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **포인트 컬러**: `site.accents`. 첫 번째가 기본이고, 두 개 이상이면 방문자가 고를 수 있는 팔레트가 생깁니다.
 - **명함**: `profile.card`. 실제 명함 스캔이 있으면 `image: 'assets/card.jpg'`로 넣으면 "Save card"가 그 파일을 내려받습니다.
 - **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 (서울처럼 `projects`로 프로젝트별 묶음도 가능) `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
-- **영상**: `visual.videos`의 `url`에 YouTube나 Vimeo 링크를 넣습니다.
+- **영상**: 지역의 `videos`에 YouTube나 Vimeo 링크를 넣습니다(예: Suncheon).
 - **앨범 커버**: `assets/albums/`에 넣고 `cover`에 경로를 적습니다. 비어 있으면 제목을 시드로 한 플로우 필드 아트가 그려집니다.
 - **Inspiration**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고(Photographers · Directors · Videos · Other Artwork, 이름과 순서는 `visual.museTypes`), 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
 - **티켓**: `music.tickets`.

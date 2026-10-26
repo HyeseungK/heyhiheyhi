@@ -221,11 +221,12 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Spin the globe and pick a place: film in New York, fashion film in Euljiro, digital on the road.', // [PLACEHOLDER]
+  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, the road in Mongolia, a short film in Suncheon.',
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
   // Add a place by copying a block; lat / lon are its coordinates.
+  // Places with no real photo (`src`) or video yet stay hidden from the globe.
   // `notes`: scanned scraps of my travel diary, mixed in with the photos.
   //   Put scans in assets/diary/ and set `src`. Without a scan, `text` is shown in a handwriting font.
   places: [
@@ -263,7 +264,7 @@ export const visual = {
         {
           title: 'The Closet',
           kind: 'Fashion shoot · Euljiro',
-          year: '', // [YEAR?]
+          year: '2025',
           credit: '', // e.g. 'Photography by Helen · Styling by …'
           photos: [
             { src: 'assets/photos/seoul/the-closet/01.jpg', caption: 'The Closet 01', ratio: 1.5 },
@@ -294,6 +295,38 @@ export const visual = {
           notes: [],
         },
       ],
+    },
+    {
+      id: 'mongolia',
+      name: 'Mongolia',
+      lat: 47.92, lon: 106.92,
+      kind: 'Digital',
+      year: '2025',
+      photos: [
+        { src: 'assets/photos/mongolia/01.jpg', caption: 'Ger camp, pink dusk', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/mongolia/02.jpg', caption: 'Fire, late night', ratio: 0.666 }, // [CAPTION?]
+        { src: 'assets/photos/mongolia/03.jpg', caption: 'Inside the monastery', ratio: 0.666 }, // [CAPTION?]
+        { src: 'assets/photos/mongolia/04.jpg', caption: 'Rain, gas stop', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/mongolia/05.jpg', caption: 'Boat on the lake', ratio: 1.5 }, // [CAPTION?]
+      ],
+      notes: [],
+    },
+    {
+      id: 'suncheon',
+      name: 'Suncheon',
+      lat: 34.95, lon: 127.49,
+      kind: 'Film · video',
+      year: '2025', // [PLACEHOLDER]
+      photos: [],
+      // films play in place when the pin opens. `url`: YouTube or Vimeo
+      videos: [
+        {
+          title: 'Suncheon is Silent',
+          role: 'Shot on a camcorder · music made in Ableton · edited in Movavi', // camcorder model to come
+          url: 'https://youtu.be/a2JeC39Gv_U',
+        },
+      ],
+      notes: [],
     },
     {
       id: 'lisbon',
@@ -407,17 +440,6 @@ export const visual = {
       instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#2a2a2a',
     },
-  ],
-  // Moving pictures, below the globe. `url` can be a YouTube or Vimeo link.
-  videos: [
-    {
-      title: 'Suncheon is Silent',
-      year: '2025', // [PLACEHOLDER]
-      role: 'Shot on a camcorder · music made in Ableton · edited in Movavi', // camcorder model to come
-      url: 'https://youtu.be/a2JeC39Gv_U',
-    },
-    { title: 'Euljiro lookbook', year: '2024', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]
-    { title: 'Travel log — Lisbon', year: '2023', role: 'Shot on phone', url: '' }, // [PLACEHOLDER]
   ],
 };
 

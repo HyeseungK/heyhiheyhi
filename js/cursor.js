@@ -3,7 +3,6 @@ const LABELS = [
   ['.spread-item, .lb-media', 'view'],
   ['.pin, .place-chip', 'open'],
   ['.globe-canvas', 'spin'],
-  ['.video-card', 'play'],
   ['.sleeve', 'open'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
