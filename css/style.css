@@ -776,7 +776,7 @@ body.lock { overflow: hidden; }
 .layout-compact .chips { margin-top: 0; }
 .layout-compact .career { padding-bottom: clamp(48px, 6vw, 80px); }
 .layout-compact .laptop-section { padding-top: clamp(40px, 5vw, 72px); }
-.layout-compact .laptop-stage { --w: min(1040px, 92vw); }
+.layout-compact .laptop-stage { --w: min(800px, 86vw); }
 .layout-compact .v-block, .layout-compact .room, .layout-compact .tickets-block { max-width: 1440px; }
 @media (max-width: 860px) {
   .layout-compact .page-head { grid-template-columns: 1fr; }
