@@ -226,12 +226,14 @@ export const visual = {
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
   // Add a place by copying a block; lat / lon are its coordinates.
-  // Places with no real photo (`src`) or video yet stay hidden from the globe.
+  // `cover`: the photo that sits on top of the pile (defaults to the first).
+  // Places with no real photo (`src`) or video yet are left off the table.
   // `notes`: scanned scraps of my travel diary, mixed in with the photos.
   //   Put scans in assets/diary/ and set `src`. Without a scan, `text` is shown in a handwriting font.
   places: [
     {
       id: 'new-york',
+      cover: 'assets/photos/new-york/07.jpg',
       name: 'New York',
       lat: 40.71, lon: -74.0,
       kind: '35mm film',
@@ -263,6 +265,7 @@ export const visual = {
       projects: [
         {
           title: 'The Closet',
+          cover: 'assets/photos/seoul/the-closet/02.jpg',
           kind: 'Fashion shoot · Euljiro',
           year: '2025',
           credit: '', // e.g. 'Photography by Helen · Styling by …'
@@ -282,6 +285,7 @@ export const visual = {
         },
         {
           title: 'Heedo’s Album',
+          cover: 'assets/photos/seoul/heedos-album/03.jpg',
           kind: '35mm film · portraits',
           year: '2025',
           credit: '',
@@ -296,6 +300,7 @@ export const visual = {
         },
         {
           title: 'My Kind of Woman',
+          cover: 'assets/photos/seoul/my-kind-of-woman/07.jpg',
           kind: '35mm film · portraits',
           year: '2023 — 2025',
           credit: '',
@@ -315,6 +320,7 @@ export const visual = {
         },
         {
           title: 'Daily Life',
+          cover: 'assets/photos/seoul/daily-life/06.jpg',
           kind: '35mm film',
           year: '2023 — Now',
           credit: '',
@@ -337,6 +343,10 @@ export const visual = {
     {
       id: 'europe',
       name: 'Europe',
+      year: '2026',
+      kind: 'Digital',
+      onePile: true, // London and Barcelona share one pile
+      cover: 'assets/photos/europe/london/04.jpg',
       lat: 48.86, lon: 2.35,
       // one trip through Europe: each city is a project
       projects: [
@@ -371,6 +381,7 @@ export const visual = {
     },
     {
       id: 'busan',
+      cover: 'assets/photos/busan/04.jpg',
       name: 'Busan',
       lat: 35.18, lon: 129.08,
       kind: 'Black & white',

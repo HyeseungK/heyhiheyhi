@@ -15,18 +15,26 @@ function parseVideo(url) {
 // Frames: a white table of photo piles, one per series. The cover print sits on top;
 // hover fans the pile out, click spills the whole series across the screen.
 
-// every project (or place without projects) becomes one series
+// every project (or place without projects) becomes one series;
+// a place with `onePile: true` keeps all its projects together in one pile (Europe)
 function buildSeries() {
   const out = [];
+  const withSrc = (g) => ({ ...g, photos: g.photos.filter((ph) => ph.src) });
   for (const place of visual.places) {
     const vids = (place.videos || []).filter((v) => parseVideo(v.url));
-    if (vids.length) out.push({ id: place.id, title: place.name, place: place.name, kind: place.kind, year: place.year, photos: [], videos: vids, notes: [] });
-    const groups = place.projects || (place.photos?.length ? [{ title: place.name, kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }] : []);
-    groups.forEach((g, k) => {
-      const photos = g.photos.filter((ph) => ph.src);
-      if (!photos.length) return;
-      out.push({ id: `${place.id}-${k}`, title: g.title, place: place.projects ? place.name : '', kind: g.kind, year: g.year, credit: g.credit, photos, notes: g.notes || [], videos: [] });
-    });
+    if (vids.length) out.push({ id: place.id, title: place.name, place: place.name, kind: place.kind, year: place.year, photos: [], groups: [], videos: vids });
+    const groups = (place.projects || (place.photos?.length ? [{ title: '', kind: place.kind, year: place.year, cover: place.cover, photos: place.photos, notes: place.notes }] : []))
+      .map(withSrc)
+      .filter((g) => g.photos.length);
+    if (!groups.length) continue;
+    if (place.onePile || !place.projects) {
+      out.push({
+        id: place.id, title: place.name, place: '', kind: place.kind || groups[0].kind, year: place.year || groups[0].year, cover: place.cover || groups[0].cover,
+        photos: groups.flatMap((g) => g.photos), groups: place.projects ? groups : [{ ...groups[0], title: '' }], videos: [],
+      });
+    } else {
+      groups.forEach((g, k) => out.push({ id: `${place.id}-${k}`, title: g.title, place: place.name, kind: g.kind, year: g.year, credit: g.credit, cover: g.cover, photos: g.photos, groups: [{ ...g, title: '' }], videos: [] }));
+    }
   }
   return out;
 }
@@ -40,7 +48,11 @@ export function renderVisual(root) {
     .map((s, i) => {
       const covers = s.videos.length
         ? [{ src: parseVideo(s.videos[0].url).thumb, ratio: 16 / 9, video: true }]
-        : s.photos.slice(0, 3);
+        : (() => {
+            // `cover` (a photo's src) goes on top, then the next two
+            const top = s.photos.find((ph) => ph.src === s.cover) || s.photos[0];
+            return [top, ...s.photos.filter((ph) => ph !== top).slice(0, 2)];
+          })();
       const prints = covers
         .map((c, k) => `<span class="print" style="--r:${covers[0].ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
         .reverse() // first photo ends up on top
@@ -104,7 +116,7 @@ export function renderVisual(root) {
           <div class="spread-film"><iframe src="${esc(pv.embed.replace('autoplay=1', 'autoplay=0'))}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(v.title)}" loading="lazy"></iframe></div></section>`;
       })
       .join('');
-    const groups = total ? [{ title: '', photos: place.photos, notes: place.notes }] : [];
+    const groups = place.groups;
     let j = 0;
     grid.innerHTML = films + groups
       .map((g) => {
@@ -123,7 +135,8 @@ export function renderVisual(root) {
           mixed.push(h);
           if ((k + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
         });
-        return `<section class="project"><div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
+        const head = g.title ? `<div class="project-head"><h4>${esc(g.title)}</h4><p>${esc([g.kind, g.year].filter(Boolean).join(' · '))}</p></div>` : '';
+        return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
       })
       .join('');
     place.allPhotos = place.photos.map((p) => ({ ...p, camera: [place.title, place.kind, p.year].filter(Boolean).join(' · ') }));
