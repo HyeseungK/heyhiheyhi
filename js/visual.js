@@ -42,7 +42,7 @@ export function renderVisual(root) {
         ? [{ src: parseVideo(s.videos[0].url).thumb, ratio: 16 / 9, video: true }]
         : s.photos.slice(0, 3);
       const prints = covers
-        .map((c, k) => `<span class="print" style="--r:${c.ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
+        .map((c, k) => `<span class="print" style="--r:${covers[0].ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
         .reverse() // first photo ends up on top
         .join('');
       const count = s.videos.length ? `${s.videos.length} film${s.videos.length > 1 ? 's' : ''}` : `${s.photos.length}`;
@@ -57,12 +57,13 @@ export function renderVisual(root) {
   table.querySelectorAll('.stack').forEach((st) => {
     const seed = +st.style.getPropertyValue('--seed');
     const prints = [...st.querySelectorAll('.print')].reverse(); // top first
-    prints.forEach((p, k) => gsap.set(p, { rotation: k === 0 ? seed * 0.6 : seed * 0.6 + (k % 2 ? 5 : -6) * k * 0.7, x: k * (k % 2 ? 6 : -5), y: k * 3 }));
+    const rest = (k) => ({ rotation: k === 0 ? 0 : (k % 2 ? 2.2 : -2.6) + seed * 0.2, x: k * (k % 2 ? 3 : -3), y: k * 2 });
+    prints.forEach((p, k) => gsap.set(p, rest(k)));
     st.addEventListener('pointerenter', () => {
-      prints.forEach((p, k) => gsap.to(p, { rotation: [0, -9, 9][k] ?? 0, x: [0, -26, 26][k] ?? 0, y: [-8, 0, 0][k] ?? 0, duration: 0.55, ease: 'power3.out', overwrite: 'auto' }));
+      prints.forEach((p, k) => gsap.to(p, { rotation: [0, -4, 4][k] ?? 0, x: [0, -14, 14][k] ?? 0, y: [-6, 0, 0][k] ?? 0, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
     });
     st.addEventListener('pointerleave', () => {
-      prints.forEach((p, k) => gsap.to(p, { rotation: k === 0 ? seed * 0.6 : seed * 0.6 + (k % 2 ? 5 : -6) * k * 0.7, x: k * (k % 2 ? 6 : -5), y: k * 3, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
+      prints.forEach((p, k) => gsap.to(p, { ...rest(k), duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
     });
   });
   table.addEventListener('click', (e) => {
@@ -304,7 +305,7 @@ lb.addEventListener('click', (e) => {
 export function initVisualScroll(root) {
   const gsap = window.gsap;
   gsap.from(root.querySelectorAll('.stack'), {
-    y: 60, rotation: () => gsap.utils.random(-8, 8), opacity: 0, stagger: 0.06, duration: 0.9, ease: 'power3.out',
+    y: 40, opacity: 0, stagger: 0.06, duration: 0.9, ease: 'power3.out',
     scrollTrigger: { trigger: root.querySelector('.photo-table'), start: 'top 90%' },
   });
   gsap.from(root.querySelectorAll('.muse'), {

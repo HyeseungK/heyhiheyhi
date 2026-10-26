@@ -316,7 +316,7 @@ export const visual = {
         {
           title: 'Daily Life',
           kind: '35mm film',
-          year: '', // [YEAR?]
+          year: '2023 — Now',
           credit: '',
           photos: [
             { src: 'assets/photos/seoul/daily-life/01.jpg', caption: 'Bukchon, N Tower in the back', ratio: 0.663 }, // [CAPTION?]
