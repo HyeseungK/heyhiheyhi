@@ -21,7 +21,7 @@ export const site = {
   accents: [
     { name: 'Cobalt', hex: '#2f4cff' },
     { name: 'Vermilion', hex: '#e8462a' },
-    { name: 'Oxblood', hex: '#7a1f2b' },
+    { name: 'Wine', hex: '#a3162f' },
     { name: 'Film orange', hex: '#ff6a1f' },
     { name: 'Pink', hex: '#ff4f8b' },
     { name: 'Ink', hex: '#0f0f0f' },
