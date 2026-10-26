@@ -79,12 +79,22 @@ export function renderVisual(root) {
     await globe?.focus(id);
     spread.querySelector('.spread-title').textContent = place.name;
     spread.querySelector('.spread-meta').textContent = `${place.kind} · ${place.year} · ${place.photos.length} frames`;
-    grid.innerHTML = place.photos
-      .map((p, j) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j}" style="--r:${p.ratio || 1.5}">
+    const photoHTML = place.photos.map((p, j) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j}" style="--r:${p.ratio || 1.5}">
           ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
           <span class="spread-cap">${esc(p.caption)}</span>
-        </button>`)
-      .join('');
+        </button>`);
+    // diary scraps slot in after every few photos
+    const noteHTML = (place.notes || []).map((n, k) => `<div class="diary" style="--tilt:${k % 2 ? 2.5 : -2}deg">
+        <span class="tape" aria-hidden="true"></span>
+        ${n.src ? `<img src="${esc(n.src)}" alt="Diary, ${esc(n.date || place.name)}" decoding="async" />` : `<p class="diary-text">${esc(n.text || '')}</p>`}
+        ${n.date ? `<span class="diary-date">${esc(n.date)}</span>` : ''}
+      </div>`);
+    const mixed = [];
+    photoHTML.forEach((h, j) => {
+      mixed.push(h);
+      if ((j + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
+    });
+    grid.innerHTML = [...mixed, ...noteHTML].join('');
     const from = origin(id);
     openModal(spread, {
       from: { opacity: 1 },

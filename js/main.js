@@ -6,6 +6,7 @@ import { renderVisual, initVisualScroll, globeLoop } from './visual.js';
 import { renderMusic, initMusicScroll, guitarLoop } from './music.js';
 import { renderBrickIcons } from './bricks.js';
 import { initCursor } from './cursor.js';
+import { currentModal, closeModal } from './modal.js';
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
@@ -45,8 +46,7 @@ function setupCard() {
   const rows = [
     ['Email', c.email && `mailto:${c.email}`, c.email],
     ['Phone', c.phone && `tel:${c.phone.replace(/\s/g, '')}`, c.phone],
-    ...profile.links.filter((l) => l.label !== 'Email').map((l) => [l.label, l.href, l.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')]),
-    ['Web', c.website, c.website.replace(/^https?:\/\//, '').replace(/\/$/, '')],
+    ...profile.links.filter((l) => l.label !== 'Email').map((l) => [l.label, l.href, l.display || l.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')]),
   ].filter((r) => r[1]);
   $('.bc-rows').innerHTML = rows
     .map(([k, href, v]) => `<a class="bc-row" href="${href}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ''}><span class="k">${k}</span><span class="v">${v}</span></a>`)
@@ -252,6 +252,7 @@ let current = null;
 let ctx = null;
 
 function activate(name) {
+  if (currentModal()) closeModal(currentModal(), true);
   ctx?.revert();
   Object.entries(tabs).forEach(([k, el]) => (el.hidden = k !== name));
   current = name;

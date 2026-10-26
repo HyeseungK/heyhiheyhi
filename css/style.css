@@ -203,6 +203,8 @@ img { display: block; max-width: 100%; }
 }
 .career-side .label { position: sticky; top: calc(var(--topbar) + 28px); }
 .career-list { list-style: none; margin: 0; padding: 0; }
+.career-group { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); padding: 34px 0 10px; }
+.career-group:first-child { padding-top: 0; }
 .career-item {
   display: grid; grid-template-columns: 150px 1fr; gap: 24px;
   padding: 32px 0; border-top: 1px solid var(--line);
@@ -394,7 +396,7 @@ img { display: block; max-width: 100%; }
 .moving { max-width: 1440px; margin: 0 auto; padding: 0 var(--gutter) clamp(80px, 10vw, 140px); }
 .video-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 24px; }
 .video-card .video-screen { display: block; }
-.video-card .video-meta { display: flex; }
+.video-card .video-meta { display: flex; flex-direction: column; gap: 2px; }
 
 .spread { position: fixed; inset: 0; z-index: 58; overflow-y: auto; overscroll-behavior: contain; background: #fff; }
 .spread-head {
@@ -414,6 +416,17 @@ img { display: block; max-width: 100%; }
 .spread-item img, .spread-item .ph { width: 100%; aspect-ratio: var(--r); object-fit: cover; display: grid; place-items: center; transition: transform .8s var(--ease); }
 .spread-item:hover img { transform: scale(1.02); }
 .spread-cap { font-size: 13px; color: var(--muted); }
+.diary {
+  position: relative; align-self: start; rotate: var(--tilt); margin: 14px 6px;
+  background: #fbf8f0; padding: 26px 22px 30px; will-change: transform;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 18px 30px -20px rgba(0,0,0,.35);
+  background-image: repeating-linear-gradient(transparent 0 31px, rgba(47, 76, 255, .12) 31px 32px);
+  clip-path: polygon(0 0, 100% 0, 100% 96%, 94% 100%, 86% 97%, 77% 100%, 66% 96.5%, 55% 100%, 44% 97%, 33% 100%, 22% 96.5%, 11% 99.5%, 0 97%);
+}
+.diary img { width: 100%; display: block; mix-blend-mode: multiply; }
+.diary .tape { top: -6px; }
+.diary-text { margin: 0; font-family: 'Nanum Pen Script', var(--serif); font-size: clamp(22px, 2.2vw, 28px); line-height: 32px; color: #2b2b2b; }
+.diary-date { display: block; margin-top: 10px; font-family: 'Nanum Pen Script', var(--serif); font-size: 18px; color: var(--muted); text-align: right; }
 .ph em { font-family: var(--serif); color: rgba(0,0,0,.35); font-size: 17px; }
 
 /* ── Muses moodboard ─────────────────────────────────────── */
@@ -663,10 +676,10 @@ body.lock { overflow: hidden; }
 .bc-backbody { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
 .bc-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; min-width: 0; }
 .bc-row .v { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bc-qr { display: block; width: clamp(64px, 18vw, 92px); background: #fff; padding: 6px; border-radius: 6px; }
+.bc-qr { display: block; width: clamp(60px, 16vw, 80px); background: #fff; padding: 6px; border-radius: 6px; }
 .bc-qr svg { display: block; width: 100%; height: auto; }
 .bc-actions { display: flex; gap: 8px; }
-.bc-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.12); text-decoration: none; font-size: clamp(13px, 2.4vw, 15px); }
+.bc-row { display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.12); text-decoration: none; font-size: clamp(13px, 2.4vw, 15px); }
 .bc-row .k { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); }
 .bc-row:hover .v { color: #9fb0ff; }
 .bc-save {
@@ -805,6 +818,8 @@ body.lock { overflow: hidden; }
   .bcard-face { padding: 6% 6.5%; }
   .bc-row { padding: 4px 0; grid-template-columns: 64px minmax(0, 1fr); font-size: 12.5px; }
   .bc-qr { width: 72px; padding: 4px; }
+  .bc-row { grid-template-columns: minmax(0, 1fr); }
+  .bc-row .k { display: none; }
   .tab-btn .num { display: none; }
   .career-item { grid-template-columns: 1fr; gap: 6px; padding: 24px 0; }
   .career-period { padding-top: 0; }

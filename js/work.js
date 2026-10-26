@@ -6,9 +6,14 @@ const deckModal = document.querySelector('.deck-modal');
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 export function renderWork(root) {
-  root.querySelector('.career-list').innerHTML = work.career
-    .map(
-      (c) => `
+  // career, grouped (Experience / Education & activities …)
+  const groups = [...new Set(work.career.map((c) => c.group || ''))];
+  root.querySelector('.career-list').innerHTML = groups
+    .map((g) => `${g ? `<li class="career-group">${esc(g)}</li>` : ''}${work.career.filter((c) => (c.group || '') === g).map(careerItem).join('')}`)
+    .join('');
+
+  function careerItem(c) {
+    return `
       <li class="career-item rv">
         <div class="career-period">${esc(c.period)}</div>
         <div>
@@ -16,9 +21,8 @@ export function renderWork(root) {
           <p class="career-role">${esc(c.role)}</p>
           <p class="career-text">${esc(c.text)}</p>
         </div>
-      </li>`
-    )
-    .join('');
+      </li>`;
+  }
 
   root.querySelector('.os-title').textContent = `projects — ${work.projects.length} items`;
   root.querySelector('.os-list').innerHTML = work.projects

@@ -37,17 +37,18 @@ export const profile = {
   card: {
     title: 'Strategy Consultant', // [PLACEHOLDER]
     org: 'Kearney',
-    email: 'hello@example.com', // [PLACEHOLDER]
+    email: 'hyeseungkim.kr@gmail.com', // personal
     phone: '', // optional, e.g. '+82 10 0000 0000'
     website: 'https://hyeseungk.github.io/heyhiheyhi/',
     // Optional: a scan of your real card (e.g. 'assets/card.jpg').
     // If set, "Save card" downloads it; otherwise a card image with a QR code is drawn.
     image: '',
   },
+  // `display`: how the link reads on the business card (defaults to the URL)
   links: [
-    { label: 'Email', href: 'mailto:hello@example.com' }, // [PLACEHOLDER]
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' }, // [PLACEHOLDER]
-    { label: 'Instagram', href: 'https://www.instagram.com/' }, // [PLACEHOLDER]
+    { label: 'Email', href: 'mailto:hyeseungkim.kr@gmail.com' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/helen-kim-369261268/', display: 'in/helen-kim' },
+    { label: 'Instagram', href: 'https://www.instagram.com/helenrighthere/', display: '@helenrighthere' },
   ],
 };
 
@@ -62,28 +63,49 @@ export const heroWords = [
 export const work = {
   lead:
     'I like turning messy questions into clear decisions. Below is the path so far, and inside the laptop are the projects that shaped it.', // [PLACEHOLDER]
+  // Grouped on the page by `group`, in the order they first appear. Newest first.
   career: [
-    // [PLACEHOLDER] newest first
     {
-      period: '2024 — Now',
+      group: 'Experience',
+      period: '2024 — Now', // [PLACEHOLDER]
       org: 'Kearney',
-      role: 'Consultant',
-      text:
-        'Strategy and operations projects across consumer, tech and financial services. I usually own the problem structuring and the final storyline, from the first hypothesis tree to the deck the CEO reads.',
+      role: 'Business Analyst', // [PLACEHOLDER] your title
+      text: '[PLACEHOLDER] My first full-time role: strategy and operations projects, from the first hypothesis tree to the final storyline.',
     },
     {
-      period: '2022 — 2024',
+      group: 'Experience',
+      period: '2023', // [PLACEHOLDER]
+      org: 'Company A',
+      role: 'Intern, Strategy', // [PLACEHOLDER]
+      text: '[PLACEHOLDER] What I did and what I learned, in one or two sentences.',
+    },
+    {
+      group: 'Experience',
+      period: '2022', // [PLACEHOLDER]
       org: 'Company B',
-      role: 'Business Analyst',
-      text:
-        'Built the market-sizing and pricing models behind two product launches, and learned how a recommendation lives or dies once it leaves the slide.',
+      role: 'Intern', // [PLACEHOLDER]
+      text: '[PLACEHOLDER]',
     },
     {
-      period: '2018 — 2022',
-      org: 'University C',
-      role: 'B.A. Business & Media',
-      text:
-        'Split my time between economics classes and the film club. Ran the school’s music society for two years.',
+      group: 'Education & activities',
+      period: '2019 — 2024', // [PLACEHOLDER]
+      org: 'University name',
+      role: 'B.A. Major', // [PLACEHOLDER]
+      text: '[PLACEHOLDER] One line about what you studied.',
+    },
+    {
+      group: 'Education & activities',
+      period: '2021 — 2022', // [PLACEHOLDER]
+      org: 'Strategy society name',
+      role: 'Member', // [PLACEHOLDER] 학회
+      text: '[PLACEHOLDER] Case competitions and consulting projects for real clients.',
+    },
+    {
+      group: 'Education & activities',
+      period: '2019 — 2023', // [PLACEHOLDER]
+      org: 'Film · Photo · MIDI clubs',
+      role: 'Member', // [PLACEHOLDER]
+      text: '[PLACEHOLDER] Short films, darkroom nights and late-night music production: where the creative side of this site started.',
     },
   ],
   // Each project opens as a small deck on the laptop:
@@ -151,6 +173,44 @@ export const work = {
         { value: '3-yr', label: 'roadmap adopted by the board' },
       ],
     },
+    {
+      year: '2025',
+      client: 'Industry, anonymised',
+      title: 'Project title 4',
+      tags: ['Tag'],
+      summary: '[PLACEHOLDER] The answer in two sentences.',
+      issueTree: {
+        question: '[PLACEHOLDER] The key question?',
+        branches: [
+          { label: 'Branch 1', items: ['Sub-question', 'Sub-question'] },
+          { label: 'Branch 2', items: ['Sub-question', 'Sub-question'] },
+        ],
+      },
+      approach: ['[PLACEHOLDER] Step one', 'Step two', 'Step three'],
+      impact: [
+        { value: '00', label: 'what it measured' },
+        { value: '00%', label: 'what it measured' },
+      ],
+    },
+    {
+      year: '2025',
+      client: 'Industry, anonymised',
+      title: 'Project title 5',
+      tags: ['Tag'],
+      summary: '[PLACEHOLDER] The answer in two sentences.',
+      issueTree: {
+        question: '[PLACEHOLDER] The key question?',
+        branches: [
+          { label: 'Branch 1', items: ['Sub-question', 'Sub-question'] },
+          { label: 'Branch 2', items: ['Sub-question', 'Sub-question'] },
+        ],
+      },
+      approach: ['[PLACEHOLDER] Step one', 'Step two', 'Step three'],
+      impact: [
+        { value: '00', label: 'what it measured' },
+        { value: '00%', label: 'what it measured' },
+      ],
+    },
   ],
 };
 
@@ -164,6 +224,8 @@ export const visual = {
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
   // Add a place by copying a block; lat / lon are its coordinates.
+  // `notes`: scanned scraps of my travel diary, mixed in with the photos.
+  //   Put scans in assets/diary/ and set `src`. Without a scan, `text` is shown in a handwriting font.
   places: [
     {
       id: 'new-york',
@@ -181,6 +243,7 @@ export const visual = {
         { src: '', caption: 'Chinatown', ratio: 1.5, tone: '#e3d3e0' },
         { src: '', caption: 'Last light, Hudson', ratio: 0.667, tone: '#f2e3c9' },
       ],
+      notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
     {
       id: 'seoul',
@@ -197,6 +260,7 @@ export const visual = {
         { src: '', caption: 'Look 04', ratio: 0.667, tone: '#ece4dc' },
         { src: '', caption: 'Stairwell', ratio: 0.667, tone: '#d9e2e4' },
       ],
+      notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
     {
       id: 'lisbon',
@@ -208,6 +272,7 @@ export const visual = {
         { src: '', caption: 'Lisbon tram', ratio: 1.5, tone: '#cfe0e6' },
         { src: '', caption: 'Hotel window', ratio: 0.8, tone: '#e3e6df' },
       ],
+      notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
     {
       id: 'kyoto',
@@ -219,6 +284,7 @@ export const visual = {
         { src: '', caption: 'Kyoto rain', ratio: 0.8, tone: '#d6e1dc' },
         { src: '', caption: 'Shibuya crossing', ratio: 1.25, tone: '#dcd4e6' },
       ],
+      notes: [],
     },
     {
       id: 'jeju',
@@ -231,6 +297,7 @@ export const visual = {
         { src: '', caption: 'Desert road', ratio: 1.5, tone: '#f0e1c8' },
         { src: '', caption: 'Harbour', ratio: 1.25, tone: '#d9e2e4' },
       ],
+      notes: [],
     },
   ],
   // Muses: the work and people I keep coming back to. One card = one thing I love,
@@ -303,7 +370,12 @@ export const visual = {
   ],
   // Moving pictures, below the globe. `url` can be a YouTube or Vimeo link.
   videos: [
-    { title: 'Short film — “Blue Hour”', year: '2024', role: 'Director, editor', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, // [PLACEHOLDER]
+    {
+      title: 'Camcorder film', // [PLACEHOLDER] title
+      year: '2025', // [PLACEHOLDER]
+      role: 'Shot on a camcorder · music made in Ableton · edited in Movavi', // camcorder model to come
+      url: 'https://youtu.be/a2JeC39Gv_U',
+    },
     { title: 'Euljiro lookbook', year: '2024', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]
     { title: 'Travel log — Lisbon', year: '2023', role: 'Shot on phone', url: '' }, // [PLACEHOLDER]
   ],
