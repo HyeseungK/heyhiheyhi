@@ -136,7 +136,7 @@ export function renderVisual(root) {
 }
 
 // ── Inspiration: a moodboard of people and work I love ────────────
-const RATIO = { 'Music video': '16 / 9', Concept: '1 / 1' };
+const RATIO = { Video: '16 / 9', 'Other artwork': '1 / 1' };
 
 function playVideo(url) {
   const p = parseVideo(url);
@@ -151,22 +151,24 @@ function renderMuses(root) {
   const gsap = window.gsap;
   const muses = visual.muses || [];
   const board = root.querySelector('.muse-board');
-  const types = [...new Set(muses.map((m) => m.type))];
-  root.querySelector('.muse-filter').innerHTML = ['All', ...types]
-    .map((t, i) => `<button class="chip${i ? '' : ' is-on'}" data-t="${esc(t)}">${esc(t === 'All' ? t : t + 's')}</button>`)
+  // chips from visual.museTypes (only the ones that have cards), then any other types used
+  const listed = (visual.museTypes || []).filter((t) => muses.some((m) => m.type === t.type));
+  const extra = [...new Set(muses.map((m) => m.type))].filter((t) => !listed.some((l) => l.type === t)).map((t) => ({ type: t, label: t }));
+  root.querySelector('.muse-filter').innerHTML = [{ type: 'All', label: 'All' }, ...listed, ...extra]
+    .map((t, i) => `<button class="chip${i ? '' : ' is-on'}" data-t="${esc(t.type)}">${esc(t.label)}</button>`)
     .join('');
 
   board.innerHTML = muses
     .map((m, i) => {
       const imgs = m.works?.length ? m.works : m.image ? [m.image] : [];
-      const video = m.type === 'Music video' && parseVideo(m.url);
+      const video = m.type === 'Video' && parseVideo(m.url);
       const thumb = !imgs.length && video?.thumb ? video.thumb : '';
       const dark = /^#[0-3]/.test(m.tone || '');
       const media = imgs.length
         ? `<span class="muse-media${imgs.length > 1 ? ' collage' : ''}">${imgs.slice(0, 3).map((src) => `<img src="${esc(src)}" alt="" loading="lazy" />`).join('')}</span>`
         : thumb
           ? `<span class="muse-media"><img src="${esc(thumb)}" alt="" loading="lazy" /><span class="play"></span></span>`
-          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${m.type === 'Music video' ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
+          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${m.type === 'Video' ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
       const tilt = ((i * 37) % 7) - 3;
       const handle = (m.instagram || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
       const ig = handle ? `https://www.instagram.com/${encodeURIComponent(handle)}/` : '';

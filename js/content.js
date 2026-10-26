@@ -14,7 +14,7 @@ export const site = {
     lead: 'Hey Hi, I’m',
     home: 'Helen',
     work: 'working',
-    visual: 'looking',
+    visual: 'filming',
     music: 'listening',
   },
   // With more than one entry, a colour dot in the top bar lets visitors switch.
@@ -305,9 +305,16 @@ export const visual = {
   // Inspiration (section title on the Frames tab): the work and people I keep coming back to. One card = one thing I love,
   // whether it is a person, an album concept or a single music video.
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
-  // `url`: the original (artist site, YouTube…). Music videos with a YouTube / Vimeo url play in place.
+  // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
+  // Filter chips, in this order. Each card's `type` must be one of these.
+  museTypes: [
+    { type: 'Photographer', label: 'Photographers' },
+    { type: 'Director', label: 'Directors' },
+    { type: 'Video', label: 'Videos' },
+    { type: 'Other artwork', label: 'Other Artwork' },
+  ],
   muses: [
     {
       type: 'Photographer',
@@ -330,7 +337,7 @@ export const visual = {
       tone: '#d7dfe3',
     },
     {
-      type: 'Concept',
+      type: 'Other artwork',
       title: 'Album name', // [PLACEHOLDER]
       credit: 'Artist · art direction by Studio',
       image: '',
@@ -340,7 +347,7 @@ export const visual = {
       tone: '#e3d3e0',
     },
     {
-      type: 'Music video',
+      type: 'Video',
       title: 'Song title', // [PLACEHOLDER]
       credit: 'dir. Director name',
       image: '',
@@ -360,7 +367,7 @@ export const visual = {
       tone: '#dcd4e6',
     },
     {
-      type: 'Music video',
+      type: 'Video',
       title: 'Another video', // [PLACEHOLDER]
       credit: 'dir. Director name',
       image: '',
