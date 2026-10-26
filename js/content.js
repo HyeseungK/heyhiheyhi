@@ -221,7 +221,7 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, the road in Mongolia, a short film in Suncheon.',
+  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, a trip through Europe, the road in Mongolia, a short film in Suncheon.',
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
@@ -313,6 +313,30 @@ export const visual = {
           ],
           notes: [],
         },
+      ],
+    },
+    {
+      id: 'europe',
+      name: 'Europe',
+      lat: 48.86, lon: 2.35,
+      // one trip, three cities: each city is a project
+      projects: [
+        {
+          title: 'London',
+          kind: 'Digital',
+          year: '2026',
+          credit: '',
+          photos: [
+            { src: 'assets/photos/europe/london/01.jpg', caption: 'St Thomas Street, rain', ratio: 1.333 }, // [CAPTION?]
+            { src: 'assets/photos/europe/london/02.jpg', caption: 'Dinner at home', ratio: 0.75 }, // [CAPTION?]
+            { src: 'assets/photos/europe/london/03.jpg', caption: 'Coffee in the sun', ratio: 1.333 }, // [CAPTION?]
+            { src: 'assets/photos/europe/london/04.jpg', caption: 'Whitehall, blue hour', ratio: 1.333 }, // [CAPTION?]
+            { src: 'assets/photos/europe/london/05.jpg', caption: 'Supper, hands up', ratio: 0.75 }, // [CAPTION?]
+          ],
+          notes: [],
+        },
+        { title: 'Paris', kind: 'Digital', year: '2026', credit: '', photos: [], notes: [] },
+        { title: 'Barcelona', kind: 'Digital', year: '2026', credit: '', photos: [], notes: [] },
       ],
     },
     {

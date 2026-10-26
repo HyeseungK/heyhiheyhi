@@ -69,7 +69,7 @@ export function renderVisual(root) {
     await globe?.focus(id);
     spread.querySelector('.spread-title').textContent = place.name;
     // a place is either one set of photos, or several projects (e.g. Seoul → The Closet)
-    const groups = place.projects || [{ title: '', kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }];
+    const groups = (place.projects || [{ title: '', kind: place.kind, year: place.year, photos: place.photos, notes: place.notes }]).filter((g) => g.photos.length);
     const total = groups.reduce((n, g) => n + g.photos.length, 0);
     spread.querySelector('.spread-meta').textContent = place.projects
       ? `${groups.length} ${groups.length > 1 ? 'projects' : 'project'} · ${total} frames`
