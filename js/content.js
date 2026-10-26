@@ -241,6 +241,11 @@ export const visual = {
         { src: 'assets/photos/new-york/03.jpg', caption: 'Middle Village, Queens', ratio: 1.5 },
         { src: 'assets/photos/new-york/04.jpg', caption: '42 St, the dance', ratio: 1.5 },
         { src: 'assets/photos/new-york/05.jpg', caption: '42 St, the band', ratio: 1.5 },
+        { src: 'assets/photos/new-york/06.jpg', caption: 'Diner window', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/07.jpg', caption: 'Chinatown, afternoon bench', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/08.jpg', caption: 'Billboard, golden hour', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/09.jpg', caption: 'Mott & Bayard', ratio: 1.5 },
+        { src: 'assets/photos/new-york/10.jpg', caption: 'Reading in the blossoms', ratio: 1.5 }, // [CAPTION?]
       ],
       notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
