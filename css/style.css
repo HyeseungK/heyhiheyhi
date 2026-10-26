@@ -664,7 +664,9 @@ body.lock { overflow: hidden; }
 .frame { position: relative; aspect-ratio: 3 / 2; display: block; transition: opacity .35s, filter .35s; }
 .frame .ph, .frame img { width: 100%; height: 100%; object-fit: cover; display: grid; place-items: center; font-family: var(--serif); font-style: italic; color: rgba(0,0,0,.35); font-size: clamp(9px, 1vw, 13px); }
 .frame .fno { position: absolute; left: 0; top: -14px; font-family: ui-monospace, monospace; font-size: 9px; color: #e8a33d; }
-.frame.dim { opacity: .18; filter: grayscale(1); }
+.frame.dim { opacity: .3; filter: grayscale(1) blur(1px); }
+.frame.dim .grease { opacity: 0; }
+.grease { transition: opacity .3s; }
 .grease { position: absolute; inset: -16% -12%; width: 124%; height: 132%; pointer-events: none; overflow: visible; }
 .grease path { fill: none; stroke: #e0312b; stroke-width: 2.6; stroke-linecap: round; opacity: .9; }
 .loupe {
@@ -734,6 +736,8 @@ body.lock { overflow: hidden; }
   .career-period { padding-top: 0; }
   .chapter { padding: 8px 6px; }
   .chapter-word { font-size: 30px; }
+  .chapter-num { display: none; }
+  .chapter-ico { width: 38px; }
   .chapter:nth-child(1) { --x: 5% !important; --y: 15% !important; }
   .chapter:nth-child(2) { --x: 38% !important; --y: 24% !important; }
   .chapter:nth-child(3) { --x: 48% !important; --y: 70% !important; }

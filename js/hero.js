@@ -181,12 +181,13 @@ export function createHero(canvas, words, getCard) {
       const font = korean ? '700 250px "Noto Sans KR", sans-serif' : '650 270px "Inter Tight", sans-serif';
       return sampleWord(w, font, W, H, gap);
     });
-    const maxW = Math.max(...samples.map((s) => s.width));
-    const fitW = view.w * (view.w < view.h ? 0.88 : 0.74);
-    const scale = Math.min(fitW / maxW, (view.h * 0.3) / 270);
+    // each word fills the width on its own, up to a common letter height
+    const fitW = view.w * (view.w < view.h ? 0.86 : 0.74);
+    const capH = (view.h * (view.w < view.h ? 0.2 : 0.3)) / 270;
     const yOff = view.w < view.h ? 0.15 : 0.05;
     const r = mulberry32(7);
     samples.forEach((s, idx) => {
+      const scale = Math.min(fitW / s.width, capH);
       const n = s.pts.length / 2;
       const arr = new Float32Array(COUNT * 3);
       for (let i = 0; i < COUNT; i++) {
