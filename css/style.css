@@ -163,7 +163,6 @@ img { display: block; max-width: 100%; }
 .chapter img { -webkit-user-drag: none; pointer-events: none; }
 .chapter.is-dragging { cursor: grabbing; z-index: 5; }
 .chapter.is-dragging .chapter-ico { scale: 1.25; }
-.chapter.is-pet { z-index: 5; color: var(--accent); }
 
 .scroll-hint {
   position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);

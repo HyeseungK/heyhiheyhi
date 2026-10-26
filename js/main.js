@@ -173,17 +173,15 @@ function initHomeScroll() {
 }
 
 // chapters float around and lean toward the cursor.
-// Drag one and let go: it follows the mouse like a pet (several form a chain).
-// Click an empty spot (or press Esc) to set them free again.
+// Drag one anywhere and let go: it glides a little, settles, and floats around its new spot.
 const chapters = $$('.chapter');
-const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-const pets = [];
-const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
+// each chapter drifts around an anchor (its layout spot plus wherever it was dropped)
 function drift(el) {
+  const ax = +el.dataset.ax || 0, ay = +el.dataset.ay || 0;
   gsap.to(el, {
-    x: gsap.utils.random(-0.14, 0.14) * window.innerWidth,
-    y: gsap.utils.random(-0.11, 0.11) * window.innerHeight,
+    x: ax + gsap.utils.random(-0.12, 0.12) * window.innerWidth,
+    y: ay + gsap.utils.random(-0.09, 0.09) * window.innerHeight,
     rotation: gsap.utils.random(-6, 6),
     duration: gsap.utils.random(5, 9),
     ease: 'sine.inOut',
@@ -191,13 +189,15 @@ function drift(el) {
   });
 }
 const stopDrift = (el) => gsap.killTweensOf(el, 'x,y,rotation');
-function freePets() {
-  pets.splice(0).forEach((el) => { el.classList.remove('is-pet'); drift(el); });
-}
-// centre of a chapter in viewport coordinates
-function centre(el) {
+
+// keeps a chapter fully on screen: returns the clamped x / y offsets
+function clampOnScreen(el, x, y) {
   const r = el.getBoundingClientRect();
-  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  const cx = gsap.getProperty(el, 'x'), cy = gsap.getProperty(el, 'y');
+  const left = r.left - cx, top = r.top - cy, pad = 12;
+  const minX = pad - left, maxX = window.innerWidth - pad - r.width - left;
+  const minY = 70 - top, maxY = window.innerHeight - pad - r.height - top;
+  return [gsap.utils.clamp(minX, maxX, x), gsap.utils.clamp(minY, maxY, y)];
 }
 
 if (!reduceMotion) {
@@ -216,55 +216,33 @@ if (!reduceMotion) {
       qy(((e.clientY / window.innerHeight) - 0.5) * depth * 1.4);
     }, { passive: true });
 
-    // drag
-    let start = null;
+    // drag and drop (with a little throw)
+    let drag = null;
     el.addEventListener('pointerdown', (e) => {
-      start = { x: e.clientX, y: e.clientY, ox: gsap.getProperty(el, 'x'), oy: gsap.getProperty(el, 'y'), dragged: false };
+      drag = { x: e.clientX, y: e.clientY, ox: gsap.getProperty(el, 'x'), oy: gsap.getProperty(el, 'y'), moved: false, vx: 0, vy: 0, t: performance.now() };
     });
     window.addEventListener('pointermove', (e) => {
-      if (!start) return;
-      const dx = e.clientX - start.x, dy = e.clientY - start.y;
-      if (!start.dragged && Math.hypot(dx, dy) < 6) return;
-      if (!start.dragged) {
-        start.dragged = true;
-        stopDrift(el);
-        const k = pets.indexOf(el);
-        if (k >= 0) pets.splice(k, 1);
-        el.classList.add('is-dragging');
-      }
-      gsap.set(el, { x: start.ox + dx, y: start.oy + dy, rotation: gsap.utils.clamp(-18, 18, (e.movementX || 0) * 1.5) });
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+      if (!drag.moved) { drag.moved = true; stopDrift(el); el.classList.add('is-dragging'); }
+      const now = performance.now(), dt = Math.max(1, now - drag.t);
+      drag.vx = (e.movementX || 0) / dt; drag.vy = (e.movementY || 0) / dt; drag.t = now;
+      gsap.set(el, { x: drag.ox + dx, y: drag.oy + dy, rotation: gsap.utils.clamp(-18, 18, (e.movementX || 0) * 1.5) });
     });
     window.addEventListener('pointerup', () => {
-      if (!start) return;
-      const was = start.dragged;
-      start = null;
+      if (!drag) return;
+      const d = drag;
+      drag = null;
       el.classList.remove('is-dragging');
-      if (!was) return;
+      if (!d.moved) return;
       el.dataset.dragged = '1';
       setTimeout(() => delete el.dataset.dragged, 0);
-      if (canHover) { pets.push(el); el.classList.add('is-pet'); }
-      else gsap.delayedCall(2.5, () => !pets.includes(el) && drift(el));
+      const [x, y] = clampOnScreen(el, gsap.getProperty(el, 'x') + d.vx * 90, gsap.getProperty(el, 'y') + d.vy * 90);
+      el.dataset.ax = x; el.dataset.ay = y;
+      gsap.to(el, { x, y, rotation: 0, duration: 0.9, ease: 'power3.out', onComplete: () => drift(el) });
     });
   });
-
-  window.addEventListener('pointermove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
-  // pets trail the cursor, each one following the one before it
-  gsap.ticker.add(() => {
-    if (!pets.length || current !== 'home') return;
-    let lead = { x: mouse.x + 36, y: mouse.y + 30 };
-    pets.forEach((el) => {
-      const c = centre(el);
-      const dx = lead.x - c.x, dy = lead.y - c.y;
-      const dist = Math.hypot(dx, dy), gap = el === pets[0] ? 0 : 130;
-      if (dist > gap) {
-        const k = ((dist - gap) / dist) * 0.12;
-        gsap.set(el, { x: gsap.getProperty(el, 'x') + dx * k, y: gsap.getProperty(el, 'y') + dy * k, rotation: gsap.utils.clamp(-20, 20, dx * k * 2) });
-      }
-      lead = centre(el);
-    });
-  });
-  document.addEventListener('keydown', (e) => e.key === 'Escape' && freePets());
-  $('.hero').addEventListener('click', (e) => { if (!e.target.closest('.chapter, .bcard, .bc-save')) freePets(); });
 }
 
 // ── router ──────────────────────────────────────────────────
@@ -286,7 +264,7 @@ function activate(name) {
   if (name !== 'visual') globeLoop.stop();
   window.scrollTo(0, 0);
   if (name === 'home') { hero?.relayout(); hero?.start(); }
-  else { hero?.stop(); freePets(); }
+  else hero?.stop();
   ctx = gsap.context(() => inits[name]?.(tabs[name]));
   ScrollTrigger.refresh();
   window.scrollTo(0, 0);
