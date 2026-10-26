@@ -384,7 +384,7 @@ export const visual = {
       cover: 'assets/photos/busan/04.jpg',
       name: 'Busan',
       lat: 35.18, lon: 129.08,
-      kind: 'Black & white',
+      kind: 'Nights out',
       year: '2025',
       photos: [
         { src: 'assets/photos/busan/01.jpg', caption: 'Before the set', ratio: 1.5 }, // [CAPTION?]
@@ -392,6 +392,10 @@ export const visual = {
         { src: 'assets/photos/busan/03.jpg', caption: 'Leftover cups', ratio: 1.5 }, // [CAPTION?]
         { src: 'assets/photos/busan/04.jpg', caption: 'Crosswalk, after work', ratio: 1.5 }, // [CAPTION?]
         { src: 'assets/photos/busan/05.jpg', caption: 'Smoke break', ratio: 0.666 }, // [CAPTION?]
+        { src: 'assets/photos/busan/06.jpg', caption: 'Peace, after the set', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/07.jpg', caption: 'Outside Haneum Media', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/08.jpg', caption: 'On the floor', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/09.jpg', caption: 'The DJ', ratio: 1.5 }, // [CAPTION?]
       ],
       notes: [],
     },
