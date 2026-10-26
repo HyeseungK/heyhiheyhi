@@ -221,7 +221,7 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Film in New York, shoots and days in Seoul, a trip through Europe, black and white in Busan, the road in Mongolia, a short film in Suncheon. Pick up a pile.',
+  lead: 'Film in New York City, shoots and days in Seoul, a trip through Europe, black and white in Busan, the road in Mongolia, a short film in Suncheon. Pick up a pile.',
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
@@ -234,7 +234,7 @@ export const visual = {
     {
       id: 'new-york',
       cover: 'assets/photos/new-york/07.jpg',
-      name: 'New York',
+      name: 'New York City',
       lat: 40.71, lon: -74.0,
       kind: '35mm film',
       year: '2023',
