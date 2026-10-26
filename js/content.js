@@ -229,6 +229,7 @@ export const visual = {
   // whether it is a person, an album concept or a single music video.
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
   // `url`: the original (artist site, YouTube…). Music videos with a YouTube / Vimeo url play in place.
+  // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
   muses: [
     {
@@ -238,6 +239,7 @@ export const visual = {
       works: [], // e.g. ['assets/muses/park-young-sook-1.jpg', '...']
       why: '[PLACEHOLDER] Why her work stays with me.',
       url: '',
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#e6dccf',
     },
     {
@@ -247,6 +249,7 @@ export const visual = {
       works: [],
       why: '[PLACEHOLDER] Why this work stays with me.',
       url: '',
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#d7dfe3',
     },
     {
@@ -256,6 +259,7 @@ export const visual = {
       image: '',
       why: '[PLACEHOLDER] The colour, the styling, the whole world of it.',
       url: '',
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#e3d3e0',
     },
     {
@@ -265,6 +269,7 @@ export const visual = {
       image: '',
       why: '[PLACEHOLDER] The one shot I can’t forget.',
       url: '', // YouTube or Vimeo link
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#1d1d1d',
     },
     {
@@ -274,6 +279,7 @@ export const visual = {
       works: [],
       why: '[PLACEHOLDER]',
       url: '',
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#dcd4e6',
     },
     {
@@ -283,6 +289,7 @@ export const visual = {
       image: '',
       why: '[PLACEHOLDER]',
       url: '',
+      instagram: '', // [PLACEHOLDER] e.g. 'handle'
       tone: '#2a2a2a',
     },
   ],

@@ -158,12 +158,14 @@ function renderMuses(root) {
           ? `<span class="muse-media"><img src="${esc(thumb)}" alt="" loading="lazy" /><span class="play"></span></span>`
           : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${m.type === 'Music video' ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
       const tilt = ((i * 37) % 7) - 3;
+      const handle = (m.instagram || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
+      const ig = handle ? `https://www.instagram.com/${encodeURIComponent(handle)}/` : '';
       return `<div class="muse" data-type="${esc(m.type)}" role="button" tabindex="0" aria-pressed="false" style="--tilt:${tilt}deg;--ratio:${RATIO[m.type] || '4 / 5'}" aria-label="${esc(m.title)}. Press to read why">
         <span class="tape" aria-hidden="true"></span>
         <span class="muse-inner">
           <span class="muse-front">
             ${media}
-            <span class="muse-text"><span class="muse-type">${esc(m.type)}</span><b>${esc(m.title)}</b><span class="muse-credit">${esc(m.credit || '')}</span></span>
+            <span class="muse-text"><span class="muse-type">${esc(m.type)}</span><b>${esc(m.title)}</b><span class="muse-credit">${esc(m.credit || '')}</span>${ig ? `<a class="muse-ig" href="${ig}" target="_blank" rel="noopener">@${esc(handle)}</a>` : ''}</span>
           </span>
           <span class="muse-back">
             <span class="muse-type">${esc(m.type)}</span>
@@ -172,6 +174,7 @@ function renderMuses(root) {
             <span class="muse-actions">
               ${video ? `<button class="muse-btn" data-play="${i}">▶ Watch</button>` : ''}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+              ${ig ? `<a class="muse-btn" href="${ig}" target="_blank" rel="noopener">Instagram ↗</a>` : ''}
             </span>
           </span>
         </span>

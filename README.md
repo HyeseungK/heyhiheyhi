@@ -23,7 +23,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
 - **영상**: `visual.videos`의 `url`에 YouTube나 Vimeo 링크를 넣습니다.
 - **앨범 커버**: `assets/albums/`에 넣고 `cover`에 경로를 적습니다. 비어 있으면 제목을 시드로 한 플로우 필드 아트가 그려집니다.
-- **Muses**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고, 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
+- **Muses**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고, 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
 - **티켓**: `music.tickets`.
 - **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`.
 
