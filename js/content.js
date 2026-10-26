@@ -265,7 +265,7 @@ export const visual = {
       projects: [
         {
           title: 'The Closet',
-          cover: 'assets/photos/seoul/the-closet/02.jpg',
+          cover: 'assets/photos/seoul/the-closet/08.jpg',
           kind: 'Fashion shoot · Euljiro',
           year: '2025',
           credit: '', // e.g. 'Photography by Helen · Styling by …'
