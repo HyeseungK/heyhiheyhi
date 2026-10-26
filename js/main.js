@@ -366,6 +366,7 @@ function paintIcons() {
 initCursor();
 
 // first paint
-const initial = tabs[location.hash.slice(1)] ? location.hash.slice(1) : 'home';
-activate(initial);
+// every visit (and every refresh) starts at home
+if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+activate('home');
 bootHero();
