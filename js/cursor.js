@@ -7,6 +7,8 @@ const LABELS = [
   ['.sleeve', 'open'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
+  ['.muse-btn', 'open'],
+  ['.muse', 'flip'],
   ['.bcard', 'flip'],
   ['.laptop-hit', 'open'],
   ['.os-row', 'deck'],

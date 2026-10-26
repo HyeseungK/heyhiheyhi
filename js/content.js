@@ -225,6 +225,67 @@ export const visual = {
       ],
     },
   ],
+  // Muses: the work and people I keep coming back to. One card = one thing I love,
+  // whether it is a person, an album concept or a single music video.
+  // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
+  // `url`: the original (artist site, YouTube…). Music videos with a YouTube / Vimeo url play in place.
+  musesNote: 'frames I keep coming back to',
+  muses: [
+    {
+      type: 'Photographer',
+      title: '박영숙 Park Young-sook',
+      credit: 'Photographer, Seoul',
+      works: [], // e.g. ['assets/muses/park-young-sook-1.jpg', '...']
+      why: '[PLACEHOLDER] Why her work stays with me.',
+      url: '',
+      tone: '#e6dccf',
+    },
+    {
+      type: 'Photographer',
+      title: 'Sylvester Mako', // [PLACEHOLDER] check the spelling
+      credit: 'Photographer',
+      works: [],
+      why: '[PLACEHOLDER] Why this work stays with me.',
+      url: '',
+      tone: '#d7dfe3',
+    },
+    {
+      type: 'Concept',
+      title: 'Album name', // [PLACEHOLDER]
+      credit: 'Artist · art direction by Studio',
+      image: '',
+      why: '[PLACEHOLDER] The colour, the styling, the whole world of it.',
+      url: '',
+      tone: '#e3d3e0',
+    },
+    {
+      type: 'Music video',
+      title: 'Song title', // [PLACEHOLDER]
+      credit: 'dir. Director name',
+      image: '',
+      why: '[PLACEHOLDER] The one shot I can’t forget.',
+      url: '', // YouTube or Vimeo link
+      tone: '#1d1d1d',
+    },
+    {
+      type: 'Director',
+      title: 'Director name', // [PLACEHOLDER]
+      credit: 'Film / music video director',
+      works: [],
+      why: '[PLACEHOLDER]',
+      url: '',
+      tone: '#dcd4e6',
+    },
+    {
+      type: 'Music video',
+      title: 'Another video', // [PLACEHOLDER]
+      credit: 'dir. Director name',
+      image: '',
+      why: '[PLACEHOLDER]',
+      url: '',
+      tone: '#2a2a2a',
+    },
+  ],
   // Moving pictures, below the globe. `url` can be a YouTube or Vimeo link.
   videos: [
     { title: 'Short film — “Blue Hour”', year: '2024', role: 'Director, editor', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, // [PLACEHOLDER]
