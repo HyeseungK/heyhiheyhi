@@ -1,0 +1,266 @@
+// Home hero: the four name-words as one particle cloud that morphs on scroll.
+import * as THREE from 'three';
+import { mulberry32 } from './gen.js';
+
+const vertex = /* glsl */ `
+  attribute vec3 aP0;
+  attribute vec3 aP1;
+  attribute vec3 aP2;
+  attribute vec3 aP3;
+  attribute vec3 aDir;
+  attribute float aRand;
+
+  uniform float uProgress;
+  uniform float uTime;
+  uniform float uSize;
+  uniform float uPixelRatio;
+  uniform vec2 uMouse;
+  uniform vec3 uRipple;
+
+  varying float vAlpha;
+
+  float stage(float p, float i, float d) {
+    return smoothstep(i + d, i + d + 0.62, p);
+  }
+
+  // layered sine "noise": cheap stand-in for multi-octave flow
+  vec2 flow(vec2 p, float t, float r) {
+    vec2 f = vec2(0.0);
+    float amp = 1.0;
+    float freq = 0.9;
+    for (int i = 0; i < 3; i++) {
+      f += vec2(sin(p.y * freq + t * 0.7 + r * 6.2831), cos(p.x * freq - t * 0.6 + r * 4.0)) * amp;
+      amp *= 0.5;
+      freq *= 2.1;
+    }
+    return f;
+  }
+
+  void main() {
+    float d = aRand * 0.36;
+    float t1 = stage(uProgress, 0.0, d);
+    float t2 = stage(uProgress, 1.0, d);
+    float t3 = stage(uProgress, 2.0, d);
+
+    vec3 pos = mix(aP0, aP1, t1);
+    pos = mix(pos, aP2, t2);
+    pos = mix(pos, aP3, t3);
+
+    // in-between: particles leave the letters and ride a flow field
+    float travel = sin(t1 * 3.14159) + sin(t2 * 3.14159) + sin(t3 * 3.14159);
+    pos.xy += flow(pos.xy, uTime, aRand) * 0.22 * travel;
+    pos += aDir * travel * 0.55;
+
+    // idle breathing
+    pos.xy += flow(pos.xy * 1.7, uTime * 0.6, aRand) * 0.012;
+
+    // cursor pushes particles away
+    vec2 diff = pos.xy - uMouse;
+    float dist = length(diff);
+    float push = smoothstep(0.85, 0.0, dist);
+    pos.xy += normalize(diff + 1e-5) * push * 0.32;
+    pos.z += push * 0.6;
+
+    // ripple from a click
+    float rt = uTime - uRipple.z;
+    if (rt > 0.0 && rt < 3.0) {
+      float rd = length(pos.xy - uRipple.xy);
+      float front = rt * 4.2;
+      float wave = sin((rd - front) * 5.0) * exp(-abs(rd - front) * 1.4) * (1.0 - rt / 3.0);
+      pos.z += wave * 0.9;
+      pos.xy += normalize(pos.xy - uRipple.xy + 1e-5) * wave * 0.12;
+    }
+
+    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    gl_Position = projectionMatrix * mv;
+    gl_PointSize = uSize * uPixelRatio * (0.65 + aRand * 0.7) * (10.0 / -mv.z);
+    vAlpha = 0.55 + 0.45 * (1.0 - travel / 3.0) * (0.6 + aRand * 0.4);
+  }
+`;
+
+const fragment = /* glsl */ `
+  uniform vec3 uColor;
+  uniform vec3 uAccent;
+  varying float vAlpha;
+  void main() {
+    vec2 c = gl_PointCoord - 0.5;
+    float r = length(c);
+    if (r > 0.5) discard;
+    float a = smoothstep(0.5, 0.32, r) * vAlpha;
+    gl_FragColor = vec4(uColor, a);
+  }
+`;
+
+function sampleWord(word, font, W, H, gap) {
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.fillStyle = '#000';
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(word, W / 2, H / 2);
+  const data = ctx.getImageData(0, 0, W, H).data;
+  const pts = [];
+  for (let y = 0; y < H; y += gap) {
+    for (let x = 0; x < W; x += gap) {
+      if (data[(y * W + x) * 4 + 3] > 140) pts.push(x - W / 2, H / 2 - y);
+    }
+  }
+  return { pts, width: ctx.measureText(word).width };
+}
+
+export function createHero(canvas, words) {
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) {
+    document.documentElement.classList.add('no-webgl');
+    return null;
+  }
+  const pr = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(pr);
+  renderer.setClearColor(0xffffff, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  camera.position.set(0, 0, 10);
+
+  const isSmall = Math.min(window.innerWidth, window.innerHeight) < 700;
+  const COUNT = isSmall ? 3600 : 7600;
+
+  const uniforms = {
+    uProgress: { value: 0 },
+    uTime: { value: 0 },
+    uSize: { value: isSmall ? 2.3 : 2.1 },
+    uPixelRatio: { value: pr },
+    uMouse: { value: new THREE.Vector2(99, 99) },
+    uRipple: { value: new THREE.Vector3(0, 0, -99) },
+    uColor: { value: new THREE.Color('#0f0f0f') },
+    uAccent: { value: new THREE.Color('#2f4cff') },
+  };
+
+  const geometry = new THREE.BufferGeometry();
+  const rand = mulberry32(20240521);
+  const aRand = new Float32Array(COUNT);
+  const aDir = new Float32Array(COUNT * 3);
+  for (let i = 0; i < COUNT; i++) {
+    aRand[i] = rand();
+    const th = rand() * Math.PI * 2, ph = Math.acos(2 * rand() - 1);
+    aDir[i * 3] = Math.sin(ph) * Math.cos(th);
+    aDir[i * 3 + 1] = Math.sin(ph) * Math.sin(th);
+    aDir[i * 3 + 2] = Math.cos(ph);
+  }
+  geometry.setAttribute('aRand', new THREE.BufferAttribute(aRand, 1));
+  geometry.setAttribute('aDir', new THREE.BufferAttribute(aDir, 3));
+  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3));
+
+  const material = new THREE.ShaderMaterial({
+    vertexShader: vertex,
+    fragmentShader: fragment,
+    uniforms,
+    transparent: true,
+    depthWrite: false,
+  });
+  const points = new THREE.Points(geometry, material);
+  points.frustumCulled = false;
+  scene.add(points);
+
+  let view = { w: 1, h: 1 };
+
+  function layoutWords() {
+    const W = 1600, H = 420, gap = isSmall ? 4 : 3;
+    const samples = words.map((w) => {
+      const korean = /[ㄱ-힝]/.test(w);
+      const font = korean ? '700 250px "Noto Sans KR", sans-serif' : '650 270px "Inter Tight", sans-serif';
+      return sampleWord(w, font, W, H, gap);
+    });
+    const maxW = Math.max(...samples.map((s) => s.width));
+    const fitW = view.w * (view.w < view.h ? 0.88 : 0.74);
+    const scale = Math.min(fitW / maxW, (view.h * 0.3) / 270);
+    const yOff = view.w < view.h ? 0.15 : 0.05;
+    const r = mulberry32(7);
+    samples.forEach((s, idx) => {
+      const n = s.pts.length / 2;
+      const arr = new Float32Array(COUNT * 3);
+      for (let i = 0; i < COUNT; i++) {
+        const k = Math.floor(r() * n) * 2;
+        arr[i * 3] = s.pts[k] * scale + (r() - 0.5) * 0.02;
+        arr[i * 3 + 1] = s.pts[k + 1] * scale + (r() - 0.5) * 0.02 + yOff;
+        arr[i * 3 + 2] = (r() - 0.5) * 0.12;
+      }
+      geometry.setAttribute(`aP${idx}`, new THREE.BufferAttribute(arr, 3));
+    });
+  }
+
+  function resize() {
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+    view = { w: vh * camera.aspect, h: vh };
+    layoutWords();
+  }
+
+  function toWorld(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = -(((clientY - rect.top) / rect.height) * 2 - 1);
+    return [(nx * view.w) / 2, (ny * view.h) / 2];
+  }
+
+  const target = new THREE.Vector2(99, 99);
+  const onMove = (e) => {
+    const p = e.touches ? e.touches[0] : e;
+    const [x, y] = toWorld(p.clientX, p.clientY);
+    target.set(x, y);
+  };
+  const onLeave = () => target.set(99, 99);
+  window.addEventListener('pointermove', onMove, { passive: true });
+  window.addEventListener('pointerleave', onLeave);
+  window.addEventListener('touchend', onLeave, { passive: true });
+
+  let running = false;
+  const clock = new THREE.Clock();
+  const tilt = { x: 0, y: 0 };
+
+  function frame() {
+    if (!running) return;
+    uniforms.uTime.value = clock.getElapsedTime();
+    const m = uniforms.uMouse.value;
+    if (target.x > 50) m.copy(target);
+    else if (m.x > 50) m.copy(target);
+    else m.lerp(target, 0.12);
+    const tx = target.x > 50 ? 0 : target.y / view.h;
+    const ty = target.x > 50 ? 0 : target.x / view.w;
+    tilt.x += (-tx * 0.18 - tilt.x) * 0.05;
+    tilt.y += (ty * 0.25 - tilt.y) * 0.05;
+    points.rotation.set(tilt.x, tilt.y, 0);
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  let rT;
+  window.addEventListener('resize', () => {
+    clearTimeout(rT);
+    rT = setTimeout(resize, 120);
+  });
+
+  return {
+    uniforms,
+    start() {
+      if (running) return;
+      running = true;
+      clock.start();
+      requestAnimationFrame(frame);
+    },
+    stop() { running = false; },
+    ripple(clientX, clientY) {
+      const [x, y] = toWorld(clientX, clientY);
+      uniforms.uRipple.value.set(x, y, uniforms.uTime.value);
+    },
+  };
+}
