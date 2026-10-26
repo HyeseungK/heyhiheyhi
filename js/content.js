@@ -234,7 +234,7 @@ export const visual = {
       name: 'New York',
       lat: 40.71, lon: -74.0,
       kind: '35mm film',
-      year: '2023', // [PLACEHOLDER]
+      year: '2023',
       photos: [
         { src: 'assets/photos/new-york/01.jpg', caption: 'Still life, lighter', ratio: 1.5 }, // [CAPTION?]
         { src: 'assets/photos/new-york/02.jpg', caption: 'Sunday sign', ratio: 1.5 }, // [CAPTION?]
