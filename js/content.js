@@ -303,7 +303,7 @@ export const visual = {
       notes: [],
     },
   ],
-  // Muses: the work and people I keep coming back to. One card = one thing I love,
+  // Inspiration (section title on the Frames tab): the work and people I keep coming back to. One card = one thing I love,
   // whether it is a person, an album concept or a single music video.
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
   // `url`: the original (artist site, YouTube…). Music videos with a YouTube / Vimeo url play in place.

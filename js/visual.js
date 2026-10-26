@@ -135,7 +135,7 @@ export function renderVisual(root) {
   });
 }
 
-// ── Muses: a moodboard of people and work I love ────────────
+// ── Inspiration: a moodboard of people and work I love ────────────
 const RATIO = { 'Music video': '16 / 9', Concept: '1 / 1' };
 
 function playVideo(url) {
