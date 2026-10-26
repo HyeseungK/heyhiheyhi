@@ -404,6 +404,14 @@ img { display: block; max-width: 100%; }
 .print img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .print .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.8); }
 .stack-label { display: flex; flex-direction: column; gap: 2px; }
+/* desktop: piles a little larger */
+@media (min-width: 861px) {
+  .photo-table { max-width: 1520px; column-gap: clamp(18px, 2.2vw, 32px); }
+  .print {
+    width: calc(min(100%, 100% * var(--r)) * .98);
+    margin-left: calc(min(100%, 100% * var(--r)) * -.49); margin-top: calc(min(100%, 100% * var(--r)) * -.49 / var(--r));
+  }
+}
 .stack-label b { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(22px, 2vw, 28px); line-height: 1.05; transition: color .25s; }
 .stack-label span { font-size: 12px; letter-spacing: .04em; color: var(--muted); }
 .stack:hover .stack-label b { color: var(--accent); }

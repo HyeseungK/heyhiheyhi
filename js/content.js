@@ -20,7 +20,7 @@ export const site = {
   // With more than one entry, a colour dot in the top bar lets visitors switch.
   accents: [
     { name: 'Cobalt', hex: '#2f4cff' },
-    { name: 'Red', hex: '#f22b1f' },
+    // { name: 'Red', hex: '#f22b1f' },
     // { name: 'Ink', hex: '#0f0f0f' },
     // { name: 'Film orange', hex: '#ff6a1f' },
     // { name: 'Pink', hex: '#ff4f8b' },
