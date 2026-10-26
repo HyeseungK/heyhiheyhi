@@ -10,6 +10,14 @@ export const site = {
   layout: 'compact',
   // Accent colours visitors can switch between with the dot in the top bar.
   // The first one is the default.
+  // What the page-transition screen says on the way to each tab: "Hey Hi, I'm …"
+  greeting: {
+    lead: 'Hey Hi, I’m',
+    home: 'Helen',
+    work: 'working',
+    visual: 'looking',
+    music: 'listening',
+  },
   accents: [
     { name: 'Cobalt', hex: '#2f4cff' },
     { name: 'Pink', hex: '#ff4f8b' },

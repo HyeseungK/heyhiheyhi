@@ -34,9 +34,20 @@ function animate(duration, draw) {
   });
 }
 
-function showLabel(text) {
-  labelEl.textContent = text || '';
-  window.gsap.fromTo(labelEl, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' });
+// `label`: a string, or { lead, word } for a small lead-in above a big word
+function showLabel(label) {
+  const gsap = window.gsap;
+  labelEl.replaceChildren();
+  const lead = document.createElement('span');
+  const word = document.createElement('span');
+  lead.className = 'fx-lead';
+  word.className = 'fx-word';
+  lead.textContent = typeof label === 'object' ? label.lead : '';
+  word.textContent = typeof label === 'object' ? label.word : label || '';
+  labelEl.append(lead, word);
+  gsap.set(labelEl, { opacity: 1, y: 0 });
+  gsap.fromTo(lead, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
+  gsap.fromTo(word, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.12, ease: 'power3.out' });
 }
 function hideLabel() {
   return window.gsap.to(labelEl, { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' });
@@ -80,7 +91,7 @@ async function pixel(x, y, label, onCovered) {
   ctx.fillRect(0, 0, W, H);
   showLabel(label);
   await onCovered();
-  await wait(380);
+  await wait(620);
   hideLabel();
   await animate(760, (t) => drawCells(t * (0.85 + grow), 'dout', true));
   ctx.clearRect(0, 0, W, H);
@@ -122,7 +133,7 @@ async function ripple(x, y, label, onCovered) {
   ctx.fillRect(0, 0, W, H);
   showLabel(label);
   await onCovered();
-  await wait(380);
+  await wait(620);
   hideLabel();
   const ox = W / 2, oy = H / 2;
   const maxR2 = Math.hypot(W, H) * 0.62;

@@ -279,7 +279,7 @@ function go(name, { fx = 'pixel', x, y } = {}) {
   if (current === 'home' && fx === 'ripple') hero?.ripple(x, y);
   transition(fx, {
     x, y,
-    label: labels[name],
+    label: site.greeting ? { lead: site.greeting.lead, word: site.greeting[name] || labels[name] } : labels[name],
     onCovered: async () => activate(name),
   });
 }
