@@ -319,7 +319,7 @@ export const visual = {
       id: 'europe',
       name: 'Europe',
       lat: 48.86, lon: 2.35,
-      // one trip, three cities: each city is a project
+      // one trip through Europe: each city is a project
       projects: [
         {
           title: 'London',
@@ -335,8 +335,19 @@ export const visual = {
           ],
           notes: [],
         },
-        { title: 'Paris', kind: 'Digital', year: '2026', credit: '', photos: [], notes: [] },
-        { title: 'Barcelona', kind: 'Digital', year: '2026', credit: '', photos: [], notes: [] },
+        {
+          title: 'Barcelona',
+          kind: 'Digital',
+          year: '2026',
+          credit: '',
+          photos: [
+            { src: 'assets/photos/europe/barcelona/01.jpg', caption: 'Sagrada Família, looking up', ratio: 0.75 }, // [CAPTION?]
+            { src: 'assets/photos/europe/barcelona/02.jpg', caption: 'Hostel friends', ratio: 0.75 }, // [CAPTION?]
+            { src: 'assets/photos/europe/barcelona/03.jpg', caption: 'Waiting outside BLESSED', ratio: 1.333 }, // [CAPTION?]
+            { src: 'assets/photos/europe/barcelona/04.jpg', caption: 'One on one', ratio: 0.75 }, // [CAPTION?]
+          ],
+          notes: [],
+        },
       ],
     },
     {
