@@ -29,7 +29,10 @@
       <button class="tab-btn" data-go="visual" data-fx="pixel"><img class="tab-ico" data-icon="visual" alt="" /><span class="num">02</span><span class="lbl">Frames</span></button>
       <button class="tab-btn" data-go="music" data-fx="ripple"><img class="tab-ico" data-icon="music" alt="" /><span class="num">03</span><span class="lbl">Music</span></button>
     </nav>
-    <button class="accent-dot" aria-label="Change accent colour"><i></i></button>
+    <div class="accent-wrap">
+      <button class="accent-dot" aria-label="Change accent colour" aria-expanded="false"><i></i></button>
+      <div class="swatches" hidden role="listbox" aria-label="Accent colour"></div>
+    </div>
   </header>
 
   <main id="main">

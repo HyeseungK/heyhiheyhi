@@ -315,7 +315,7 @@ new IntersectionObserver(([entry]) => {
   entry.isIntersecting ? hero.start() : hero.stop();
 }).observe($('.hero'));
 
-// ── accent colour (dot in the top bar) ──────────────────────
+// ── accent colour (dot in the top bar opens a palette) ──────
 const accents = site.accents;
 let accentIdx = 0;
 try {
@@ -323,20 +323,35 @@ try {
   const k = accents.findIndex((a) => a.name === saved);
   if (k >= 0) accentIdx = k;
 } catch (e) { /* storage blocked */ }
+const swatches = $('.swatches');
+swatches.innerHTML = accents
+  .map((a, i) => `<button class="swatch" role="option" data-i="${i}" style="--c:${a.hex}"><i></i><span>${a.name}</span></button>`)
+  .join('');
 function applyAccent() {
   const a = accents[accentIdx];
   document.documentElement.style.setProperty('--accent', a.hex);
-  $('.accent-dot').style.setProperty('--next', accents[(accentIdx + 1) % accents.length].hex);
   $('.accent-dot').setAttribute('aria-label', `Accent colour: ${a.name}. Change`);
+  $$('.swatch').forEach((b, i) => b.setAttribute('aria-selected', i === accentIdx));
   window.dispatchEvent(new CustomEvent('accentchange', { detail: a }));
 }
 applyAccent();
-$('.accent-dot').addEventListener('click', () => {
-  accentIdx = (accentIdx + 1) % accents.length;
-  try { localStorage.setItem('accent', accents[accentIdx].name); } catch (e) { /* ignore */ }
+function togglePalette(open = swatches.hidden) {
+  swatches.hidden = !open;
+  $('.accent-dot').setAttribute('aria-expanded', open);
+  if (open) gsap.fromTo($$('.swatch'), { y: -8, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.03, duration: 0.3, ease: 'power3.out' });
+}
+$('.accent-dot').addEventListener('click', (e) => { e.stopPropagation(); togglePalette(); });
+swatches.addEventListener('click', (e) => {
+  const b = e.target.closest('.swatch');
+  if (!b) return;
+  e.stopPropagation();
+  accentIdx = +b.dataset.i;
+  try { localStorage.setItem('accent', accents[accentIdx].name); } catch (err) { /* ignore */ }
   applyAccent();
   gsap.fromTo('.accent-dot i', { scale: 0.4 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
 });
+document.addEventListener('click', (e) => { if (!swatches.hidden && !e.target.closest('.accent-wrap')) togglePalette(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !swatches.hidden) togglePalette(false); });
 window.addEventListener('accentchange', () => icons && paintIcons());
 
 // brick icons for the nav and the floating chapters

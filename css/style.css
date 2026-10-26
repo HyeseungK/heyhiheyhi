@@ -76,7 +76,19 @@ img { display: block; max-width: 100%; }
 .tabs { display: flex; gap: 4px; margin-left: auto; }
 .accent-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-left: -8px; }
 .accent-dot i { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--line); }
-.accent-dot:hover i { background: var(--next, var(--accent)); }
+.accent-wrap { position: relative; flex: none; }
+.accent-dot:hover i { transform: scale(1.15); }
+.accent-dot i { transition: transform .3s var(--ease); }
+.swatches {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 50;
+  display: flex; flex-direction: column; gap: 2px; padding: 8px; min-width: 168px;
+  background: #fff; border-radius: 14px; box-shadow: 0 0 0 1px var(--line), 0 24px 40px -20px rgba(0,0,0,.25);
+}
+.swatch { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; font-size: 13px; text-align: left; }
+.swatch:hover { background: var(--soft); }
+.swatch i { width: 16px; height: 16px; border-radius: 50%; background: var(--c); flex: none; }
+.swatch[aria-selected='true'] i { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--c); }
+.swatch[aria-selected='true'] { font-weight: 600; }
 .tab-btn {
   position: relative;
   padding: 8px 14px; border-radius: 999px;
