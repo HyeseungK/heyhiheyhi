@@ -151,46 +151,63 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Things I filmed, shot, and cut. Film photos on the strip, digital ones on the wall, moving pictures on the screens.', // [PLACEHOLDER]
+  lead: 'Things I shot and cut: film in New York, fashion film in Euljiro, digital on the road.', // [PLACEHOLDER]
+  // Photo series, shown as an index. Click a title to open its gallery.
+  // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
+  // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
+  series: [
+    {
+      id: 'new-york',
+      title: 'New York',
+      kind: '35mm film',
+      year: '2023', // [PLACEHOLDER]
+      photos: [
+        { src: '', caption: 'Canal St, 8am', ratio: 1.5, tone: '#e9d8c4' },
+        { src: '', caption: 'Bodega cat', ratio: 0.667, tone: '#ead9c0' },
+        { src: '', caption: 'Brooklyn rooftops', ratio: 1.5, tone: '#d7dfe3' },
+        { src: '', caption: 'Subway, F train', ratio: 1.5, tone: '#dcd4e6' },
+        { src: '', caption: 'Washington Sq', ratio: 0.667, tone: '#e6dccf' },
+        { src: '', caption: 'Fire escape', ratio: 1.5, tone: '#f0d2c2' },
+        { src: '', caption: 'Chinatown', ratio: 1.5, tone: '#e3d3e0' },
+        { src: '', caption: 'Last light, Hudson', ratio: 0.667, tone: '#f2e3c9' },
+      ],
+    },
+    {
+      id: 'euljiro',
+      title: 'Euljiro',
+      kind: 'Fashion film',
+      year: '2024', // [PLACEHOLDER]
+      photos: [
+        { src: '', caption: 'Look 01', ratio: 0.667, tone: '#d9d9d6' },
+        { src: '', caption: 'Look 02', ratio: 0.667, tone: '#dededa' },
+        { src: '', caption: 'Printing alley', ratio: 1.5, tone: '#e3e6df' },
+        { src: '', caption: 'Look 03', ratio: 0.667, tone: '#d6dcef' },
+        { src: '', caption: 'Neon, 11pm', ratio: 1.5, tone: '#e0dce8' },
+        { src: '', caption: 'Look 04', ratio: 0.667, tone: '#ece4dc' },
+        { src: '', caption: 'Stairwell', ratio: 0.667, tone: '#d9e2e4' },
+      ],
+    },
+    {
+      id: 'on-the-road',
+      title: 'On the Road',
+      kind: 'Digital, travels',
+      year: '2019 — Now', // [PLACEHOLDER]
+      photos: [
+        { src: '', caption: 'Lisbon tram', ratio: 1.5, tone: '#cfe0e6' },
+        { src: '', caption: 'Kyoto rain', ratio: 0.8, tone: '#d6e1dc' },
+        { src: '', caption: 'Jeju coast', ratio: 1.5, tone: '#dde3ea' },
+        { src: '', caption: 'Shibuya crossing', ratio: 1.25, tone: '#dcd4e6' },
+        { src: '', caption: 'Hotel window', ratio: 0.8, tone: '#e3e6df' },
+        { src: '', caption: 'Desert road', ratio: 1.5, tone: '#f0e1c8' },
+        { src: '', caption: 'Harbour', ratio: 1.25, tone: '#d9e2e4' },
+      ],
+    },
+  ],
+  // Moving pictures: the last row of the index. `url` can be a YouTube or Vimeo link.
   videos: [
-    // `url` can be a YouTube or Vimeo link.
     { title: 'Short film — “Blue Hour”', year: '2024', role: 'Director, editor', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, // [PLACEHOLDER]
-    { title: 'Live session — Band X', year: '2023', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]
+    { title: 'Euljiro lookbook', year: '2024', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]
     { title: 'Travel log — Lisbon', year: '2023', role: 'Shot on phone', url: '' }, // [PLACEHOLDER]
-  ],
-  // Film frames appear on a contact sheet. `stock` drives the film-canister filter,
-  // `pick: true` gets a red grease-pencil circle.
-  film: [
-    // [PLACEHOLDER]
-    { src: '', caption: 'Morning, Jeju', camera: 'Pentax MX', stock: 'Portra 400', tone: '#e9d8c4', pick: true },
-    { src: '', caption: 'Bus stop', camera: 'Pentax MX', stock: 'Gold 200', tone: '#d7dfe3' },
-    { src: '', caption: 'Grandmother’s kitchen', camera: 'Olympus mju II', stock: 'Portra 400', tone: '#efe2cf' },
-    { src: '', caption: 'Han River, 6pm', camera: 'Pentax MX', stock: 'Gold 200', tone: '#f0d2c2', pick: true },
-    { src: '', caption: 'Rehearsal room', camera: 'Olympus mju II', stock: 'HP5 Plus', tone: '#d9d9d6' },
-    { src: '', caption: 'Seaside, Gangneung', camera: 'Pentax MX', stock: 'Portra 400', tone: '#cfe0e6' },
-    { src: '', caption: 'Late tram', camera: 'Olympus mju II', stock: 'Cinestill 800T', tone: '#e3d3e0', pick: true },
-    { src: '', caption: 'Brooklyn rooftops', camera: 'Pentax MX', stock: 'Gold 200', tone: '#ead9c0' },
-    { src: '', caption: 'Shibuya at night', camera: 'Olympus mju II', stock: 'Cinestill 800T', tone: '#dcd4e6' },
-    { src: '', caption: 'Market stall', camera: 'Pentax MX', stock: 'HP5 Plus', tone: '#dededa' },
-    { src: '', caption: 'Rain, Kyoto', camera: 'Olympus mju II', stock: 'Portra 400', tone: '#d6e1dc' },
-    { src: '', caption: 'Last frame', camera: 'Pentax MX', stock: 'Gold 200', tone: '#f2e3c9' },
-  ],
-  // film canister colours for the filter
-  stocks: {
-    'Portra 400': '#f2c14e',
-    'Gold 200': '#e8a33d',
-    'HP5 Plus': '#3b3b3b',
-    'Cinestill 800T': '#c94f3d',
-  },
-
-  digital: [
-    // [PLACEHOLDER] `ratio` is width / height, used for placeholder shape
-    { src: '', caption: 'Concrete & sky', ratio: 0.8, tone: '#dde3ea' },
-    { src: '', caption: 'Studio portrait', ratio: 1.25, tone: '#ece4dc' },
-    { src: '', caption: 'Night market', ratio: 0.75, tone: '#e6dccf' },
-    { src: '', caption: 'Window light', ratio: 1, tone: '#e3e6df' },
-    { src: '', caption: 'Stage, close up', ratio: 1.5, tone: '#e0dce8' },
-    { src: '', caption: 'Rain on glass', ratio: 0.8, tone: '#d9e2e4' },
   ],
 };
 

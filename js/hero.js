@@ -205,10 +205,12 @@ export function createHero(canvas, words, getCard) {
   function layoutCard(r) {
     const arr = new Float32Array(COUNT * 3);
     const cv = canvas.getBoundingClientRect();
-    const rect = getCard?.();
-    const perPx = view.h / (cv.height || window.innerHeight);
-    const w = (rect ? rect.width : cv.width * 0.6) * perPx * 1.03;
-    const h = (rect ? rect.height : cv.width * 0.34) * perPx * 1.03;
+    let rect = getCard?.();
+    if (rect && !rect.width) rect = null; // card not laid out (home tab hidden)
+    const cvW = cv.width || window.innerWidth, cvH = cv.height || window.innerHeight;
+    const perPx = view.h / cvH;
+    const w = (rect ? rect.width : Math.min(440, cvW * 0.82)) * perPx * 1.03;
+    const h = (rect ? rect.height : Math.min(440, cvW * 0.82) / 1.75) * perPx * 1.03;
     const cx = rect ? (rect.left + rect.width / 2 - cv.left - cv.width / 2) * perPx : 0;
     const cy = rect ? -(rect.top + rect.height / 2 - cv.top - cv.height / 2) * perPx : 0;
     const rad = Math.min(w, h) * 0.06;
@@ -304,6 +306,7 @@ export function createHero(canvas, words, getCard) {
       requestAnimationFrame(frame);
     },
     stop() { running = false; },
+    relayout: resize,
     ripple(clientX, clientY) {
       const [x, y] = toWorld(clientX, clientY);
       uniforms.uRipple.value.set(x, y, uniforms.uTime.value);

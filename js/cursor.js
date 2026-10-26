@@ -1,7 +1,7 @@
 // A small ink dot that follows the mouse and says what a click will do.
 const LABELS = [
-  ['.sheet-wrap', null], // the loupe is the cursor there
-  ['.frame, .wall-item, .lb-media', 'view'],
+  ['.shot, .lb-media', 'view'],
+  ['.series-head', 'open'],
   ['.video-card', 'play'],
   ['.sleeve', 'open'],
   ['.guitar', 'strum'],

@@ -40,7 +40,7 @@ $('.year').textContent = new Date().getFullYear();
 // ── business card ───────────────────────────────────────────
 function setupCard() {
   const c = profile.card;
-  $('.bc-title').textContent = `${c.title} · ${c.org}`;
+  $('.bc-title').textContent = `${c.title} @ ${c.org}`;
   $('.bc-loc').textContent = profile.location;
   const rows = [
     ['Email', c.email && `mailto:${c.email}`, c.email],
@@ -111,7 +111,7 @@ function drawCardPNG(qr) {
   g.fillStyle = '#3a3a3a'; g.font = 'italic 44px "Instrument Serif", serif';
   g.fillText(profile.nickname, 66, 356);
   g.fillStyle = '#8b8b88'; g.font = '500 22px "Inter Tight", sans-serif';
-  g.fillText(`${c.title} · ${c.org}`.toUpperCase(), 66, 500);
+  g.fillText(`${c.title} @ ${c.org}`.toUpperCase(), 66, 500);
   g.fillText([c.email, c.phone].filter(Boolean).join('  ·  '), 66, 540);
   if (qr) {
     const n = qr.getModuleCount(), size = 170, cell = size / n, x0 = W - 66 - size, y0 = H - 66 - size;
@@ -172,21 +172,37 @@ function initHomeScroll() {
   });
 }
 
-// chapters float around and lean toward the cursor
+// chapters float around and lean toward the cursor.
+// Drag one and let go: it follows the mouse like a pet (several form a chain).
+// Click an empty spot (or press Esc) to set them free again.
 const chapters = $$('.chapter');
+const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const pets = [];
+const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+function drift(el) {
+  gsap.to(el, {
+    x: gsap.utils.random(-0.14, 0.14) * window.innerWidth,
+    y: gsap.utils.random(-0.11, 0.11) * window.innerHeight,
+    rotation: gsap.utils.random(-6, 6),
+    duration: gsap.utils.random(5, 9),
+    ease: 'sine.inOut',
+    onComplete: () => drift(el),
+  });
+}
+const stopDrift = (el) => gsap.killTweensOf(el, 'x,y,rotation');
+function freePets() {
+  pets.splice(0).forEach((el) => { el.classList.remove('is-pet'); drift(el); });
+}
+// centre of a chapter in viewport coordinates
+function centre(el) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+
 if (!reduceMotion) {
   chapters.forEach((el, i) => {
-    // wander around a wide area, the brick icon bobbing on its own
-    const drift = () =>
-      gsap.to(el, {
-        x: gsap.utils.random(-0.14, 0.14) * window.innerWidth,
-        y: gsap.utils.random(-0.11, 0.11) * window.innerHeight,
-        rotation: gsap.utils.random(-6, 6),
-        duration: gsap.utils.random(5, 9),
-        ease: 'sine.inOut',
-        onComplete: drift,
-      });
-    drift();
+    drift(el);
     gsap.to(el.querySelector('.chapter-ico'), {
       rotation: gsap.utils.random(-16, 16), y: gsap.utils.random(-10, -4),
       duration: gsap.utils.random(1.6, 2.6), ease: 'sine.inOut', yoyo: true, repeat: -1, delay: i * 0.4,
@@ -199,7 +215,56 @@ if (!reduceMotion) {
       qx(((e.clientX / window.innerWidth) - 0.5) * depth);
       qy(((e.clientY / window.innerHeight) - 0.5) * depth * 1.4);
     }, { passive: true });
+
+    // drag
+    let start = null;
+    el.addEventListener('pointerdown', (e) => {
+      start = { x: e.clientX, y: e.clientY, ox: gsap.getProperty(el, 'x'), oy: gsap.getProperty(el, 'y'), dragged: false };
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!start) return;
+      const dx = e.clientX - start.x, dy = e.clientY - start.y;
+      if (!start.dragged && Math.hypot(dx, dy) < 6) return;
+      if (!start.dragged) {
+        start.dragged = true;
+        stopDrift(el);
+        const k = pets.indexOf(el);
+        if (k >= 0) pets.splice(k, 1);
+        el.classList.add('is-dragging');
+      }
+      gsap.set(el, { x: start.ox + dx, y: start.oy + dy, rotation: gsap.utils.clamp(-18, 18, (e.movementX || 0) * 1.5) });
+    });
+    window.addEventListener('pointerup', () => {
+      if (!start) return;
+      const was = start.dragged;
+      start = null;
+      el.classList.remove('is-dragging');
+      if (!was) return;
+      el.dataset.dragged = '1';
+      setTimeout(() => delete el.dataset.dragged, 0);
+      if (canHover) { pets.push(el); el.classList.add('is-pet'); }
+      else gsap.delayedCall(2.5, () => !pets.includes(el) && drift(el));
+    });
   });
+
+  window.addEventListener('pointermove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+  // pets trail the cursor, each one following the one before it
+  gsap.ticker.add(() => {
+    if (!pets.length || current !== 'home') return;
+    let lead = { x: mouse.x + 36, y: mouse.y + 30 };
+    pets.forEach((el) => {
+      const c = centre(el);
+      const dx = lead.x - c.x, dy = lead.y - c.y;
+      const dist = Math.hypot(dx, dy), gap = el === pets[0] ? 0 : 130;
+      if (dist > gap) {
+        const k = ((dist - gap) / dist) * 0.12;
+        gsap.set(el, { x: gsap.getProperty(el, 'x') + dx * k, y: gsap.getProperty(el, 'y') + dy * k, rotation: gsap.utils.clamp(-20, 20, dx * k * 2) });
+      }
+      lead = centre(el);
+    });
+  });
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && freePets());
+  $('.hero').addEventListener('click', (e) => { if (!e.target.closest('.chapter, .bcard, .bc-save')) freePets(); });
 }
 
 // ── router ──────────────────────────────────────────────────
@@ -219,8 +284,8 @@ function activate(name) {
   if (name !== 'work') workApi.close();
   if (name !== 'music') guitarLoop.stop();
   window.scrollTo(0, 0);
-  if (name === 'home') hero?.start();
-  else hero?.stop();
+  if (name === 'home') { hero?.relayout(); hero?.start(); }
+  else { hero?.stop(); freePets(); }
   ctx = gsap.context(() => inits[name]?.(tabs[name]));
   ScrollTrigger.refresh();
   window.scrollTo(0, 0);
@@ -244,6 +309,7 @@ document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-go]');
   if (!t) return;
   e.preventDefault();
+  if (t.dataset.dragged) return; // the end of a drag, not a click
   const r = t.getBoundingClientRect();
   const x = e.clientX || r.left + r.width / 2;
   const y = e.clientY || r.top + r.height / 2;

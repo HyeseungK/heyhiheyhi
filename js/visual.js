@@ -12,139 +12,140 @@ function parseVideo(url) {
   return { embed: url, thumb: '' };
 }
 
-const media = (item, cls = 'ph') =>
-  item.src
-    ? `<img src="${esc(item.src)}" alt="${esc(item.caption)}" loading="lazy" decoding="async" />`
-    : `<div class="${cls}" style="background:${esc(item.tone || '#eee')}">${esc(item.caption)}</div>`;
+const pad = (n) => String(n).padStart(2, '0');
+const thumb = (p) =>
+  p.src
+    ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" decoding="async" />`
+    : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`;
 
+// Frames: an index of series. Each row opens into a horizontal gallery.
 export function renderVisual(root) {
-  // moving pictures
-  root.querySelector('.video-grid').innerHTML = visual.videos
+  const list = root.querySelector('.series-list');
+  const rows = visual.series.map((s, i) => {
+    const gallery = s.photos
+      .map((p, j) => `<button class="shot" data-j="${j}" style="--r:${p.src ? 'auto' : p.ratio || 1.5}">
+          <span class="shot-media">${thumb(p)}</span>
+          <span class="shot-cap"><span>${esc(p.caption)}</span><span>${pad(j + 1)}</span></span>
+        </button>`)
+      .join('');
+    return row(i, s.title, `${esc(s.kind)} · ${esc(s.year)}`, `${s.photos.length} frames`, `<div class="gallery" data-s="${i}">${gallery}</div>`);
+  });
+  const videos = visual.videos
     .map((v, i) => {
       const p = parseVideo(v.url);
-      return `
-      <button class="video-card rv" data-i="${i}" ${p ? '' : 'aria-disabled="true"'}>
-        <div class="video-screen">
-          ${p && p.thumb ? `<img src="${p.thumb}" alt="" loading="lazy" />` : '<div class="noise"></div>'}
+      return `<button class="video-card" data-v="${i}" ${p ? '' : 'aria-disabled="true"'}>
+        <span class="video-screen">
+          ${p && p.thumb ? `<img src="${p.thumb}" alt="" loading="lazy" />` : '<span class="noise"></span>'}
           ${p ? '<span class="play"></span>' : '<span class="soon">COMING SOON</span>'}
-        </div>
-        <div class="video-meta"><span class="t">${esc(v.title)}</span><span class="r">${esc(v.year)}</span></div>
-        <div class="video-meta" style="margin-top:2px"><span class="r">${esc(v.role)}</span></div>
+        </span>
+        <span class="video-meta"><span class="t">${esc(v.title)}</span><span class="r">${esc(v.year)} · ${esc(v.role)}</span></span>
       </button>`;
     })
     .join('');
+  rows.push(row(visual.series.length, 'Moving', 'Video', `${visual.videos.length} films`, `<div class="video-row">${videos}</div>`));
+  list.innerHTML = rows.join('');
 
-  // film contact sheet + canister filter
-  renderSheet(root);
-  window.matchMedia('(max-width: 640px)').addEventListener('change', () => renderSheet(root));
-  const stockCount = (k) => visual.film.filter((f) => f.stock === k).length;
-  root.querySelector('.canisters').innerHTML = Object.entries(visual.stocks)
-    .map(([k, c]) => `<button class="can" data-stock="${esc(k)}" aria-pressed="false"><span class="can-ico" style="--c:${esc(c)}"><i></i></span>${esc(k)} <span class="n">${stockCount(k)}</span></button>`)
-    .join('');
-  root.querySelector('.canisters').addEventListener('click', (e) => {
-    const b = e.target.closest('.can');
-    if (!b) return;
-    const on = !b.classList.contains('is-on');
-    root.querySelectorAll('.can').forEach((x) => { x.classList.remove('is-on'); x.setAttribute('aria-pressed', 'false'); });
-    if (on) { b.classList.add('is-on'); b.setAttribute('aria-pressed', 'true'); }
-    filterStock = on ? b.dataset.stock : null;
-    applyFilter(root);
-  });
-  setupLoupe(root);
+  function row(i, title, meta, count, body) {
+    return `<li class="series" data-i="${i}">
+      <button class="series-head" aria-expanded="false">
+        <span class="series-no">${pad(i + 1)}</span>
+        <span class="series-title">${esc(title)}</span>
+        <span class="series-meta">${meta}</span>
+        <span class="series-count">${count}</span>
+        <span class="series-pm" aria-hidden="true"></span>
+      </button>
+      <div class="series-body">${body}</div>
+    </li>`;
+  }
 
-  // digital wall
-  root.querySelector('.digital-wall').innerHTML = visual.digital
-    .map(
-      (d, i) => `
-      <button class="wall-item rv" data-i="${i}">
-        <div class="frame" style="aspect-ratio:${d.src ? 'auto' : d.ratio || 1}">${media(d)}</div>
-        <span class="cap">${esc(d.caption)}</span>
-      </button>`
-    )
-    .join('');
-
-  root.querySelector('.video-grid').addEventListener('click', (e) => {
-    const card = e.target.closest('.video-card');
-    if (!card) return;
-    const p = parseVideo(visual.videos[+card.dataset.i].url);
-    if (!p) return;
-    const modal = document.querySelector('.video-modal');
-    modal.querySelector('.video-frame').innerHTML = `<iframe src="${esc(p.embed)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
-    openModal(modal, { onClose: () => (modal.querySelector('.video-frame').innerHTML = '') });
-  });
-  root.querySelector('.sheet').addEventListener('click', (e) => {
-    const f = e.target.closest('.frame');
-    if (f) openLightbox(visual.film, +f.dataset.i);
-  });
-  root.querySelector('.digital-wall').addEventListener('click', (e) => {
-    const f = e.target.closest('.wall-item');
-    if (f) openLightbox(visual.digital, +f.dataset.i);
-  });
-  root.querySelectorAll('.chip').forEach((a) =>
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      const el = document.querySelector(a.getAttribute('href'));
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
-    })
-  );
-}
-
-// ── contact sheet ───────────────────────────────────────────
-let filterStock = null;
-const GREASE = 'M14 55 C 8 20, 86 6, 93 44 C 99 84, 22 97, 8 62 C 4 46, 18 27, 38 22';
-
-function renderSheet(root) {
-  const per = window.matchMedia('(max-width: 640px)').matches ? 3 : 6;
-  const rows = [];
-  for (let i = 0; i < visual.film.length; i += per) rows.push(visual.film.slice(i, i + per).map((f, j) => [f, i + j]));
-  root.querySelector('.sheet').innerHTML =
-    `<div class="sheet-head"><span>HELEN · ROLL 01</span><span>${visual.film.length} EXP</span></div>` +
-    rows
-      .map(
-        (row) => `<div class="strip" style="--per:${per}">${row
-          .map(
-            ([f, i]) => `<button class="frame" data-i="${i}" data-stock="${esc(f.stock)}" aria-label="${esc(f.caption)}">
-              <span class="fno">${i + 1} ▸ ${i + 1}A</span>
-              ${f.src ? `<img src="${esc(f.src)}" alt="" loading="lazy" />` : `<div class="ph" style="background:${esc(f.tone)}">${esc(f.caption)}</div>`}
-              ${f.pick ? `<svg class="grease" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="${GREASE}" pathLength="1" /></svg>` : ''}
-            </button>`
-          )
-          .join('')}</div>`
-      )
-      .join('');
-  applyFilter(root);
-}
-
-function applyFilter(root) {
-  root.querySelectorAll('.sheet .frame').forEach((f) => f.classList.toggle('dim', !!filterStock && f.dataset.stock !== filterStock));
-  syncLoupe?.();
-}
-
-let syncLoupe = null;
-function setupLoupe(root) {
-  const wrap = root.querySelector('.sheet-wrap');
-  const sheet = root.querySelector('.sheet');
-  const loupe = root.querySelector('.loupe');
-  const inner = root.querySelector('.loupe-inner');
-  const Z = 2.6, R = 110;
-  let dirty = true;
-  syncLoupe = () => (dirty = true);
-  window.addEventListener('resize', syncLoupe);
-  wrap.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    if (dirty) {
-      const clone = sheet.cloneNode(true);
-      clone.style.width = sheet.offsetWidth + 'px';
-      inner.replaceChildren(clone);
-      dirty = false;
+  const gsap = window.gsap;
+  function toggle(li, open) {
+    const head = li.querySelector('.series-head');
+    const body = li.querySelector('.series-body');
+    li.classList.toggle('open', open);
+    head.setAttribute('aria-expanded', open);
+    gsap.to(body, {
+      height: open ? 'auto' : 0, duration: open ? 0.8 : 0.5, ease: open ? 'power3.inOut' : 'power3.in',
+      onComplete: () => window.ScrollTrigger.refresh(),
+    });
+    if (open) {
+      gsap.fromTo(body.querySelectorAll('.shot, .video-card'), { x: 60, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.05, duration: 0.7, delay: 0.2, ease: 'power3.out' });
+      const scroller = body.querySelector('.gallery');
+      if (scroller) scroller.scrollLeft = 0;
     }
-    const r = sheet.getBoundingClientRect();
-    const x = e.clientX - r.left, y = e.clientY - r.top;
-    loupe.style.transform = `translate(${x}px, ${y}px)`;
-    inner.style.transform = `translate(${R - x * Z}px, ${R - y * Z}px) scale(${Z})`;
-    loupe.classList.add('on');
+  }
+  list.addEventListener('click', (e) => {
+    const head = e.target.closest('.series-head');
+    if (head) {
+      const li = head.parentElement;
+      const open = !li.classList.contains('open');
+      list.querySelectorAll('.series.open').forEach((o) => o !== li && toggle(o, false));
+      toggle(li, open);
+      hidePeek();
+      if (open) setTimeout(() => window.scrollTo({ top: li.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }), 350);
+      return;
+    }
+    const shot = e.target.closest('.shot');
+    if (shot) {
+      const s = visual.series[+shot.closest('.gallery').dataset.s];
+      openLightbox(s.photos.map((p) => ({ ...p, camera: `${s.title} · ${s.kind}` })), +shot.dataset.j);
+      return;
+    }
+    const card = e.target.closest('.video-card');
+    if (card) {
+      const p = parseVideo(visual.videos[+card.dataset.v].url);
+      if (!p) return;
+      const modal = document.querySelector('.video-modal');
+      modal.querySelector('.video-frame').innerHTML = `<iframe src="${esc(p.embed)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
+      openModal(modal, { onClose: () => (modal.querySelector('.video-frame').innerHTML = '') });
+    }
   });
-  wrap.addEventListener('pointerleave', () => loupe.classList.remove('on'));
+
+  // drag the open gallery sideways with the mouse (touch scrolls natively)
+  list.querySelectorAll('.gallery').forEach((g) => {
+    let down = null, moved = false;
+    g.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') { down = { x: e.clientX, left: g.scrollLeft }; moved = false; } });
+    window.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - down.x;
+      if (Math.abs(dx) > 4) moved = true;
+      g.scrollLeft = down.left - dx;
+    });
+    window.addEventListener('pointerup', () => (down = null));
+    g.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); moved = false; } }, true);
+  });
+
+  // a small preview that follows the cursor over closed rows and flips through the series
+  const peek = root.querySelector('.series-peek');
+  const qx = gsap.quickTo(peek, 'x', { duration: 0.5, ease: 'power3' });
+  const qy = gsap.quickTo(peek, 'y', { duration: 0.5, ease: 'power3' });
+  let timer = null, peekRow = -1;
+  function showPeek(i) {
+    if (peekRow === i) return;
+    peekRow = i;
+    clearInterval(timer);
+    const s = visual.series[i];
+    if (!s) return hidePeek();
+    let k = 0;
+    const paint = () => { peek.innerHTML = thumb(s.photos[k++ % s.photos.length]); };
+    paint();
+    timer = setInterval(paint, 650);
+    gsap.to(peek, { autoAlpha: 1, scale: 1, duration: 0.35, ease: 'power3.out' });
+  }
+  function hidePeek() {
+    peekRow = -1;
+    clearInterval(timer);
+    gsap.to(peek, { autoAlpha: 0, scale: 0.9, duration: 0.25 });
+  }
+  list.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    qx(e.clientX + 24);
+    qy(e.clientY - 90);
+    const li = e.target.closest('.series');
+    if (li && !li.classList.contains('open') && e.target.closest('.series-head')) showPeek(+li.dataset.i);
+    else hidePeek();
+  });
+  list.addEventListener('pointerleave', hidePeek);
 }
 
 // ── lightbox ────────────────────────────────────────────────
@@ -191,20 +192,8 @@ lb.addEventListener('click', (e) => {
 
 // ── scroll animations ───────────────────────────────────────
 export function initVisualScroll(root) {
-  const gsap = window.gsap;
-  gsap.from(root.querySelectorAll('.strip'), {
-    y: 30, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: root.querySelector('.sheet'), start: 'top 85%' },
-  });
-  // grease-pencil circles draw themselves once the sheet is in view
-  gsap.fromTo(root.querySelectorAll('.grease path'), { strokeDasharray: 1, strokeDashoffset: 1 }, {
-    strokeDashoffset: 0, duration: 0.9, stagger: 0.25, ease: 'power2.inOut',
-    scrollTrigger: { trigger: root.querySelector('.sheet'), start: 'top 60%' },
-  });
-  root.querySelectorAll('.video-card, .wall-item').forEach((el) => {
-    gsap.from(el, {
-      y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
-      scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none reverse' },
-    });
+  window.gsap.from(root.querySelectorAll('.series-head'), {
+    y: 40, opacity: 0, stagger: 0.08, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: root.querySelector('.series-list'), start: 'top 90%' },
   });
 }
