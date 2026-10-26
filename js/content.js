@@ -279,6 +279,20 @@ export const visual = {
           ],
           notes: [],
         },
+        {
+          title: 'Heedo’s Album',
+          kind: '35mm film · portraits',
+          year: '2025',
+          credit: '',
+          photos: [
+            { src: 'assets/photos/seoul/heedos-album/01.jpg', caption: 'Heedo 01', ratio: 1.508 },
+            { src: 'assets/photos/seoul/heedos-album/02.jpg', caption: 'Heedo 02', ratio: 1.508 },
+            { src: 'assets/photos/seoul/heedos-album/03.jpg', caption: 'Heedo 03', ratio: 1.508 },
+            { src: 'assets/photos/seoul/heedos-album/04.jpg', caption: 'Heedo 04', ratio: 1.508 },
+            { src: 'assets/photos/seoul/heedos-album/05.jpg', caption: 'Heedo 05', ratio: 0.663 },
+          ],
+          notes: [],
+        },
       ],
     },
     {

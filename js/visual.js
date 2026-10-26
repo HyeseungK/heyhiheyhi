@@ -105,7 +105,7 @@ export function renderVisual(root) {
         const head = g.title
           ? `<div class="project-head"><h4>${esc(g.title)}</h4><p>${esc([g.kind, g.year, g.credit].filter(Boolean).join(' · '))}</p></div>`
           : '';
-        return head + [...mixed, ...noteHTML].join('');
+        return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
       })
       .join('');
     place.allPhotos = groups.flatMap((g) => g.photos.map((p) => ({ ...p, camera: [g.title || place.name, g.kind].filter(Boolean).join(' · ') })));
@@ -113,7 +113,7 @@ export function renderVisual(root) {
     openModal(spread, {
       from: { opacity: 1 },
       onClose: () => {
-        const items = [...grid.children].reverse();
+        const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary')].reverse();
         const back = origin(id);
         const targets = fly(items, back);
         return new Promise((resolve) => {
@@ -128,7 +128,7 @@ export function renderVisual(root) {
       },
     });
     spread.scrollTop = 0;
-    const items = [...grid.children];
+    const items = [...grid.querySelectorAll('.project-head, .spread-item, .diary')];
     const starts = fly(items, from);
     gsap.fromTo(spread, { backgroundColor: 'rgba(255,255,255,0)' }, { backgroundColor: 'rgba(255,255,255,1)', duration: 0.5 });
     gsap.fromTo(spread.querySelector('.spread-head'), { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: 0.3, ease: 'power3.out' });
