@@ -49,8 +49,7 @@ export function renderVisual(root) {
   // where the photos fly from / back to: the pin if visible, else the chip
   function origin(id) {
     const r = globe?.pinRect(id);
-    const pin = root.querySelector(`.pin[data-id="${id}"]`);
-    if (r && r.width && pin && +pin.style.opacity > 0.5) return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    if (r && r.width && r.top > 0 && r.bottom < window.innerHeight) return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     const chip = root.querySelector(`.place-chip[data-id="${id}"]`).getBoundingClientRect();
     return { x: chip.left + chip.width / 2, y: chip.top + chip.height / 2 };
   }

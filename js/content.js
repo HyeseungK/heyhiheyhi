@@ -221,7 +221,7 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, a trip through Europe, the road in Mongolia, a short film in Suncheon.',
+  lead: 'Spin the globe and pick a place: film in New York, shoots in Seoul, a trip through Europe, black and white in Busan, the road in Mongolia, a short film in Suncheon.',
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
@@ -349,6 +349,21 @@ export const visual = {
           notes: [],
         },
       ],
+    },
+    {
+      id: 'busan',
+      name: 'Busan',
+      lat: 35.18, lon: 129.08,
+      kind: 'Black & white',
+      year: '2025',
+      photos: [
+        { src: 'assets/photos/busan/01.jpg', caption: 'Before the set', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/02.jpg', caption: 'Night shift', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/03.jpg', caption: 'Leftover cups', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/04.jpg', caption: 'Crosswalk, after work', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/busan/05.jpg', caption: 'Smoke break', ratio: 0.666 }, // [CAPTION?]
+      ],
+      notes: [],
     },
     {
       id: 'mongolia',

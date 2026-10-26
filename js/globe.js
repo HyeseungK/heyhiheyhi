@@ -54,10 +54,13 @@ export function createGlobe(canvas, layer, places, { onPick } = {}) {
     btn.setAttribute('aria-label', `${p.name}: open photos`);
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!dragMoved) onPick?.(p.id, btn);
+      if (dragMoved) return;
+      if (pin.group) openMenu(pin);
+      else onPick?.(p.id, btn);
     });
     layer.appendChild(btn);
-    return { p, btn, local: toVec(p.lat, p.lon, 1.0) };
+    const pin = { p, btn, local: toVec(p.lat, p.lon, 1.0) };
+    return pin;
   });
 
   // drag to spin, with inertia; idles into a slow turn
@@ -111,13 +114,51 @@ export function createGlobe(canvas, layer, places, { onPick } = {}) {
       pin.btn.style.opacity = pin.visible ? Math.min(1, (facing - 0.15) * 4) : 0;
       pin.btn.style.pointerEvents = facing > 0.3 ? 'auto' : 'none';
     }
-    // pins close together on screen (Seoul / Suncheon): the lower one puts its label on the left
+    // pins that sit on top of each other (Seoul / Busan / Suncheon) merge into one;
+    // the first in the list leads and opens a small menu
+    const CLOSE = 30;
+    for (const pin of pins) pin.group = null;
     for (const pin of pins) {
-      pin.flip = pins.some((o) => o !== pin && o.visible && pin.visible && o.y < pin.y && pin.y - o.y < 26 && Math.abs(pin.x - o.x) < 140);
-      pin.btn.classList.toggle('flip', pin.flip);
-      pin.btn.style.transform = `translate(${pin.x}px, ${pin.y}px)${pin.flip ? ' translateX(calc(-100% + 14px))' : ''}`;
+      if (!pin.visible || pin.hiddenBy) continue;
+      const near = pins.filter((o) => o !== pin && o.visible && !o.group && Math.hypot(o.x - pin.x, o.y - pin.y) < CLOSE);
+      if (near.length) pin.group = [pin, ...near];
+    }
+    for (const pin of pins) pin.hiddenBy = null;
+    for (const pin of pins) if (pin.group) pin.group.slice(1).forEach((o) => (o.hiddenBy = pin));
+    for (const pin of pins) {
+      const span = pin.btn.querySelector('span');
+      const label = pin.group ? pin.group.map((o) => o.p.name.split(' ')[0]).join(' · ') : pin.p.name;
+      if (span.textContent !== label) span.textContent = label;
+      pin.btn.classList.toggle('cluster', !!pin.group);
+      if (pin.hiddenBy) { pin.btn.style.opacity = 0; pin.btn.style.pointerEvents = 'none'; }
+      pin.btn.style.transform = `translate(${pin.x}px, ${pin.y}px)`;
+    }
+    if (menu.owner) {
+      if (!menu.owner.group || !menu.owner.visible) closeMenu();
+      else menu.el.style.transform = `translate(${menu.owner.x}px, ${menu.owner.y + 18}px)`;
     }
   }
+
+  // menu for a merged pin
+  const menu = { el: document.createElement('div'), owner: null };
+  menu.el.className = 'pin-menu';
+  menu.el.hidden = true;
+  layer.appendChild(menu.el);
+  function openMenu(pin) {
+    menu.owner = pin;
+    menu.el.innerHTML = pin.group.map((o) => `<button data-id="${o.p.id}">${o.p.name}</button>`).join('');
+    menu.el.hidden = false;
+    window.gsap.fromTo(menu.el.children, { y: -6, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.04, duration: 0.25 });
+  }
+  function closeMenu() { menu.owner = null; menu.el.hidden = true; }
+  menu.el.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    e.stopPropagation();
+    closeMenu();
+    onPick?.(b.dataset.id, b);
+  });
+  document.addEventListener('click', (e) => { if (menu.owner && !e.target.closest('.pin-menu, .pin')) closeMenu(); });
 
   let running = false;
   function frame() {
@@ -153,7 +194,8 @@ export function createGlobe(canvas, layer, places, { onPick } = {}) {
       return focusTween;
     },
     pinRect(id) {
-      return pins.find((p) => p.p.id === id)?.btn.querySelector('i').getBoundingClientRect();
+      const pin = pins.find((p) => p.p.id === id);
+      return (pin?.hiddenBy || pin)?.btn.querySelector('i').getBoundingClientRect();
     },
   };
 }
