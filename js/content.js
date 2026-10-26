@@ -309,6 +309,7 @@ export const visual = {
             { src: 'assets/photos/seoul/my-kind-of-woman/07.jpg', caption: 'Michelle 1', year: '2025', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/08.jpg', caption: 'Jieun', year: '2023', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/09.jpg', caption: 'Michelle 2', year: '2023', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/10.jpg', caption: 'Freda & Jisoo', year: '2023', ratio: 0.663 },
           ],
           notes: [],
         },
