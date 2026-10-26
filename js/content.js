@@ -151,14 +151,16 @@ export const work = {
 // and set `src` (e.g. 'assets/photos/film/01.jpg').
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
-  lead: 'Things I shot and cut: film in New York, fashion film in Euljiro, digital on the road.', // [PLACEHOLDER]
-  // Photo series, shown as an index. Click a title to open its gallery.
+  lead: 'Spin the globe and pick a place: film in New York, fashion film in Euljiro, digital on the road.', // [PLACEHOLDER]
+  // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.
-  series: [
+  // Add a place by copying a block; lat / lon are its coordinates.
+  places: [
     {
       id: 'new-york',
-      title: 'New York',
+      name: 'New York',
+      lat: 40.71, lon: -74.0,
       kind: '35mm film',
       year: '2023', // [PLACEHOLDER]
       photos: [
@@ -173,8 +175,9 @@ export const visual = {
       ],
     },
     {
-      id: 'euljiro',
-      title: 'Euljiro',
+      id: 'seoul',
+      name: 'Seoul · Euljiro',
+      lat: 37.566, lon: 126.99,
       kind: 'Fashion film',
       year: '2024', // [PLACEHOLDER]
       photos: [
@@ -188,22 +191,41 @@ export const visual = {
       ],
     },
     {
-      id: 'on-the-road',
-      title: 'On the Road',
-      kind: 'Digital, travels',
-      year: '2019 — Now', // [PLACEHOLDER]
+      id: 'lisbon',
+      name: 'Lisbon',
+      lat: 38.72, lon: -9.14,
+      kind: 'Digital',
+      year: '2023', // [PLACEHOLDER]
       photos: [
         { src: '', caption: 'Lisbon tram', ratio: 1.5, tone: '#cfe0e6' },
-        { src: '', caption: 'Kyoto rain', ratio: 0.8, tone: '#d6e1dc' },
-        { src: '', caption: 'Jeju coast', ratio: 1.5, tone: '#dde3ea' },
-        { src: '', caption: 'Shibuya crossing', ratio: 1.25, tone: '#dcd4e6' },
         { src: '', caption: 'Hotel window', ratio: 0.8, tone: '#e3e6df' },
+      ],
+    },
+    {
+      id: 'kyoto',
+      name: 'Kyoto',
+      lat: 35.01, lon: 135.77,
+      kind: 'Digital',
+      year: '2022', // [PLACEHOLDER]
+      photos: [
+        { src: '', caption: 'Kyoto rain', ratio: 0.8, tone: '#d6e1dc' },
+        { src: '', caption: 'Shibuya crossing', ratio: 1.25, tone: '#dcd4e6' },
+      ],
+    },
+    {
+      id: 'jeju',
+      name: 'Jeju',
+      lat: 33.5, lon: 126.53,
+      kind: 'Digital',
+      year: '2021', // [PLACEHOLDER]
+      photos: [
+        { src: '', caption: 'Jeju coast', ratio: 1.5, tone: '#dde3ea' },
         { src: '', caption: 'Desert road', ratio: 1.5, tone: '#f0e1c8' },
         { src: '', caption: 'Harbour', ratio: 1.25, tone: '#d9e2e4' },
       ],
     },
   ],
-  // Moving pictures: the last row of the index. `url` can be a YouTube or Vimeo link.
+  // Moving pictures, below the globe. `url` can be a YouTube or Vimeo link.
   videos: [
     { title: 'Short film — “Blue Hour”', year: '2024', role: 'Director, editor', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }, // [PLACEHOLDER]
     { title: 'Euljiro lookbook', year: '2024', role: 'Camera, edit', url: '' }, // [PLACEHOLDER]

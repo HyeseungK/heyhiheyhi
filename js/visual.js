@@ -1,5 +1,6 @@
 import { visual } from './content.js';
 import { openModal, closeModal } from './modal.js';
+import { createGlobe } from './globe.js';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -12,25 +13,28 @@ function parseVideo(url) {
   return { embed: url, thumb: '' };
 }
 
-const pad = (n) => String(n).padStart(2, '0');
-const thumb = (p) =>
-  p.src
-    ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" decoding="async" />`
-    : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`;
+// Frames: a globe of places. Pick one and its photos spill out of the pin.
+let globe = null;
+export const globeLoop = { start: () => globe?.start(), stop: () => globe?.stop() };
 
-// Frames: an index of series. Each row opens into a horizontal gallery.
 export function renderVisual(root) {
-  const list = root.querySelector('.series-list');
-  const rows = visual.series.map((s, i) => {
-    const gallery = s.photos
-      .map((p, j) => `<button class="shot" data-j="${j}" style="--r:${p.src ? 'auto' : p.ratio || 1.5}">
-          <span class="shot-media">${thumb(p)}</span>
-          <span class="shot-cap"><span>${esc(p.caption)}</span><span>${pad(j + 1)}</span></span>
-        </button>`)
-      .join('');
-    return row(i, s.title, `${esc(s.kind)} · ${esc(s.year)}`, `${s.photos.length} frames`, `<div class="gallery" data-s="${i}">${gallery}</div>`);
+  const gsap = window.gsap;
+  const places = visual.places;
+
+  globe = createGlobe(root.querySelector('.globe-canvas'), root.querySelector('.pin-layer'), places, {
+    onPick: (id) => openPlace(id),
   });
-  const videos = visual.videos
+  if (!globe) root.querySelector('.globe-wrap').hidden = true;
+
+  root.querySelector('.place-chips').innerHTML = places
+    .map((p) => `<button class="place-chip" data-id="${esc(p.id)}">${esc(p.name)} <span>${p.photos.length}</span></button>`)
+    .join('');
+  root.querySelector('.place-chips').addEventListener('click', (e) => {
+    const b = e.target.closest('.place-chip');
+    if (b) openPlace(b.dataset.id);
+  });
+
+  root.querySelector('.video-row').innerHTML = visual.videos
     .map((v, i) => {
       const p = parseVideo(v.url);
       return `<button class="video-card" data-v="${i}" ${p ? '' : 'aria-disabled="true"'}>
@@ -42,110 +46,85 @@ export function renderVisual(root) {
       </button>`;
     })
     .join('');
-  rows.push(row(visual.series.length, 'Moving', 'Video', `${visual.videos.length} films`, `<div class="video-row">${videos}</div>`));
-  list.innerHTML = rows.join('');
-
-  function row(i, title, meta, count, body) {
-    return `<li class="series" data-i="${i}">
-      <button class="series-head" aria-expanded="false">
-        <span class="series-no">${pad(i + 1)}</span>
-        <span class="series-title">${esc(title)}</span>
-        <span class="series-meta">${meta}</span>
-        <span class="series-count">${count}</span>
-        <span class="series-pm" aria-hidden="true"></span>
-      </button>
-      <div class="series-body">${body}</div>
-    </li>`;
-  }
-
-  const gsap = window.gsap;
-  function toggle(li, open) {
-    const head = li.querySelector('.series-head');
-    const body = li.querySelector('.series-body');
-    li.classList.toggle('open', open);
-    head.setAttribute('aria-expanded', open);
-    gsap.to(body, {
-      height: open ? 'auto' : 0, duration: open ? 0.8 : 0.5, ease: open ? 'power3.inOut' : 'power3.in',
-      onComplete: () => window.ScrollTrigger.refresh(),
-    });
-    if (open) {
-      gsap.fromTo(body.querySelectorAll('.shot, .video-card'), { x: 60, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.05, duration: 0.7, delay: 0.2, ease: 'power3.out' });
-      const scroller = body.querySelector('.gallery');
-      if (scroller) scroller.scrollLeft = 0;
-    }
-  }
-  list.addEventListener('click', (e) => {
-    const head = e.target.closest('.series-head');
-    if (head) {
-      const li = head.parentElement;
-      const open = !li.classList.contains('open');
-      list.querySelectorAll('.series.open').forEach((o) => o !== li && toggle(o, false));
-      toggle(li, open);
-      hidePeek();
-      if (open) setTimeout(() => window.scrollTo({ top: li.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }), 350);
-      return;
-    }
-    const shot = e.target.closest('.shot');
-    if (shot) {
-      const s = visual.series[+shot.closest('.gallery').dataset.s];
-      openLightbox(s.photos.map((p) => ({ ...p, camera: `${s.title} · ${s.kind}` })), +shot.dataset.j);
-      return;
-    }
+  root.querySelector('.video-row').addEventListener('click', (e) => {
     const card = e.target.closest('.video-card');
-    if (card) {
-      const p = parseVideo(visual.videos[+card.dataset.v].url);
-      if (!p) return;
-      const modal = document.querySelector('.video-modal');
-      modal.querySelector('.video-frame').innerHTML = `<iframe src="${esc(p.embed)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
-      openModal(modal, { onClose: () => (modal.querySelector('.video-frame').innerHTML = '') });
-    }
+    const p = card && parseVideo(visual.videos[+card.dataset.v].url);
+    if (!p) return;
+    const modal = document.querySelector('.video-modal');
+    modal.querySelector('.video-frame').innerHTML = `<iframe src="${esc(p.embed)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
+    openModal(modal, { onClose: () => (modal.querySelector('.video-frame').innerHTML = '') });
   });
 
-  // drag the open gallery sideways with the mouse (touch scrolls natively)
-  list.querySelectorAll('.gallery').forEach((g) => {
-    let down = null, moved = false;
-    g.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') { down = { x: e.clientX, left: g.scrollLeft }; moved = false; } });
-    window.addEventListener('pointermove', (e) => {
-      if (!down) return;
-      const dx = e.clientX - down.x;
-      if (Math.abs(dx) > 4) moved = true;
-      g.scrollLeft = down.left - dx;
+  // ── the spread ──
+  const spread = document.querySelector('.spread');
+  const grid = spread.querySelector('.spread-grid');
+  let place = null;
+
+  // where the photos fly from / back to: the pin if visible, else the chip
+  function origin(id) {
+    const r = globe?.pinRect(id);
+    const pin = root.querySelector(`.pin[data-id="${id}"]`);
+    if (r && r.width && pin && +pin.style.opacity > 0.5) return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    const chip = root.querySelector(`.place-chip[data-id="${id}"]`).getBoundingClientRect();
+    return { x: chip.left + chip.width / 2, y: chip.top + chip.height / 2 };
+  }
+
+  // offsets that put each photo back inside the pin
+  function fly(items, from) {
+    return items.map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: from.x - (r.left + r.width / 2), y: from.y - (r.top + r.height / 2), rotation: gsap.utils.random(-35, 35) };
     });
-    window.addEventListener('pointerup', () => (down = null));
-    g.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); moved = false; } }, true);
-  });
+  }
 
-  // a small preview that follows the cursor over closed rows and flips through the series
-  const peek = root.querySelector('.series-peek');
-  const qx = gsap.quickTo(peek, 'x', { duration: 0.5, ease: 'power3' });
-  const qy = gsap.quickTo(peek, 'y', { duration: 0.5, ease: 'power3' });
-  let timer = null, peekRow = -1;
-  function showPeek(i) {
-    if (peekRow === i) return;
-    peekRow = i;
-    clearInterval(timer);
-    const s = visual.series[i];
-    if (!s) return hidePeek();
-    let k = 0;
-    const paint = () => { peek.innerHTML = thumb(s.photos[k++ % s.photos.length]); };
-    paint();
-    timer = setInterval(paint, 650);
-    gsap.to(peek, { autoAlpha: 1, scale: 1, duration: 0.35, ease: 'power3.out' });
+  async function openPlace(id) {
+    place = places.find((p) => p.id === id);
+    if (!place) return;
+    await globe?.focus(id);
+    spread.querySelector('.spread-title').textContent = place.name;
+    spread.querySelector('.spread-meta').textContent = `${place.kind} · ${place.year} · ${place.photos.length} frames`;
+    grid.innerHTML = place.photos
+      .map((p, j) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j}" style="--r:${p.ratio || 1.5}">
+          ${p.src ? `<img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />` : `<span class="ph" style="background:${esc(p.tone || '#eee')}"><em>${esc(p.caption)}</em></span>`}
+          <span class="spread-cap">${esc(p.caption)}</span>
+        </button>`)
+      .join('');
+    const from = origin(id);
+    openModal(spread, {
+      from: { opacity: 1 },
+      onClose: () => {
+        const items = [...grid.children].reverse();
+        const back = origin(id);
+        const targets = fly(items, back);
+        return new Promise((resolve) => {
+          gsap.to(spread.querySelector('.spread-head'), { opacity: 0, duration: 0.25 });
+          gsap.to(items, {
+            x: (i) => targets[i].x, y: (i) => targets[i].y, scale: 0.06, rotation: (i) => targets[i].rotation, opacity: 0,
+            duration: 0.55, ease: 'power3.in', stagger: 0.025,
+            onComplete: () => { gsap.set(spread.querySelector('.spread-head'), { opacity: 1 }); resolve(); },
+          });
+          gsap.to(spread, { backgroundColor: 'rgba(255,255,255,0)', duration: 0.5, delay: 0.2 });
+        });
+      },
+    });
+    spread.scrollTop = 0;
+    const items = [...grid.children];
+    const starts = fly(items, from);
+    gsap.fromTo(spread, { backgroundColor: 'rgba(255,255,255,0)' }, { backgroundColor: 'rgba(255,255,255,1)', duration: 0.5 });
+    gsap.fromTo(spread.querySelector('.spread-head'), { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: 0.3, ease: 'power3.out' });
+    gsap.fromTo(items, {
+      x: (i) => starts[i].x, y: (i) => starts[i].y, scale: 0.06, rotation: (i) => starts[i].rotation, opacity: 0,
+    }, {
+      x: 0, y: 0, scale: 1, rotation: 0, opacity: 1,
+      duration: 1, ease: 'power4.out', stagger: 0.05, clearProps: 'transform',
+    });
   }
-  function hidePeek() {
-    peekRow = -1;
-    clearInterval(timer);
-    gsap.to(peek, { autoAlpha: 0, scale: 0.9, duration: 0.25 });
-  }
-  list.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    qx(e.clientX + 24);
-    qy(e.clientY - 90);
-    const li = e.target.closest('.series');
-    if (li && !li.classList.contains('open') && e.target.closest('.series-head')) showPeek(+li.dataset.i);
-    else hidePeek();
+
+  spread.querySelector('.spread-back').addEventListener('click', () => closeModal(spread));
+  grid.addEventListener('click', (e) => {
+    const it = e.target.closest('.spread-item');
+    if (it && place) openLightbox(place.photos.map((p) => ({ ...p, camera: `${place.name} · ${place.kind}` })), +it.dataset.j);
   });
-  list.addEventListener('pointerleave', hidePeek);
 }
 
 // ── lightbox ────────────────────────────────────────────────
@@ -192,8 +171,11 @@ lb.addEventListener('click', (e) => {
 
 // ── scroll animations ───────────────────────────────────────
 export function initVisualScroll(root) {
-  window.gsap.from(root.querySelectorAll('.series-head'), {
-    y: 40, opacity: 0, stagger: 0.08, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: root.querySelector('.series-list'), start: 'top 90%' },
+  const gsap = window.gsap;
+  gsap.from(root.querySelector('.globe-wrap'), { scale: 0.85, opacity: 0, duration: 1.2, ease: 'power3.out' });
+  gsap.from(root.querySelectorAll('.place-chip'), { y: 14, opacity: 0, stagger: 0.06, duration: 0.6, delay: 0.4, ease: 'power3.out' });
+  window.ScrollTrigger.create({
+    trigger: root.querySelector('.globe-wrap'), start: 'top bottom', end: 'bottom top',
+    onToggle: (self) => (self.isActive ? globeLoop.start() : globeLoop.stop()),
   });
 }

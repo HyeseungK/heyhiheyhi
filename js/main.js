@@ -2,7 +2,7 @@ import { site, profile, work, visual, music, heroWords } from './content.js';
 import { createHero } from './hero.js';
 import { transition, isBusy } from './fx.js';
 import { renderWork, initWorkScroll } from './work.js';
-import { renderVisual, initVisualScroll } from './visual.js';
+import { renderVisual, initVisualScroll, globeLoop } from './visual.js';
 import { renderMusic, initMusicScroll, guitarLoop } from './music.js';
 import { renderBrickIcons } from './bricks.js';
 import { initCursor } from './cursor.js';
@@ -283,6 +283,7 @@ function activate(name) {
   });
   if (name !== 'work') workApi.close();
   if (name !== 'music') guitarLoop.stop();
+  if (name !== 'visual') globeLoop.stop();
   window.scrollTo(0, 0);
   if (name === 'home') { hero?.relayout(); hero?.start(); }
   else { hero?.stop(); freePets(); }

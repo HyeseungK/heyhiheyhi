@@ -146,8 +146,16 @@
         <p class="page-lead" data-fill="visual.lead"></p>
       </div>
 
-      <ol class="series-list"></ol>
-      <div class="series-peek" aria-hidden="true"></div>
+      <div class="globe-wrap">
+        <canvas class="globe-canvas" aria-label="Globe. Drag to spin, pick a place"></canvas>
+        <div class="pin-layer"></div>
+      </div>
+      <div class="place-chips" aria-label="Places"></div>
+
+      <div class="moving">
+        <div class="block-head"><p class="label">Moving</p></div>
+        <div class="video-row"></div>
+      </div>
     </section>
 
     <!-- ── MUSIC ──────────────────────────────────────────── -->
@@ -196,6 +204,14 @@
     <button class="lb-nav lb-prev" aria-label="Previous">←</button>
     <figure class="lb-figure"><div class="lb-media"></div><figcaption class="lb-cap"></figcaption></figure>
     <button class="lb-nav lb-next" aria-label="Next">→</button>
+  </div>
+
+  <div class="spread" hidden role="dialog" aria-modal="true" aria-label="Photos">
+    <div class="spread-head">
+      <button class="spread-back">← Globe</button>
+      <div class="spread-titles"><h3 class="spread-title"></h3><p class="spread-meta"></p></div>
+    </div>
+    <div class="spread-grid"></div>
   </div>
 
   <div class="modal video-modal" hidden role="dialog" aria-modal="true" aria-label="Video player">
