@@ -47,7 +47,7 @@ export const profile = {
   // `display`: how the link reads on the business card (defaults to the URL)
   links: [
     { label: 'Email', href: 'mailto:hyeseungkim.kr@gmail.com' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/helen-kim-369261268/', display: 'in/helen-kim' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/helen-kim-kr/', display: 'in/helen-kim-kr' },
     { label: 'Instagram', href: 'https://www.instagram.com/helenrighthere/', display: '@helenrighthere' },
   ],
 };
@@ -371,7 +371,7 @@ export const visual = {
   // Moving pictures, below the globe. `url` can be a YouTube or Vimeo link.
   videos: [
     {
-      title: 'Camcorder film', // [PLACEHOLDER] title
+      title: 'Suncheon is Silent',
       year: '2025', // [PLACEHOLDER]
       role: 'Shot on a camcorder · music made in Ableton · edited in Movavi', // camcorder model to come
       url: 'https://youtu.be/a2JeC39Gv_U',
