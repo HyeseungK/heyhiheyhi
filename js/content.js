@@ -300,9 +300,9 @@ export const visual = {
           year: '2023 — 2025',
           credit: '',
           photos: [
-            { src: 'assets/photos/seoul/my-kind-of-woman/01.jpg', caption: 'Ok Jiwon 1', year: '2025', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/02.jpg', caption: 'Hyemin 1', year: '2025', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/03.jpg', caption: 'Hyemin & Hyomin', year: '2025', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/01.jpg', caption: 'Ok Jiwon 1', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/02.jpg', caption: 'Hyemin 1', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/03.jpg', caption: 'Hyemin & Hyomin', year: '2024', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/04.jpg', caption: 'Hyemin 2', year: '2025', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/05.jpg', caption: 'Hyemin 3', year: '2025', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/06.jpg', caption: 'Ok Jiwon 2', year: '2024', ratio: 1.508 },
