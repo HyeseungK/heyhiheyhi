@@ -294,6 +294,20 @@ export const visual = {
           ],
           notes: [],
         },
+        {
+          title: 'My Kind of Woman',
+          kind: '35mm film · portraits',
+          year: '2025',
+          credit: '',
+          photos: [
+            { src: 'assets/photos/seoul/my-kind-of-woman/01.jpg', caption: 'Ok Jiwon 1', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/02.jpg', caption: 'Hyemin 1', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/03.jpg', caption: 'Hyemin & Hyomin', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/04.jpg', caption: 'Hyemin 2', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/05.jpg', caption: 'Hyemin 3', ratio: 1.508 },
+          ],
+          notes: [],
+        },
       ],
     },
     {
