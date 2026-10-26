@@ -324,6 +324,11 @@ export const visual = {
             { src: 'assets/photos/seoul/daily-life/03.jpg', caption: 'Peace signs, neon', ratio: 1.508 }, // [CAPTION?]
             { src: 'assets/photos/seoul/daily-life/04.jpg', caption: 'Flowers after graduation', ratio: 1.508 }, // [CAPTION?]
             { src: 'assets/photos/seoul/daily-life/05.jpg', caption: 'Dance shoes in the window', ratio: 1.508 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/06.jpg', caption: 'Bus stop, blur', ratio: 0.663 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/07.jpg', caption: 'Mirror, before going out', ratio: 0.663 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/08.jpg', caption: 'Underground, emart24', ratio: 1.508 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/09.jpg', caption: 'Three on a walk', ratio: 1.508 }, // [CAPTION?]
+            { src: 'assets/photos/seoul/daily-life/10.jpg', caption: 'Carnival, night', ratio: 0.663 }, // [CAPTION?]
           ],
           notes: [],
         },
