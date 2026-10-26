@@ -246,6 +246,11 @@ export const visual = {
         { src: 'assets/photos/new-york/08.jpg', caption: 'Billboard, golden hour', ratio: 1.5 }, // [CAPTION?]
         { src: 'assets/photos/new-york/09.jpg', caption: 'Mott & Bayard', ratio: 1.5 },
         { src: 'assets/photos/new-york/10.jpg', caption: 'Reading in the blossoms', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/11.jpg', caption: 'Dusk, the gang', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/12.jpg', caption: 'Spring, Washington Square', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/13.jpg', caption: 'Denim on the fence', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/14.jpg', caption: 'Through the fence, the court', ratio: 1.5 }, // [CAPTION?]
+        { src: 'assets/photos/new-york/15.jpg', caption: 'Sideline', ratio: 1.5 }, // [CAPTION?]
       ],
       notes: [], // e.g. [{ src: 'assets/diary/new-york-1.jpg', date: '2023.05.02' }]
     },
