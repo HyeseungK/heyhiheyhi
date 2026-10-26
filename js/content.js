@@ -20,11 +20,10 @@ export const site = {
   },
   accents: [
     { name: 'Cobalt', hex: '#2f4cff' },
-    { name: 'Vermilion', hex: '#e8462a' },
-    { name: 'Wine', hex: '#a3162f' },
+    { name: 'Red', hex: '#c8102e' },
+    { name: 'Ink', hex: '#0f0f0f' },
     { name: 'Film orange', hex: '#ff6a1f' },
     { name: 'Pink', hex: '#ff4f8b' },
-    { name: 'Ink', hex: '#0f0f0f' },
   ],
 };
 
