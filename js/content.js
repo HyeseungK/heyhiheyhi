@@ -538,7 +538,7 @@ export const visual = {
     },
     {
       type: 'Director',
-      title: '윤승림 Yoon Seungrim', // [CHECK] romanisation
+      title: 'Rimayoon',
       credit: 'Music video director · Legend Film',
       works: [],
       why: '', // [PLACEHOLDER]
@@ -590,6 +590,16 @@ export const visual = {
       url: '',
       instagram: '', // [PLACEHOLDER] handle
       tone: '#d5dde6',
+    },
+    {
+      type: 'Artist',
+      title: 'Karel Martens',
+      credit: 'Graphic designer, the Netherlands',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '',
+      tone: '#e7e1d2',
     },
     {
       type: 'Artist',
