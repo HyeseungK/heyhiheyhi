@@ -442,6 +442,7 @@ export const visual = {
   museTypes: [
     { type: 'Photographer', label: 'Photographers' },
     { type: 'Director', label: 'Directors' },
+    { type: 'Artist', label: 'Artists' },
     { type: 'Work', label: 'Works' },
   ],
   muses: [
@@ -544,6 +545,26 @@ export const visual = {
       url: '',
       instagram: '', // [PLACEHOLDER] handle
       tone: '#e3d3e0',
+    },
+    {
+      type: 'Artist',
+      title: '고태호 Ko Taeho', // [CHECK] romanisation
+      credit: 'Webtoon artist · 당신의 과녁',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#e2dccf',
+    },
+    {
+      type: 'Artist',
+      title: '조은영 Cho Eunyoung', // [CHECK] romanisation
+      credit: 'Webtoon artist · 저궤도인간',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#d5dde6',
     },
     {
       type: 'Work',
