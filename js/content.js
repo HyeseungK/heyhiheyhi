@@ -538,6 +538,21 @@ export const visual = {
     },
     {
       type: 'Director',
+      title: '윤승림 Yoon Seungrim', // [CHECK] romanisation
+      credit: 'Music video director · Legend Film',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      // each one gets its own ▶ button on the back of the card
+      videos: [
+        { title: 'Jeon Somi — EXTRA', url: 'https://www.youtube.com/watch?v=zq5mr3ePY1I' },
+        { title: 'Hearts2Hearts — The Chase', url: 'https://www.youtube.com/watch?v=kxUA2wwYiME' },
+      ],
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#2a2a2a',
+    },
+    {
+      type: 'Director',
       title: '노상윤 Roh Sangyun', // [CHECK] romanisation
       credit: 'Music video director',
       works: [],
@@ -595,16 +610,6 @@ export const visual = {
       url: 'https://www.youtube.com/watch?v=BTlj6Sls7KE',
       instagram: '',
       tone: '#1d1d1d',
-    },
-    {
-      type: 'Work',
-      title: 'Jeon Somi — EXTRA',
-      credit: 'Music video · Legend Film', // [CHECK] dir. Yoon Seung-rim, per press
-      image: '',
-      why: '', // [PLACEHOLDER]
-      url: 'https://www.youtube.com/watch?v=zq5mr3ePY1I',
-      instagram: '',
-      tone: '#2a2a2a',
     },
     {
       type: 'Work',

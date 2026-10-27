@@ -223,7 +223,9 @@ function renderMuses(root) {
   board.innerHTML = muses
     .map((m, i) => {
       const imgs = m.works?.length ? m.works : m.image ? [m.image] : [];
-      const video = isFilm(m.url) && parseVideo(m.url);
+      // `videos` ([{ title, url }]) for a card with several films, or a single film in `url`
+      const films = (m.videos || (isFilm(m.url) ? [{ title: '', url: m.url }] : [])).filter((v) => isFilm(v.url));
+      const video = films.length && parseVideo(films[0].url);
       const thumb = !imgs.length && video?.thumb ? video.thumb : '';
       const dark = /^#[0-3]/.test(m.tone || '');
       const media = imgs.length
@@ -246,7 +248,7 @@ function renderMuses(root) {
             <b>${esc(m.title)}</b>
             ${m.why ? `<span class="muse-why">“${esc(m.why)}”</span>` : ''}
             <span class="muse-actions">
-              ${video ? `<button class="muse-btn" data-play="${i}">▶ Watch</button>` : ''}
+              ${films.map((v, k) => `<button class="muse-btn" data-play="${i}" data-k="${k}">▶ ${esc(v.title || 'Watch')}</button>`).join('')}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
               ${ig ? `<a class="muse-btn" href="${ig}" target="_blank" rel="noopener">Instagram ↗</a>` : ''}
             </span>
@@ -263,7 +265,10 @@ function renderMuses(root) {
   };
   board.addEventListener('click', (e) => {
     const play = e.target.closest('[data-play]');
-    if (play) return playVideo(muses[+play.dataset.play].url);
+    if (play) {
+      const m = muses[+play.dataset.play];
+      return playVideo((m.videos || [{ url: m.url }])[+play.dataset.k || 0].url);
+    }
     if (e.target.closest('a')) return;
     const card = e.target.closest('.muse');
     if (card) flip(card);
