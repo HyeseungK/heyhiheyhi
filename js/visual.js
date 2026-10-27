@@ -198,7 +198,9 @@ export function renderVisual(root) {
 const RATIO = { Work: '16 / 9', Video: '16 / 9', 'Other artwork': '1 / 1' };
 // a card can have one type or several (e.g. ['Photographer', 'Director'])
 const typesOf = (m) => [].concat(m.type || []);
-const isFilm = (url) => /youtu|vimeo/.test(url || '');
+const isFilm = (url) => /youtu\.be\/|youtube\.com\/(watch|embed|shorts)|vimeo\.com\/(video\/)?\d/.test(url || ''); // a single film, not a channel
+// Korean runs get their own upright font (the serif italic has no Hangul)
+const ko = (html) => html.replace(/[\u3131-\u318E\uAC00-\uD7A3]+(?:\s+[\u3131-\u318E\uAC00-\uD7A3]+)*/g, '<span class="ko">$&</span>');
 
 function playVideo(url) {
   const p = parseVideo(url);
@@ -232,7 +234,7 @@ function renderMuses(root) {
         ? `<span class="muse-media${imgs.length > 1 ? ' collage' : ''}">${imgs.slice(0, 3).map((src) => `<img src="${esc(src)}" alt="" loading="lazy" />`).join('')}</span>`
         : thumb
           ? `<span class="muse-media"><img src="${esc(thumb)}" alt="" loading="lazy" /><span class="play"></span></span>`
-          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${video ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
+          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${video ? '<span class="play"></span>' : `<em>${ko(esc(m.title.split(' ')[0]))}</em>`}</span>`;
       const tilt = ((i * 37) % 7) - 3;
       const handle = (m.instagram || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
       const ig = handle ? `https://www.instagram.com/${encodeURIComponent(handle)}/` : '';
@@ -241,12 +243,12 @@ function renderMuses(root) {
         <span class="muse-inner">
           <span class="muse-front">
             ${media}
-            <span class="muse-text"><span class="muse-type">${esc(typesOf(m).join(' · '))}</span><b>${esc(m.title)}</b><span class="muse-credit">${esc(m.credit || '')}</span>${ig ? `<a class="muse-ig" href="${ig}" target="_blank" rel="noopener">@${esc(handle)}</a>` : ''}</span>
+            <span class="muse-text"><span class="muse-type">${esc(typesOf(m).join(' · '))}</span><b>${esc(m.title)}</b><span class="muse-credit">${ko(esc(m.credit || ''))}</span>${ig ? `<a class="muse-ig" href="${ig}" target="_blank" rel="noopener">@${esc(handle)}</a>` : ''}</span>
           </span>
           <span class="muse-back">
             <span class="muse-type">${esc(typesOf(m).join(' · '))}</span>
             <b>${esc(m.title)}</b>
-            ${m.why ? `<span class="muse-why">“${esc(m.why)}”</span>` : ''}
+            ${m.why ? `<span class="muse-why">“${ko(esc(m.why))}”</span>` : ''}
             <span class="muse-actions">
               ${films.map((v, k) => `<button class="muse-btn" data-play="${i}" data-k="${k}">▶ ${esc(v.title || 'Watch')}</button>`).join('')}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}

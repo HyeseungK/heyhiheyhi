@@ -437,13 +437,13 @@ export const visual = {
   // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
-  // Filter chips, in this order. A card's `type` is one of these, or a list of them
-  // (e.g. ['Photographer', 'Director']) to show under both.
+  // Every card is a person. Their favourite works hang off the card: `works` (images) and
+  // `videos` (films that play in place). Filter chips, in this order. A card's `type` is one
+  // of these, or a list of them (e.g. ['Photographer', 'Director']) to show under both.
   museTypes: [
     { type: 'Photographer', label: 'Photographers' },
     { type: 'Director', label: 'Directors' },
     { type: 'Artist', label: 'Artists' },
-    { type: 'Work', label: 'Works' },
   ],
   muses: [
     {
@@ -563,6 +563,28 @@ export const visual = {
     },
     {
       type: 'Director',
+      title: '송민규 Song Mingyu', // [CHECK] romanisation
+      credit: 'Music video director',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      videos: [{ title: 'FILM KAI', url: 'https://www.youtube.com/watch?v=VjjKbrFJoxY' }],
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#262626',
+    },
+    {
+      type: 'Director',
+      title: '송서윤 Song Seoyoon', // [CHECK] credited online for the Delulu track film; confirm
+      credit: 'Music video director',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      videos: [{ title: 'KiiiKiii — Delulu', url: 'https://www.youtube.com/watch?v=BTlj6Sls7KE' }],
+      instagram: '',
+      tone: '#1d1d1d',
+    },
+    {
+      type: 'Director',
       title: '노상윤 Roh Sangyun', // [CHECK] romanisation
       credit: 'Music video director',
       works: [],
@@ -620,26 +642,6 @@ export const visual = {
       url: 'https://www.youtube.com/@Gawx2',
       instagram: '',
       tone: '#e6d9c8',
-    },
-    {
-      type: 'Work',
-      title: 'KiiiKiii — Delulu',
-      credit: 'Music video', // [CHECK] director: listed online as a track film by Song Seo-yoon
-      image: '',
-      why: '', // [PLACEHOLDER]
-      url: 'https://www.youtube.com/watch?v=BTlj6Sls7KE',
-      instagram: '',
-      tone: '#1d1d1d',
-    },
-    {
-      type: 'Work',
-      title: 'FILM KAI',
-      credit: 'dir. 송민규 Song Mingyu', // [CHECK] romanisation
-      image: '',
-      why: '', // [PLACEHOLDER]
-      url: 'https://www.youtube.com/watch?v=VjjKbrFJoxY',
-      instagram: '',
-      tone: '#262626',
     },
   ],
 };
