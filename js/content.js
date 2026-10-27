@@ -489,10 +489,7 @@ export const visual = {
       works: ['assets/muses/yoon-songi-1.jpg'],
       why: 'A gift for drawing people as a dream. Fashion photographs where you can read the photographer, someone who thinks a lot. A pretty kind of melancholy, bluish and see-through, like light through paper doors.',
       url: '',
-      links: [
-        { label: 'Interview', url: 'https://www.marieclairekorea.com/fashion/2026/04/yoon-song-yi-2/' },
-        { label: 'With Brian Eno', url: 'https://www.marieclairekorea.com/lifestyle/2022/11/coda/' },
-      ],
+      links: [{ label: 'Interview', url: 'https://www.marieclairekorea.com/fashion/2026/04/yoon-song-yi-2/' }],
       instagram: 'songgge',
       tone: '#e9dfe0',
     },
