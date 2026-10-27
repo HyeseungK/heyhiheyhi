@@ -15,7 +15,7 @@ export const site = {
     home: 'Helen',
     work: 'working',
     visual: 'filming',
-    music: 'listening',
+    music: 'playing',
   },
   // With more than one entry, a colour dot in the top bar lets visitors switch.
   accents: [
