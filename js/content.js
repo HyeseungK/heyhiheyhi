@@ -64,60 +64,74 @@ export const heroWords = [
 // ── WORK ─────────────────────────────────────────────────────
 export const work = {
   lead:
-    'I like turning messy questions into clear decisions. Below is the path so far, and inside the laptop are the projects that shaped it.', // [PLACEHOLDER]
+    'I like turning messy questions into clear decisions: start with a hypothesis, then go and ask the people who know. Below is the path so far, and inside the laptop are the industries I’ve been living in.',
   // Grouped on the page by `group`, in the order they first appear. Newest first.
   career: [
     {
       group: 'Experience',
-      period: '2024 — Now', // [PLACEHOLDER]
-      org: 'Kearney',
-      role: 'Business Analyst', // [PLACEHOLDER] your title
-      text: '[PLACEHOLDER] My first full-time role: strategy and operations projects, from the first hypothesis tree to the final storyline.',
+      period: '2026 — Now',
+      org: 'Kearney, Seoul',
+      role: 'Business Analyst',
+      text: 'Due diligence and market entry, hypothesis first. So far: semiconductor consumables, power transformers, an indie K-beauty brand and the global drone market, with a lot of expert calls along the way.',
     },
     {
       group: 'Experience',
-      period: '2023', // [PLACEHOLDER]
-      org: 'Company A',
-      role: 'Intern, Strategy', // [PLACEHOLDER]
-      text: '[PLACEHOLDER] What I did and what I learned, in one or two sentences.',
+      period: '2024 — 2025',
+      org: 'Bain & Company, Seoul',
+      role: 'Associate Consultant Trainee',
+      text: 'Took apart how about ten bakery products get made, looking for costs to cut and steps to automate, and turned it into a growth story for a Korean food group.',
     },
     {
       group: 'Experience',
-      period: '2022', // [PLACEHOLDER]
-      org: 'Company B',
-      role: 'Intern', // [PLACEHOLDER]
-      text: '[PLACEHOLDER]',
+      period: '2024',
+      org: 'Boston Consulting Group, Seoul',
+      role: 'Research Assistant',
+      text: 'Helped plan how a robotics startup would fit into a much larger company, and worked on C-suite pay and governance built on 50+ interviews.',
     },
     {
       group: 'Education & activities',
-      period: '2019 — 2024', // [PLACEHOLDER]
-      org: 'University name',
-      role: 'B.A. Major', // [PLACEHOLDER]
-      text: '[PLACEHOLDER] One line about what you studied.',
+      period: '2021 — 2026',
+      org: 'Yonsei University',
+      role: 'Bachelor of Business Administration',
+      text: 'GPA 4.21 / 4.30, academic honours in three semesters.',
     },
     {
       group: 'Education & activities',
-      period: '2021 — 2022', // [PLACEHOLDER]
-      org: 'Strategy society name',
-      role: 'Member', // [PLACEHOLDER] 학회
-      text: '[PLACEHOLDER] Case competitions and consulting projects for real clients.',
+      period: '2023',
+      org: 'New York University',
+      role: 'Visiting Student',
+      text: 'A spring in New York: supply chains and accounting by day, the film rolls you’ll find in Frames by night.',
     },
     {
       group: 'Education & activities',
-      period: '2019 — 2023', // [PLACEHOLDER]
-      org: 'Film · Photo · MIDI clubs',
-      role: 'Member', // [PLACEHOLDER]
-      text: '[PLACEHOLDER] Short films, darkroom nights and late-night music production: where the creative side of this site started.',
+      period: '2023 — 2024',
+      org: 'Global Management Track',
+      role: 'Strategy club · VP of Public Relations',
+      text: '15+ projects across turnarounds, valuations and market entry. Led three teams start to finish and was named Best Team Player. As PR lead, I made the recruiting videos.',
+    },
+    {
+      group: 'Education & activities',
+      period: 'Yonsei',
+      org: 'Prometheus · Yonyoung',
+      role: 'Film and photography clubs',
+      text: 'Where the creative side of this site started.',
+    },
+    {
+      group: 'Also',
+      period: '2026',
+      org: 'Kearney Vibe Coding Contest',
+      role: 'Winner',
+      text: 'Built and shipped web apps by talking to Claude. This site is the sequel.',
     },
   ],
   // Inside the laptop: one brick object and a short label per project, nothing more.
   // `icon`: transformer · skincare · probecard · drone · hud (drawn in js/bricks.js).
   // `label`: the hint shown under the object. `about`: read aloud to screen readers only.
   projects: [
-    { icon: 'transformer', label: 'CDD', about: 'Three-phase power transformers' }, // [PLACEHOLDER] label
-    { icon: 'skincare', label: 'Go-to-Market', about: 'K-beauty skincare: sheet masks and cream' }, // [PLACEHOLDER] label
-    { icon: 'probecard', label: 'Market Entry', about: 'Semiconductor parts: probe cards' }, // [PLACEHOLDER] label
-    { icon: 'drone', label: 'Market Scan', about: 'Consumer drones' }, // [PLACEHOLDER] label
+    { icon: 'transformer', label: 'Due Diligence', about: 'Power transformer manufacturer' },
+    { icon: 'skincare', label: 'Investment Thesis', about: 'Indie K-beauty skincare brand' },
+    { icon: 'probecard', label: 'Market Entry', about: 'Semiconductor back-end consumables' },
+    { icon: 'drone', label: 'Market Mapping', about: 'Global drone market' },
     { icon: 'hud', label: 'Growth Strategy', about: 'Automotive head-up displays' }, // [PLACEHOLDER] label
   ],
 };
