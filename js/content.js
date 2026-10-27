@@ -559,9 +559,10 @@ export const visual = {
     {
       type: 'Director',
       title: 'Wim Wenders',
-      credit: 'Film director',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      credit: 'Film director · Paris, Texas',
+      works: ['assets/muses/wim-wenders-1.jpg'],
+      ratio: '5 / 3',
+      why: 'A magician of colour. Everything looks gently smudged, softened once over. Peaceful, tragic and warm all at once, and that irony is the whole feeling. Perfect Days and Paris, Texas so far; Wings of Desire is next.',
       url: '',
       instagram: '',
       tone: '#d3dbe0',
