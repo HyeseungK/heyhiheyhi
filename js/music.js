@@ -213,7 +213,7 @@ function renderTickets(root) {
             <span class="t-type">Tap to put it back</span>
           </span>
         </span>
-        <span class="t-stub"><span class="admit">ADMIT ONE</span><span>No. ${String(i + 1).padStart(4, '0')}</span></span>
+        <span class="t-stub"><span class="admit">ADMIT ONE</span><span>No. ${String(i + 1).padStart(4, '0')}</span>${t.stars ? `<span class="t-stars" aria-label="${t.stars} out of 5">${[1, 2, 3, 4, 5].map((n) => `<i class="${n <= t.stars ? 'punched' : ''}"></i>`).join('')}</span>` : ''}</span>
       </button>`;
     })
     .join('');

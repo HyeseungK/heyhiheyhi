@@ -860,9 +860,9 @@ body.lock { overflow: hidden; }
 .t-back { transform: rotateY(180deg); background: #fbfaf6; box-shadow: inset 0 0 0 1px var(--line); border-radius: 10px; }
 .t-type { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
 .t-name { font-size: clamp(18px, 2vw, 22px); font-weight: 600; letter-spacing: -.02em; line-height: 1.1; margin: 4px 0 2px; }
-.t-line { font-family: var(--serif); font-style: italic; font-size: 16px; opacity: .85; }
+.t-line { display: block; font-family: var(--serif); font-style: italic; font-size: 16px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .t-meta { display: flex; gap: 14px; font-size: 12px; font-variant-numeric: tabular-nums; opacity: .85; flex-wrap: wrap; }
-.t-memo { font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.25; color: var(--ink); }
+.t-memo { font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.22; color: var(--ink); }
 .t-back .t-type { color: var(--muted); }
 .t-stub {
   position: relative; flex: none; width: 92px; background: var(--c); color: var(--fg);
@@ -875,6 +875,19 @@ body.lock { overflow: hidden; }
 .t-stub .admit { position: absolute; top: 10px; font-size: 9px; letter-spacing: .14em; writing-mode: horizontal-tb; }
 .ticket:not(.torn):hover .t-stub { transform: rotate(4deg) translateX(3px); transform-origin: 0 100%; transition: transform .3s var(--ease); }
 .ticket.light .t-stub { border-left-color: rgba(0,0,0,.25); }
+/* the rating: star-shaped holes punched through the stub */
+.t-stub .t-stars { position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 3px; writing-mode: horizontal-tb; opacity: 1; }
+.t-stars i {
+  width: 12px; height: 12px; background: currentColor; opacity: .22;
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.t-stars i.punched { background: var(--bg); opacity: 1; }
+.ticket:hover .t-stars i.punched { animation: punch .4s var(--ease) both; }
+.ticket:hover .t-stars i:nth-child(2) { animation-delay: .05s; } .ticket:hover .t-stars i:nth-child(3) { animation-delay: .1s; }
+.ticket:hover .t-stars i:nth-child(4) { animation-delay: .15s; } .ticket:hover .t-stars i:nth-child(5) { animation-delay: .2s; }
+@keyframes punch { 50% { transform: scale(1.35) rotate(18deg); } }
+.t-stub > span:nth-child(2) { margin-bottom: 18px; }
+.t-memo { font-size: 17px; }
 
 /* ── Compact layout (site.layout = 'compact') ────────────── */
 .ey-compact { display: none; }
@@ -952,6 +965,9 @@ body.lock { overflow: hidden; }
   .lb-nav { top: auto; bottom: 16px; transform: none; }
   .ticket { height: 150px; }
   .t-stub { width: 70px; }
+  .t-stars i { width: 10px; height: 10px; }
+  .t-stub .t-stars { gap: 2px; }
+  .t-memo { font-size: 15px; }
   .slide { padding: 1.1em 1.2em; }
   .tree { grid-template-columns: 1fr; gap: 1em; }
   .tree-q::after { display: none; }

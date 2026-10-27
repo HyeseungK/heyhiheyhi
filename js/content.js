@@ -679,7 +679,7 @@ export const music = {
     {
       title: '여정 (旅程)',
       artist: 'Casker',
-      year: '2008', // [CHECK] iTunes lists 2012 (likely a reissue)
+      year: '2012',
       color: '#7a8b6f', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['캐스커'], titles: ['여정', '旅程'], country: 'kr' },
@@ -776,13 +776,17 @@ export const music = {
       { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
     ],
   },
+  // Newest first. `stars`: 1–5, punched into the stub. `memo`: the back of the ticket, keep it short.
   tickets: [
-    // [PLACEHOLDER]
-    { type: 'Festival', name: 'Pentaport Rock Festival', lineup: 'Day 2', date: '2024.08.03', venue: 'Songdo Moonlight Park', city: 'Incheon', color: '#2f4cff', memo: 'Rain all afternoon, then the headliner played under clear sky.' },
-    { type: 'Concert', name: 'Artist B — World Tour', lineup: 'Live in Seoul', date: '2023.11.18', venue: 'KSPO Dome', city: 'Seoul', seat: 'Floor B · 12', color: '#111111', memo: 'Cried at the encore. Went with my sister.' },
-    { type: 'Festival', name: 'Fuji Rock', lineup: 'Friday', date: '2023.07.28', venue: 'Naeba Ski Resort', city: 'Niigata', color: '#7a8b6f', memo: 'Mountain air, mud boots, and the best set of my life.' },
-    { type: 'Concert', name: 'Artist C', lineup: 'Club show', date: '2022.05.12', venue: 'Rolling Hall', city: 'Seoul', seat: 'Standing', color: '#c94f3d', memo: 'Two hundred people and a band I had loved for ten years.' },
-    { type: 'Concert', name: 'Artist D', lineup: 'Live at the Garden', date: '2024.10.02', venue: 'Madison Square Garden', city: 'New York', seat: 'Sec 112 · Row 8', color: '#e8dccb', memo: 'My first concert in New York.' },
+    { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'Massive Attack · Jang Pil-soon · HYUKOH', date: '2026.08.01', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#e2492f', stars: 3, memo: 'Massive Attack: no festival mood, but maybe that is what rock is, protest through music. Jang Pil-soon was lovely. Still sad I missed The Jesus and Mary Chain.' },
+    { type: 'Festival', name: 'DMZ Peace Train Music Festival', lineup: 'Sailor Honeymoon · Nourished by Time · The Volunteers', date: '2026.06.13', venue: 'Goseokjeong', city: 'Cheorwon', color: '#3d6b48', stars: 5, memo: 'A whole day with strangers from the festival app, better for it. Ramen at dawn, a fountain in the middle of it all. Felt born for this one.' },
+    { type: 'Festival', name: 'Busan International Rock Festival', lineup: 'The Smashing Pumpkins · MIKA · Porter Robinson', date: '2025.09.27 — 28', venue: 'Samnak Ecological Park', city: 'Busan', color: '#1f3a5f', stars: 5, memo: 'Rain turned it to mud and we danced anyway. MIKA right in front of me, pure energy. Everyone dancing to Tokyo Ska Paradise Orchestra: perfect.' },
+    { type: 'Concert', name: 'Yaeji — With A Hammer Asia Tour', lineup: 'Live in Seoul', date: '2025.08.25', venue: 'Bluesquare SOL Travel Hall', city: 'Seoul', color: '#cdb4db', stars: 2, memo: 'Not quite what I hoped. The staging fell flat, or maybe it was just my seat at the back.' },
+    { type: 'Festival', name: 'Asian Pop Festival', lineup: 'Lamp · Y2K92 · Yogee New Waves · mindfreakk', date: '2025.06.22', venue: 'Paradise City', city: 'Incheon', color: '#f2c14e', stars: 5, memo: 'Lamp, back in Korea after almost ten years. My favourite album, live, right there.' },
+    { type: 'Concert', name: 'Coldplay — Music of the Spheres World Tour', lineup: 'Live in Korea', date: '2025.04.25', venue: 'Goyang Stadium', city: 'Goyang', color: '#2f4cff', stars: 4, memo: 'The new songs aren’t for me, the old ones are. Grown men singing Yellow at the piano got me. Obvious love songs, and I took them anyway.' },
+    { type: 'Concert', name: 'Olivia Rodrigo — GUTS World Tour', lineup: 'Live in Seoul', date: '2024.09.21', venue: 'Jamsil Indoor Stadium', city: 'Seoul', color: '#7d4bb3', stars: 4, memo: 'A pop star, impossibly pretty. Went with friends and danced the whole way through.' },
+    { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'The Strokes · Silica Gel · 250', date: '2023.08.05', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#111111', stars: 4, memo: 'Here for The Strokes. Julian came on tipsy, sang one song three times, no Ode to the Mets. Silica Gel’s Desert Eagle was huge; raved to 250 at midnight.' },
+    { type: 'Concert', name: 'Hiatus Kaiyote', lineup: 'Live in Brooklyn', date: '2023.04.29', venue: 'Brooklyn Steel', city: 'New York', color: '#d9643a', stars: 3, memo: 'One of my most New York nights. Brooklyn at its truest, in a crowd of wonderful weirdos.' },
   ],
   stage: {
     intro: 'In college I was a band nomad: science, then business, then engineering. Only one of those is my major. I sang in all three.',
