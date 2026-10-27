@@ -600,7 +600,8 @@ export const visual = {
       type: 'Director',
       title: '노상윤 Roh Sangyoon',
       credit: 'Music video director',
-      works: [],
+      works: ['assets/muses/roh-sangyoon-1.jpg', 'assets/muses/roh-sangyoon-2.jpg'],
+      layout: 'stack',
       why: 'K-pop’s well-read obsessive. Famous for filming THE BOYZ more beautifully than anyone; what fan wouldn’t want their idols shot this way? Grainy, high-contrast, saturated, and stopped just at fantastical. I watched IVE’s Dear Cupid until it wore thin. Above all, ties music to image like few others: one of the best at using sound.',
       url: '',
       videos: [
