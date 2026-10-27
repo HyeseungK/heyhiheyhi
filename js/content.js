@@ -482,6 +482,17 @@ export const visual = {
       tone: '#d9cdb8',
     },
     {
+      type: 'Filmmaker',
+      title: 'Gawx',
+      credit: 'Video artist · YouTube',
+      works: [],
+      why: 'Sprinkles a little magic on every city. Every trip comes out nostalgic, in exactly the colours I love, and the music is always the right pick.',
+      url: '',
+      videos: [{ title: 'Watch', url: 'https://www.youtube.com/watch?v=DqySMp3Zbeo' }],
+      instagram: '',
+      tone: '#e6d9c8',
+    },
+    {
       type: 'Photographer',
       title: '윤송이 Yoon Songyi',
       credit: 'Photographer · fashion',
@@ -497,7 +508,7 @@ export const visual = {
       credit: 'Photographer and director · lifeimages film',
       works: ['assets/muses/annie-chung-4.jpg', 'assets/muses/annie-chung-5.jpg'],
       layout: 'stack', // one above the other, each whole
-      why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. The personal film work is lovely too. KiiiKiii’s first-album concept photos and Sweet & Sour are legendary.',
+      why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. Her personal film work is lovely too.',
       url: '',
       links: [
         { label: 'Website', url: 'https://lifeimagesfilm.com/film' },
@@ -616,17 +627,6 @@ export const visual = {
       url: '',
       instagram: '',
       tone: '#e7e1d2',
-    },
-    {
-      type: 'Filmmaker',
-      title: 'Gawx',
-      credit: 'Video artist · YouTube',
-      works: [],
-      why: 'Sprinkles a little magic on every city. Every trip comes out nostalgic, in exactly the colours I love, and the music is always the right pick.',
-      url: '',
-      videos: [{ title: 'Watch', url: 'https://www.youtube.com/watch?v=DqySMp3Zbeo' }],
-      instagram: '',
-      tone: '#e6d9c8',
     },
   ],
 };
