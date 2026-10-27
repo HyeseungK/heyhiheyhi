@@ -1,4 +1,4 @@
-import { site, profile, work, visual, music, heroWords } from './content.js';
+import { site, profile, work, visual, music, heroWords, colophon } from './content.js';
 import { createHero } from './hero.js';
 import { transition, isBusy } from './fx.js';
 import { renderWork, initWorkScroll } from './work.js';
@@ -7,7 +7,7 @@ import { renderMusic, initMusicScroll, guitarLoop, stopMixtape } from './music.j
 import { renderBrickIcons } from './bricks.js';
 import { initCursor } from './cursor.js';
 import { sound } from './sound.js';
-import { currentModal, closeModal } from './modal.js';
+import { currentModal, closeModal, openModal } from './modal.js';
 
 const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
@@ -318,6 +318,32 @@ new IntersectionObserver(([entry]) => {
   if (!hero || current !== 'home') return;
   entry.isIntersecting ? hero.start() : hero.stop();
 }).observe($('.hero'));
+
+// ── How This Was Made ──────────────────────────────────────
+function renderColophon() {
+  const c = colophon;
+  const esc = (s = '') => String(s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  $('.colophon-body').innerHTML = `
+    <p class="eyebrow">Colophon</p>
+    <h2>${esc(c.title)}</h2>
+    <p class="col-lead">${esc(c.lead)}</p>
+    <div class="col-stats">${c.stats.map((s) => `<div><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`).join('')}</div>
+    ${c.sections.map((s, i) => `<section>
+      <p class="col-no">${String(i + 1).padStart(2, '0')}</p>
+      <div><h3>${esc(s.title)}</h3>
+      ${(s.body || []).map((p) => `<p>${esc(p)}</p>`).join('')}
+      ${s.items ? `<dl>${s.items.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : ''}</div>
+    </section>`).join('')}
+    <p class="col-sign">${esc(c.signoff)}</p>`;
+}
+if (colophon) renderColophon();
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.colophon-link')) return;
+  const m = $('.colophon');
+  openModal(m);
+  m.scrollTop = 0;
+  gsap.from(m.querySelectorAll('.colophon-body > *, .colophon-body section'), { y: 24, opacity: 0, stagger: 0.05, duration: 0.6, ease: 'power3.out' });
+});
 
 // ── sound switch (shown on the Music tab) ──────────────────
 function paintSound() {

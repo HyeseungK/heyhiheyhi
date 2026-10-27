@@ -703,3 +703,53 @@ export const music = {
     ],
   },
 };
+
+// ── HOW THIS WAS MADE ────────────────────────────────────────
+// Opens from the link next to Email / LinkedIn / Instagram.
+export const colophon = {
+  title: 'How This Was Made',
+  lead:
+    'This site was built over two days of conversation. I described what I wanted, mostly in Korean and half in feelings, and Claude Code wrote, tested and shipped every line. I steered; it built.',
+  stats: [
+    { value: '2', label: 'days' },
+    { value: '~5k', label: 'lines of code, none typed by me' },
+    { value: '70+', label: 'commits' },
+    { value: '73', label: 'photos from my own rolls' },
+  ],
+  sections: [
+    {
+      title: 'The conversation',
+      body: [
+        'No mockups, no Figma. Just messages like “make the guitar not look like a frog”, “more chic”, or “the shelf looks empty”.',
+        'Every round went the same way: I sent screenshots and opinions, Claude Code changed the code, opened the site in a headless browser, looked at its own screenshots, fixed what it did not like, and pushed to GitHub.',
+        'Some ideas were mine (a business card that flips, a guitar you can throw at the record rack). Some were its suggestions I kept (a loupe on a contact sheet, the ticket book). A few we built and then threw away, like a globe of pins that turned out too sparse.',
+      ],
+    },
+    {
+      title: 'The stack',
+      items: [
+        ['Three.js', 'the particle name on the home screen (a custom shader), the brick guitar, amp and icons'],
+        ['GSAP + ScrollTrigger', 'every scroll, flip, fan-out and spin'],
+        ['Canvas 2D', 'the pixel and ripple page transitions'],
+        ['Web Audio', 'the guitar chord, synthesised string by string (Karplus–Strong)'],
+        ['Plain HTML, CSS, JS', 'no framework and no build step; hosted on GitHub Pages'],
+      ],
+    },
+    {
+      title: 'The data',
+      items: [
+        ['iTunes Search · Deezer · Spotify · MusicBrainz', 'official album covers, 30-second previews, album names and years'],
+        ['GitHub Actions', 'a small bot that looks the covers up and saves them into the repo whenever the music list changes'],
+        ['js/content.js', 'every word, photo and song on the site lives in one file'],
+      ],
+    },
+    {
+      title: 'The skills',
+      body: [
+        'Claude Code loaded design “skills”, short playbooks for specific crafts: threejs-webgl, gsap-scrolltrigger and modern-web-design from freshtechbro/claudedesignskills, plus p5js and algorithmic-art for the generative bits.',
+        'Playwright took the test screenshots; Pillow resized my film scans.',
+      ],
+    },
+  ],
+  signoff: 'Designed in conversation by Helen. Built by Claude Code.',
+};

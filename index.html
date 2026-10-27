@@ -11,20 +11,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&family=Nanum+Pen+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=99473600" />
+  <link rel="stylesheet" href="css/style.css?v=2bfda985" />
   <script type="importmap">
     {
       "imports": {
         "three": "./vendor/three.module.min.js?v=2992ecd7",
         "./js/bricks.js": "./js/bricks.js?v=f90dc1b0",
-        "./js/content.js": "./js/content.js?v=ea98cbda",
+        "./js/content.js": "./js/content.js?v=13144651",
         "./js/cursor.js": "./js/cursor.js?v=9c697a20",
         "./js/fx.js": "./js/fx.js?v=6ff55346",
         "./js/gen.js": "./js/gen.js?v=6ccfc483",
         "./js/guitar3d.js": "./js/guitar3d.js?v=07299b71",
         "./js/hero.js": "./js/hero.js?v=1fef5737",
         "./js/itunes.js": "./js/itunes.js?v=7e3bf0a7",
-        "./js/main.js": "./js/main.js?v=7e85fab9",
+        "./js/main.js": "./js/main.js?v=bc0dc3d2",
         "./js/modal.js": "./js/modal.js?v=c2e0d811",
         "./js/music.js": "./js/music.js?v=ba6ddce4",
         "./js/sound.js": "./js/sound.js?v=6916e9d4",
@@ -109,7 +109,7 @@
         <p class="outro-text" data-fill="profile.intro"></p>
         <div class="outro-meta">
           <div><span class="label">Based in</span><span data-fill="profile.location"></span></div>
-          <div><span class="label">Find me</span><span class="outro-links" data-fill="profile.links"></span></div>
+          <div><span class="label">Find me</span><span class="outro-links" data-fill="profile.links"></span><button class="colophon-link">How This Was Made</button></div>
         </div>
       </div>
     </section>
@@ -246,7 +246,7 @@
 
   <footer class="footer">
     <span>© <span class="year"></span> Hyeseung Kim</span>
-    <span class="footer-links" data-fill="profile.links"></span>
+    <span class="footer-right"><span class="footer-links" data-fill="profile.links"></span><button class="colophon-link">How This Was Made</button></span>
   </footer>
 
   <!-- overlays -->
@@ -296,6 +296,11 @@
     <div class="deck-host"></div>
   </div>
 
+  <div class="modal colophon" hidden role="dialog" aria-modal="true" aria-label="How this was made">
+    <button class="modal-x" aria-label="Close">Close</button>
+    <article class="colophon-body"></article>
+  </div>
+
   <aside class="drawer stage-drawer" hidden aria-label="Performances">
     <button class="modal-x" aria-label="Close">Close</button>
     <div class="drawer-body"></div>
@@ -304,6 +309,6 @@
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
   <script src="vendor/qrcode.js"></script>
-  <script type="module" src="js/main.js?v=7e85fab9"></script>
+  <script type="module" src="js/main.js?v=bc0dc3d2"></script>
 </body>
 </html>
