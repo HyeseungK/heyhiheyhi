@@ -177,7 +177,7 @@ for (const { kind, a, dir } of jobs) {
   try {
     await download(r.artwork, path.join(root, rel));
     if (r.album && !r.year) r.year = await albumInfo(a.artist, r.album);
-    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, name: r.name, album: r.album || '', year: r.year || '', source: r.source, spotify: a.spotify || '' };
+    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, previewUrl: r.previewUrl || '', name: r.name, album: r.album || '', year: r.year || '', source: r.source, spotify: a.spotify || '' };
     found++;
     log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name}${r.album ? ` · ${r.album}` : ''}${r.year ? `, ${r.year}` : ''})`);
   } catch (e) {
