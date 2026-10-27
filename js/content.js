@@ -589,7 +589,7 @@ export const visual = {
       credit: 'Commercial director · FILM KAI',
       works: ['assets/muses/song-mingyu-1.jpg'],
       ratio: '11 / 6',
-      why: 'FILM KAI is why I can’t forget the name. It lifts the idol mood sampler somewhere else: too long, too whole, too beautiful to be called a sampler. It is a film. It makes the case, on screen, for how the songs belong together, more satisfying than the album played straight through. Songs with nothing in common, sewn into one wild garment. So this is what a commercials director does. More idols, please.',
+      why: 'FILM KAI is why I can’t forget the name. It lifts the idol mood sampler somewhere else: too long, too whole, too beautiful to be called a sampler. Songs with nothing in common, sewn into one wild garment. So this is what a commercials director does.',
       url: '',
       videos: [{ title: 'FILM KAI', url: 'https://www.youtube.com/watch?v=VjjKbrFJoxY' }],
       instagram: '', // [PLACEHOLDER] handle
