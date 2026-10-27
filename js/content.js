@@ -700,7 +700,7 @@ export const music = {
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'The Word',
+      title: 'ザ・ワード (The Word)',
       series: 'Special Sound Series Vol. 2', // shown small above the title
       artist: 'Shigeo Sekito',
       year: '1975',
