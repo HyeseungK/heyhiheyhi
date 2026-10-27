@@ -720,7 +720,7 @@ export const colophon = {
     {
       title: 'The conversation',
       body: [
-        'No mockups, no Figma. Just messages like “make the guitar not look like a frog”, “more chic”, or “the shelf looks empty”.',
+        'No mockups, no Figma. Just messages like “this guitar looks so dumb”, “more chic”, or “the shelf looks empty”.',
         'Every round went the same way: I sent screenshots and opinions, Claude Code changed the code, opened the site in a headless browser, looked at its own screenshots, fixed what it did not like, and pushed to GitHub.',
         'Some ideas were mine (a business card that flips, a guitar you can throw at the record rack). Some were its suggestions I kept (a loupe on a contact sheet, the ticket book). A few we built and then threw away, like a globe of pins that turned out too sparse.',
       ],
