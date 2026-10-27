@@ -144,16 +144,6 @@
     "source": "spotify",
     "spotify": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q"
   },
-  "album|Hiroshi Yoshimura|Wet Land": {
-    "artwork": "assets/albums/hiroshi-yoshimura-wet-land.jpg",
-    "url": "https://musicbrainz.org/release-group/2ddd3e2d-0796-4b08-bf1a-152b3a771dcf",
-    "preview": "",
-    "name": "Wet Land",
-    "album": "",
-    "year": "",
-    "source": "coverartarchive",
-    "spotify": ""
-  },
   "album|Steely Dan|Aja": {
     "artwork": "assets/albums/steely-dan-aja.jpg",
     "url": "https://music.apple.com/us/album/aja/1706428459?uo=4",

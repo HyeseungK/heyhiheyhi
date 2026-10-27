@@ -700,12 +700,12 @@ export const music = {
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Wet Land',
-      artist: 'Hiroshi Yoshimura',
-      year: '1993',
-      color: '#cfe0e6', // used until the official cover loads
-      spotify: '', // optional: https://open.spotify.com/album/…
-      itunes: { artists: ['吉村弘'], country: 'jp' },
+      title: 'The Word', // Special Sound Series Vol. 2: The Word
+      artist: 'Shigeo Sekito',
+      year: '1975',
+      color: '#e7c3cf', // used until the official cover loads
+      spotify: 'https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7',
+      itunes: { titles: ['Special Sound Series Vol. 2: The Word', 'Special Sound Series Vol.2'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
