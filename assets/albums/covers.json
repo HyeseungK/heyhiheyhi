@@ -85,13 +85,14 @@
   },
   "song|capsule|I Wish You": {
     "artwork": "assets/songs/capsule-i-wish-you.jpg",
-    "url": "https://music.apple.com/jp/album/i-wish-you/676035200?i=676035235&uo=4",
+    "url": "https://open.spotify.com/track/3cUNYZbxke9SvwvsayCNvx",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4b/63/ea/4b63ea9d-a53b-0903-76d3-0e749979c520/mzaf_2096015636243671654.plus.aac.p.m4a",
+    "previewUrl": "https://music.apple.com/jp/album/i-wish-you/676035200?i=676035235&uo=4",
     "name": "I wish You",
-    "album": "rewind BEST-1 (2012→2006)",
+    "album": "PLAYER",
     "year": "2010",
-    "source": "itunes",
-    "spotify": ""
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/track/3cUNYZbxke9SvwvsayCNvx"
   },
   "song|Perfume|575": {
     "artwork": "assets/songs/perfume-575.jpg",
@@ -205,13 +206,14 @@
   },
   "song|The Beatles|Hey Jude": {
     "artwork": "assets/songs/the-beatles-hey-jude.jpg",
-    "url": "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277&uo=4",
+    "url": "https://open.spotify.com/album/7vEJAtP3KgKSpOHVgwm3Eh",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3d/08/f5/3d08f5d7-1e0a-99d9-1085-d50ecc972bb9/mzaf_1689604474306790314.plus.aac.p.m4a",
-    "name": "Hey Jude",
-    "album": "The Beatles 1967-1970 (The Blue Album)",
-    "year": "1968",
-    "source": "itunes",
-    "spotify": ""
+    "previewUrl": "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277&uo=4",
+    "name": "1 (Remastered 2015)",
+    "album": "1 (Remastered 2015)",
+    "year": "2000",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/7vEJAtP3KgKSpOHVgwm3Eh"
   },
   "song|Caetano Veloso|Pecado": {
     "artwork": "assets/songs/caetano-veloso-pecado.jpg",
@@ -235,13 +237,14 @@
   },
   "song|Masayoshi Takanaka|Beleza Pula": {
     "artwork": "assets/songs/masayoshi-takanaka-beleza-pula.jpg",
-    "url": "https://music.apple.com/jp/album/beleza-pula/1603369881?i=1603369893&uo=4",
+    "url": "https://open.spotify.com/album/0zXeZw0oFC2Db99RqlfHur",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2f/e7/25/2fe72518-b266-1593-feb2-18bb658c8523/mzaf_11120807249677246955.plus.aac.p.m4a",
-    "name": "BELEZA PULA",
-    "album": "TAKANAKA ALL TIME SUPER BEST",
-    "year": "1992",
-    "source": "itunes",
-    "spotify": ""
+    "previewUrl": "https://music.apple.com/jp/album/beleza-pula/1603369881?i=1603369893&uo=4",
+    "name": "BRASILIAN SKIES",
+    "album": "BRASILIAN SKIES",
+    "year": "1978",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/0zXeZw0oFC2Db99RqlfHur"
   },
   "song|Blood Orange|Augustine": {
     "artwork": "assets/songs/blood-orange-augustine.jpg",
