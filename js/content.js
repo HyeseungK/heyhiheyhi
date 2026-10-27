@@ -646,7 +646,7 @@ export const music = {
     {
       title: 'Call Me Baby',
       artist: 'EXO',
-      year: '2015', // [CHECK]
+      year: '2015',
       color: '#d9d4cc', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['엑소'], titles: ['EXODUS', 'The 2nd Album EXODUS'], country: 'kr' },
@@ -656,7 +656,7 @@ export const music = {
     {
       title: '恋人へ (For Lovers)',
       artist: 'Lamp',
-      year: '2004', // [CHECK]
+      year: '2004',
       color: '#e8dccb', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['恋人へ', 'Koibito e'], country: 'jp' },
@@ -666,7 +666,7 @@ export const music = {
     {
       title: 'When the Pawn...',
       artist: 'Fiona Apple',
-      year: '1999', // [CHECK]
+      year: '1999',
       color: '#c94f3d', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['When the Pawn'] },
@@ -676,7 +676,7 @@ export const music = {
     {
       title: '여정 (旅程)',
       artist: 'Casker',
-      year: '2008', // [CHECK]
+      year: '2008', // [CHECK] iTunes lists 2012 (likely a reissue)
       color: '#7a8b6f', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['캐스커'], titles: ['여정', '旅程'], country: 'kr' },
@@ -686,7 +686,7 @@ export const music = {
     {
       title: 'CAPRISONGS',
       artist: 'FKA twigs',
-      year: '2022', // [CHECK]
+      year: '2022',
       color: '#e3d3e0', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
@@ -696,7 +696,7 @@ export const music = {
     {
       title: 'Ego Death',
       artist: 'The Internet',
-      year: '2015', // [CHECK]
+      year: '2015',
       color: '#2f4cff', // used until the official cover loads
       spotify: 'https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q', // the orange cover
       itunes: {  },
@@ -706,7 +706,7 @@ export const music = {
     {
       title: 'Wet Land',
       artist: 'Hiroshi Yoshimura',
-      year: '1993', // [CHECK]
+      year: '1993',
       color: '#cfe0e6', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['吉村弘'], country: 'jp' },
@@ -716,7 +716,7 @@ export const music = {
     {
       title: 'Aja',
       artist: 'Steely Dan',
-      year: '1977', // [CHECK]
+      year: '1977',
       color: '#111111', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
@@ -726,7 +726,7 @@ export const music = {
     {
       title: 'Love Trip',
       artist: 'Takako Mamiya',
-      year: '1982', // [CHECK]
+      year: '1982',
       color: '#f0d2c2', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['間宮貴子'], country: 'jp' },
@@ -736,7 +736,7 @@ export const music = {
     {
       title: 'WhyKiiiKiii',
       artist: 'KiiiKiii',
-      year: '2025', // [CHECK]
+      year: '2026',
       color: '#f2f0ea', // used until the official cover loads
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['키키'], country: 'kr' },
@@ -801,8 +801,8 @@ export const colophon = {
     'This site was built over two days of conversation. I described what I wanted, mostly in Korean and half in feelings, and Claude Code wrote, tested and shipped every line. I steered; it built.',
   stats: [
     { value: '2', label: 'days' },
-    { value: '~5k', label: 'lines of code, none typed by me' },
-    { value: '70+', label: 'commits' },
+    { value: '~5.4k', label: 'lines of code, none typed by me' },
+    { value: '100+', label: 'commits' },
     { value: '73', label: 'photos from my own rolls' },
   ],
   sections: [
