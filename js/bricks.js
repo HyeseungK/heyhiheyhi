@@ -121,8 +121,101 @@ const ICONS = {
   },
 };
 
+// project objects for the laptop in Work
+function grid(w, h, fn) {
+  return Array.from({ length: h }, (_, y) => Array.from({ length: w }, (_, x) => fn(x, y)).join(''));
+}
+
+Object.assign(ICONS, {
+  // three-phase transformer: three porcelain bushings on a finned tank
+  transformer: {
+    map: [
+      '..A...A...A..',
+      '..W...W...W..',
+      '.WWW.WWW.WWW.',
+      '..W...W...W..',
+      '.WWW.WWW.WWW.',
+      '..W...W...W..',
+      'GGGGGGGGGGGGG',
+      'F.TTTTTTTTT.F',
+      'FFTTTTTTTTTFF',
+      'F.TTTPPPTTT.F',
+      'FFTTTPPPTTTFF',
+      'F.TTTTTTTTT.F',
+      'FFTTTTTTTTTFF',
+      '.KKK.....KKK.',
+    ],
+    colors: { A: COBALT, W: '#f3f1ea', G: '#7f848b', T: '#b4b9bf', F: '#9a9fa6', P: '#f7f7f4', K: INK },
+    lift: (ch) => (ch === 'P' ? 0.3 : ch === 'F' ? -0.5 : 0),
+  },
+  // K-beauty: a sheet-mask pouch and a jar of cream
+  skincare: {
+    map: [
+      'SSSSSS.........',
+      'PPPPPP.........',
+      'PPPPPP.........',
+      'PLLLLP.........',
+      'PLAALP.........',
+      'PLLLLP..CCCCCC.',
+      'PPPPPP.CCCCCCCC',
+      'PPPPPP.JJJJJJJJ',
+      'PPPPPP.JJllllJJ',
+      'PPPPPP.JJJJJJJJ',
+      'PPPPPP.JJJJJJJJ',
+      'SSSSSS..JJJJJJ.',
+    ],
+    colors: { S: '#f9d6dd', P: '#f3b3c1', L: '#ffffff', A: COBALT, C: '#e9cfa6', J: '#f7f7f4', l: '#f3b3c1' },
+    lift: (ch) => ('CJl'.includes(ch) ? 1.2 : 'LA'.includes(ch) ? 0.25 : 0),
+  },
+  // probe card: a round board, gold pads round the edge, a steel stiffener, needles in the middle
+  probecard: {
+    map: grid(15, 15, (x, y) => {
+      const dx = x - 7, dy = y - 7, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+      if (r > 7.3) return '.';
+      if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) return x === 7 && y === 7 ? 'A' : 'N';
+      if (r > 5.6 && r < 6.6) return Math.round((a / Math.PI) * 10) % 2 ? 'Y' : 'B';
+      if (r > 2.2 && r < 3.6) return 'M';
+      return 'B';
+    }),
+    colors: { B: '#245c49', Y: '#d8b04c', M: '#c3c6ca', N: '#e7e8ea', A: COBALT },
+    lift: (ch) => (ch === 'M' ? 0.5 : ch === 'N' || ch === 'A' ? 0.9 : ch === 'Y' ? 0.15 : 0),
+  },
+  // DJI-style quadcopter from above
+  drone: {
+    map: grid(15, 15, (x, y) => {
+      for (const [cx, cy] of [[2, 2], [12, 2], [2, 12], [12, 12]]) {
+        const d = Math.hypot(x - cx, y - cy);
+        if (d < 0.8) return 'M';
+        if (d < 2.6) return 'P';
+      }
+      if (Math.abs(x - 7) <= 1 && Math.abs(y - 7) <= 3) return y === 4 ? 'A' : y === 5 && x === 7 ? 'L' : 'B';
+      if ((Math.abs(x - y) <= 0.5 || Math.abs(x + y - 14) <= 0.5) && Math.abs(x - 7) < 5) return 'K';
+      return '.';
+    }),
+    colors: { M: INK, P: '#d9dcdf', B: '#8e9399', K: '#6c7177', A: COBALT, L: '#151a2e' },
+    lift: (ch) => (ch === 'P' || ch === 'M' ? 1 : ch === 'L' || ch === 'A' ? 0.4 : 0),
+  },
+  // a car with its head-up display floating ahead of the windscreen
+  hud: {
+    map: [
+      '..............HH..',
+      '.............H....',
+      '.....RRRRRR..HH...',
+      '....RGGRGGGR......',
+      '...RGGGRGGGGR.....',
+      '.RRRRRRRRRRRRRRR..',
+      'ERRRRRRRRRRRRRRRRY',
+      '.RRKKKRRRRRRKKKRR.',
+      '...KKK......KKK...',
+    ],
+    colors: { R: '#e4e2dc', G: '#2a3140', K: INK, E: '#e0443a', Y: '#fff3c4', H: COBALT },
+    lift: (ch) => (ch === 'H' ? 1.6 : ch === 'K' ? 0.3 : 0),
+    zoom: 1.2,
+  },
+});
+
 // Renders each icon once to a transparent PNG data URL.
-export function renderBrickIcons(px = 160) {
+export function renderBrickIcons(px = 200) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
@@ -140,7 +233,7 @@ export function renderBrickIcons(px = 160) {
     const g = buildBricks(icon.map, icon.colors, () => 2, icon.lift);
     g.rotation.set(0.32, -0.55, 0);
     scene.add(g);
-    const half = Math.max(g.userData.size.w, g.userData.size.h) * 0.62;
+    const half = (Math.max(g.userData.size.w, g.userData.size.h) * 0.62) / (icon.zoom || 1);
     const cam = new THREE.OrthographicCamera(-half, half, half, -half, -100, 100);
     cam.position.set(0, 0, 50);
     renderer.render(scene, cam);

@@ -110,109 +110,15 @@ export const work = {
       text: '[PLACEHOLDER] Short films, darkroom nights and late-night music production: where the creative side of this site started.',
     },
   ],
-  // Each project opens as a small deck on the laptop:
-  // Exec summary → Issue tree → Approach → Impact. Keep client names anonymous.
+  // Inside the laptop: one brick object and a short label per project, nothing more.
+  // `icon`: transformer · skincare · probecard · drone · hud (drawn in js/bricks.js).
+  // `label`: the hint shown under the object. `about`: read aloud to screen readers only.
   projects: [
-    // [PLACEHOLDER]
-    {
-      year: '2025',
-      client: 'Global consumer brand',
-      title: 'Growth strategy for the Korean market',
-      tags: ['Strategy', 'Consumer'],
-      summary: 'Growth had stalled after three years of double-digit gains. We found that the slowdown came from lapsed repeat buyers, not from new-customer acquisition, and re-focused the plan on retention.',
-      issueTree: {
-        question: 'How can the brand return to 10%+ growth in Korea?',
-        branches: [
-          { label: 'Win new customers', items: ['Under-served segments', 'Channel gaps'] },
-          { label: 'Keep existing ones', items: ['Repeat-purchase drivers', 'Loyalty economics'] },
-          { label: 'Grow basket size', items: ['Pricing & bundles', 'Range extension'] },
-        ],
-      },
-      approach: ['Segmentation from 4,000 survey responses', 'Channel economics by store format', 'Competitor teardown of five rival brands'],
-      impact: [
-        { value: '3', label: 'growth bets prioritised' },
-        { value: '40', label: 'stores in the pilot' },
-        { value: '+8%', label: 'repeat rate in pilot stores' },
-      ],
-    },
-    {
-      year: '2025',
-      client: 'Fintech scale-up',
-      title: 'Pricing redesign',
-      tags: ['Pricing', 'Fintech'],
-      summary: 'A flat fee left value on the table with power users and pushed light users away. A three-tier model fits willingness to pay much better.',
-      issueTree: {
-        question: 'What pricing model maximises revenue without hurting growth?',
-        branches: [
-          { label: 'Who values what?', items: ['Usage cohorts', 'Willingness to pay'] },
-          { label: 'Which structure?', items: ['Tiers vs. usage-based', 'Free tier limits'] },
-          { label: 'How to roll out?', items: ['Migration path', 'Churn risk'] },
-        ],
-      },
-      approach: ['Van Westendorp survey with 1,200 users', 'Cohort analysis of 18 months of usage', 'Interactive pricing simulator for leadership'],
-      impact: [
-        { value: '+12%', label: 'projected revenue per user' },
-        { value: '3', label: 'tiers launched' },
-      ],
-    },
-    {
-      year: '2024',
-      client: 'Conglomerate',
-      title: 'Digital transformation roadmap',
-      tags: ['Digital', 'Operations'],
-      summary: 'Twenty-plus digital initiatives competed for the same budget. A shared scoring model and governance turned them into one three-year roadmap.',
-      issueTree: {
-        question: 'Which digital initiatives should the group fund, and in what order?',
-        branches: [
-          { label: 'Value', items: ['Revenue upside', 'Cost savings'] },
-          { label: 'Feasibility', items: ['Data readiness', 'Talent & vendors'] },
-          { label: 'Governance', items: ['Decision rights', 'Funding model'] },
-        ],
-      },
-      approach: ['Scoring workshops with 12 business units', 'Value-vs-feasibility matrix', 'Governance design benchmarked on 4 peers'],
-      impact: [
-        { value: '24→7', label: 'initiatives, prioritised' },
-        { value: '3-yr', label: 'roadmap adopted by the board' },
-      ],
-    },
-    {
-      year: '2025',
-      client: 'Industry, anonymised',
-      title: 'Project title 4',
-      tags: ['Tag'],
-      summary: '[PLACEHOLDER] The answer in two sentences.',
-      issueTree: {
-        question: '[PLACEHOLDER] The key question?',
-        branches: [
-          { label: 'Branch 1', items: ['Sub-question', 'Sub-question'] },
-          { label: 'Branch 2', items: ['Sub-question', 'Sub-question'] },
-        ],
-      },
-      approach: ['[PLACEHOLDER] Step one', 'Step two', 'Step three'],
-      impact: [
-        { value: '00', label: 'what it measured' },
-        { value: '00%', label: 'what it measured' },
-      ],
-    },
-    {
-      year: '2025',
-      client: 'Industry, anonymised',
-      title: 'Project title 5',
-      tags: ['Tag'],
-      summary: '[PLACEHOLDER] The answer in two sentences.',
-      issueTree: {
-        question: '[PLACEHOLDER] The key question?',
-        branches: [
-          { label: 'Branch 1', items: ['Sub-question', 'Sub-question'] },
-          { label: 'Branch 2', items: ['Sub-question', 'Sub-question'] },
-        ],
-      },
-      approach: ['[PLACEHOLDER] Step one', 'Step two', 'Step three'],
-      impact: [
-        { value: '00', label: 'what it measured' },
-        { value: '00%', label: 'what it measured' },
-      ],
-    },
+    { icon: 'transformer', label: 'CDD', about: 'Three-phase power transformers' }, // [PLACEHOLDER] label
+    { icon: 'skincare', label: 'Go-to-Market', about: 'K-beauty skincare: sheet masks and cream' }, // [PLACEHOLDER] label
+    { icon: 'probecard', label: 'Market Entry', about: 'Semiconductor parts: probe cards' }, // [PLACEHOLDER] label
+    { icon: 'drone', label: 'Market Scan', about: 'Consumer drones' }, // [PLACEHOLDER] label
+    { icon: 'hud', label: 'Growth Strategy', about: 'Automotive head-up displays' }, // [PLACEHOLDER] label
   ],
 };
 

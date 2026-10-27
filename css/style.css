@@ -337,19 +337,22 @@ img { display: block; max-width: 100%; }
   position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
-.os-list { padding: .6em 0; }
-.os-row {
-  width: 100%; text-align: left;
-  display: grid; grid-template-columns: 3.6em 1fr auto; gap: 1em; align-items: baseline;
-  padding: 1em 1.4em; border-bottom: 1px solid var(--line);
-  transition: background .2s;
+.os-list {
+  display: grid; grid-template-columns: repeat(5, 1fr); align-content: center;
+  gap: 1.2em .4em; padding: 1.2em 1.6em;
 }
-.os-row:hover { background: var(--soft); }
-.os-row .y { color: var(--muted); font-variant-numeric: tabular-nums; }
-.os-row .t { font-weight: 600; letter-spacing: -.01em; font-size: 1.12em; display: block; }
-.os-row .c { color: var(--muted); font-size: .92em; }
-.os-row .arrow { color: var(--muted); transition: transform .25s var(--ease); }
-.os-row:hover .arrow { transform: translateX(4px); color: var(--ink); }
+.os-obj {
+  display: flex; flex-direction: column; align-items: center; gap: .5em;
+  padding: .4em 0; border-radius: 10px;
+}
+.os-obj img {
+  width: 100%; max-width: 11em; aspect-ratio: 1; object-fit: contain;
+  transition: transform .45s var(--ease), filter .45s var(--ease);
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .08));
+}
+.os-obj img:not([src]) { visibility: hidden; }
+.os-obj:hover img { transform: translateY(-6%) rotate(-3deg) scale(1.04); filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .12)); }
+.os-obj span { font-weight: 600; letter-spacing: -.01em; font-size: 1.05em; white-space: nowrap; }
 .os-detail { background: #fff; transform: translateX(100%); overflow: hidden; }
 .deck-host { position: relative; width: 100%; height: min(78vh, 640px); border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); background: #fff; font-size: 15px; }
 .os-back { color: var(--muted); font-size: .92em; margin-bottom: 1.2em; }
@@ -997,8 +1000,11 @@ body.lock { overflow: hidden; }
   .shelf-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 0 4px; }
   .sleeve { --s: auto; width: 100%; }
   .sleeve + .sleeve { margin-left: 0; }
-  .os-row { grid-template-columns: 1fr auto; }
-  .os-row .y { display: none; }
+  .os-list { grid-template-columns: repeat(6, 1fr); gap: .6em 0; padding: .6em .8em; }
+  .os-obj { grid-column: span 2; padding: 0; }
+  .os-obj:nth-child(4) { grid-column: 2 / span 2; }
+  .os-obj img { max-width: 5.4em; }
+  .os-obj span { font-size: .95em; }
   .os-detail dl { grid-template-columns: 1fr; gap: .2em; }
   .os-detail dd { margin-bottom: .8em; }
   .laptop-stage { --w: 94vw; }

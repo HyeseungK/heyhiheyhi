@@ -25,13 +25,13 @@ export function renderWork(root) {
   }
 
   root.querySelector('.os-title').textContent = `projects — ${work.projects.length} items`;
+  // one brick object per project; the image is filled in by main.js once the icons are rendered
   root.querySelector('.os-list').innerHTML = work.projects
     .map(
       (p, i) => `
-      <button class="os-row" role="listitem" data-i="${i}">
-        <span class="y">${esc(p.year)}</span>
-        <span><span class="t">${esc(p.title)}</span><span class="c">${esc(p.client)}</span></span>
-        <span class="arrow">→</span>
+      <button class="os-obj" role="listitem" data-i="${i}" aria-label="${esc(p.label)}: ${esc(p.about || '')}">
+        <img data-icon="${esc(p.icon)}" alt="">
+        <span>${esc(p.label)}</span>
       </button>`
     )
     .join('');
@@ -53,8 +53,8 @@ export function renderWork(root) {
       .to(prompt, { opacity: 0, y: -20, duration: 0.35, ease: 'power2.in' })
       .to(laptop, { '--lid': '4deg', duration: 1.25, ease: 'power3.inOut' }, 0.1)
       .to(off, { opacity: 0, duration: 0.5, ease: 'power1.out' }, '-=0.2')
-      .from(root.querySelectorAll('.os-row'), { y: 14, opacity: 0, stagger: 0.05, duration: 0.45, ease: 'power2.out' }, '-=0.25');
-    hint.textContent = 'Scroll inside the screen, click a project';
+      .from(root.querySelectorAll('.os-obj'), { y: 24, opacity: 0, scale: 0.8, stagger: 0.07, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.25');
+    hint.textContent = 'Details under NDA';
   }
   function close() {
     if (laptop.dataset.open !== 'true') return;
@@ -94,15 +94,22 @@ export function renderWork(root) {
   root.querySelector('.laptop-hit').addEventListener('click', open);
   root.querySelector('.os-close').addEventListener('click', close);
   root.querySelector('.os-list').addEventListener('click', (e) => {
-    const row = e.target.closest('.os-row');
-    if (row) showDetail(+row.dataset.i);
+    const obj = e.target.closest('.os-obj');
+    if (!obj) return;
+    const p = work.projects[+obj.dataset.i];
+    if (p.deck) return showDetail(+obj.dataset.i); // a project with a `deck` still opens as slides
+    const img = obj.querySelector('img');
+    gsap.timeline()
+      .to(img, { y: '-22%', rotate: gsap.utils.random([-14, 14]), duration: 0.22, ease: 'power2.out' })
+      .to(img, { y: 0, rotate: 0, duration: 0.6, ease: 'bounce.out' });
   });
 
   return { close };
 }
 
 // ── project deck: Exec summary → Issue tree → Approach → Impact ──
-function slides(p) {
+function slides(project) {
+  const p = { ...project, ...project.deck };
   const head = (kicker) => `<p class="slide-kicker">${kicker}</p>`;
   return [
     `${head('Executive summary')}
