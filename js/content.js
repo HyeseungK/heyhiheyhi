@@ -441,7 +441,6 @@ export const visual = {
   // `links`: more buttons on the back, [{ label, url }]. `ratio`: the picture's shape, e.g. '12 / 5' for a wide print.
   // `layout: 'stack'`: several photos one above the other instead of a collage.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
-  musesNote: 'frames I keep coming back to',
   // Every card is a person. Their favourite works hang off the card: `works` (images) and
   // `videos` (films that play in place). Filter chips, in this order. A card's `type` is one
   // of these, or a list of them (e.g. ['Photographer', 'Director']) to show under both.
