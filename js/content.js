@@ -264,26 +264,6 @@ export const visual = {
           notes: [],
         },
         {
-          title: 'My Kind of Woman',
-          cover: 'assets/photos/seoul/my-kind-of-woman/07.jpg',
-          kind: '35mm film · portraits',
-          year: '2023 — 2025',
-          credit: '',
-          photos: [
-            { src: 'assets/photos/seoul/my-kind-of-woman/01.jpg', caption: 'Ok Jiwon 1', year: '2024', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/02.jpg', caption: 'Hyemin 1', year: '2024', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/03.jpg', caption: 'Hyemin & Hyomin', year: '2024', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/04.jpg', caption: 'Hyemin 2', year: '2025', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/05.jpg', caption: 'Hyemin 3', year: '2025', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/06.jpg', caption: 'Ok Jiwon 2', year: '2024', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/07.jpg', caption: 'Michelle 1', year: '2025', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/08.jpg', caption: 'Jieun', year: '2023', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/09.jpg', caption: 'Michelle 2', year: '2023', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/10.jpg', caption: 'Freda', year: '2023', ratio: 0.663 },
-          ],
-          notes: [],
-        },
-        {
           title: 'Daily Life',
           cover: 'assets/photos/seoul/daily-life/06.jpg',
           kind: '35mm film',
@@ -300,6 +280,26 @@ export const visual = {
             { src: 'assets/photos/seoul/daily-life/08.jpg', caption: 'Underground, emart24', ratio: 1.508 }, // [CAPTION?]
             { src: 'assets/photos/seoul/daily-life/09.jpg', caption: 'Three on a walk', ratio: 1.508 }, // [CAPTION?]
             { src: 'assets/photos/seoul/daily-life/10.jpg', caption: 'Carnival, night', ratio: 0.663 }, // [CAPTION?]
+          ],
+          notes: [],
+        },
+        {
+          title: 'My Kind of Woman',
+          cover: 'assets/photos/seoul/my-kind-of-woman/07.jpg',
+          kind: '35mm film · portraits',
+          year: '2023 — 2025',
+          credit: '',
+          photos: [
+            { src: 'assets/photos/seoul/my-kind-of-woman/01.jpg', caption: 'Ok Jiwon 1', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/02.jpg', caption: 'Hyemin 1', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/03.jpg', caption: 'Hyemin & Hyomin', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/04.jpg', caption: 'Hyemin 2', year: '2025', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/05.jpg', caption: 'Hyemin 3', year: '2025', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/06.jpg', caption: 'Ok Jiwon 2', year: '2024', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/07.jpg', caption: 'Michelle 1', year: '2025', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/08.jpg', caption: 'Jieun', year: '2023', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/09.jpg', caption: 'Michelle 2', year: '2023', ratio: 1.508 },
+            { src: 'assets/photos/seoul/my-kind-of-woman/10.jpg', caption: 'Freda', year: '2023', ratio: 0.663 },
           ],
           notes: [],
         },
