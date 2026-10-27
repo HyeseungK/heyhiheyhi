@@ -48,8 +48,9 @@ function record(accent) {
       if (d > R) continue;
       // top face is side A, bottom face is side B (its letter is mirrored so it reads right once flipped)
       const groove = Math.round(d) % 2 ? '#1f1f1f' : '#161616';
-      const top = d < labelR ? (letterAt('A', x, z) ? '#ffffff' : accent) : groove;
-      const bottom = d < labelR ? (letterAt('B', x, z, true) ? INK : '#efe6d2') : groove;
+      // A (analog) gets the warm beige label, B (modern) the accent
+      const top = d < labelR ? (letterAt('A', x, z) ? INK : '#efe6d2') : groove;
+      const bottom = d < labelR ? (letterAt('B', x, z, true) ? '#ffffff' : accent) : groove;
       cells.push({ x, y: 0.5, z, c: top, stud: d < 0.5 ? 0 : 1 });
       cells.push({ x, y: -0.5, z, c: bottom, stud: d < 0.5 ? 0 : -1 });
     }

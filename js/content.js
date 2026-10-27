@@ -748,7 +748,7 @@ export const music = {
   // Artwork, previews, album and year are found automatically; add `spotify: 'https://open.spotify.com/…'`
   // to pin a cover, or `album` / `year` to override what was found.
   mixtape: {
-    label: 'Favorite Songs',
+    label: 'On repeat',
     note: 'Pick a side', // the small line next to the title
     sides: { analog: 'Side A · Analog', modern: 'Side B · Modern' },
     songs: [
