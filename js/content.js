@@ -453,7 +453,7 @@ export const visual = {
   muses: [
     {
       type: 'Photographer',
-      title: '박현경 Park Hyunkyung', // [CHECK] romanisation
+      title: '박현경 Park Hyunkyung',
       credit: 'Photographer · on every KiiiKiii release',
       works: ['assets/muses/park-hyunkyung-1.jpg'],
       ratio: '4 / 3',
