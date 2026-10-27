@@ -31,7 +31,7 @@ export const profile = {
   nameKo: '김혜승',
   name: 'Hyeseung Kim',
   nickname: 'Helen',
-  tagline: 'Consultant by day; film, photography and music lover 24/7.',
+  tagline: 'Consultant by day; film, photo and music lover 24/7.',
   intro:
     'Hi, I’m Helen. I work on strategy problems with consulting teams, and spend the rest of my time with a camera, some headphones, or a guitar. This page is an archive of both sides.',
   location: 'Seoul', // [PLACEHOLDER]
