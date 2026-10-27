@@ -571,7 +571,7 @@ export const visual = {
       credit: 'Music video director · Legend Film',
       works: ['assets/muses/rimayoon-1.jpg'],
       ratio: '11 / 8',
-      why: '', // [PLACEHOLDER]
+      why: 'Dozens of K-pop music videos in, and never a recycled idea. Every one sinks completely into its group and its song.',
       url: '',
       // each one gets its own ▶ button on the back of the card
       videos: [
