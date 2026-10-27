@@ -528,6 +528,16 @@ export const visual = {
     },
     {
       type: 'Director',
+      title: 'Wim Wenders',
+      credit: 'Film director',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '',
+      tone: '#d3dbe0',
+    },
+    {
+      type: 'Director',
       title: '노상윤 Roh Sangyun', // [CHECK] romanisation
       credit: 'Music video director',
       works: [],
