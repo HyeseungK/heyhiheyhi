@@ -18,8 +18,11 @@ const vertex = /* glsl */ `
   uniform vec2 uMouse;
   uniform vec3 uRipple;
   uniform float uFade;
+  uniform vec3 uBurst;
 
   varying float vAlpha;
+  varying float vSpark;
+  varying float vRand;
 
   float stage(float p, float i, float d) {
     return smoothstep(i + d, i + d + 0.62, p);
@@ -75,9 +78,29 @@ const vertex = /* glsl */ `
       pos.xy += normalize(pos.xy - uRipple.xy + 1e-5) * wave * 0.12;
     }
 
+    // burst from a click: letters fly apart in a sparkling swirl, then gather back
+    float bt = uTime - uBurst.z - aRand * 0.12;
+    float spark = 0.0;
+    if (bt > 0.0 && bt < 2.6) {
+      float away = 1.0 - exp(-bt * 7.0);
+      float back = 1.0 - smoothstep(0.45, 2.5, bt);
+      spark = away * back;
+      vec2 from = pos.xy - uBurst.xy;
+      vec2 dir = normalize(from + aDir.xy * 0.6 + 1e-5);
+      float reach = (0.8 + aRand * 2.6) * (1.0 + 0.25 * length(from));
+      float ang = spark * (aRand - 0.5) * 2.2;
+      dir = vec2(dir.x * cos(ang) - dir.y * sin(ang), dir.x * sin(ang) + dir.y * cos(ang));
+      pos.xy += dir * reach * spark;
+      pos.z += aDir.z * 2.4 * spark;
+      pos.y -= bt * bt * 0.12 * spark; // a little gravity on the way
+    }
+    vSpark = spark;
+    vRand = aRand;
+
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
-    gl_PointSize = uSize * uPixelRatio * (0.65 + aRand * 0.7) * (10.0 / -mv.z);
+    float twinkle = 1.0 + spark * (1.2 + 1.8 * step(0.82, fract(aRand * 13.0 + uTime * 3.0)));
+    gl_PointSize = uSize * uPixelRatio * (0.65 + aRand * 0.7) * (10.0 / -mv.z) * twinkle;
     vAlpha = (0.55 + 0.45 * (1.0 - min(travel, 1.0)) * (0.6 + aRand * 0.4)) * uFade;
   }
 `;
@@ -86,12 +109,16 @@ const fragment = /* glsl */ `
   uniform vec3 uColor;
   uniform vec3 uAccent;
   varying float vAlpha;
+  varying float vSpark;
+  varying float vRand;
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     float r = length(c);
     if (r > 0.5) discard;
     float a = smoothstep(0.5, 0.32, r) * vAlpha;
-    gl_FragColor = vec4(uColor, a);
+    // while bursting, about half the dots turn accent-coloured
+    vec3 col = mix(uColor, uAccent, vSpark * step(0.45, vRand));
+    gl_FragColor = vec4(col, a);
   }
 `;
 
@@ -142,6 +169,7 @@ export function createHero(canvas, words, getCard) {
     uMouse: { value: new THREE.Vector2(99, 99) },
     uRipple: { value: new THREE.Vector3(0, 0, -99) },
     uFade: { value: 1 },
+    uBurst: { value: new THREE.Vector3(0, 0, -99) },
     uColor: { value: new THREE.Color('#0f0f0f') },
     uAccent: { value: new THREE.Color('#2f4cff') },
   };
@@ -307,6 +335,13 @@ export function createHero(canvas, words, getCard) {
     },
     stop() { running = false; },
     relayout: resize,
+    // sparkle burst from a click on the letters
+    burst(clientX, clientY) {
+      const [x, y] = toWorld(clientX, clientY);
+      if (uniforms.uTime.value - uniforms.uBurst.value.z < 1.2) return;
+      uniforms.uBurst.value.set(x, y, uniforms.uTime.value);
+      uniforms.uAccent.value.set(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2f4cff');
+    },
     ripple(clientX, clientY) {
       const [x, y] = toWorld(clientX, clientY);
       uniforms.uRipple.value.set(x, y, uniforms.uTime.value);

@@ -70,11 +70,101 @@ export function renderMusic(root) {
   const guitar = root.querySelector('.guitar');
   guitar3d = createGuitar(guitar.querySelector('canvas'));
   if (!guitar3d) guitar.innerHTML = '<span class="guitar-fallback">♪ Guitar</span>';
-  guitar.addEventListener('click', () => {
+  guitar.addEventListener('click', (e) => {
+    if (guitar.dataset.thrown) { e.preventDefault(); return; } // the end of a throw, not a click
     strum();
     setTimeout(openStage, 700);
   });
   guitar.addEventListener('pointerenter', () => guitar3d?.nudge());
+  makeThrowable(guitar, root.querySelector('.shelf'));
+}
+
+// Drag the guitar and fling it: if it reaches the record ledge, the sleeves get knocked
+// about and it twangs; either way it floats back home.
+function makeThrowable(guitar, shelf) {
+  const gsap = window.gsap;
+  let drag = null;
+  guitar.addEventListener('pointerdown', (e) => {
+    if (e.button) return;
+    gsap.killTweensOf(guitar);
+    drag = { x: e.clientX, y: e.clientY, ox: gsap.getProperty(guitar, 'x'), oy: gsap.getProperty(guitar, 'y'), moved: false, hist: [] };
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 8) return;
+    if (!drag.moved) { drag.moved = true; guitar.classList.add('is-held'); try { guitar.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
+    drag.hist.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+    if (drag.hist.length > 6) drag.hist.shift();
+    gsap.set(guitar, { x: drag.ox + dx, y: drag.oy + dy, rotation: gsap.utils.clamp(-35, 35, (e.movementX || 0) * 2) });
+  });
+  window.addEventListener('pointerup', () => {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    if (!d.moved) return;
+    guitar.dataset.thrown = '1';
+    setTimeout(() => delete guitar.dataset.thrown, 0);
+    // release velocity from the last few moves (px per ms)
+    const a = d.hist[0], b = d.hist[d.hist.length - 1];
+    const dt = Math.max(16, (b?.t || 0) - (a?.t || 0));
+    const vx = a ? (b.x - a.x) / dt : 0, vy = a ? (b.y - a.y) / dt : 0;
+    fly(vx, vy);
+  });
+
+  function hitShelf() {
+    const g = guitar.getBoundingClientRect();
+    const cx = g.left + g.width / 2, cy = g.top + g.height * 0.35;
+    return [...shelf.querySelectorAll('.sleeve')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      return Math.hypot(cx - (r.left + r.width / 2), cy - (r.top + r.height / 2)) < Math.max(r.width, g.width * 0.35);
+    });
+  }
+
+  function fly(vx, vy) {
+    const speed = Math.hypot(vx, vy);
+    let done = false;
+    const x0 = gsap.getProperty(guitar, 'x'), y0 = gsap.getProperty(guitar, 'y');
+    gsap.to(guitar, {
+      x: x0 + vx * 420, y: y0 + vy * 420, rotation: `+=${gsap.utils.clamp(-540, 540, vx * 500)}`,
+      duration: speed > 0.3 ? 0.8 : 0.3, ease: 'power2.out',
+      onUpdate() {
+        if (done) return;
+        const hits = hitShelf();
+        if (!hits.length) return;
+        done = true;
+        this.kill();
+        bonk(hits);
+      },
+      onComplete: () => !done && goHome(0.5),
+    });
+  }
+
+  function bonk(hits) {
+    strum();
+    guitar3d?.strum();
+    gsap.to(guitar, { y: '+=40', rotation: '+=25', duration: 0.35, ease: 'power2.out' });
+    const all = [...shelf.querySelectorAll('.sleeve')];
+    const g = guitar.getBoundingClientRect();
+    all.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const dist = Math.abs(r.left + r.width / 2 - (g.left + g.width / 2)) / r.width;
+      const k = hits.includes(el) ? 1 : Math.max(0, 1 - dist / 3);
+      if (!k) return;
+      const dir = Math.sign(r.left + r.width / 2 - (g.left + g.width / 2)) || 1;
+      gsap.timeline()
+        .to(el, { y: -36 * k, x: dir * 14 * k, rotation: dir * 18 * k, duration: 0.18, ease: 'power2.out', overwrite: 'auto' })
+        .to(el, { y: 0, x: 0, rotation: +el.dataset.tilt, duration: 1.1, ease: 'elastic.out(1, 0.3)' });
+    });
+    goHome(0.9);
+  }
+
+  function goHome(delay) {
+    gsap.to(guitar, {
+      x: 0, y: 0, rotation: 0, duration: 1.2, delay, ease: 'elastic.out(1, 0.55)',
+      onStart: () => guitar.classList.remove('is-held'),
+    });
+  }
 }
 
 let guitar3d = null;

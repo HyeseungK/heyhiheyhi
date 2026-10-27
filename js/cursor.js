@@ -2,6 +2,7 @@
 const LABELS = [
   ['.spread-item, .lb-media', 'view'],
   ['.stack', 'open'],
+  ['#hero-canvas', '✦'],
   ['.sleeve', 'open'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],

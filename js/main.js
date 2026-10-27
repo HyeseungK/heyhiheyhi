@@ -172,6 +172,9 @@ function initHomeScroll() {
   });
 }
 
+// click the letters: they burst into sparkles and gather back
+$('#hero-canvas').addEventListener('click', (e) => hero?.burst(e.clientX, e.clientY));
+
 // chapters float around and lean toward the cursor.
 // Drag one anywhere and let go: it glides a little, settles, and floats around its new spot.
 const chapters = $$('.chapter');
