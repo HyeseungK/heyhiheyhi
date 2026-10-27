@@ -55,7 +55,7 @@ export function renderWork(root) {
     tl = gsap
       .timeline()
       .to(prompt, { opacity: 0, y: -20, duration: 0.35, ease: 'power2.in' })
-      .to(laptop, { '--lid': '4deg', duration: 1.25, ease: 'power3.inOut' }, 0.1)
+      .to(laptop, { '--lid': small() ? '0deg' : '4deg', duration: 1.25, ease: 'power3.inOut' }, 0.1) // flat on phones: a tilted screen is harder to tap
       .to(off, { opacity: 0, duration: 0.5, ease: 'power1.out' }, '-=0.2')
       .from(root.querySelectorAll('.os-obj'), { y: 24, opacity: 0, scale: 0.8, stagger: 0.07, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.25');
     hint.textContent = 'Details under NDA';
@@ -99,6 +99,8 @@ export function renderWork(root) {
   root.querySelector('.os-list').addEventListener('click', (e) => {
     const obj = e.target.closest('.os-obj');
     if (!obj) return;
+    // phones open straight away; on a desktop the object hops first
+    if (small()) return showDetail(+obj.dataset.i);
     gsap.timeline({ onComplete: () => showDetail(+obj.dataset.i) })
       .to(obj.querySelector('img'), { y: '-18%', rotate: gsap.utils.random([-12, 12]), duration: 0.2, ease: 'power2.out' })
       .to(obj.querySelector('img'), { y: 0, rotate: 0, duration: 0.25, ease: 'power2.in' });

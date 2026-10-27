@@ -49,6 +49,7 @@ export function renderMusic(root) {
   const gsap = window.gsap;
   shelf.querySelectorAll('.sleeve').forEach((el) => gsap.set(el, { rotation: +el.dataset.tilt, transformOrigin: '50% 100%' }));
   function wave(row, x) {
+    if (shuffling) return;
     row.querySelectorAll('.sleeve').forEach((el) => {
       if (current === +el.dataset.i) return;
       const r = el.getBoundingClientRect();
@@ -282,21 +283,31 @@ function loadCovers(shelf) {
 }
 
 // shuffle the records across both ledges, with a little hop (FLIP: measure, move, animate back)
+let shuffling = false;
 function shuffleRack(shelf) {
   const gsap = window.gsap;
+  if (shuffling) return;
+  shuffling = true;
   const sleeves = [...shelf.querySelectorAll('.sleeve')];
+  gsap.killTweensOf(sleeves);
+  gsap.set(sleeves, { x: 0, y: 0, scale: 1, zIndex: 0 });
   const before = new Map(sleeves.map((el) => [el, el.getBoundingClientRect()]));
   const order = gsap.utils.shuffle(sleeves.slice());
   const rows = [...shelf.querySelectorAll('.shelf-row')];
   const per = Math.ceil(order.length / rows.length);
   order.forEach((el, k) => rows[Math.floor(k / per)].appendChild(el));
+  // FLIP: start where each record was, lift it, carry it along an arc, set it down in its new slot
+  const tl = gsap.timeline({ onComplete: () => { shuffling = false; gsap.set(sleeves, { zIndex: 0 }); } });
   order.forEach((el, k) => {
     const a = before.get(el), b = el.getBoundingClientRect();
-    gsap.fromTo(el,
-      { x: a.left - b.left, y: a.top - b.top, rotation: gsap.utils.random(-25, 25) },
-      { x: 0, y: 0, rotation: +el.dataset.tilt, duration: 0.9, delay: k * 0.03, ease: 'power3.inOut',
-        overwrite: true });
-    gsap.fromTo(el, { scale: 1 }, { scale: 1.08, duration: 0.45, delay: k * 0.03, yoyo: true, repeat: 1, ease: 'sine.inOut' });
+    const dx = a.left - b.left, dy = a.top - b.top;
+    gsap.set(el, { x: dx, y: dy, zIndex: 10 + k });
+    tl.to(el, {
+      keyframes: [
+        { x: dx * 0.5, y: dy * 0.5 - 34, rotation: gsap.utils.random(-7, 7), scale: 1.06, duration: 0.5, ease: 'sine.out' },
+        { x: 0, y: 0, rotation: +el.dataset.tilt, scale: 1, duration: 0.65, ease: 'back.out(1.3)' },
+      ],
+    }, k * 0.04);
   });
 }
 
@@ -503,6 +514,9 @@ function playIn(dir = 0) {
   const small = window.matchMedia('(max-width: 860px)').matches;
   gsap.killTweensOf([caseEl, cover, cd]);
   gsap.set([cover, cd], { clearProps: 'transform' });
+  // in 3D, Safari sorts by depth, not z-index: keep the CD a hair above the case and the cover above both
+  gsap.set(cd, { z: 2 });
+  gsap.set(cover, { z: 4 });
   const tl = gsap.timeline();
   if (dir) tl.fromTo(caseEl, { x: dir * 80, opacity: 0, y: 0, rotateX: 0, rotateZ: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'power3.out' });
   else tl.fromTo(caseEl, { y: 90, x: 0, rotateX: 28, rotateZ: -6, opacity: 0 }, { y: 0, rotateX: 0, rotateZ: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);

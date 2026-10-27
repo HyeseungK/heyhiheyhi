@@ -455,19 +455,19 @@ img { display: block; max-width: 100%; }
 }
 .diary img { width: 100%; display: block; mix-blend-mode: multiply; }
 .diary .tape { top: -6px; }
-/* Frames: a taped note about the clubs, beside the lead */
+/* Frames: a taped note about the clubs, between the photo table and the inspiration board */
+.club-strip { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter) clamp(48px, 6vw, 90px); display: flex; justify-content: flex-end; }
 .club-note {
-  width: min(300px, 100%); margin: 24px 0 0; align-self: start; justify-self: end;
+  width: min(320px, 100%); margin: 0; align-self: start;
   background-image: none; padding: 20px 20px 24px;
   font-family: 'Reenie Beanie', var(--serif); font-size: 24px; line-height: 1.05; color: #2b2b2b;
 }
-.layout-compact .club-note { margin: -6px 0 0; }
 .club-note p { margin: 0 0 8px; }
 .club-note ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .club-note b { font-weight: 400; color: var(--accent); }
 .club-note span { color: var(--muted); white-space: nowrap; }
 .club-note a { color: inherit; font-size: .8em; }
-@media (max-width: 900px) { .layout-compact .club-note { justify-self: start; margin: 14px 0 0 6px; } }
+@media (max-width: 640px) { .club-strip { justify-content: center; } }
 /* Hangul inside the italic serif: upright, in the Korean sans */
 .ko { font-family: 'Noto Sans KR', var(--sans); font-style: normal; font-size: .86em; letter-spacing: -.01em; }
 .diary-text { margin: 0; font-family: 'Nanum Pen Script', var(--serif); font-size: clamp(22px, 2.2vw, 28px); line-height: 32px; color: #2b2b2b; }
@@ -954,8 +954,9 @@ body.lock { overflow: hidden; }
   .shelf-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 0 10px; }
   .sleeve { --s: auto; width: 100%; }
   .sleeve + .sleeve { margin-left: 0; }
-  .os-list { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .6em 0; padding: .6em .8em; }
-  .os-obj { grid-column: span 2; padding: 0; }
+  .os-list { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; padding: .3em .4em; }
+  .os-obj { grid-column: span 2; padding: .45em 0; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
+  .os-obj:active { background: var(--soft); }
   .os-obj:nth-child(4) { grid-column: 2 / span 2; }
   .os-obj img { max-width: 4em; }
   .os-obj { gap: .25em; }

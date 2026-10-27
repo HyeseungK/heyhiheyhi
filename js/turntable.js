@@ -131,6 +131,7 @@ export function createTurntable(canvas) {
   tilt.rotation.x = UP;
 
   const state = { side: 'A', on: false, speed: 0 };
+  let want = 'A';
   let tl = null;
 
   function fit() {
@@ -168,17 +169,20 @@ export function createTurntable(canvas) {
     get on() { return state.on; },
     // put the needle down on `side`, flipping the record first if the other side is up
     play(side) {
-      if (side === state.side && state.on) return;
+      const target = side === 'B' ? Math.PI : 0;
+      const turned = Math.abs(flip.rotation.x - target) < 0.01 && lift.position.y < 0.6;
+      if (turned && state.on && want === side) return;
+      want = side;
       tl?.kill();
       tl = gsap.timeline();
-      if (side !== state.side) {
-        if (state.on || swing.rotation.y !== REST) tl.add(needleOff());
-        const turned = side === 'B';
-        tl.to(lift.position, { y: 6, duration: 0.45, ease: 'power2.out' })
-          .to(flip.rotation, { x: turned ? Math.PI : 0, duration: 0.7, ease: 'power2.inOut' }, '-=0.15')
+      if (!turned) {
+        // needle up, record up, over, down (also picks up from a flip that was cut short)
+        if (state.speed > 0 || swing.rotation.y !== REST || tilt.rotation.x !== UP) tl.add(needleOff());
+        tl.to(lift.position, { y: 6, duration: 0.4, ease: 'power2.out' })
+          .to(flip.rotation, { x: target, duration: 0.7, ease: 'power2.inOut' }, '-=0.15')
           .add(() => (state.side = side), '<0.35')
           .to(lift.position, { y: 0.5, duration: 0.45, ease: 'bounce.out' });
-      }
+      } else state.side = side;
       state.on = true;
       tl.add(needleOn());
     },

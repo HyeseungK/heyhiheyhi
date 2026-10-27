@@ -110,18 +110,18 @@ export const work = {
       text: '15+ projects across turnarounds, valuations and market entry. Led three teams start to finish and was named Best Team Player. As PR lead, I made the recruiting videos.',
     },
     {
-      group: 'Education & activities',
-      period: '2025',
-      org: 'SM Entertainment',
-      role: 'SM Biz Ent Class',
-      text: 'Five weeks I signed up and paid for myself: artist development, making and distributing records, A&R, concert planning, then creative and visuals. The life of a K-pop release, in order.',
-    },
-    {
-      group: 'Also',
+      group: 'Cool stuff',
       period: '2026',
       org: 'Kearney Vibe Coding Contest',
       role: '3rd Place',
       text: 'My first try at building with Claude: a map of the good places to eat near the office, made as a new joiner to share with coworkers. Even the CEO dropped a pin for a favourite spot. This site is the sequel.',
+    },
+    {
+      group: 'Cool stuff',
+      period: '2025',
+      org: 'SM Entertainment',
+      role: 'SM Biz Ent Class',
+      text: 'Five weeks I signed up and paid for myself: artist development, making and distributing records, A&R, concert planning, then creative and visuals. The life of a K-pop release, in order.',
     },
   ],
   // the title bar of the laptop window
@@ -787,6 +787,7 @@ export const music = {
     { type: 'Concert', name: 'Olivia Rodrigo — GUTS World Tour', lineup: 'Live in Seoul', date: '2024.09.21', venue: 'Jamsil Indoor Stadium', city: 'Seoul', color: '#7d4bb3', stars: 4, memo: 'A pop star, impossibly pretty. Went with friends and danced the whole way through.' },
     { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'The Strokes · Silica Gel · 250', date: '2023.08.05', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#111111', stars: 4, memo: 'Here for The Strokes. Julian came on tipsy, sang one song three times, no Ode to the Mets. Silica Gel’s Desert Eagle was huge; raved to 250 at midnight.' },
     { type: 'Concert', name: 'Hiatus Kaiyote', lineup: 'Live in Brooklyn', date: '2023.04.29', venue: 'Brooklyn Steel', city: 'New York', color: '#d9643a', stars: 3, memo: 'One of my most New York nights. Brooklyn at its truest, in a crowd of wonderful weirdos.' },
+    { type: 'Concert', name: 'Billy Joel', lineup: 'Live at The Garden', date: '2023.03.26', venue: 'Madison Square Garden', city: 'New York', color: '#b0413e', memo: 'Exchange semester, slow to settle in. Then the song I needed: “But I’m taking a Greyhound on the Hudson River Line.” New York finally felt real.' }, // [PLACEHOLDER] stars
   ],
   stage: {
     intro: 'In college I was a band nomad: science, then business, then engineering. Only one of those is my major. I sang in all three.',
