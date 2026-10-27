@@ -1,7 +1,6 @@
 import { work } from './content.js';
 import { openModal, closeModal } from './modal.js';
 import { createPerson } from './person3d.js';
-import { createCoffee } from './coffee3d.js';
 
 const deckModal = document.querySelector('.deck-modal');
 
@@ -43,9 +42,6 @@ export function renderWork(root) {
     .join('');
 
   const laptop = root.querySelector('.laptop');
-  // the iced coffee next to it renders only while the laptop section is on screen
-  const coffee = createCoffee(root.querySelector('.coffee-canvas'));
-  if (coffee) new IntersectionObserver(([e]) => (e.isIntersecting ? coffee.start() : coffee.stop())).observe(root.querySelector('.laptop-stage'));
   const off = root.querySelector('.screen-off');
   const hint = root.querySelector('.laptop-hint');
   const prompt = root.querySelector('.laptop-prompt');
@@ -56,9 +52,6 @@ export function renderWork(root) {
   function open() {
     if (laptop.dataset.open === 'true') return;
     laptop.dataset.open = 'true';
-    coffee?.setOpen(true);
-    shut.hidden = false;
-    gsap.fromTo(shut, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, delay: 1.2 });
     tl?.kill();
     tl = gsap
       .timeline()
@@ -71,8 +64,6 @@ export function renderWork(root) {
   }
   function close() {
     if (laptop.dataset.open !== 'true') return;
-    coffee?.setOpen(false);
-    shut.hidden = true;
     hideDetail(true);
     tl?.kill();
     tl = gsap
@@ -108,9 +99,7 @@ export function renderWork(root) {
 
   root.querySelector('.laptop-hit').addEventListener('click', open);
   root.querySelector('.os-close').addEventListener('click', close);
-  // a plain button under the laptop, so closing never depends on hitting the tilted screen
-  const shut = root.querySelector('.laptop-shut');
-  shut.addEventListener('click', close);
+  // Esc closes it too
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && laptop.dataset.open === 'true' && !document.querySelector('.modal:not([hidden])')) close(); });
   root.querySelector('.os-list').addEventListener('click', (e) => {
     const obj = e.target.closest('.os-obj');

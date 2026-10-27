@@ -332,16 +332,6 @@ img { display: block; max-width: 100%; }
 .laptop-hit { position: absolute; inset: 0; z-index: 2; }
 /* an iced americano beside the laptop; its ice melts while the laptop is open */
 .laptop-stage { position: relative; }
-.laptop-shut {
-  display: block; margin: 28px auto 0; font-size: 13px; letter-spacing: .04em;
-  padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink);
-}
-.laptop-shut:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-.coffee-canvas {
-  position: absolute; bottom: calc(var(--w) * .05); left: calc(50% + var(--w) * .5 - 10px);
-  width: calc(var(--w) * .3); aspect-ratio: 4 / 5; pointer-events: none;
-}
-@media (max-width: 1180px) { .coffee-canvas { left: auto; right: -3vw; bottom: calc(var(--w) * .07); width: calc(var(--w) * .24); } }
 .laptop-prompt {
   position: absolute; left: 0; right: 0; top: 34%; text-align: center; pointer-events: none;
   font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4.4vw, 56px); line-height: 1.05; color: var(--ink);
@@ -360,7 +350,8 @@ img { display: block; max-width: 100%; }
 .os-bar i { width: .8em; height: .8em; border-radius: 50%; background: #e2e2de; }
 .os-bar i:first-child { background: #ff6159; }
 .os-title { flex: 1; text-align: center; color: var(--muted); font-size: .92em; }
-.os-close { font-size: .85em; color: var(--muted); padding: 2px 8px; border-radius: 6px; }
+.os-close { position: relative; z-index: 2; font-size: .85em; color: var(--muted); padding: .5em 1em; margin: -.4em -.6em -.4em 0; border-radius: 6px; }
+.os-close::after { content: ''; position: absolute; inset: -10px -14px; } /* a bigger target than it looks */
 .os-close:hover { background: var(--soft); color: var(--ink); }
 .os-body { position: relative; flex: 1; overflow: hidden; }
 .os-list, .os-detail {
