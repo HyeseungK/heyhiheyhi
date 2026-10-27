@@ -528,11 +528,11 @@ function paintAlbum(a) {
   const info = modal.querySelector('.album-info');
   modal.style.setProperty('--c', a.color || '#ddd');
   modal.querySelector('.cover-face').innerHTML = `<img src="${esc(src)}" alt="${esc(a.title)} cover" />`;
-  modal.querySelector('.cover-back').innerHTML = `${esc(a.artist)}<br>${esc(a.title)}<br>${esc(a.year)}`;
+  modal.querySelector('.cover-back').innerHTML = `${esc(a.artist)}<br>${esc([a.series, a.title].filter(Boolean).join(': '))}<br>${esc(a.year)}`;
   modal.querySelector('.cd-art').innerHTML = `<img src="${esc(src)}" alt="" />`;
   modal.querySelector('.album-count').textContent = `${String(rackOrder().indexOf(current) + 1).padStart(2, '0')} / ${String(music.albums.length).padStart(2, '0')}`;
   info.innerHTML = `
-    <p class="year">${esc(a.year)}</p>
+    <p class="year">${esc([a.year, a.series].filter(Boolean).join(' · '))}</p>
     <h3>${esc(a.title)}</h3>
     <p class="artist">${esc(a.artist)}</p>
     ${a.why ? `<p class="why">${esc(a.why)}</p>` : ''}

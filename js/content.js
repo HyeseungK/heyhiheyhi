@@ -700,7 +700,8 @@ export const music = {
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'The Word', // Special Sound Series Vol. 2: The Word
+      title: 'The Word',
+      series: 'Special Sound Series Vol. 2', // shown small above the title
       artist: 'Shigeo Sekito',
       year: '1975',
       color: '#e7c3cf', // used until the official cover loads
