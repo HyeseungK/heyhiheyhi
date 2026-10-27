@@ -598,23 +598,20 @@ export const visual = {
     },
     {
       type: 'Director',
-      title: '노상윤 Roh Sangyun', // [CHECK] romanisation
+      title: '노상윤 Roh Sangyoon',
       credit: 'Music video director',
       works: [],
-      why: '', // [PLACEHOLDER]
+      why: 'K-pop’s well-read obsessive. Famous for filming THE BOYZ more beautifully than anyone; what fan wouldn’t want their idols shot this way? Grainy, high-contrast, saturated, and stopped just at fantastical. I watched IVE’s Dear Cupid until it wore thin. Above all, ties music to image like few others: one of the best at using sound.',
       url: '',
-      instagram: '', // [PLACEHOLDER] handle
+      videos: [
+        { title: 'IVE — Dear Cupid', url: 'https://www.youtube.com/watch?v=x_CQ36iwRrs' },
+        { title: 'IVE — Summer Film', url: 'https://www.youtube.com/watch?v=jibz3MwJpj8' },
+        { title: 'JAEHYUN — Poetic Beauty', url: 'https://www.youtube.com/watch?v=VB6j33QjazA' },
+        { title: 'THE BOYZ', url: 'https://www.youtube.com/watch?v=IYo55ma5PaY' },
+        { title: 'NCT — Irregular Office', url: 'https://www.youtube.com/watch?v=Pne7e_FGGsM' },
+      ],
+      instagram: 'rohsangyoon',
       tone: '#dcd4e6',
-    },
-    {
-      type: 'Director',
-      title: '신희원 Shin Heewon', // [CHECK] romanisation
-      credit: 'Music video director',
-      works: [],
-      why: '', // [PLACEHOLDER]
-      url: '',
-      instagram: '', // [PLACEHOLDER] handle
-      tone: '#e3d3e0',
     },
     {
       type: 'Artist',
