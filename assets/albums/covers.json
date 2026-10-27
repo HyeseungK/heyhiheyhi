@@ -1,0 +1,79 @@
+{
+  "album|Fiona Apple|When the Pawn...": {
+    "artwork": "assets/albums/fiona-apple-when-the-pawn.jpg",
+    "url": "https://www.deezer.com/album/70982",
+    "preview": "",
+    "name": "When The Pawn...",
+    "source": "deezer"
+  },
+  "album|FKA twigs|CAPRISONGS": {
+    "artwork": "assets/albums/fka-twigs-caprisongs.jpg",
+    "url": "https://www.deezer.com/album/286473712",
+    "preview": "",
+    "name": "CAPRISONGS",
+    "source": "deezer"
+  },
+  "song|Yusef Lateef|Love Theme from Spartacus": {
+    "artwork": "assets/songs/yusef-lateef-love-theme-from-spartacus.jpg",
+    "url": "https://music.apple.com/us/album/love-theme-from-spartacus-remastered-2023/1725397456?i=1725397777&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/21/74/712174a9-0ee4-7f56-e976-f2d5d5d56c6a/mzaf_10124784520397343696.plus.aac.p.m4a",
+    "name": "Love Theme From Spartacus (Remastered 2023)",
+    "source": "itunes"
+  },
+  "song|The Strokes|Ode to the Mets": {
+    "artwork": "assets/songs/the-strokes-ode-to-the-mets.jpg",
+    "url": "https://www.deezer.com/track/921027372",
+    "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/c/1/0/9c16b85fa000f69eb4be0b1cd22c159f.mp3?hdnea=exp=1793066683~acl=/api/1/1/9/c/1/0/9c16b85fa000f69eb4be0b1cd22c159f.mp3*~data=user_id=0,application_id=42~hmac=3ef19454b5ca82fb49ba1732577907dcd45f0104a120aee3622ebd7a84532289",
+    "name": "Ode To The Mets",
+    "source": "deezer"
+  },
+  "song|Billy Joel|Vienna": {
+    "artwork": "assets/songs/billy-joel-vienna.jpg",
+    "url": "https://music.apple.com/us/album/vienna/158617952?i=158618071&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e8/d2/03/e8d203cc-ce97-278b-5abb-c6de33d36d37/mzaf_5153648922176185845.plus.aac.p.m4a",
+    "name": "Vienna",
+    "source": "itunes"
+  },
+  "song|Cortex|Poxa": {
+    "artwork": "assets/songs/cortex-poxa.jpg",
+    "url": "https://music.apple.com/jp/album/poxa/1157426805?i=1157428228&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/30/e8/88/30e8882e-9608-3d84-3754-d931a1abc476/mzaf_4725928189839392992.plus.aac.p.m4a",
+    "name": "Poxa",
+    "source": "itunes"
+  },
+  "song|Daniel Caesar|Who Knows": {
+    "artwork": "assets/songs/daniel-caesar-who-knows.jpg",
+    "url": "https://music.apple.com/us/album/who-knows/1839352404?i=1839352411&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/af/b0/f2afb01b-42c5-7803-be2f-b7365c9a928a/mzaf_17144887126595930673.plus.aac.p.m4a",
+    "name": "Who Knows",
+    "source": "itunes"
+  },
+  "song|Four Tet|31 Bloom": {
+    "artwork": "assets/songs/four-tet-31-bloom.jpg",
+    "url": "https://music.apple.com/us/album/31-bloom/1743823041?i=1743824184&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/74/e6/9b/74e69b06-aa89-d01b-ac79-ea3e77a8c15a/mzaf_17559748072377962116.plus.aac.p.m4a",
+    "name": "31 Bloom",
+    "source": "itunes"
+  },
+  "song|NMIXX|Phoenix": {
+    "artwork": "assets/songs/nmixx-phoenix.jpg",
+    "url": "https://music.apple.com/us/album/phoenix/1839523838?i=1839523847&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b6/66/d8/b666d89b-f7c1-4541-4893-b1845d79359d/mzaf_8389708915204331360.plus.aac.p.m4a",
+    "name": "Phoenix",
+    "source": "itunes"
+  },
+  "song|capsule|I Wish You": {
+    "artwork": "assets/songs/capsule-i-wish-you.jpg",
+    "url": "https://music.apple.com/jp/album/i-wish-you/676035200?i=676035235&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4b/63/ea/4b63ea9d-a53b-0903-76d3-0e749979c520/mzaf_2096015636243671654.plus.aac.p.m4a",
+    "name": "I wish You",
+    "source": "itunes"
+  },
+  "song|Perfume|575": {
+    "artwork": "assets/songs/perfume-575.jpg",
+    "url": "https://music.apple.com/jp/album/575/663645347?i=663645495&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bc/57/80/bc57803d-d73a-eb00-d2ce-7b6cc5cdaf3c/mzaf_5277544180907940424.plus.aac.p.m4a",
+    "name": "575",
+    "source": "itunes"
+  }
+}
