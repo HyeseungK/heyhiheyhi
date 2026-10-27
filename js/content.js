@@ -787,7 +787,7 @@ export const music = {
     { type: 'Concert', name: 'Olivia Rodrigo — GUTS World Tour', lineup: 'Live in Seoul', date: '2024.09.21', venue: 'Jamsil Indoor Stadium', city: 'Seoul', color: '#7d4bb3', stars: 4, memo: 'A pop star, impossibly pretty. Went with friends and danced the whole way through.' },
     { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'The Strokes · Silica Gel · 250', date: '2023.08.05', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#111111', stars: 4, memo: 'Here for The Strokes. Julian came on tipsy, sang one song three times, no Ode to the Mets. Silica Gel’s Desert Eagle was huge; raved to 250 at midnight.' },
     { type: 'Concert', name: 'Hiatus Kaiyote', lineup: 'Live in Brooklyn', date: '2023.04.29', venue: 'Brooklyn Steel', city: 'New York', color: '#d9643a', stars: 3, memo: 'One of my most New York nights. Brooklyn at its truest, in a crowd of wonderful weirdos.' },
-    { type: 'Concert', name: 'Billy Joel', lineup: 'Live at The Garden', date: '2023.03.26', venue: 'Madison Square Garden', city: 'New York', color: '#b0413e', memo: 'Exchange semester, slow to settle in. Then the song I needed: “But I’m taking a Greyhound on the Hudson River Line.” New York finally felt real.' }, // [PLACEHOLDER] stars
+    { type: 'Concert', name: 'Billy Joel', lineup: 'Live at The Garden', date: '2023.03.26', venue: 'Madison Square Garden', city: 'New York', color: '#b0413e', stars: 5, memo: 'Exchange semester, slow to settle in. Then the song I needed: “But I’m taking a Greyhound on the Hudson River Line.” New York finally felt real.' },
   ],
   stage: {
     intro: 'In college I was a band nomad: science, then business, then engineering. Only one of those is my major. I sang in all three.',
