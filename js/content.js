@@ -786,9 +786,9 @@ export const music = {
     soundcloud: '', // optional: a SoundCloud link shows a button at the bottom
     // Newest first. `next`: an upcoming show, highlighted. `instagram`: the band's handle, without @.
     performances: [
-      { title: '활천 Hwalchun', sub: 'Engineering band', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third show', instagram: 'hwalchun' },
-      { title: '오도 Odo', sub: 'Business School, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: 'band_odoyonsei' },
-      { title: '청년 Puruni', sub: 'Science × life sciences band', date: '2021 — 2022', role: 'Vocals and guitar · one busking set, one concert', instagram: 'ys_puruni' },
+      { title: '활천 Hwalchun', sub: 'Based in the College of Engineering', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third show', instagram: 'hwalchun' },
+      { title: '오도 Odo', sub: 'Based in the School of Business, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: 'band_odoyonsei' },
+      { title: '청년 Puruni', sub: 'Based in the Colleges of Science and Life Sciences', date: '2021 — 2022', role: 'Vocals and guitar · one busking set, one concert', instagram: 'ys_puruni' },
     ],
   },
 };
