@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { addLights } from './bricks.js';
 
-const MELT_SECONDS = 150; // fully melted after this long with the laptop open
+const MELT_SECONDS = 60; // fully melted after this long with the laptop open
 
 export function createCoffee(canvas) {
   let renderer;
@@ -17,8 +17,8 @@ export function createCoffee(canvas) {
   const scene = new THREE.Scene();
   addLights(scene);
   const camera = new THREE.PerspectiveCamera(26, 1, 1, 200);
-  camera.position.set(0, 16, 38);
-  camera.lookAt(0, 6.2, 0);
+  camera.position.set(0, 15, 34);
+  camera.lookAt(0, 5.2, 0);
 
   const box = new THREE.BoxGeometry(0.94, 0.94, 0.94);
   const R = 3.6, H = 12;
@@ -57,8 +57,17 @@ export function createCoffee(canvas) {
   straw.position.set(1.4, 2, -0.6);
   straw.rotation.z = -0.22;
 
+  // the puddle of condensation that spreads under the glass as it sweats
+  const puddleMat = new THREE.MeshStandardMaterial({ color: '#cfe3ef', roughness: 0.05, transparent: true, opacity: 0.55, depthWrite: false });
+  const puddleCells = [];
+  for (let x = -8; x <= 8; x++) for (let z = -8; z <= 8; z++) {
+    const d = Math.hypot(x * 0.9, z + 0.6 * Math.sin(x)); // a little lopsided
+    if (d <= 8) puddleCells.push([x, z, d]);
+  }
+  const puddle = new THREE.InstancedMesh(new THREE.BoxGeometry(0.98, 0.18, 0.98), puddleMat, puddleCells.length);
+
   const cup = new THREE.Group();
-  cup.add(coffee, ...ice, straw, glass);
+  cup.add(puddle, coffee, ...ice, straw, glass);
   cup.rotation.y = -0.5;
   scene.add(cup);
 
@@ -74,6 +83,11 @@ export function createCoffee(canvas) {
     coffee.count = n;
     coffee.instanceMatrix.needsUpdate = true;
     coffeeMat.color.copy(dark).lerp(light, k * 0.75);
+    const spread = 3.6 + k * 4.4; // the puddle grows from under the glass
+    let p = 0;
+    puddleCells.forEach(([x, z, d]) => { if (k > 0.05 && d <= spread) puddle.setMatrixAt(p++, m.makeTranslation(x, -0.55, z)); });
+    puddle.count = p;
+    puddle.instanceMatrix.needsUpdate = true;
     ice.forEach((c, i) => {
       const left = Math.max(0, 1 - k * (1.15 - i * 0.1));
       c.visible = left > 0.02;

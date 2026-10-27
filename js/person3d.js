@@ -84,31 +84,45 @@ function bricksOf(fig) {
 const accentNow = () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || COBALT;
 
 let ac;
+// a sung "wheeee~": a voice-like tone through vowel formants that slide from "w" (oo) to "ee",
+// rising, holding, then falling away; higher and brighter the younger she is
 function whee(age) {
   if (!sound.on) return;
   try {
     ac = ac || new (window.AudioContext || window.webkitAudioContext)();
     ac.resume();
-    const t = ac.currentTime + 0.01, base = 200 * Math.pow(2, age * 0.75); // ~200 Hz grown-up → ~570 Hz baby
-    const o = ac.createOscillator(), g = ac.createGain(), f1 = ac.createBiquadFilter(), f2 = ac.createBiquadFilter();
-    const vib = ac.createOscillator(), vg = ac.createGain();
-    o.type = 'sawtooth';
-    o.frequency.setValueAtTime(base, t);
-    o.frequency.exponentialRampToValueAtTime(base * 1.9, t + 0.28); // "whee" rising…
-    o.frequency.exponentialRampToValueAtTime(base * 1.25, t + 0.85); // …and falling away
-    vib.frequency.value = 6; vg.gain.value = base * 0.03;
-    vib.connect(vg).connect(o.frequency);
-    // two vowel formants for an "ee"
-    f1.type = 'bandpass'; f1.frequency.value = 330 + age * 60; f1.Q.value = 6;
-    f2.type = 'bandpass'; f2.frequency.value = 2400 + age * 400; f2.Q.value = 9;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.5, t + 0.05);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
-    o.connect(f1).connect(g);
-    o.connect(f2).connect(g);
-    g.connect(ac.destination);
-    o.start(t); vib.start(t);
-    o.stop(t + 0.95); vib.stop(t + 0.95);
+    const t = ac.currentTime + 0.01, dur = 1.5;
+    const base = 165 * Math.pow(2, age * 0.8); // ~165 Hz grown-up → ~500 Hz baby
+    const out = ac.createGain();
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.35, t + 0.12);
+    out.gain.setValueAtTime(0.35, t + 0.75);
+    out.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    out.connect(ac.destination);
+    // the voice: a buzzy source with a slow, small vibrato that only arrives on the held note
+    const src = ac.createOscillator();
+    src.type = 'sawtooth';
+    src.frequency.setValueAtTime(base * 0.85, t);
+    src.frequency.exponentialRampToValueAtTime(base * 1.6, t + 0.35);
+    src.frequency.setValueAtTime(base * 1.6, t + 0.7);
+    src.frequency.exponentialRampToValueAtTime(base * 1.05, t + dur);
+    const vib = ac.createOscillator(), vibAmt = ac.createGain();
+    vib.frequency.value = 5;
+    vibAmt.gain.setValueAtTime(0, t);
+    vibAmt.gain.linearRampToValueAtTime(base * 0.012, t + 0.6);
+    vib.connect(vibAmt).connect(src.frequency);
+    // formants: F1 low and steady, F2 sweeping up from "oo" to "ee", F3 for brightness
+    const s = 1 + age * 0.12;
+    [[300 * s, 4, 1], [800 * s, 7, 0.7, 2300 * s], [3000 * s, 9, 0.35]].forEach(([f, q, g, to]) => {
+      const bp = ac.createBiquadFilter(), gg = ac.createGain();
+      bp.type = 'bandpass'; bp.Q.value = q;
+      bp.frequency.setValueAtTime(f, t);
+      if (to) bp.frequency.exponentialRampToValueAtTime(to, t + 0.25);
+      gg.gain.value = g;
+      src.connect(bp).connect(gg).connect(out);
+    });
+    src.start(t); vib.start(t);
+    src.stop(t + dur + 0.05); vib.stop(t + dur + 0.05);
   } catch (e) { /* no audio */ }
 }
 

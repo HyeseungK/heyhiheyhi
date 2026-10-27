@@ -332,11 +332,16 @@ img { display: block; max-width: 100%; }
 .laptop-hit { position: absolute; inset: 0; z-index: 2; }
 /* an iced americano beside the laptop; its ice melts while the laptop is open */
 .laptop-stage { position: relative; }
-.coffee-canvas {
-  position: absolute; bottom: calc(var(--w) * .085); left: calc(50% + var(--w) * .5 + 6px);
-  width: calc(var(--w) * .2); aspect-ratio: 3 / 4; pointer-events: none;
+.laptop-shut {
+  display: block; margin: 28px auto 0; font-size: 13px; letter-spacing: .04em;
+  padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink);
 }
-@media (max-width: 1180px) { .coffee-canvas { left: auto; right: -2vw; bottom: calc(var(--w) * .1); width: calc(var(--w) * .17); } }
+.laptop-shut:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.coffee-canvas {
+  position: absolute; bottom: calc(var(--w) * .05); left: calc(50% + var(--w) * .5 - 10px);
+  width: calc(var(--w) * .3); aspect-ratio: 4 / 5; pointer-events: none;
+}
+@media (max-width: 1180px) { .coffee-canvas { left: auto; right: -3vw; bottom: calc(var(--w) * .07); width: calc(var(--w) * .24); } }
 .laptop-prompt {
   position: absolute; left: 0; right: 0; top: 34%; text-align: center; pointer-events: none;
   font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4.4vw, 56px); line-height: 1.05; color: var(--ink);

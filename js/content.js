@@ -256,6 +256,7 @@ export const visual = {
             { src: 'assets/photos/seoul/heedos-album/03.jpg', caption: 'Heedo 03', ratio: 1.508 },
             { src: 'assets/photos/seoul/heedos-album/04.jpg', caption: 'Heedo 04', ratio: 1.508 },
             { src: 'assets/photos/seoul/heedos-album/05.jpg', caption: 'Heedo 05', ratio: 0.663 },
+            { src: 'assets/photos/seoul/heedos-album/06.jpg', caption: 'Heedo 06', ratio: 0.663 },
           ],
           // plays under the photos, like the Suncheon film
           videos: [
@@ -299,7 +300,6 @@ export const visual = {
             { src: 'assets/photos/seoul/my-kind-of-woman/07.jpg', caption: 'Michelle 1', year: '2025', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/08.jpg', caption: 'Jieun', year: '2023', ratio: 1.508 },
             { src: 'assets/photos/seoul/my-kind-of-woman/09.jpg', caption: 'Michelle 2', year: '2023', ratio: 1.508 },
-            { src: 'assets/photos/seoul/my-kind-of-woman/10.jpg', caption: 'Freda', year: '2023', ratio: 0.663 },
           ],
           notes: [],
         },
@@ -708,7 +708,6 @@ export const music = {
       why: '', // [PLACEHOLDER] one line on why
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
-        { n: 3, name: 'meta angel', apple: 'https://music.apple.com/us/song/meta-angel/1603753478' },
         { n: 5, name: 'oh my love', apple: 'https://music.apple.com/us/song/oh-my-love/1603753482' },
         { n: 8, name: 'lightbeamers' },
         { n: 15, name: 'darjeeling (feat. jorja smith & unknown t)' },
@@ -756,7 +755,7 @@ export const music = {
       why: '',
       tracks: [
         { n: 1, name: '보통의 이별' },
-        { n: 4, name: '째깍째깍 (Tic Toc Tic Toc)' },
+        { n: 4, name: '째깍째깍' },
         { n: 6, name: '텅빈밤' },
       ],
     },
@@ -890,10 +889,25 @@ export const colophon = {
       ],
     },
     {
+      title: 'The design',
+      body: [
+        'If the look needs a name: editorial minimalism with a tactile, toy-like layer. A white page and big quiet type, then things you want to touch: brick toys, taped paper, punched tickets. My notes to Claude were mostly feelings (“simple but sensible”, “too much talk”, “more chic”, “this looks dumb”); it turned them into the rules below.',
+      ],
+      items: [
+        ['Colour', 'white (#ffffff), near-black ink (#0f0f0f), warm greys, and one accent only: cobalt #2f4cff. Every other colour comes from the photos and album covers.'],
+        ['Type', 'Inter Tight for headings and UI, set large with tight tracking · Instrument Serif in italic for leads, roles and quiet hints · Noto Sans KR for Hangul · Reenie Beanie for handwritten notes, stickers and the signature · Nanum Pen Script for diary scraps. All free on Google Fonts.'],
+        ['Voxel art', '“voxels” are 3D pixels. Every object (the nav icons, guitar, amp, turntable, the projects in the laptop, the figure in Work, this iced coffee) is drawn as a small pixel map and built in Three.js from brick-shaped boxes with round studs on top, like LEGO. One accent brick per object.'],
+        ['Motion', 'page changes as pixelation (blocks sweep in from where you clicked) or an ink ripple · the name on the home screen is a particle cloud that morphs between words · elastic and back-out easing so things land with a little bounce · records rise like a dock on hover.'],
+        ['Paper', 'polaroid-style cards with a strip of tape · a note folded in half with a real crease and a crumpled texture (an SVG noise filter) · tickets with a tear-off stub and star-shaped punch holes · a hand-written “play” sticker instead of a big play button.'],
+        ['Layout', 'one idea per section, lots of white space, a small label above each block (“On the rack”, “On repeat”, “On stage”). On phones, nothing scrolls sideways except things you swipe on purpose.'],
+        ['Words', 'short and dry, in English, never explaining the joke. If a caption can go, it goes.'],
+      ],
+    },
+    {
       title: 'The skills',
       body: [
         'Claude Code loaded design “skills”, short playbooks for specific crafts: threejs-webgl, gsap-scrolltrigger and modern-web-design from freshtechbro/claudedesignskills, plus p5js and algorithmic-art for the generative bits.',
-        'Playwright took the test screenshots; Pillow resized my film scans.',
+        'Playwright took the test screenshots (desktop and phone sizes, every change); Pillow resized and cropped my film scans; Web Audio made every sound on the site from scratch, the guitar and the “wheee” included.',
       ],
     },
   ],
