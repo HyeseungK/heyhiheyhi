@@ -647,7 +647,12 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['엑소'], titles: ['EXODUS', 'The 2nd Album EXODUS'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 1, name: 'CALL ME BABY' },
+        { n: 3, name: '시선 둘, 시선 하나 (What If...)' },
+        { n: 5, name: 'EXODUS' },
+      ],
     },
     {
       title: '恋人へ (For Lovers)',
@@ -657,7 +662,11 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['恋人へ', 'Koibito e'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 3, name: '最終列車は25時 (Last Train at 25 O’clock)' },
+        { n: 8, name: '恋は月の蔭に (Behind the Moon Shadow)' },
+      ],
     },
     {
       title: 'When the Pawn...',
@@ -667,7 +676,11 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['When the Pawn'] },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 5, name: 'Paper Bag' },
+        { n: 9, name: 'Get Gone' },
+      ],
     },
     {
       title: '여정 (旅程)',
@@ -677,7 +690,12 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['캐스커'], titles: ['여정', '旅程'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 3, name: '나쁘게' },
+        { n: 7, name: '편지' },
+        { n: 9, name: '천개의 태양' },
+      ],
     },
     {
       title: 'CAPRISONGS',
@@ -687,7 +705,13 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 3, name: 'meta angel' },
+        { n: 5, name: 'oh my love' },
+        { n: 8, name: 'lightbeamers' },
+        { n: 15, name: 'darjeeling (feat. jorja smith & unknown t)' },
+      ],
     },
     {
       title: 'Ego Death',
@@ -697,7 +721,12 @@ export const music = {
       spotify: 'https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q', // the orange cover
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 3, name: 'Under Control' },
+        { n: 5, name: 'Just Sayin / I Tried' },
+        { n: 10, name: 'Partners in Crime Part Three' },
+      ],
     },
     {
       title: 'ザ・ワード (The Word)',
@@ -708,17 +737,25 @@ export const music = {
       spotify: 'https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7',
       itunes: { titles: ['Special Sound Series Vol. 2: The Word', 'Special Sound Series Vol.2'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 2, name: 'Happiness Is Me and You' },
+        { n: 8, name: 'The Word II' },
+      ],
     },
     {
-      title: 'Aja',
+      title: 'Can’t Buy a Thrill',
       artist: 'Steely Dan',
-      year: '1977',
-      color: '#111111', // used until the official cover loads
-      spotify: '', // optional: https://open.spotify.com/album/…
-      itunes: {  },
+      year: '1972',
+      color: '#c9b79c', // used until the official cover loads
+      spotify: '',
+      itunes: { titles: ['Can\'t Buy a Thrill'] },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 2, name: 'Dirty Work' },
+        { n: 7, name: 'Fire in the Hole' },
+      ],
     },
     {
       title: 'Love Trip',
@@ -728,7 +765,11 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['間宮貴子'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 2, name: 'チャイニーズ・レストラン (Chinese Restaurant)' },
+        { n: 3, name: '真夜中のジョーク (Midnight Joke)' },
+      ],
     },
     {
       title: 'WhyKiiiKiii',
@@ -738,7 +779,12 @@ export const music = {
       spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['키키'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
-      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+      // favourite tracks: `n` is the track number on the album, `why` optional
+      tracks: [
+        { n: 2, name: 'Hey Hi' },
+        { n: 4, name: 'Sweet Sour' },
+        { n: 6, name: 'Blue Hour' },
+      ],
     },
   ],
   // The burned CD. `side`: 'analog' or 'modern' — names in `sides`.
@@ -760,6 +806,7 @@ export const music = {
       { artist: 'Billy Joel', title: 'Vienna', side: 'analog', itunes: {  } },
       { artist: 'Cortex', title: 'Poxa', side: 'analog', album: 'Cortex, Vol. 2', year: '1977', itunes: {} },
       { artist: 'Daniel Caesar', title: 'Who Knows', side: 'analog', itunes: {  } },
+      { artist: 'Steely Dan', title: 'Deacon Blues', side: 'analog', album: 'Aja', year: '1977', itunes: {  } },
       { artist: 'Slom', title: '아니라고', side: 'modern', spotify: 'https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm', itunes: { artists: ['슬롬'], country: 'kr' } },
       { artist: 'Four Tet', title: '31 Bloom', side: 'modern', itunes: {  } },
       { artist: 'NMIXX', title: 'Phoenix', side: 'modern', itunes: { artists: ['엔믹스'], country: 'kr' } },
@@ -768,6 +815,7 @@ export const music = {
       { artist: 'House Rulez', title: 'House', side: 'modern', spotify: 'https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
       { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
       { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
+      { artist: 'Lily Allen', title: 'Trigger Bang', side: 'modern', itunes: { titles: ['Trigger Bang (feat. Giggs)'] } },
     ],
   },
   // Newest first. `stars`: 1–5, punched into the stub. `memo`: the back of the ticket, keep it short.

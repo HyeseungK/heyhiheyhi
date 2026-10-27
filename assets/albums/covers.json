@@ -144,16 +144,6 @@
     "source": "spotify",
     "spotify": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q"
   },
-  "album|Steely Dan|Aja": {
-    "artwork": "assets/albums/steely-dan-aja.jpg",
-    "url": "https://music.apple.com/us/album/aja/1706428459?uo=4",
-    "preview": "",
-    "name": "Aja",
-    "album": "Aja",
-    "year": "1977",
-    "source": "itunes",
-    "spotify": ""
-  },
   "album|Takako Mamiya|Love Trip": {
     "artwork": "assets/albums/takako-mamiya-love-trip.jpg",
     "url": "https://music.apple.com/jp/album/love-trip/1671915477?uo=4",

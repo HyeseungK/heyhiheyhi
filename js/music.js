@@ -541,10 +541,13 @@ function paintAlbum(a) {
     <ol class="tracks">
       ${a.tracks
         .map(
-          (t, i) => `<li class="track">
-            <button aria-expanded="false"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="name">${esc(t.name)}</span><span class="pm">+</span></button>
-            <div class="note"><p>${esc(t.why || '—')}</p></div>
-          </li>`
+          (t, i) => {
+            const n = `<span class="n">${String(t.n || i + 1).padStart(2, '0')}</span><span class="name">${esc(t.name)}</span>`;
+            // a track opens only when there is a note to read
+            return t.why
+              ? `<li class="track"><button aria-expanded="false">${n}<span class="pm">+</span></button><div class="note"><p>${esc(t.why)}</p></div></li>`
+              : `<li class="track"><div class="track-row">${n}</div></li>`;
+          }
         )
         .join('')}
     </ol>`;
