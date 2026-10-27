@@ -499,7 +499,8 @@ img { display: block; max-width: 100%; }
 /* phones: a small folded slip sitting on the page; tap and it grows and unfolds over the photos */
 @media (max-width: 900px) {
   .club-note {
-    top: calc(var(--topbar) + 22px); right: var(--gutter); width: min(290px, 84vw);
+    /* under the lead, over the top of the second pile, so it never covers the text */
+    top: calc(100% - 8px); right: var(--gutter); width: min(290px, 84vw);
     transform-origin: 100% 0; scale: .5; transition: scale .6s cubic-bezier(.4, 1.3, .5, 1), rotate .5s var(--ease);
   }
   .club-note[aria-expanded='true'] { scale: 1; rotate: 1deg; z-index: 30; }
