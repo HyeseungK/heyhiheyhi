@@ -536,7 +536,8 @@ export const visual = {
       type: 'Photographer',
       title: 'Josef Koudelka',
       credit: 'Photographer · Magnum',
-      works: [], // photo to come
+      works: ['assets/muses/josef-koudelka-1.jpg'],
+      ratio: '4 / 3',
       why: 'Draws human history like a poem. Cities I have never been to, people and moments I have never seen, and for a second I am inside them. A kind of magic.',
       url: '',
       instagram: '',
