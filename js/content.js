@@ -574,17 +574,6 @@ export const visual = {
     },
     {
       type: 'Director',
-      title: '송서윤 Song Seoyoon', // [CHECK] credited online for the Delulu track film; confirm
-      credit: 'Music video director',
-      works: [],
-      why: '', // [PLACEHOLDER]
-      url: '',
-      videos: [{ title: 'KiiiKiii — Delulu', url: 'https://www.youtube.com/watch?v=BTlj6Sls7KE' }],
-      instagram: '',
-      tone: '#1d1d1d',
-    },
-    {
-      type: 'Director',
       title: '노상윤 Roh Sangyun', // [CHECK] romanisation
       credit: 'Music video director',
       works: [],
