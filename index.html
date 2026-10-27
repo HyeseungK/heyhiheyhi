@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&family=Nanum+Pen+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=f5792fb4" />
+  <link rel="stylesheet" href="css/style.css?v=d6909c6a" />
   <script type="importmap">
     {
       "imports": {
@@ -26,7 +26,7 @@
         "./js/itunes.js": "./js/itunes.js?v=3a7dafff",
         "./js/main.js": "./js/main.js?v=32b784db",
         "./js/modal.js": "./js/modal.js?v=c2e0d811",
-        "./js/music.js": "./js/music.js?v=4585c0c9",
+        "./js/music.js": "./js/music.js?v=43c7fbde",
         "./js/visual.js": "./js/visual.js?v=79a159e9",
         "./js/work.js": "./js/work.js?v=c5b8a30b"
       }
@@ -199,16 +199,33 @@
 
       <div class="mixtape">
         <div class="burn-stage">
-          <div class="burn-disc" aria-hidden="true">
-            <span class="burn-rings"></span>
-            <span class="burn-holo"></span>
-            <span class="burn-shine"></span>
-            <span class="burn-hub"></span>
-            <span class="burn-label"></span>
-            <span class="burn-note"></span>
+          <div class="dcase" data-open="false">
+            <div class="dcase-base">
+              <div class="tray"><span class="tray-teeth"></span></div>
+              <div class="disc-slot" data-side="1"></div>
+            </div>
+            <div class="dcase-cover">
+              <div class="dcase-front">
+                <div class="insert">
+                  <span class="ins-label"></span>
+                  <span class="ins-vol"></span>
+                  <span class="ins-sides"></span>
+                  <span class="ins-sticker">2 CD</span>
+                </div>
+              </div>
+              <div class="dcase-inside">
+                <div class="tray"><span class="tray-teeth"></span></div>
+                <div class="disc-slot" data-side="0"></div>
+              </div>
+            </div>
+            <button class="dcase-hit" aria-label="Open the CD case"></button>
           </div>
+          <p class="hint case-hint">Open the case</p>
         </div>
-        <div class="mix-list" aria-label="Favorite songs"></div>
+        <div class="mix-panel">
+          <div class="chips side-tabs" role="tablist"></div>
+          <div class="mix-list" aria-label="Favorite songs"></div>
+        </div>
       </div>
 
       <div class="tickets-block">

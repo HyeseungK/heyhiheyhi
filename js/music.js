@@ -299,63 +299,112 @@ function shuffleRack(shelf) {
 
 // ── the burned CD ───────────────────────────────────────────
 let player = null;
+function discHTML(label, sub) {
+  return `<div class="burn-disc" aria-hidden="true">
+    <span class="burn-rings"></span><span class="burn-holo"></span><span class="burn-shine"></span><span class="burn-hub"></span>
+    <span class="burn-label">${esc(label)}</span><span class="burn-note">${esc(sub)}</span>
+  </div>`;
+}
+
+// a double jewel case: open it, pick disc A or B, play a track and that disc spins
 function renderMixtape(root) {
   const gsap = window.gsap;
   const m = music.mixtape;
   if (!m) return;
   const box = root.querySelector('.mixtape');
-  box.querySelector('.burn-label').textContent = m.label;
-  box.querySelector('.burn-note').textContent = m.note || '';
-  const sides = Object.entries(m.sides || { all: '' });
-  let n = 0;
-  box.querySelector('.mix-list').innerHTML = sides
-    .map(([key, label]) => {
-      const songs = m.songs.map((s, i) => [s, i]).filter(([s]) => (s.side || 'all') === key);
-      if (!songs.length) return '';
-      return `<div class="mix-side"><p class="label">${esc(label)}</p><ol>${songs
-        .map(([s, i]) => `<li><button class="mix-track" data-i="${i}">
-            <span class="n">${String(++n).padStart(2, '0')}</span>
-            <span class="art"></span>
-            <span class="tt"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></span>
-            <span class="pl" aria-hidden="true"></span>
-          </button></li>`)
-        .join('')}</ol></div>`;
-    })
+  const caseEl = box.querySelector('.dcase');
+  const cover = box.querySelector('.dcase-cover');
+  const sides = Object.entries(m.sides || {});
+  const songsOf = (key) => m.songs.map((s, i) => [s, i]).filter(([s]) => s.side === key);
+
+  // paper insert on the front
+  box.querySelector('.ins-label').textContent = m.label;
+  box.querySelector('.ins-vol').textContent = m.note || '';
+  box.querySelector('.ins-sides').innerHTML = sides.map(([, label], k) => `<span>${'AB'[k] || k + 1} — ${esc(label.replace(/^Side \w+ · /, ''))}</span>`).join('');
+
+  // one burned disc per side: A sits in the cover, B in the base
+  const slots = [...box.querySelectorAll('.disc-slot')].sort((x, y) => x.dataset.side - y.dataset.side);
+  sides.forEach(([key, label], k) => {
+    if (!slots[k]) return;
+    slots[k].dataset.key = key;
+    slots[k].innerHTML = discHTML(m.label, `${'AB'[k] || k + 1} · ${label.replace(/^Side \w+ · /, '')}`);
+  });
+
+  box.querySelector('.side-tabs').innerHTML = sides
+    .map(([key, label]) => `<button class="chip" role="tab" data-key="${esc(key)}">${esc(label)} <span>${songsOf(key).length}</span></button>`)
     .join('');
 
-  const disc = box.querySelector('.burn-disc');
-  const spin = gsap.to(disc, { rotation: '+=360', duration: 9, ease: 'none', repeat: -1, paused: true });
+  const list = box.querySelector('.mix-list');
+  let side = sides[0]?.[0];
+  function paintList(animate) {
+    let n = 0;
+    const offset = sides.findIndex(([k]) => k === side) ? songsOf(sides[0][0]).length : 0;
+    list.innerHTML = `<ol>${songsOf(side)
+      .map(([s, i]) => `<li><button class="mix-track${playing === i ? ' is-playing' : ''}" data-i="${i}">
+          <span class="n">${String(offset + ++n).padStart(2, '0')}</span>
+          <span class="art"${s.found?.artwork ? ` style="background-image:url('${esc(s.found.artwork.replace('600x600bb', '200x200bb'))}')"` : ''}></span>
+          <span class="tt"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></span>
+          <span class="pl" aria-hidden="true"></span>
+        </button></li>`)
+      .join('')}</ol>`;
+    box.querySelectorAll('.side-tabs .chip').forEach((c) => {
+      c.classList.toggle('is-on', c.dataset.key === side);
+      c.setAttribute('aria-selected', c.dataset.key === side);
+    });
+    slots.forEach((sl) => sl.classList.toggle('is-picked', sl.dataset.key === side));
+    if (animate) gsap.from(list.querySelectorAll('li'), { x: 24, opacity: 0, stagger: 0.035, duration: 0.45, ease: 'power3.out' });
+  }
+
+  // open / close the case: the cover swings on its left hinge, the case slides to stay centred
+  let open = false;
+  function setOpen(v) {
+    if (open === v) return;
+    open = v;
+    caseEl.dataset.open = v;
+    box.querySelector('.case-hint').textContent = v ? 'Pick a disc' : 'Open the case';
+    gsap.to(cover, { rotationY: v ? -180 : 0, duration: 1.1, ease: 'power3.inOut' });
+    gsap.to(caseEl, { xPercent: v ? 50 : 0, duration: 1.1, ease: 'power3.inOut' });
+    if (v) gsap.fromTo(slots.map((s) => s.querySelector('.burn-disc')), { rotation: -40 }, { rotation: 0, duration: 1.4, ease: 'power3.out', stagger: 0.1 });
+  }
+  box.querySelector('.dcase-hit').addEventListener('click', () => setOpen(true));
+  caseEl.addEventListener('click', (e) => {
+    if (!open) return;
+    const slot = e.target.closest('.disc-slot');
+    if (slot) pickSide(slot.dataset.key);
+    else if (!e.target.closest('.dcase-hit')) setOpen(false);
+  });
+
+  function pickSide(key, quiet) {
+    if (!key) return;
+    const changed = key !== side;
+    side = key;
+    paintList(changed && !quiet);
+    const slot = slots.find((s) => s.dataset.key === key);
+    if (slot && changed) gsap.fromTo(slot.querySelector('.burn-disc'), { rotation: -90 }, { rotation: 0, duration: 1, ease: 'power3.out' });
+  }
+  box.querySelector('.side-tabs').addEventListener('click', (e) => {
+    const c = e.target.closest('.chip');
+    if (!c) return;
+    setOpen(true);
+    pickSide(c.dataset.key);
+  });
+
+  // playback: preview audio, the chosen disc spins
   const audio = new Audio();
   audio.preload = 'none';
   let playing = null;
-
-  // fetch artwork + previews once the section comes into view
-  let looked = false;
-  const look = () => {
-    if (looked) return;
-    looked = true;
-    m.songs.forEach((s, i) => {
-      officialFor('song', s).then((r) => {
-        if (!r) return;
-        s.found = r;
-        const art = box.querySelector(`.mix-track[data-i="${i}"] .art`);
-        if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '200x200bb')}")`;
-      }).catch(() => {});
-    });
-  };
-  new IntersectionObserver(([e]) => e.isIntersecting && look(), { rootMargin: '300px' }).observe(box);
-
+  let spin = null;
   function stop() {
     audio.pause();
-    box.querySelectorAll('.mix-track.is-playing').forEach((b) => b.classList.remove('is-playing'));
     playing = null;
-    gsap.to(spin, { timeScale: 0, duration: 1.2, onComplete: () => spin.pause() });
-    box.classList.remove('is-spinning');
+    list.querySelectorAll('.mix-track.is-playing').forEach((b) => b.classList.remove('is-playing'));
+    if (spin) { const sp = spin; gsap.to(sp, { timeScale: 0, duration: 1.2, onComplete: () => sp.kill() }); spin = null; }
+    slots.forEach((s) => s.classList.remove('is-spinning'));
   }
   audio.addEventListener('ended', stop);
   player = { stop };
 
-  box.querySelector('.mix-list').addEventListener('click', (e) => {
+  list.addEventListener('click', (e) => {
     const b = e.target.closest('.mix-track');
     if (!b) return;
     const i = +b.dataset.i;
@@ -363,29 +412,52 @@ function renderMixtape(root) {
     if (playing === i) return stop();
     if (s.found?.preview) {
       stop();
+      setOpen(true);
       audio.src = s.found.preview;
       audio.play().catch(() => {});
       playing = i;
       b.classList.add('is-playing');
-      box.classList.add('is-spinning');
-      spin.play();
-      gsap.fromTo(spin, { timeScale: 0.2 }, { timeScale: 6, duration: 1.4, ease: 'power2.out' });
+      const slot = slots.find((sl) => sl.dataset.key === s.side);
+      if (slot) {
+        slot.classList.add('is-spinning');
+        spin = gsap.to(slot.querySelector('.burn-disc'), { rotation: '+=360', duration: 1.6, ease: 'none', repeat: -1 });
+        gsap.fromTo(spin, { timeScale: 0.1 }, { timeScale: 1, duration: 1.2, ease: 'power2.out' });
+      }
       return;
     }
-    // no preview: open the song elsewhere
     const url = s.found?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.artist} ${s.title}`)}`;
     window.open(url, '_blank', 'noopener');
   });
 
-  // the disc tilts a little toward the cursor
-  const qx = gsap.quickTo(disc.parentElement, 'rotationY', { duration: 0.8, ease: 'power3' });
-  const qy = gsap.quickTo(disc.parentElement, 'rotationX', { duration: 0.8, ease: 'power3' });
-  box.addEventListener('pointermove', (e) => {
-    const r = box.getBoundingClientRect();
-    qx(((e.clientX - r.left) / r.width - 0.5) * 14);
-    qy(-((e.clientY - r.top) / r.height - 0.5) * 10);
-    disc.style.setProperty('--shine', `${((e.clientX - r.left) / r.width) * 360}deg`);
+  // artwork + previews (saved covers first, live lookup for the rest), once in view
+  let looked = false;
+  new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting || looked) return;
+    looked = true;
+    m.songs.forEach((s, i) => {
+      officialFor('song', s).then((r) => {
+        if (!r) return;
+        s.found = r;
+        const art = list.querySelector(`.mix-track[data-i="${i}"] .art`);
+        if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '200x200bb')}")`;
+      }).catch(() => {});
+    });
+  }, { rootMargin: '300px' }).observe(box);
+
+  // the case tilts a little toward the cursor; the discs catch the light
+  const stage = box.querySelector('.burn-stage');
+  const qx = gsap.quickTo(caseEl, 'rotationY', { duration: 0.8, ease: 'power3' });
+  const qy = gsap.quickTo(caseEl, 'rotationX', { duration: 0.8, ease: 'power3' });
+  stage.addEventListener('pointermove', (e) => {
+    const r = stage.getBoundingClientRect();
+    const fx = (e.clientX - r.left) / r.width;
+    qx((fx - 0.5) * 12);
+    qy(-((e.clientY - r.top) / r.height - 0.5) * 8);
+    box.style.setProperty('--shine', `${fx * 360}deg`);
   });
+  stage.addEventListener('pointerleave', () => { qx(0); qy(0); });
+
+  paintList(false);
 }
 export const stopMixtape = () => player?.stop();
 
