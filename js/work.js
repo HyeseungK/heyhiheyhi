@@ -27,7 +27,7 @@ export function renderWork(root) {
       </li>`;
   }
 
-  root.querySelector('.os-title').textContent = `projects — ${work.projects.length} items`;
+  root.querySelector('.os-title').textContent = work.projectsTitle || 'Projects';
   // one brick object per project; the image is filled in by main.js once the icons are rendered
   root.querySelector('.os-list').innerHTML = work.projects
     .map(

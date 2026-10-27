@@ -111,13 +111,6 @@ export const work = {
     },
     {
       group: 'Education & activities',
-      period: '2022 — 2025',
-      org: 'Yonyoung · Prometheus · MAY',
-      role: 'Film, photography and music clubs',
-      text: 'Yonyoung in 2022 and 2023, Prometheus in 2025, and MAY (MIDI Associate of Yonsei) for writing songs on a laptop. Where the creative side of this site started.',
-    },
-    {
-      group: 'Education & activities',
       period: '2025',
       org: 'SM Entertainment',
       role: 'SM Biz Ent Class',
@@ -131,6 +124,8 @@ export const work = {
       text: 'My first try at building with Claude: a map of the good places to eat near the office, made as a new joiner to share with coworkers. Even the CEO dropped a pin for a favourite spot. This site is the sequel.',
     },
   ],
+  // the title bar of the laptop window
+  projectsTitle: 'Projects at Kearney',
   // Inside the laptop: one brick object per project, with a label and a date.
   // Click one to read a few lines about it. `icon`: transformer · skincare · drone · probecard · hud
   // (drawn in js/bricks.js). `now: true` marks a project that is still running.
@@ -165,7 +160,7 @@ export const work = {
     },
     {
       icon: 'hud',
-      label: 'Cost Competitiveness',
+      label: 'Cost Analysis',
       period: 'Oct 2026 — Now',
       now: true,
       about: 'Head-up displays in cars',
@@ -180,6 +175,14 @@ export const work = {
 // Leave `src` empty to show a placeholder frame.
 export const visual = {
   lead: 'Film in New York City, shoots and days in Seoul, a trip through Europe, nights out in Busan, the road in Mongolia, a short film in Suncheon. Pick up a pile.',
+  // a taped note next to the title: the clubs where the visual side started (`instagram`: handle, no @)
+  clubNote: {
+    text: 'Always been a visuals person.',
+    clubs: [
+      { name: 'Yonyoung', what: 'Yonsei’s photography club', years: '2022 — 2023', instagram: '' }, // [PLACEHOLDER] handle
+      { name: 'Prometheus', what: 'Yonsei’s film club', years: '2025', instagram: '' }, // [PLACEHOLDER] handle
+    ],
+  },
   // Places on the globe. Click a pin and its photos spill out.
   // Photos: put files in assets/photos/<id>/ and set `src`, e.g. 'assets/photos/new-york/01.jpg'.
   // `ratio` (width / height) is only used for empty placeholders: 1.5 landscape, 0.667 portrait.

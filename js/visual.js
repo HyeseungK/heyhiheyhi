@@ -176,6 +176,15 @@ export function renderVisual(root) {
 
   renderMuses(root);
 
+  // the club note, taped next to the title
+  const cn = visual.clubNote, note = root.querySelector('.club-note');
+  if (cn && note) {
+    const ig = (h) => (h ? ` <a href="https://www.instagram.com/${encodeURIComponent(h.replace(/^@/, ''))}/" target="_blank" rel="noopener">@${esc(h.replace(/^@/, ''))}</a>` : '');
+    note.insertAdjacentHTML('beforeend', `<p>${esc(cn.text)}</p><ul>${cn.clubs
+      .map((c) => `<li><b>${esc(c.name)}</b>, ${esc(c.what)} <span>${esc(c.years)}</span>${ig(c.instagram)}</li>`)
+      .join('')}</ul>`);
+  } else note?.remove();
+
   spread.querySelector('.spread-back').addEventListener('click', () => closeModal(spread));
   grid.addEventListener('click', (e) => {
     const it = e.target.closest('.spread-item');

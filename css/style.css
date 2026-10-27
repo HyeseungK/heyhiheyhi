@@ -455,6 +455,19 @@ img { display: block; max-width: 100%; }
 }
 .diary img { width: 100%; display: block; mix-blend-mode: multiply; }
 .diary .tape { top: -6px; }
+/* Frames: a taped note about the clubs, beside the lead */
+.club-note {
+  width: min(300px, 100%); margin: 24px 0 0; align-self: start; justify-self: end;
+  background-image: none; padding: 20px 20px 24px;
+  font-family: 'Reenie Beanie', var(--serif); font-size: 24px; line-height: 1.05; color: #2b2b2b;
+}
+.layout-compact .club-note { margin: -6px 0 0; }
+.club-note p { margin: 0 0 8px; }
+.club-note ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.club-note b { font-weight: 400; color: var(--accent); }
+.club-note span { color: var(--muted); white-space: nowrap; }
+.club-note a { color: inherit; font-size: .8em; }
+@media (max-width: 900px) { .layout-compact .club-note { justify-self: start; margin: 14px 0 0 6px; } }
 /* Hangul inside the italic serif: upright, in the Korean sans */
 .ko { font-family: 'Noto Sans KR', var(--sans); font-style: normal; font-size: .86em; letter-spacing: -.01em; }
 .diary-text { margin: 0; font-family: 'Nanum Pen Script', var(--serif); font-size: clamp(22px, 2.2vw, 28px); line-height: 32px; color: #2b2b2b; }
