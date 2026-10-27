@@ -438,6 +438,7 @@ export const visual = {
   // whether it is a person, an album concept or a single music video.
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
   // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
+  // `links`: more buttons on the back, [{ label, url }].
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
   // Every card is a person. Their favourite works hang off the card: `works` (images) and
@@ -453,9 +454,10 @@ export const visual = {
       type: 'Photographer',
       title: '박현경 Park Hyunkyung', // [CHECK] romanisation
       credit: 'Photographer · KiiiKiii’s first two albums',
-      works: [], // e.g. ['assets/muses/park-hyunkyung-1.jpg', '...']
-      why: 'Picked by KiiiKiii’s creative director Haewon Jung (@byheyone), and a Joel Meyerowitz fan. Flipping through the KiiiKiii photo books on the way to work makes for the best kind of morning. I want to capture people like that: entirely themselves, only cheekier and more sparkling.',
-      url: 'https://m.singleskorea.com/culture/2026/02/720835',
+      works: [], // photos to come
+      why: 'One of the few who can hold KiiiKiii’s whole vibe, the person who turns their creative director’s imagination into photographs. A very Gen Z eye: flash-bright, a little odd, never too polished. A KiiiKiii photo book on the way to work makes the best morning.',
+      url: '',
+      links: [{ label: 'Interview', url: 'https://m.singleskorea.com/culture/2026/02/720835' }],
       instagram: 'hiozoik',
       tone: '#e6dccf',
     },
@@ -463,8 +465,8 @@ export const visual = {
       type: 'Photographer',
       title: 'Szilveszter Makó',
       credit: 'Photographer · Hollywood’s current favourite',
-      works: [],
-      why: 'A classic, analog mood all of its own, dreamy without ever being obvious. Fantastical techniques that never feel like a trick. I found the work in an issue of Numéro I bought for Cho Gi-seok’s photos (@chogiseok), “bought the dip” in 2023, and it has only gone up since. Called it.',
+      works: ['assets/muses/szilveszter-mako-1.jpg'],
+      why: 'Photographs like oil paintings. Absurd props, and people pinned in place as part of the artwork, like a dark fairy tale. The most experimental ideas come with lesser-known sitters. Very conceptual, and somehow I never tire of it.',
       url: '',
       instagram: 'szilvesztermako',
       tone: '#d7dfe3',
@@ -482,21 +484,29 @@ export const visual = {
     {
       type: 'Photographer',
       title: '윤송이 Yoon Songi', // [CHECK] romanisation
-      credit: 'Photographer, Seoul',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      credit: 'Photographer · fashion',
+      works: ['assets/muses/yoon-songi-1.jpg'],
+      why: 'A gift for drawing people as a dream. Fashion photographs where you can read the photographer, someone who thinks a lot. A pretty kind of melancholy, bluish and see-through, like light through paper doors.',
       url: '',
+      links: [
+        { label: 'Interview', url: 'https://www.marieclairekorea.com/fashion/2026/04/yoon-song-yi-2/' },
+        { label: 'With Brian Eno', url: 'https://www.marieclairekorea.com/lifestyle/2022/11/coda/' },
+      ],
       instagram: 'songgge',
       tone: '#e9dfe0',
     },
     {
-      type: 'Photographer',
+      type: ['Photographer', 'Director'],
       title: 'Annie Chung',
-      credit: 'Photographer · lifeimages film · worked with KiiiKiii',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      credit: 'Photographer and director · lifeimages film',
+      works: ['assets/muses/annie-chung-1.jpg', 'assets/muses/annie-chung-2.jpg', 'assets/muses/annie-chung-3.jpg'],
+      why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. The personal film work is lovely too. KiiiKiii’s first-album concept photos and Sweet & Sour are legendary.',
       url: '',
-      instagram: '', // [PLACEHOLDER] handle
+      links: [
+        { label: 'Films', url: 'https://lifeimagesfilm.com/film' },
+        { label: 'Sweet & Sour', url: 'https://kiiikiii.kr/sweetsour' },
+      ],
+      instagram: 'lifeimagesfilm',
       tone: '#e4dfd6',
     },
     {
