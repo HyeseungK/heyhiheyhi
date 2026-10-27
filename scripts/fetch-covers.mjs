@@ -71,6 +71,14 @@ async function spotifyMeta(link) {
 }
 
 async function lookup(q, kind) {
+  // an album's Apple Music link + a track number: take that track from the album
+  const albumId = /\/album\/[^/]+\/(\d+)/.exec(q.appleAlbum || '')?.[1];
+  if (albumId && q.n) {
+    const store = /music\.apple\.com\/(\w\w)\//.exec(q.appleAlbum)?.[1] || 'us';
+    const r = ((await getJSON(`https://itunes.apple.com/lookup?id=${albumId}&entity=song&country=${store}`))?.results || [])
+      .find((x) => x.wrapperType === 'track' && x.trackNumber === q.n && (x.discNumber || 1) === 1);
+    if (r) return { source: 'itunes', artwork: (r.artworkUrl100 || '').replace(/\/\d+x\d+bb\./, '/600x600bb.'), url: r.trackViewUrl, preview: r.previewUrl || '', name: r.trackName, album: r.collectionName || '', year: (r.releaseDate || '').slice(0, 4) };
+  }
   // a pasted Apple Music song link (…?i=<id>) gives the exact track, preview included
   const appleId = /[?&]i=(\d+)/.exec(q.apple || '')?.[1] || /\/song\/[^/]+\/(\d+)/.exec(q.apple || '')?.[1];
   if (appleId) {
@@ -175,7 +183,7 @@ const jobs = [
   // favourite tracks inside each album: looked up as songs, for their 30-second previews
   ...music.albums.flatMap((al) => (al.tracks || []).map((t) => ({
     kind: 'song', dir: 'assets/songs',
-    a: { artist: al.artist, title: t.name, spotify: t.spotify || '', apple: t.apple || '', itunes: { ...(al.itunes || {}), titles: t.titles || [] } },
+    a: { artist: al.artist, title: t.name, spotify: t.spotify || '', apple: t.apple || '', appleAlbum: /\/album\//.test(al.apple || '') ? al.apple : '', n: t.n, itunes: { ...(al.itunes || {}), titles: t.titles || [] } },
   }))),
 ];
 let found = 0, missing = [];
@@ -184,7 +192,7 @@ for (const { kind, a, dir } of jobs) {
   const rel = `${dir}/${slug(`${a.artist}-${a.title}`)}.jpg`;
   const have = manifest[key] && 'album' in manifest[key] && (manifest[key].spotify || '') === (a.spotify || '') && (manifest[key].apple || '') === (a.apple || '') && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
   if (have || a.cover) { found++; continue; }
-  const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, apple: a.apple, ...(a.itunes || {}) }, kind);
+  const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, apple: kind === 'album' ? '' : a.apple, appleAlbum: a.appleAlbum, n: a.n, ...(a.itunes || {}) }, kind);
   if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); log(`✗ ${kind} ${a.artist} — ${a.title}`); continue; }
   try {
     await download(r.artwork, path.join(root, rel));

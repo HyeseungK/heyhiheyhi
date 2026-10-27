@@ -651,6 +651,7 @@ export const music = {
       // favourite tracks: `n` is the track number on the album
       tracks: [
         { n: 3, name: 'Artificial Love' },
+        { n: 4, name: 'Cloud 9' },
         { n: 6, name: '백색소음 (White Noise)' }, // the Korean version, not the Chinese one
       ],
     },
@@ -750,6 +751,7 @@ export const music = {
       color: '#e4ddd2', // used until the official cover loads
       spotify: '',
       itunes: { artists: ['SUMIN', '수민', 'Slom'], titles: ['MINISERIES 2', 'Miniseries 2'], country: 'kr' },
+      apple: 'https://music.apple.com/us/album/miniseries-2/1757545844', // favourite tracks are picked from this album by number
       why: '',
       tracks: [
         { n: 1, name: '보통의 이별' },

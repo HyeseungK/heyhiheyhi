@@ -700,7 +700,7 @@ modal.addEventListener('touchend', (e) => {
 let audio;
 function pluck(freq, when, gain = 0.18) {
   const sr = audio.sampleRate;
-  const len = Math.floor(sr * 2.2);
+  const len = Math.floor(sr * 3);
   const buf = audio.createBuffer(1, len, sr);
   const d = buf.getChannelData(0);
   const N = Math.round(sr / freq);
@@ -710,7 +710,7 @@ function pluck(freq, when, gain = 0.18) {
   for (let i = 0; i < len; i++) {
     const nx = (p + 1) % N;
     const v = ring[p];
-    ring[p] = 0.996 * 0.5 * (ring[p] + ring[nx]);
+    ring[p] = 0.9975 * 0.5 * (ring[p] + ring[nx]);
     d[i] = v;
     p = nx;
   }
@@ -718,14 +718,23 @@ function pluck(freq, when, gain = 0.18) {
   src.buffer = buf;
   const g = audio.createGain();
   g.gain.setValueAtTime(gain, when);
-  g.gain.exponentialRampToValueAtTime(0.001, when + 2.1);
+  g.gain.exponentialRampToValueAtTime(0.001, when + 2.9);
   const lp = audio.createBiquadFilter();
   lp.type = 'lowpass';
-  lp.frequency.value = 3200;
+  lp.frequency.value = 2600; // warmer
   src.connect(lp).connect(g).connect(audio.destination);
   src.start(when);
 }
 
+// Cmaj9 → Am9 → Fmaj7 → Em9 → Gmaj7, low to high (Hz)
+const CHORDS = [
+  [130.81, 164.81, 246.94, 293.66, 329.63],
+  [110.0, 164.81, 196.0, 261.63, 329.63, 493.88],
+  [87.31, 174.61, 220.0, 261.63, 329.63],
+  [82.41, 123.47, 146.83, 196.0, 293.66, 369.99],
+  [98.0, 146.83, 185.0, 246.94, 293.66, 369.99],
+];
+let chordIx = 0;
 function strum() {
   guitar3d?.strum();
   if (!sound.on) return;
@@ -733,8 +742,9 @@ function strum() {
     audio = audio || new (window.AudioContext || window.webkitAudioContext)();
     audio.resume();
     const t = audio.currentTime + 0.02;
-    // a G major chord, low to high
-    [98.0, 123.47, 146.83, 196.0, 246.94, 392.0].forEach((f, i) => pluck(f, t + i * 0.028));
+    // a slow, soft strum through jazzy voicings (7ths and 9ths), a new chord each time
+    const chord = CHORDS[chordIx++ % CHORDS.length];
+    chord.forEach((f, i) => pluck(f, t + i * 0.05 + Math.random() * 0.01, 0.15));
   } catch (e) {
     /* no audio, no problem */
   }
