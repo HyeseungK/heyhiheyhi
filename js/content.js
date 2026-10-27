@@ -818,7 +818,6 @@ export const music = {
       { artist: 'Perfume', title: '575', side: 'modern', itunes: { country: 'jp' } },
       { artist: 'House Rulez', title: '집 (House)', side: 'modern', apple: 'https://music.apple.com/us/song/home-feat-youme/354643930', spotify: 'https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
       { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', apple: 'https://music.apple.com/us/song/stranger/1810176751', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
-      { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
       { artist: 'Lily Allen', title: 'Trigger Bang', side: 'modern', itunes: { titles: ['Trigger Bang (feat. Giggs)'] } },
       { artist: 'Fantastic Plastic Machine', title: 'City Lights', side: 'modern', itunes: { titles: ['CITY LIGHTS'], country: 'jp' } },
       { artist: 'Aphex Twin', title: 'CIRCLONT6A [141.98][syrobonkus mix]', side: 'modern', itunes: { titles: ['CIRCLONT6A (syrobonkus mix)', 'CIRCLONT6A'] } },
