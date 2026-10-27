@@ -75,5 +75,110 @@
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bc/57/80/bc57803d-d73a-eb00-d2ce-7b6cc5cdaf3c/mzaf_5277544180907940424.plus.aac.p.m4a",
     "name": "575",
     "source": "itunes"
+  },
+  "album|EXO|Call Me Baby": {
+    "artwork": "assets/albums/exo-call-me-baby.jpg",
+    "url": "https://music.apple.com/us/album/the-2nd-album-exodus/979878364?uo=4",
+    "preview": "",
+    "name": "The 2nd Album ‘EXODUS’",
+    "source": "itunes"
+  },
+  "album|Lamp|恋人へ (For Lovers)": {
+    "artwork": "assets/albums/lamp-恋人へ-for-lovers.jpg",
+    "url": "https://music.apple.com/jp/album/%E6%81%8B%E4%BA%BA%E3%81%B8/1486281113?uo=4",
+    "preview": "",
+    "name": "恋人へ",
+    "source": "itunes"
+  },
+  "album|Casker|여정 (旅程)": {
+    "artwork": "assets/albums/casker-여정-旅程.jpg",
+    "url": "https://music.apple.com/us/album/%EC%97%AC%EC%A0%95/1453385251?uo=4",
+    "preview": "",
+    "name": "여정",
+    "source": "itunes"
+  },
+  "album|The Internet|Ego Death": {
+    "artwork": "assets/albums/the-internet-ego-death.jpg",
+    "url": "https://music.apple.com/us/album/ego-death-bonus-tracks-single/1056407834?uo=4",
+    "preview": "",
+    "name": "Ego Death (Bonus Tracks) - Single",
+    "source": "itunes"
+  },
+  "album|Hiroshi Yoshimura|Wet Land": {
+    "artwork": "assets/albums/hiroshi-yoshimura-wet-land.jpg",
+    "url": "https://musicbrainz.org/release-group/2ddd3e2d-0796-4b08-bf1a-152b3a771dcf",
+    "preview": "",
+    "name": "Wet Land",
+    "source": "coverartarchive"
+  },
+  "album|Steely Dan|Aja": {
+    "artwork": "assets/albums/steely-dan-aja.jpg",
+    "url": "https://music.apple.com/us/album/aja/1706428459?uo=4",
+    "preview": "",
+    "name": "Aja",
+    "source": "itunes"
+  },
+  "album|Takako Mamiya|Love Trip": {
+    "artwork": "assets/albums/takako-mamiya-love-trip.jpg",
+    "url": "https://music.apple.com/jp/album/love-trip/1671915477?uo=4",
+    "preview": "",
+    "name": "LOVE TRIP",
+    "source": "itunes"
+  },
+  "album|KiiiKiii|WhyKiiiKiii": {
+    "artwork": "assets/albums/kiiikiii-whykiiikiii.jpg",
+    "url": "https://music.apple.com/us/album/whykiiikiii-ep/6796609538?uo=4",
+    "preview": "",
+    "name": "WhyKiiiKiii - EP",
+    "source": "itunes"
+  },
+  "song|Brian Eno|By This River": {
+    "artwork": "assets/songs/brian-eno-by-this-river.jpg",
+    "url": "https://music.apple.com/us/album/by-this-river/724418251?i=724418782&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/76/fb/be/76fbbe5f-da25-64e7-3fe8-1bc3e582f67e/mzaf_3236249640505955171.plus.aac.p.m4a",
+    "name": "By This River",
+    "source": "itunes"
+  },
+  "song|Mitski|First Love / Late Spring": {
+    "artwork": "assets/songs/mitski-first-love-late-spring.jpg",
+    "url": "https://music.apple.com/us/album/first-love-late-spring/1070245429?i=1070245510&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fd/44/38/fd4438dc-a1ef-6942-346f-db68e8511fca/mzaf_10414107169942300844.plus.aac.p.m4a",
+    "name": "First Love/Late Spring",
+    "source": "itunes"
+  },
+  "song|The Beatles|Hey Jude": {
+    "artwork": "assets/songs/the-beatles-hey-jude.jpg",
+    "url": "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3d/08/f5/3d08f5d7-1e0a-99d9-1085-d50ecc972bb9/mzaf_1689604474306790314.plus.aac.p.m4a",
+    "name": "Hey Jude",
+    "source": "itunes"
+  },
+  "song|Caetano Veloso|Pecado": {
+    "artwork": "assets/songs/caetano-veloso-pecado.jpg",
+    "url": "https://music.apple.com/br/album/pecado/1443361511?i=1443361835&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e3/dd/9e/e3dd9ec1-7ee5-871c-c701-f28e405fe4db/mzaf_6526188591201488272.plus.aac.p.m4a",
+    "name": "Pecado",
+    "source": "itunes"
+  },
+  "song|Milton Nascimento|Cais": {
+    "artwork": "assets/songs/milton-nascimento-cais.jpg",
+    "url": "https://music.apple.com/br/album/cais/1473446573?i=1473446727&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/50/3f/ba/503fba70-8e27-aae4-7656-2106d6525a1b/mzaf_16804197125626818128.plus.aac.p.m4a",
+    "name": "Cais",
+    "source": "itunes"
+  },
+  "song|Masayoshi Takanaka|Beleza Pula": {
+    "artwork": "assets/songs/masayoshi-takanaka-beleza-pula.jpg",
+    "url": "https://music.apple.com/jp/album/beleza-pula/1603369881?i=1603369893&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2f/e7/25/2fe72518-b266-1593-feb2-18bb658c8523/mzaf_11120807249677246955.plus.aac.p.m4a",
+    "name": "BELEZA PULA",
+    "source": "itunes"
+  },
+  "song|Blood Orange|Augustine": {
+    "artwork": "assets/songs/blood-orange-augustine.jpg",
+    "url": "https://music.apple.com/us/album/augustine/1120719798?i=1120720345&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/d5/62/d8d56246-bd25-ff88-ffe3-8f3a3b1778cd/mzaf_8648023887807872757.plus.aac.p.m4a",
+    "name": "Augustine",
+    "source": "itunes"
   }
 }
