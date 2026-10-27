@@ -195,7 +195,10 @@ export function renderVisual(root) {
 }
 
 // ── Inspiration: a moodboard of people and work I love ────────────
-const RATIO = { Video: '16 / 9', 'Other artwork': '1 / 1' };
+const RATIO = { Work: '16 / 9', Video: '16 / 9', 'Other artwork': '1 / 1' };
+// a card can have one type or several (e.g. ['Photographer', 'Director'])
+const typesOf = (m) => [].concat(m.type || []);
+const isFilm = (url) => /youtu|vimeo/.test(url || '');
 
 function playVideo(url) {
   const p = parseVideo(url);
@@ -211,8 +214,8 @@ function renderMuses(root) {
   const muses = visual.muses || [];
   const board = root.querySelector('.muse-board');
   // chips from visual.museTypes (only the ones that have cards), then any other types used
-  const listed = (visual.museTypes || []).filter((t) => muses.some((m) => m.type === t.type));
-  const extra = [...new Set(muses.map((m) => m.type))].filter((t) => !listed.some((l) => l.type === t)).map((t) => ({ type: t, label: t }));
+  const listed = (visual.museTypes || []).filter((t) => muses.some((m) => typesOf(m).includes(t.type)));
+  const extra = [...new Set(muses.flatMap(typesOf))].filter((t) => !listed.some((l) => l.type === t)).map((t) => ({ type: t, label: t }));
   root.querySelector('.muse-filter').innerHTML = [{ type: 'All', label: 'All' }, ...listed, ...extra]
     .map((t, i) => `<button class="chip${i ? '' : ' is-on'}" data-t="${esc(t.type)}">${esc(t.label)}</button>`)
     .join('');
@@ -220,28 +223,28 @@ function renderMuses(root) {
   board.innerHTML = muses
     .map((m, i) => {
       const imgs = m.works?.length ? m.works : m.image ? [m.image] : [];
-      const video = m.type === 'Video' && parseVideo(m.url);
+      const video = isFilm(m.url) && parseVideo(m.url);
       const thumb = !imgs.length && video?.thumb ? video.thumb : '';
       const dark = /^#[0-3]/.test(m.tone || '');
       const media = imgs.length
         ? `<span class="muse-media${imgs.length > 1 ? ' collage' : ''}">${imgs.slice(0, 3).map((src) => `<img src="${esc(src)}" alt="" loading="lazy" />`).join('')}</span>`
         : thumb
           ? `<span class="muse-media"><img src="${esc(thumb)}" alt="" loading="lazy" /><span class="play"></span></span>`
-          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${m.type === 'Video' ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
+          : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${video ? '<span class="play"></span>' : `<em>${esc(m.title.split(' ')[0])}</em>`}</span>`;
       const tilt = ((i * 37) % 7) - 3;
       const handle = (m.instagram || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
       const ig = handle ? `https://www.instagram.com/${encodeURIComponent(handle)}/` : '';
-      return `<div class="muse" data-type="${esc(m.type)}" role="button" tabindex="0" aria-pressed="false" style="--tilt:${tilt}deg;--ratio:${RATIO[m.type] || '4 / 5'}" aria-label="${esc(m.title)}. Press to read why">
+      return `<div class="muse" data-type="${esc(typesOf(m).join('|'))}" role="button" tabindex="0" aria-pressed="false" style="--tilt:${tilt}deg;--ratio:${(video && !imgs.length ? '16 / 9' : RATIO[typesOf(m)[0]]) || '4 / 5'}" aria-label="${esc(m.title)}. Press to read why">
         <span class="tape" aria-hidden="true"></span>
         <span class="muse-inner">
           <span class="muse-front">
             ${media}
-            <span class="muse-text"><span class="muse-type">${esc(m.type)}</span><b>${esc(m.title)}</b><span class="muse-credit">${esc(m.credit || '')}</span>${ig ? `<a class="muse-ig" href="${ig}" target="_blank" rel="noopener">@${esc(handle)}</a>` : ''}</span>
+            <span class="muse-text"><span class="muse-type">${esc(typesOf(m).join(' · '))}</span><b>${esc(m.title)}</b><span class="muse-credit">${esc(m.credit || '')}</span>${ig ? `<a class="muse-ig" href="${ig}" target="_blank" rel="noopener">@${esc(handle)}</a>` : ''}</span>
           </span>
           <span class="muse-back">
-            <span class="muse-type">${esc(m.type)}</span>
+            <span class="muse-type">${esc(typesOf(m).join(' · '))}</span>
             <b>${esc(m.title)}</b>
-            <span class="muse-why">“${esc(m.why || '')}”</span>
+            ${m.why ? `<span class="muse-why">“${esc(m.why)}”</span>` : ''}
             <span class="muse-actions">
               ${video ? `<button class="muse-btn" data-play="${i}">▶ Watch</button>` : ''}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
@@ -276,7 +279,7 @@ function renderMuses(root) {
     root.querySelectorAll('.muse-filter .chip').forEach((c) => c.classList.toggle('is-on', c === chip));
     const shown = [];
     board.querySelectorAll('.muse').forEach((m) => {
-      m.hidden = chip.dataset.t !== 'All' && m.dataset.type !== chip.dataset.t;
+      m.hidden = chip.dataset.t !== 'All' && !m.dataset.type.split('|').includes(chip.dataset.t);
       if (!m.hidden) shown.push(m);
     });
     gsap.fromTo(shown, { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.5, ease: 'power3.out' });

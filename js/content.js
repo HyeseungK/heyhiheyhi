@@ -437,12 +437,12 @@ export const visual = {
   // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
-  // Filter chips, in this order. Each card's `type` must be one of these.
+  // Filter chips, in this order. A card's `type` is one of these, or a list of them
+  // (e.g. ['Photographer', 'Director']) to show under both.
   museTypes: [
     { type: 'Photographer', label: 'Photographers' },
     { type: 'Director', label: 'Directors' },
-    { type: 'Video', label: 'Videos' },
-    { type: 'Other artwork', label: 'Other Artwork' },
+    { type: 'Work', label: 'Works' },
   ],
   muses: [
     {
@@ -476,44 +476,104 @@ export const visual = {
       tone: '#d9cdb8',
     },
     {
-      type: 'Other artwork',
-      title: 'Album name', // [PLACEHOLDER]
-      credit: 'Artist · art direction by Studio',
-      image: '',
-      why: '[PLACEHOLDER] The colour, the styling, the whole world of it.',
+      type: 'Photographer',
+      title: 'Annie Chung',
+      credit: 'Photographer · lifeimages film · worked with KiiiKiii',
+      works: [],
+      why: '', // [PLACEHOLDER]
       url: '',
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
-      tone: '#e3d3e0',
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#e4dfd6',
     },
     {
-      type: 'Video',
-      title: 'Song title', // [PLACEHOLDER]
-      credit: 'dir. Director name',
-      image: '',
-      why: '[PLACEHOLDER] The one shot I can’t forget.',
-      url: '', // YouTube or Vimeo link
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
-      tone: '#1d1d1d',
+      type: ['Photographer', 'Director'],
+      title: '이혜인 Lee Hyein', // [CHECK] romanisation
+      credit: 'Photographer · music video director',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '2eehyein',
+      tone: '#dfe3dc',
+    },
+    {
+      type: 'Photographer',
+      title: 'Richard Avedon',
+      credit: 'Photographer · In the American West',
+      works: [],
+      why: '', // [PLACEHOLDER] In the American West is the one
+      url: '',
+      instagram: '',
+      tone: '#e8e8e6',
+    },
+    {
+      type: 'Photographer',
+      title: 'Josef Koudelka',
+      credit: 'Photographer · Magnum',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '',
+      tone: '#d6d6d4',
     },
     {
       type: 'Director',
-      title: 'Director name', // [PLACEHOLDER]
-      credit: 'Film / music video director',
+      title: 'Denis Villeneuve',
+      credit: 'Film director',
       works: [],
-      why: '[PLACEHOLDER]',
+      why: '', // [PLACEHOLDER]
       url: '',
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
+      instagram: '',
+      tone: '#d9d2c4',
+    },
+    {
+      type: 'Director',
+      title: '노상윤 Roh Sangyun', // [CHECK] romanisation
+      credit: 'Music video director',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: '', // [PLACEHOLDER] handle
       tone: '#dcd4e6',
     },
     {
-      type: 'Video',
-      title: 'Another video', // [PLACEHOLDER]
-      credit: 'dir. Director name',
-      image: '',
-      why: '[PLACEHOLDER]',
+      type: 'Director',
+      title: '신희원 Shin Heewon', // [CHECK] romanisation
+      credit: 'Music video director',
+      works: [],
+      why: '', // [PLACEHOLDER]
       url: '',
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
+      instagram: '', // [PLACEHOLDER] handle
+      tone: '#e3d3e0',
+    },
+    {
+      type: 'Work',
+      title: 'KiiiKiii — Delulu',
+      credit: 'Music video', // [CHECK] director: listed online as a track film by Song Seo-yoon
+      image: '',
+      why: '', // [PLACEHOLDER]
+      url: 'https://www.youtube.com/watch?v=BTlj6Sls7KE',
+      instagram: '',
+      tone: '#1d1d1d',
+    },
+    {
+      type: 'Work',
+      title: 'Jeon Somi — EXTRA',
+      credit: 'Music video · Legend Film', // [CHECK] dir. Yoon Seung-rim, per press
+      image: '',
+      why: '', // [PLACEHOLDER]
+      url: '', // [PLACEHOLDER] YouTube link
+      instagram: '',
       tone: '#2a2a2a',
+    },
+    {
+      type: 'Work',
+      title: '필름카이 Film Kai', // [CHECK] couldn't find this one online yet
+      credit: 'dir. 송민규 Song Mingyu',
+      image: '',
+      why: '', // [PLACEHOLDER]
+      url: '', // [PLACEHOLDER]
+      instagram: '',
+      tone: '#262626',
     },
   ],
 };
