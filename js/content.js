@@ -635,24 +635,23 @@ export const visual = {
 // Covers: put images in assets/albums and set `cover`.
 export const music = {
   lead: 'Albums I keep coming back to, the songs I play on repeat, and the bands I’ve sung in.',
-  // `listen`: a link for the Listen button (else Spotify / Apple Music). `review`: a review link, e.g. Pitchfork.
+  // `listen`: a link for the Listen button (else Spotify / Apple Music).
   // 10 records, 5 per ledge. Covers are found automatically (iTunes, then Deezer) from
   // the artist + title; `itunes` holds extra search hints. If a cover comes out wrong,
   // paste the album's Spotify link into `spotify` (Share → Copy link) and that one is used.
   albums: [
     {
-      title: 'Call Me Baby',
+      title: 'EX’ACT',
       artist: 'EXO',
-      year: '2015',
+      year: '2016',
       color: '#d9d4cc', // used until the official cover loads
-      spotify: '', // optional: https://open.spotify.com/album/…
-      itunes: { artists: ['엑소'], titles: ['EXODUS', 'The 2nd Album EXODUS'], country: 'kr' },
-      why: '', // [PLACEHOLDER] one line on why
-      // favourite tracks: `n` is the track number on the album, `why` optional
+      spotify: '',
+      itunes: { artists: ['엑소'], titles: ['EX\'ACT', 'The 3rd Album EX\'ACT'], country: 'kr' },
+      why: '',
+      // favourite tracks: `n` is the track number on the album
       tracks: [
-        { n: 1, name: 'CALL ME BABY' },
-        { n: 3, name: '시선 둘, 시선 하나 (What If...)' },
-        { n: 5, name: 'EXODUS' },
+        { n: 3, name: 'Artificial Love' },
+        { n: 6, name: '백색소음 (White Noise)', titles: ['White Noise', '백색소음'] },
       ],
     },
     {
@@ -745,17 +744,17 @@ export const music = {
       ],
     },
     {
-      title: 'Can’t Buy a Thrill',
-      artist: 'Steely Dan',
-      year: '1972',
-      color: '#c9b79c', // used until the official cover loads
+      title: 'MINISERIES 2',
+      artist: 'SUMIN & Slom',
+      year: '2024',
+      color: '#e4ddd2', // used until the official cover loads
       spotify: '',
-      itunes: { titles: ['Can\'t Buy a Thrill'] },
-      why: '', // [PLACEHOLDER] one line on why
-      // favourite tracks: `n` is the track number on the album, `why` optional
+      itunes: { artists: ['SUMIN', '수민', 'Slom'], titles: ['MINISERIES 2', 'Miniseries 2'], country: 'kr' },
+      why: '',
       tracks: [
-        { n: 2, name: 'Dirty Work' },
-        { n: 7, name: 'Fire in the Hole' },
+        { n: 1, name: '보통의 이별' },
+        { n: 2, name: '째깍째깍' },
+        { n: 6, name: '텅빈밤' },
       ],
     },
     {
@@ -818,6 +817,9 @@ export const music = {
       { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
       { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
       { artist: 'Lily Allen', title: 'Trigger Bang', side: 'modern', itunes: { titles: ['Trigger Bang (feat. Giggs)'] } },
+      { artist: 'Fantastic Plastic Machine', title: 'City Lights', side: 'modern', itunes: { titles: ['CITY LIGHTS'], country: 'jp' } },
+      { artist: 'Aphex Twin', title: 'CIRCLONT6A [141.98][syrobonkus mix]', side: 'modern', itunes: { titles: ['CIRCLONT6A (syrobonkus mix)', 'CIRCLONT6A'] } },
+      { artist: 'Fisherman', title: '아마 난 (feat. Zion.T)', side: 'modern', itunes: { artists: ['피셔맨'], titles: ['아마 난'], country: 'kr' } },
     ],
   },
   // Newest first. `stars`: 1–5, punched into the stub. `memo`: the back of the ticket, keep it short.

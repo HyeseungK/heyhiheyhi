@@ -560,8 +560,7 @@ async function trackPreview(album, i, btn) {
 function listenLinks(a) {
   const found = a.official?.url && !/deezer\.com/.test(a.official.url) ? a.official.url : '';
   const url = a.listen || a.spotify || found || `https://music.apple.com/search?term=${encodeURIComponent(`${a.artist} ${a.title.replace(/\s*\(.*?\)\s*/g, ' ')}`)}`;
-  const review = a.review ? ` <a class="listen" href="${esc(a.review)}" target="_blank" rel="noopener">Review ↗</a>` : '';
-  return `<p class="listen-row"><a class="listen" href="${esc(url)}" target="_blank" rel="noopener">Listen ↗</a>${review}</p>`;
+  return `<p class="listen-row"><a class="listen" href="${esc(url)}" target="_blank" rel="noopener">Listen ↗</a></p>`;
 }
 
 function paintAlbum(a) {

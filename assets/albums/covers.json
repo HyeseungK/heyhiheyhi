@@ -104,16 +104,6 @@
     "source": "itunes",
     "spotify": ""
   },
-  "album|EXO|Call Me Baby": {
-    "artwork": "assets/albums/exo-call-me-baby.jpg",
-    "url": "https://music.apple.com/us/album/the-2nd-album-exodus/979878364?uo=4",
-    "preview": "",
-    "name": "The 2nd Album ‘EXODUS’",
-    "album": "The 2nd Album ‘EXODUS’",
-    "year": "2015",
-    "source": "itunes",
-    "spotify": ""
-  },
   "album|Lamp|恋人へ (For Lovers)": {
     "artwork": "assets/albums/lamp-恋人へ-for-lovers.jpg",
     "url": "https://music.apple.com/jp/album/%E6%81%8B%E4%BA%BA%E3%81%B8/1486281113?uo=4",
@@ -276,17 +266,6 @@
     "year": "1975",
     "source": "spotify",
     "spotify": "https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7"
-  },
-  "album|Steely Dan|Can’t Buy a Thrill": {
-    "artwork": "assets/albums/steely-dan-can-t-buy-a-thrill.jpg",
-    "url": "https://music.apple.com/us/album/cant-buy-a-thrill/1650885288?uo=4",
-    "preview": "",
-    "previewUrl": "",
-    "name": "Can't Buy A Thrill",
-    "album": "Can't Buy A Thrill",
-    "year": "1972",
-    "source": "itunes",
-    "spotify": ""
   },
   "song|Steely Dan|Deacon Blues": {
     "artwork": "assets/songs/steely-dan-deacon-blues.jpg",
