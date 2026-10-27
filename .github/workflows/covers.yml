@@ -1,0 +1,38 @@
+name: Fetch album covers
+
+# Saves official album / song artwork into assets/ whenever the music list changes,
+# so the site doesn't depend on a live lookup. Can also be run by hand from the Actions tab.
+on:
+  push:
+    paths:
+      - js/content.js
+      - scripts/fetch-covers.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: covers-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  covers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/fetch-covers.mjs
+      - name: Commit new covers
+        run: |
+          git config user.name "covers-bot"
+          git config user.email "covers-bot@users.noreply.github.com"
+          git add assets/albums assets/songs
+          if git diff --cached --quiet; then
+            echo "No new covers."
+          else
+            git commit -m "Save album covers"
+            git push
+          fi

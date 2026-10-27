@@ -247,12 +247,23 @@ function renderTickets(root) {
 }
 
 // ── rack: official covers + shuffle ──────────────────────────
+// covers saved into the repo by scripts/fetch-covers.mjs (GitHub Action); live lookup is the fallback
+const saved = fetch(`assets/albums/covers.json?h=${Math.floor(Date.now() / 3.6e6)}`)
+  .then((r) => (r.ok ? r.json() : {}))
+  .catch(() => ({}));
+async function officialFor(kind, a) {
+  const hit = (await saved)[`${kind}|${a.artist}|${a.title}`];
+  if (hit) return hit;
+  const q = { artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) };
+  return kind === 'album' ? findAlbum(q) : findSong(q);
+}
+
 const rackOrder = () => [...document.querySelectorAll('.shelf .sleeve')].map((el) => +el.dataset.i);
 
 function loadCovers(shelf) {
   music.albums.forEach((a, i) => {
     if (a.cover) return;
-    findAlbum({ artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) }).then((r) => {
+    officialFor('album', a).then((r) => {
       if (!r?.artwork) return;
       a.official = r;
       const img = shelf.querySelector(`.sleeve[data-i="${i}"] img`);
@@ -324,11 +335,11 @@ function renderMixtape(root) {
     if (looked) return;
     looked = true;
     m.songs.forEach((s, i) => {
-      findSong({ artist: s.artist, title: s.title, spotify: s.spotify, ...(s.itunes || {}) }).then((r) => {
+      officialFor('song', s).then((r) => {
         if (!r) return;
         s.found = r;
         const art = box.querySelector(`.mix-track[data-i="${i}"] .art`);
-        if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '100x100bb')}")`;
+        if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '200x200bb')}")`;
       }).catch(() => {});
     });
   };

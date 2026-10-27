@@ -28,6 +28,10 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **티켓**: `music.tickets`.
 - **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`. 전환 화면 문구("Hey Hi, I’m listening" 등)는 `site.greeting`에서 바꿉니다.
 
+## 앨범 커버 자동 저장
+
+`js/content.js`의 음악 목록이 바뀌면 GitHub Action(`.github/workflows/covers.yml`)이 `scripts/fetch-covers.mjs`를 실행해, 공식 커버(iTunes → Deezer)와 미리듣기 주소를 찾아 `assets/albums/`, `assets/songs/`, `assets/albums/covers.json`에 저장하고 커밋합니다. 사이트는 저장된 파일을 먼저 쓰고, 없을 때만 브라우저에서 직접 찾습니다. Actions 탭에서 "Fetch album covers"를 직접 실행할 수도 있습니다. 잘못 찾은 커버는 해당 jpg를 지우고 `itunes` 힌트를 고친 뒤 다시 실행하면 됩니다.
+
 ## 파일 수정 후 (캐시)
 
 브라우저와 GitHub Pages가 JS/CSS를 저장해 두기 때문에, 파일을 고친 뒤에는 커밋 전에 아래를 실행해 주세요. `index.html`의 파일 주소에 내용 기반 버전(`?v=…`)이 붙어서 방문자가 바로 새 파일을 받습니다.

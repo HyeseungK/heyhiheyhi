@@ -655,12 +655,12 @@ export const music = {
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
   ],
-  // The burned CD. `side`: 'analog' or 'electronic' — names in `sides`.
+  // The burned CD. `side`: 'analog' or 'modern' — names in `sides`.
   // Artwork and previews are found automatically; add `spotify: 'https://open.spotify.com/track/…'` to pin one.
   mixtape: {
     label: 'Favorite Songs',
     note: '2026 · for whoever is listening', // [PLACEHOLDER] the small scribble under the title
-    sides: { analog: 'Side A · Analog', electronic: 'Side B · Electronic' },
+    sides: { analog: 'Side A · Analog', modern: 'Side B · Modern' },
     songs: [
       { artist: 'Brian Eno', title: 'By This River', side: 'analog', itunes: { titles: ['By This River'] } },
       { artist: 'Mitski', title: 'First Love / Late Spring', side: 'analog', itunes: {  } },
@@ -673,14 +673,14 @@ export const music = {
       { artist: 'Billy Joel', title: 'Vienna', side: 'analog', itunes: {  } },
       { artist: 'Cortex', title: 'Poxa', side: 'analog', itunes: {} },
       { artist: 'Daniel Caesar', title: 'Who Knows', side: 'analog', itunes: {  } },
-      { artist: 'Slom', title: '아니라고', side: 'electronic', itunes: { artists: ['슬롬'], country: 'kr' } },
-      { artist: 'Four Tet', title: '31 Bloom', side: 'electronic', itunes: {  } },
-      { artist: 'NMIXX', title: 'Phoenix', side: 'electronic', itunes: { artists: ['엔믹스'], country: 'kr' } },
-      { artist: 'capsule', title: 'I Wish You', side: 'electronic', itunes: { country: 'jp' } },
-      { artist: 'Perfume', title: '575', side: 'electronic', itunes: { country: 'jp' } },
-      { artist: 'House Rulez', title: 'House', side: 'electronic', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
-      { artist: 'Jeebanoff', title: '낯선 사람', side: 'electronic', itunes: { artists: ['지바노프'], country: 'kr' } },
-      { artist: 'Blood Orange', title: 'Augustine', side: 'electronic', itunes: {  } },
+      { artist: 'Slom', title: '아니라고', side: 'modern', itunes: { artists: ['슬롬'], country: 'kr' } },
+      { artist: 'Four Tet', title: '31 Bloom', side: 'modern', itunes: {  } },
+      { artist: 'NMIXX', title: 'Phoenix', side: 'modern', itunes: { artists: ['엔믹스'], country: 'kr' } },
+      { artist: 'capsule', title: 'I Wish You', side: 'modern', itunes: { country: 'jp' } },
+      { artist: 'Perfume', title: '575', side: 'modern', itunes: { country: 'jp' } },
+      { artist: 'House Rulez', title: 'House', side: 'modern', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
+      { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', itunes: { artists: ['지바노프'], country: 'kr' } },
+      { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
     ],
   },
   tickets: [
