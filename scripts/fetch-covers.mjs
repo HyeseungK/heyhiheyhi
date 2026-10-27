@@ -58,11 +58,35 @@ function pick(rows, q, artistOf, nameOf) {
   return rows.filter((r) => artists.some((a) => matches(artistOf(r), a))).find((r) => titles.some((t) => matches(nameOf(r), t)));
 }
 
+// the public Spotify page carries the release date and, for a track, a link to its album
+async function spotifyMeta(link) {
+  try {
+    const res = await fetch(link.replace(/\/intl-\w+\//, '/'), { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; helen-site-covers/1.0)' } });
+    const html = await res.text();
+    const get = (name) => new RegExp(`<meta[^>]+(?:name|property)="${name}"[^>]+content="([^"]+)"`).exec(html)?.[1] || '';
+    return { year: get('music:release_date').slice(0, 4), album: get('music:album') };
+  } catch (e) {
+    return { year: '', album: '' };
+  }
+}
+
 async function lookup(q, kind) {
   // a pasted Spotify link wins (open.spotify.com/album/… or /track/…)
   if (q.spotify) {
     const d = await getJSON(`https://open.spotify.com/oembed?url=${encodeURIComponent(q.spotify)}`);
-    if (d?.thumbnail_url) return { source: 'spotify', artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title, album: /\/album\//.test(q.spotify) ? d.title : '', year: '' };
+    if (d?.thumbnail_url) {
+      const meta = await spotifyMeta(q.spotify);
+      let album = /\/album\//.test(q.spotify) ? d.title : '';
+      if (!album && meta.album) album = (await getJSON(`https://open.spotify.com/oembed?url=${encodeURIComponent(meta.album)}`))?.title || '';
+      const sp = { source: 'spotify', artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title, album, year: meta.year };
+      // Spotify gives no preview: borrow one from iTunes / Deezer for the same song
+      if (kind === 'song') {
+        const other = await lookup({ ...q, spotify: '' }, kind);
+        if (other?.preview) { sp.preview = other.preview; sp.previewUrl = other.url; }
+        if (!sp.year && other?.year && !album) sp.year = other.year;
+      }
+      return sp;
+    }
   }
   const artists = [q.artist, ...(q.artists || [])];
   const plain = q.title.replace(/\s*\(.*?\)\s*/g, ' ').trim();

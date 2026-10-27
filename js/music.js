@@ -437,7 +437,7 @@ function renderMixtape(root) {
       audio.src = s.found.preview;
       audio.play().catch(() => {});
       // Deezer links go stale: swap in a fresh one (and retry once if the old one fails)
-      if (/deezer\.com/.test(s.found.url || '')) {
+      if (/deezer\.com/.test(s.found.previewUrl || s.found.url || '')) {
         freshPreview(s.found).then((fresh) => {
           if (playing !== i || !fresh || fresh === audio.src) return;
           s.found.preview = fresh;
