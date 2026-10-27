@@ -228,33 +228,39 @@
   },
   "song|Slom|아니라고": {
     "artwork": "assets/songs/slom-아니라고.jpg",
-    "url": "https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm",
-    "preview": "",
-    "name": "WEATHER REPORT",
+    "url": "https://music.apple.com/us/album/anirago-feat-zion-t/1698683641?i=1698683643&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7c/e1/07/7ce1079b-c8b6-b22e-aef0-7df099b57bfa/mzaf_12938898240850077990.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "ANIRAGO (feat. Zion.T)",
     "album": "WEATHER REPORT",
     "year": "2022",
-    "source": "spotify",
-    "spotify": "https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm"
+    "source": "itunes",
+    "spotify": "https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm",
+    "apple": "https://music.apple.com/us/song/anirago-feat-zion-t/1698683643"
   },
   "song|House Rulez|House": {
     "artwork": "assets/songs/house-rulez-house.jpg",
-    "url": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj",
-    "preview": "",
-    "name": "Mojito",
+    "url": "https://music.apple.com/us/album/home-feat-youme/354643928?i=354643930&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/40/64/44/406444ba-e324-d0cc-8701-2267174ebdce/mzaf_12297994106477752240.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Home (feat. Youme)",
     "album": "Mojito",
     "year": "2007",
-    "source": "spotify",
-    "spotify": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj"
+    "source": "itunes",
+    "spotify": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj",
+    "apple": "https://music.apple.com/us/song/home-feat-youme/354643930"
   },
   "song|Jeebanoff|낯선 사람": {
     "artwork": "assets/songs/jeebanoff-낯선-사람.jpg",
-    "url": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK",
-    "preview": "",
-    "name": "Misery",
+    "url": "https://music.apple.com/us/album/stranger/1810176748?i=1810176751&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/3c/45/473c45e9-184a-c8ba-dd9f-3f84b5c56c6d/mzaf_7807730559737283664.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Stranger",
     "album": "Misery",
     "year": "2025",
-    "source": "spotify",
-    "spotify": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK"
+    "source": "itunes",
+    "spotify": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK",
+    "apple": "https://music.apple.com/us/song/stranger/1810176751"
   },
   "album|Shigeo Sekito|ザ・ワード (The Word)": {
     "artwork": "assets/albums/shigeo-sekito-the-word.jpg",
@@ -568,5 +574,53 @@
     "source": "itunes",
     "spotify": "",
     "apple": ""
+  },
+  "song|EXO|백색소음 (White Noise)": {
+    "artwork": "assets/songs/exo-백색소음-white-noise.jpg",
+    "url": "https://music.apple.com/us/album/white-noise/1121473062?i=1121473197&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/65/e0/97/65e097df-31fc-9f75-d444-4073e7a561a8/mzaf_9321230035168183201.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "White Noise",
+    "album": "EX’ACT - The 3rd Album",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|Fiona Apple|Get Gone": {
+    "artwork": "assets/songs/fiona-apple-get-gone.jpg",
+    "url": "https://music.apple.com/us/album/get-gone/153019510?i=153019968&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f7/9a/c8/f79ac8c9-1152-9d4f-9c0d-0e5d47c70db2/mzaf_11058388725728085271.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Get Gone",
+    "album": "When the Pawn...",
+    "year": "1999",
+    "source": "itunes",
+    "spotify": "",
+    "apple": "https://music.apple.com/us/song/get-gone/153019968"
+  },
+  "song|FKA twigs|meta angel": {
+    "artwork": "assets/songs/fka-twigs-meta-angel.jpg",
+    "url": "https://music.apple.com/us/album/meta-angel/1603753230?i=1603753478&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4d/cd/cf/4dcdcfc1-a0a1-df14-5af6-50b6c7d75bb3/mzaf_5501849175735557576.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "meta angel",
+    "album": "CAPRISONGS",
+    "year": "2022",
+    "source": "itunes",
+    "spotify": "",
+    "apple": "https://music.apple.com/us/song/meta-angel/1603753478"
+  },
+  "song|FKA twigs|oh my love": {
+    "artwork": "assets/songs/fka-twigs-oh-my-love.jpg",
+    "url": "https://music.apple.com/us/album/oh-my-love/1603753230?i=1603753482&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/74/32/f7/7432f7cc-9441-bd3f-869e-ea2843737599/mzaf_10064871718100056115.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "oh my love",
+    "album": "CAPRISONGS",
+    "year": "2022",
+    "source": "itunes",
+    "spotify": "",
+    "apple": "https://music.apple.com/us/song/oh-my-love/1603753482"
   }
 }

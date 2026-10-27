@@ -1,10 +1,15 @@
-2026-10-27T14:56:20.841Z
+2026-10-27T14:58:53.748Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
+✓ song Slom — 아니라고  (itunes: ANIRAGO (feat. Zion.T) · WEATHER REPORT, 2022)
+✓ song House Rulez — House  (itunes: Home (feat. Youme) · Mojito, 2007)
+✓ song Jeebanoff — 낯선 사람  (itunes: Stranger · Misery, 2025)
+✗ song KiiiKiii — 딸기게임 (Strawberry Game)
 ✗ song Fisherman — 아마 난 (feat. Zion.T)
-✗ song Fiona Apple — Get Gone
-✗ song FKA twigs — meta angel
-✗ song FKA twigs — oh my love
+✓ song EXO — 백색소음 (White Noise)  (itunes: White Noise · EX’ACT - The 3rd Album, 2016)
+✓ song Fiona Apple — Get Gone  (itunes: Get Gone · When the Pawn..., 1999)
+✓ song FKA twigs — meta angel  (itunes: meta angel · CAPRISONGS, 2022)
+✓ song FKA twigs — oh my love  (itunes: oh my love · CAPRISONGS, 2022)
 ✗ song The Internet — Under Control
 ✗ song The Internet — Just Sayin / I Tried
 ✗ song The Internet — Partners in Crime Part Three
@@ -12,15 +17,12 @@
 ✗ song SUMIN & Slom — 째깍째깍
 ✗ song SUMIN & Slom — 텅빈밤
 
-47/60 found.
+51/61 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa
+  KiiiKiii — 딸기게임 (Strawberry Game)
   Fisherman — 아마 난 (feat. Zion.T)
-  EXO — 백색소음 (White Noise) (download failed)
-  Fiona Apple — Get Gone
-  FKA twigs — meta angel
-  FKA twigs — oh my love
   The Internet — Under Control
   The Internet — Just Sayin / I Tried
   The Internet — Partners in Crime Part Three
