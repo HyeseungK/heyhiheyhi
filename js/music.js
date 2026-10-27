@@ -686,12 +686,13 @@ function openStage() {
     <ul class="perf">
       ${s.performances
         .map((p) => {
-          const inner = `<span class="t">${esc(p.title)}${p.url ? ' ↗' : ''}</span><span class="d">${esc(p.date)}</span><span class="r">${esc(p.role)}</span>`;
+          const ig = (p.instagram || '').replace(/^@/, '');
+          const inner = `<span class="t">${esc(p.title)}${p.url ? ' ↗' : ''}${p.sub ? `<small>${esc(p.sub)}</small>` : ''}</span><span class="d">${esc(p.date)}</span><span class="r">${esc(p.role)}</span>${p.next ? `<span class="next">Next · ${esc(p.next)}</span>` : ''}${ig ? `<span class="r"><a class="perf-ig" href="https://www.instagram.com/${encodeURIComponent(ig)}/" target="_blank" rel="noopener">@${esc(ig)}</a></span>` : ''}`;
           return `<li>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`}</li>`;
         })
         .join('')}
     </ul>
-    <a class="sc-btn" href="${esc(s.soundcloud)}" target="_blank" rel="noopener">Listen on SoundCloud ↗</a>`;
+    ${s.soundcloud ? `<a class="sc-btn" href="${esc(s.soundcloud)}" target="_blank" rel="noopener">Listen on SoundCloud ↗</a>` : ''}`;
   openModal(drawer, { from: { x: '100%', opacity: 1 } });
   window.gsap.from(drawer.querySelectorAll('.drawer-body > *, .perf li'), { y: 20, opacity: 0, stagger: 0.05, duration: 0.5, delay: 0.15, ease: 'power3.out' });
 }

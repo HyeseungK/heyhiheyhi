@@ -31,7 +31,7 @@ export const profile = {
   nameKo: '김혜승',
   name: 'Hyeseung Kim',
   nickname: 'Helen',
-  tagline: 'Consultant by day, image-maker and music lover always.', // [PLACEHOLDER]
+  tagline: 'Consultant by day; film, photography and music lover 24/7.',
   intro:
     'Hi, I’m Helen. I work on strategy problems with consulting teams, and spend the rest of my time with a camera, an editing timeline, or a guitar. This page is my business card, an archive of both sides.', // [PLACEHOLDER]
   location: 'Seoul', // [PLACEHOLDER]
@@ -782,13 +782,13 @@ export const music = {
     { type: 'Concert', name: 'Artist D', lineup: 'Live at the Garden', date: '2024.10.02', venue: 'Madison Square Garden', city: 'New York', seat: 'Sec 112 · Row 8', color: '#e8dccb', memo: 'My first concert in New York.' },
   ],
   stage: {
-    intro: 'Bands, open mics and recordings. Click a line to go there.', // [PLACEHOLDER]
-    soundcloud: 'https://soundcloud.com/', // [PLACEHOLDER]
+    intro: 'In college I was a band nomad: life sciences, then business, then engineering. Only one of those is my major. I sang in all three.',
+    soundcloud: '', // optional: a SoundCloud link shows a button at the bottom
+    // Newest first. `next`: an upcoming show, highlighted. `instagram`: the band's handle, without @.
     performances: [
-      // [PLACEHOLDER]
-      { title: 'Campus band — Spring concert', date: '2021', role: 'Guitar, vocals', url: 'https://www.youtube.com/' },
-      { title: 'Open mic, Hongdae', date: '2023', role: 'Acoustic set', url: '' },
-      { title: 'Cover — “Hey Hi”', date: '2024', role: 'Home recording', url: 'https://soundcloud.com/' },
+      { title: '활천 Hwalcheon', sub: 'Engineering band', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third show', instagram: '' },
+      { title: '오도방정 Odobangjeong', sub: 'Business School, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: '' },
+      { title: '청년 Puruni', sub: 'Life sciences band', date: '2022', role: 'Vocals and guitar · one busking set, one concert', instagram: '' },
     ],
   },
 };
