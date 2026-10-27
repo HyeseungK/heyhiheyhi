@@ -109,13 +109,12 @@ export function renderVisual(root) {
     const total = place.photos.length;
     spread.querySelector('.spread-meta').textContent = [place.place, place.kind, place.year, total && `${total} frames`, place.credit].filter(Boolean).join(' · ');
     // films play right in the spread
-    const films = place.videos
-      .map((v) => {
-        const pv = parseVideo(v.url);
-        return `<section class="project"><div class="project-head"><h4>${esc(v.title)}</h4><p>${esc(v.role || '')}</p></div>
+    const film = (v) => {
+      const pv = parseVideo(v.url);
+      return `<section class="project"><div class="project-head"><h4>${esc(v.title)}</h4><p>${esc(v.role || '')}</p></div>
           <div class="spread-film"><iframe src="${esc(pv.embed.replace('autoplay=1', 'autoplay=0'))}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(v.title)}" loading="lazy"></iframe></div></section>`;
-      })
-      .join('');
+    };
+    const films = place.videos.map(film).join('');
     const groups = place.groups;
     let j = 0;
     grid.innerHTML = films + groups
@@ -136,7 +135,9 @@ export function renderVisual(root) {
           if ((k + 1) % 3 === 2 && noteHTML.length) mixed.push(noteHTML.shift());
         });
         const head = g.title ? `<div class="project-head"><h4>${esc(g.title)}</h4><p>${esc([g.kind, g.year].filter(Boolean).join(' · '))}</p></div>` : '';
-        return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>`;
+        // a project's own films (e.g. the song a photo became the cover of) follow its photos
+        const own = (g.videos || []).filter((v) => parseVideo(v.url)).map(film).join('');
+        return `<section class="project">${head}<div class="project-grid">${[...mixed, ...noteHTML].join('')}</div></section>${own}`;
       })
       .join('');
     place.allPhotos = place.photos.map((p) => ({ ...p, camera: [place.title, place.kind, p.year].filter(Boolean).join(' · ') }));

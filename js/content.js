@@ -112,15 +112,22 @@ export const work = {
     {
       group: 'Education & activities',
       period: '2022 — 2025',
-      org: 'Yonyoung · Prometheus',
-      role: 'Film and photography clubs',
-      text: 'Yonyoung in 2022 and 2023, Prometheus in 2025. Where the creative side of this site started.',
+      org: 'Yonyoung · Prometheus · MAY',
+      role: 'Film, photography and music clubs',
+      text: 'Yonyoung in 2022 and 2023, Prometheus in 2025, and MAY (MIDI Associate of Yonsei) for writing songs on a laptop. Where the creative side of this site started.',
+    },
+    {
+      group: 'Education & activities',
+      period: '2025',
+      org: 'SM Entertainment',
+      role: 'SM Biz Ent Class',
+      text: 'Five weeks I signed up and paid for myself: artist development, making and distributing records, A&R, concert planning, then creative and visuals. The life of a K-pop release, in order.',
     },
     {
       group: 'Also',
       period: '2026',
       org: 'Kearney Vibe Coding Contest',
-      role: 'Winner',
+      role: '3rd Place',
       text: 'My first try at building with Claude: a map of the good places to eat near the office, made as a new joiner to share with coworkers. Even the CEO dropped a pin for a favourite spot. This site is the sequel.',
     },
   ],
@@ -246,6 +253,10 @@ export const visual = {
             { src: 'assets/photos/seoul/heedos-album/03.jpg', caption: 'Heedo 03', ratio: 1.508 },
             { src: 'assets/photos/seoul/heedos-album/04.jpg', caption: 'Heedo 04', ratio: 1.508 },
             { src: 'assets/photos/seoul/heedos-album/05.jpg', caption: 'Heedo 05', ratio: 0.663 },
+          ],
+          // plays under the photos, like the Suncheon film
+          videos: [
+            { title: 'Now on the cover', role: 'One of these frames became the artwork for Heedo’s release. Have a listen.', url: 'https://www.youtube.com/watch?v=sx7W70uH2VE' },
           ],
           notes: [],
         },
@@ -436,23 +447,33 @@ export const visual = {
   muses: [
     {
       type: 'Photographer',
-      title: '박영숙 Park Young-sook',
-      credit: 'Photographer, Seoul',
-      works: [], // e.g. ['assets/muses/park-young-sook-1.jpg', '...']
-      why: '[PLACEHOLDER] Why her work stays with me.',
-      url: '',
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
+      title: '박현경 Park Hyunkyung', // [CHECK] romanisation
+      credit: 'Photographer · KiiiKiii’s first two albums',
+      works: [], // e.g. ['assets/muses/park-hyunkyung-1.jpg', '...']
+      why: 'Picked by KiiiKiii’s creative director Haewon Jung (@byheyone), and a Joel Meyerowitz fan. Flipping through the KiiiKiii photo books on the way to work makes for the best kind of morning. I want to capture people like that: entirely themselves, only cheekier and more sparkling.',
+      url: 'https://m.singleskorea.com/culture/2026/02/720835',
+      instagram: 'hiozoik',
       tone: '#e6dccf',
     },
     {
       type: 'Photographer',
-      title: 'Sylvester Mako', // [PLACEHOLDER] check the spelling
-      credit: 'Photographer',
+      title: 'Szilveszter Makó',
+      credit: 'Photographer · Hollywood’s current favourite',
       works: [],
-      why: '[PLACEHOLDER] Why this work stays with me.',
+      why: 'A classic, analog mood all of its own, dreamy without ever being obvious. Fantastical techniques that never feel like a trick. I found the work in an issue of Numéro I bought for Cho Gi-seok’s photos (@chogiseok), “bought the dip” in 2023, and it has only gone up since. Called it.',
       url: '',
-      instagram: '', // [PLACEHOLDER] e.g. 'handle'
+      instagram: 'szilvesztermako',
       tone: '#d7dfe3',
+    },
+    {
+      type: 'Photographer',
+      title: 'Saul Leiter',
+      credit: 'Photographer, New York · 1923 — 2013',
+      works: ['assets/muses/saul-leiter.jpg'],
+      why: 'I saw his show in 2021. How could anyone not fall in love? Colour film at its most charming. Black and white is beautiful, but he kept shooting colour long before anyone took it seriously. I want to look at a city the way he did.',
+      url: 'https://www.saulleiterfoundation.org',
+      instagram: '',
+      tone: '#d9cdb8',
     },
     {
       type: 'Other artwork',
