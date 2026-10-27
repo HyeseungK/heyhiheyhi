@@ -756,7 +756,7 @@ export const music = {
       why: '',
       tracks: [
         { n: 1, name: '보통의 이별' },
-        { n: 2, name: '째깍째깍' },
+        { n: 4, name: '째깍째깍 (Tic Toc Tic Toc)' },
         { n: 6, name: '텅빈밤' },
       ],
     },
