@@ -43,6 +43,8 @@ export function renderMusic(root) {
     if (s) openAlbum(+s.dataset.i);
   });
   root.querySelector('.shuffle-btn').addEventListener('click', () => shuffleRack(shelf));
+  // phones swipe the ledges sideways: drop the fade once the last record is in view
+  shelf.addEventListener('scroll', () => shelf.classList.toggle('at-end', shelf.scrollLeft + shelf.clientWidth >= shelf.scrollWidth - 8), { passive: true });
   loadCovers(shelf);
 
   // hover like a dock: the record under the cursor rises most, its neighbours a little

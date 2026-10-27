@@ -995,10 +995,16 @@ body.lock { overflow: hidden; }
   .chapter:nth-child(1) { --x: 5% !important; --y: 15% !important; }
   .chapter:nth-child(2) { --x: 38% !important; --y: 24% !important; }
   .chapter:nth-child(3) { --x: 48% !important; --y: 70% !important; }
-  .shelf { gap: 34px; }
-  .shelf-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 0 10px; }
-  .sleeve { --s: auto; width: 100%; }
-  .sleeve + .sleeve { margin-left: 0; }
+  /* phones: both ledges slide sideways together, about three records in view */
+  .shelf {
+    gap: 30px; overflow-x: auto; overflow-y: hidden; padding: 12px var(--gutter) 18px 0;
+    margin-right: calc(-1 * var(--gutter)); scroll-snap-type: x proximity; scrollbar-width: none;
+    -webkit-mask: linear-gradient(90deg, #000 82%, transparent); mask: linear-gradient(90deg, #000 82%, transparent);
+  }
+  .shelf::-webkit-scrollbar { display: none; }
+  .shelf.at-end { -webkit-mask: none; mask: none; }
+  .shelf-row { width: max-content; padding: 0 10px; }
+  .sleeve { --s: calc((100vw - 2 * var(--gutter)) / 3.1); scroll-snap-align: start; }
   .os-list { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; padding: .3em .4em; }
   .os-obj { grid-column: span 2; padding: .45em 0; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
   .os-obj:active { background: var(--soft); }
