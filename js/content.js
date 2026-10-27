@@ -721,6 +721,7 @@ export const music = {
       color: '#2f4cff', // used until the official cover loads
       spotify: 'https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q', // the orange cover
       itunes: {  },
+      apple: 'https://music.apple.com/us/album/ego-death/999127640', // favourite tracks are picked from this album by number
       why: '', // [PLACEHOLDER] one line on why
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
