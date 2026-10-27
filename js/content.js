@@ -499,7 +499,7 @@ export const visual = {
       type: ['Photographer', 'Director'],
       title: 'Annie Chung',
       credit: 'Photographer and director · lifeimages film',
-      works: ['assets/muses/annie-chung-1.jpg', 'assets/muses/annie-chung-2.jpg', 'assets/muses/annie-chung-3.jpg'],
+      works: ['assets/muses/annie-chung-2.jpg', 'assets/muses/annie-chung-3.jpg'],
       why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. The personal film work is lovely too. KiiiKiii’s first-album concept photos and Sweet & Sour are legendary.',
       url: '',
       links: [
