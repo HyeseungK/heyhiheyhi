@@ -508,5 +508,77 @@
     "year": "2018",
     "source": "itunes",
     "spotify": ""
+  },
+  "album|EXO|EX’ACT": {
+    "artwork": "assets/albums/exo-ex-act.jpg",
+    "url": "https://music.apple.com/us/album/exact-the-3rd-album/1121473062?uo=4",
+    "preview": "",
+    "previewUrl": "",
+    "name": "EX’ACT - The 3rd Album",
+    "album": "EX’ACT - The 3rd Album",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "album|SUMIN & Slom|MINISERIES 2": {
+    "artwork": "assets/albums/sumin-slom-miniseries-2.jpg",
+    "url": "https://music.apple.com/us/album/miniseries-2/1757545844?uo=4",
+    "preview": "",
+    "previewUrl": "",
+    "name": "MINISERIES 2",
+    "album": "MINISERIES 2",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|Fantastic Plastic Machine|City Lights": {
+    "artwork": "assets/songs/fantastic-plastic-machine-city-lights.jpg",
+    "url": "https://music.apple.com/jp/album/city-lights/1767541516?i=1767541517&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b1/be/2d/b1be2de5-7915-46b4-aef5-058d9c02c72a/mzaf_14264229454015879744.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "CITY LIGHTS",
+    "album": "contact",
+    "year": "2001",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|Aphex Twin|CIRCLONT6A [141.98][syrobonkus mix]": {
+    "artwork": "assets/songs/aphex-twin-circlont6a-141-98-syrobonkus-mix.jpg",
+    "url": "https://music.apple.com/us/album/circlont6a-141-98-syrobonkus-mix/911319255?i=911319280&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/46/05/cd/4605cdc5-e1be-ef27-a3e6-a874c5d86b94/mzaf_16413699695496209781.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "CIRCLONT6A [141.98] [syrobonkus mix]",
+    "album": "Syro",
+    "year": "2014",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|EXO|Artificial Love": {
+    "artwork": "assets/songs/exo-artificial-love.jpg",
+    "url": "https://music.apple.com/us/album/artificial-love/1121473062?i=1121473194&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/8b/eb/a98bebae-eae4-5e51-2ad4-08d9fc5e61a9/mzaf_3898400423608571536.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Artificial Love",
+    "album": "EX’ACT - The 3rd Album",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|EXO|백색소음 (White Noise)": {
+    "artwork": "assets/songs/exo-백색소음-white-noise.jpg",
+    "url": "https://music.apple.com/us/album/white-noise-chinese-version/1121473062?i=1121473245&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/66/83/b366836f-2163-b23b-88e2-a11c29a25344/mzaf_13378816187272781067.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "White Noise (Chinese Version)",
+    "album": "EX’ACT - The 3rd Album",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
   }
 }

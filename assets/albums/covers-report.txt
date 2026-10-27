@@ -1,20 +1,34 @@
-2026-10-27T14:26:05.580Z
+2026-10-27T14:54:23.853Z
+✓ album EXO — EX’ACT  (itunes: EX’ACT - The 3rd Album · EX’ACT - The 3rd Album, 2016)
+✓ album SUMIN & Slom — MINISERIES 2  (itunes: MINISERIES 2 · MINISERIES 2, 2024)
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
+✓ song Fantastic Plastic Machine — City Lights  (itunes: CITY LIGHTS · contact, 2001)
+✓ song Aphex Twin — CIRCLONT6A [141.98][syrobonkus mix]  (itunes: CIRCLONT6A [141.98] [syrobonkus mix] · Syro, 2014)
+✗ song Fisherman — 아마 난 (feat. Zion.T)
+✓ song EXO — Artificial Love  (itunes: Artificial Love · EX’ACT - The 3rd Album, 2016)
+✓ song EXO — 백색소음 (White Noise)  (itunes: White Noise (Chinese Version) · EX’ACT - The 3rd Album, 2016)
 ✗ song Fiona Apple — Get Gone
 ✗ song FKA twigs — meta angel
 ✗ song FKA twigs — oh my love
 ✗ song The Internet — Under Control
 ✗ song The Internet — Just Sayin / I Tried
 ✗ song The Internet — Partners in Crime Part Three
+✗ song SUMIN & Slom — 보통의 이별
+✗ song SUMIN & Slom — 째깍째깍
+✗ song SUMIN & Slom — 텅빈밤
 
-49/57 found.
+48/60 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa
+  Fisherman — 아마 난 (feat. Zion.T)
   Fiona Apple — Get Gone
   FKA twigs — meta angel
   FKA twigs — oh my love
   The Internet — Under Control
   The Internet — Just Sayin / I Tried
   The Internet — Partners in Crime Part Three
+  SUMIN & Slom — 보통의 이별
+  SUMIN & Slom — 째깍째깍
+  SUMIN & Slom — 텅빈밤
