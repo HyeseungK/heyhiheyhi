@@ -240,7 +240,7 @@ function renderMuses(root) {
       const thumb = !imgs.length && video?.thumb ? video.thumb : '';
       const dark = /^#[0-3]/.test(m.tone || '');
       const media = imgs.length
-        ? `<span class="muse-media${imgs.length > 1 ? ' collage' : ''}">${imgs.slice(0, 3).map((src) => `<img src="${esc(src)}" alt="" loading="lazy" />`).join('')}${video ? '<span class="play"></span>' : ''}</span>`
+        ? `<span class="muse-media${m.layout === 'stack' ? ' stacked' : imgs.length > 1 ? ' collage' : ''}">${imgs.slice(0, 3).map((src) => `<img src="${esc(src)}" alt="" loading="lazy" />`).join('')}${video ? '<span class="play"></span>' : ''}</span>`
         : thumb
           ? `<span class="muse-media"><img src="${esc(thumb)}" alt="" loading="lazy" /><span class="play"></span></span>`
           : `<span class="muse-media ph${dark ? ' dark' : ''}" style="background:${esc(m.tone || '#eee')}">${video ? '<span class="play"></span>' : `<em>${ko(esc(m.title.split(' ')[0]))}</em>`}</span>`;

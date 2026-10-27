@@ -439,6 +439,7 @@ export const visual = {
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
   // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
   // `links`: more buttons on the back, [{ label, url }]. `ratio`: the picture's shape, e.g. '12 / 5' for a wide print.
+  // `layout: 'stack'`: several photos one above the other instead of a collage.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
   // Every card is a person. Their favourite works hang off the card: `works` (images) and
@@ -500,8 +501,8 @@ export const visual = {
       type: ['Photographer', 'Director'],
       title: 'Annie Chung',
       credit: 'Photographer and director · lifeimages film',
-      works: ['assets/muses/annie-chung-4.jpg'],
-      ratio: '3 / 2',
+      works: ['assets/muses/annie-chung-4.jpg', 'assets/muses/annie-chung-5.jpg'],
+      layout: 'stack', // one above the other, each whole
       why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. The personal film work is lovely too. KiiiKiii’s first-album concept photos and Sweet & Sour are legendary.',
       url: '',
       links: [
