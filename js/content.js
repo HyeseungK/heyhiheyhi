@@ -587,9 +587,10 @@ export const visual = {
     {
       type: 'Director',
       title: '송민규 Song Mingyu', // [CHECK] romanisation
-      credit: 'Music video director',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      credit: 'Commercial director · FILM KAI',
+      works: ['assets/muses/song-mingyu-1.jpg'],
+      ratio: '11 / 6',
+      why: 'FILM KAI is why I can’t forget the name. It lifts the idol mood sampler somewhere else: too long, too whole, too beautiful to be called a sampler. It is a film. It makes the case, on screen, for how the songs belong together, more satisfying than the album played straight through. Songs with nothing in common, sewn into one wild garment. So this is what a commercials director does. More idols, please.',
       url: '',
       videos: [{ title: 'FILM KAI', url: 'https://www.youtube.com/watch?v=VjjKbrFJoxY' }],
       instagram: '', // [PLACEHOLDER] handle
