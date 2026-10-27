@@ -634,5 +634,17 @@
     "source": "itunes",
     "spotify": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj",
     "apple": "https://music.apple.com/us/song/home-feat-youme/354643930"
+  },
+  "song|KiiiKiii|딸기게임 (Strawberry Game)": {
+    "artwork": "assets/songs/kiiikiii-딸기게임-strawberry-game.jpg",
+    "url": "https://music.apple.com/us/album/strawberry-cheesegame/1830522219?i=1830522534&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/6d/fc/55/6dfc55be-c487-b36c-31b9-d3382d52e7c7/mzaf_4629994744993038332.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Strawberry Cheesegame",
+    "album": "DANCING ALONE - Single",
+    "year": "2025",
+    "source": "itunes",
+    "spotify": "",
+    "apple": "https://music.apple.com/us/song/strawberry-cheesegame/1830522534"
   }
 }

@@ -1,9 +1,7 @@
-2026-10-27T15:03:12.468Z
+2026-10-27T15:04:37.187Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
-✓ song STUTS — 愛をさわれたら (If I Could Touch Love)  (itunes: 愛をさわれたら · 愛をさわれたら - Single, 2024)
-✗ song KiiiKiii — 딸기게임 (Strawberry Game)
-✗ song Fisherman — 아마 난 (feat. Zion.T)
+✓ song KiiiKiii — 딸기게임 (Strawberry Game)  (itunes: Strawberry Cheesegame · DANCING ALONE - Single, 2025)
 ✗ song The Internet — Under Control
 ✗ song The Internet — Just Sayin / I Tried
 ✗ song The Internet — Partners in Crime Part Three
@@ -11,12 +9,10 @@
 ✗ song SUMIN & Slom — 째깍째깍
 ✗ song SUMIN & Slom — 텅빈밤
 
-52/62 found.
+53/61 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa
-  KiiiKiii — 딸기게임 (Strawberry Game)
-  Fisherman — 아마 난 (feat. Zion.T)
   The Internet — Under Control
   The Internet — Just Sayin / I Tried
   The Internet — Partners in Crime Part Three
