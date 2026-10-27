@@ -569,7 +569,8 @@ export const visual = {
       type: 'Director',
       title: 'Rimayoon',
       credit: 'Music video director · Legend Film',
-      works: [],
+      works: ['assets/muses/rimayoon-1.jpg'],
+      ratio: '11 / 8',
       why: '', // [PLACEHOLDER]
       url: '',
       // each one gets its own ▶ button on the back of the card
