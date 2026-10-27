@@ -186,7 +186,7 @@ export function renderVisual(root) {
       <span class="fold-top"><span class="tape" aria-hidden="true"></span><span class="fold-p">${esc(cn.text)}</span><ul>${first ? line(first) : ''}</ul></span>
       <span class="fold-bottom">
         <span class="fold-front"><ul>${rest.map(line).join('')}</ul></span>
-        <span class="fold-back" aria-hidden="true">psst, unfold me</span>
+        <span class="fold-back" aria-hidden="true">unfold me</span>
       </span>`;
     note.addEventListener('click', (e) => {
       if (e.target.closest('a')) return;
