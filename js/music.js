@@ -2,7 +2,7 @@ import { music } from './content.js';
 import { openModal } from './modal.js';
 import { flowCoverURL, isDark, mulberry32, hashString } from './gen.js';
 import { createGuitar } from './guitar3d.js';
-import { findAlbum, findSong } from './itunes.js';
+import { findAlbum, findSong, freshPreview } from './itunes.js';
 import { sound } from './sound.js';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -301,7 +301,7 @@ function shuffleRack(shelf) {
 // ── the burned CD ───────────────────────────────────────────
 let player = null;
 // "Artist · Album, 1999" once the lookup has found the record
-const subLine = (s) => esc([s.artist, [s.found?.album || s.album, s.found?.year || s.year].filter(Boolean).join(', ')].filter(Boolean).join(' · '));
+const subLine = (s) => esc([s.artist, [s.album || s.found?.album, s.year || s.found?.year].filter(Boolean).join(', ')].filter(Boolean).join(' · '));
 
 function discHTML(label, sub) {
   return `<div class="burn-disc" aria-hidden="true">
@@ -436,6 +436,15 @@ function renderMixtape(root) {
     if (s.found?.preview) {
       audio.src = s.found.preview;
       audio.play().catch(() => {});
+      // Deezer links go stale: swap in a fresh one (and retry once if the old one fails)
+      if (/deezer\.com/.test(s.found.url || '')) {
+        freshPreview(s.found).then((fresh) => {
+          if (playing !== i || !fresh || fresh === audio.src) return;
+          s.found.preview = fresh;
+          audio.src = fresh;
+          audio.play().catch(() => {});
+        });
+      }
     } else {
       audio.pause();
       const url = s.found?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.artist} ${s.title}`)}`;

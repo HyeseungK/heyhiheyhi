@@ -130,3 +130,15 @@ async function fromDeezer(q, kind) {
 
 export const findAlbum = (q) => find(q, 'album');
 export const findSong = (q) => find(q, 'song');
+
+// Deezer preview links expire after a while: ask for a fresh one from the track page link
+export async function freshPreview(found) {
+  const id = /deezer\.com\/(?:\w+\/)?track\/(\d+)/.exec(found?.url || '')?.[1];
+  if (!id) return found?.preview || '';
+  try {
+    const t = await jsonp(`https://api.deezer.com/track/${id}?output=jsonp`);
+    return t?.preview || found.preview || '';
+  } catch (e) {
+    return found.preview || '';
+  }
+}

@@ -656,7 +656,8 @@ export const music = {
     },
   ],
   // The burned CD. `side`: 'analog' or 'modern' — names in `sides`.
-  // Artwork and previews are found automatically; add `spotify: 'https://open.spotify.com/track/…'` to pin one.
+  // Artwork, previews, album and year are found automatically; add `spotify: 'https://open.spotify.com/…'`
+  // to pin a cover, or `album` / `year` to override what was found.
   mixtape: {
     label: 'Favorite Songs',
     note: '2026 · for whoever is listening', // [PLACEHOLDER] the small scribble under the title
@@ -669,7 +670,7 @@ export const music = {
       { artist: 'Milton Nascimento', title: 'Cais', side: 'analog', itunes: { country: 'br' } },
       { artist: 'Masayoshi Takanaka', title: 'Beleza Pula', side: 'analog', itunes: { artists: ['高中正義'], country: 'jp' } },
       { artist: 'Yusef Lateef', title: 'Love Theme from Spartacus', side: 'analog', itunes: { titles: ['Love Theme'] } },
-      { artist: 'The Strokes', title: 'Ode to the Mets', side: 'analog', itunes: {  } },
+      { artist: 'The Strokes', title: 'Ode to the Mets', side: 'analog', album: 'The New Abnormal', year: '2020', itunes: {  } },
       { artist: 'Billy Joel', title: 'Vienna', side: 'analog', itunes: {  } },
       { artist: 'Cortex', title: 'Poxa', side: 'analog', itunes: {} },
       { artist: 'Daniel Caesar', title: 'Who Knows', side: 'analog', itunes: {  } },
