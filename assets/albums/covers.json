@@ -4,21 +4,30 @@
     "url": "https://www.deezer.com/album/70982",
     "preview": "",
     "name": "When The Pawn...",
-    "source": "deezer"
+    "album": "When The Pawn...",
+    "year": "1999",
+    "source": "deezer",
+    "spotify": ""
   },
   "album|FKA twigs|CAPRISONGS": {
     "artwork": "assets/albums/fka-twigs-caprisongs.jpg",
     "url": "https://www.deezer.com/album/286473712",
     "preview": "",
     "name": "CAPRISONGS",
-    "source": "deezer"
+    "album": "CAPRISONGS",
+    "year": "2022",
+    "source": "deezer",
+    "spotify": ""
   },
   "song|Yusef Lateef|Love Theme from Spartacus": {
     "artwork": "assets/songs/yusef-lateef-love-theme-from-spartacus.jpg",
     "url": "https://music.apple.com/us/album/love-theme-from-spartacus-remastered-2023/1725397456?i=1725397777&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/21/74/712174a9-0ee4-7f56-e976-f2d5d5d56c6a/mzaf_10124784520397343696.plus.aac.p.m4a",
     "name": "Love Theme From Spartacus (Remastered 2023)",
-    "source": "itunes"
+    "album": "Eastern Sounds (Remastered 2023)",
+    "year": "1960",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|The Strokes|Ode to the Mets": {
     "artwork": "assets/songs/the-strokes-ode-to-the-mets.jpg",
@@ -32,7 +41,10 @@
     "url": "https://music.apple.com/us/album/vienna/158617952?i=158618071&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e8/d2/03/e8d203cc-ce97-278b-5abb-c6de33d36d37/mzaf_5153648922176185845.plus.aac.p.m4a",
     "name": "Vienna",
-    "source": "itunes"
+    "album": "The Stranger",
+    "year": "1977",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Cortex|Poxa": {
     "artwork": "assets/songs/cortex-poxa.jpg",
@@ -46,139 +58,229 @@
     "url": "https://music.apple.com/us/album/who-knows/1839352404?i=1839352411&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/af/b0/f2afb01b-42c5-7803-be2f-b7365c9a928a/mzaf_17144887126595930673.plus.aac.p.m4a",
     "name": "Who Knows",
-    "source": "itunes"
+    "album": "Son Of Spergy",
+    "year": "2025",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Four Tet|31 Bloom": {
     "artwork": "assets/songs/four-tet-31-bloom.jpg",
     "url": "https://music.apple.com/us/album/31-bloom/1743823041?i=1743824184&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/74/e6/9b/74e69b06-aa89-d01b-ac79-ea3e77a8c15a/mzaf_17559748072377962116.plus.aac.p.m4a",
     "name": "31 Bloom",
-    "source": "itunes"
+    "album": "Three +",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|NMIXX|Phoenix": {
     "artwork": "assets/songs/nmixx-phoenix.jpg",
     "url": "https://music.apple.com/us/album/phoenix/1839523838?i=1839523847&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b6/66/d8/b666d89b-f7c1-4541-4893-b1845d79359d/mzaf_8389708915204331360.plus.aac.p.m4a",
     "name": "Phoenix",
-    "source": "itunes"
+    "album": "Blue Valentine",
+    "year": "2025",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|capsule|I Wish You": {
     "artwork": "assets/songs/capsule-i-wish-you.jpg",
     "url": "https://music.apple.com/jp/album/i-wish-you/676035200?i=676035235&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4b/63/ea/4b63ea9d-a53b-0903-76d3-0e749979c520/mzaf_2096015636243671654.plus.aac.p.m4a",
     "name": "I wish You",
-    "source": "itunes"
+    "album": "rewind BEST-1 (2012→2006)",
+    "year": "2010",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Perfume|575": {
     "artwork": "assets/songs/perfume-575.jpg",
     "url": "https://music.apple.com/jp/album/575/663645347?i=663645495&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bc/57/80/bc57803d-d73a-eb00-d2ce-7b6cc5cdaf3c/mzaf_5277544180907940424.plus.aac.p.m4a",
     "name": "575",
-    "source": "itunes"
+    "album": "VOICE - EP",
+    "year": "2010",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|EXO|Call Me Baby": {
     "artwork": "assets/albums/exo-call-me-baby.jpg",
     "url": "https://music.apple.com/us/album/the-2nd-album-exodus/979878364?uo=4",
     "preview": "",
     "name": "The 2nd Album ‘EXODUS’",
-    "source": "itunes"
+    "album": "The 2nd Album ‘EXODUS’",
+    "year": "2015",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|Lamp|恋人へ (For Lovers)": {
     "artwork": "assets/albums/lamp-恋人へ-for-lovers.jpg",
     "url": "https://music.apple.com/jp/album/%E6%81%8B%E4%BA%BA%E3%81%B8/1486281113?uo=4",
     "preview": "",
     "name": "恋人へ",
-    "source": "itunes"
+    "album": "恋人へ",
+    "year": "2004",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|Casker|여정 (旅程)": {
     "artwork": "assets/albums/casker-여정-旅程.jpg",
     "url": "https://music.apple.com/us/album/%EC%97%AC%EC%A0%95/1453385251?uo=4",
     "preview": "",
     "name": "여정",
-    "source": "itunes"
+    "album": "여정",
+    "year": "2012",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|The Internet|Ego Death": {
     "artwork": "assets/albums/the-internet-ego-death.jpg",
-    "url": "https://music.apple.com/us/album/ego-death-bonus-tracks-single/1056407834?uo=4",
+    "url": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q",
     "preview": "",
-    "name": "Ego Death (Bonus Tracks) - Single",
-    "source": "itunes"
+    "name": "Ego Death",
+    "album": "Ego Death",
+    "year": "2015",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q"
   },
   "album|Hiroshi Yoshimura|Wet Land": {
     "artwork": "assets/albums/hiroshi-yoshimura-wet-land.jpg",
     "url": "https://musicbrainz.org/release-group/2ddd3e2d-0796-4b08-bf1a-152b3a771dcf",
     "preview": "",
     "name": "Wet Land",
-    "source": "coverartarchive"
+    "album": "",
+    "year": "",
+    "source": "coverartarchive",
+    "spotify": ""
   },
   "album|Steely Dan|Aja": {
     "artwork": "assets/albums/steely-dan-aja.jpg",
     "url": "https://music.apple.com/us/album/aja/1706428459?uo=4",
     "preview": "",
     "name": "Aja",
-    "source": "itunes"
+    "album": "Aja",
+    "year": "1977",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|Takako Mamiya|Love Trip": {
     "artwork": "assets/albums/takako-mamiya-love-trip.jpg",
     "url": "https://music.apple.com/jp/album/love-trip/1671915477?uo=4",
     "preview": "",
     "name": "LOVE TRIP",
-    "source": "itunes"
+    "album": "LOVE TRIP",
+    "year": "1982",
+    "source": "itunes",
+    "spotify": ""
   },
   "album|KiiiKiii|WhyKiiiKiii": {
     "artwork": "assets/albums/kiiikiii-whykiiikiii.jpg",
     "url": "https://music.apple.com/us/album/whykiiikiii-ep/6796609538?uo=4",
     "preview": "",
     "name": "WhyKiiiKiii - EP",
-    "source": "itunes"
+    "album": "WhyKiiiKiii - EP",
+    "year": "2026",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Brian Eno|By This River": {
     "artwork": "assets/songs/brian-eno-by-this-river.jpg",
     "url": "https://music.apple.com/us/album/by-this-river/724418251?i=724418782&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/76/fb/be/76fbbe5f-da25-64e7-3fe8-1bc3e582f67e/mzaf_3236249640505955171.plus.aac.p.m4a",
     "name": "By This River",
-    "source": "itunes"
+    "album": "Before and After Science - Ten Pictures",
+    "year": "1977",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Mitski|First Love / Late Spring": {
     "artwork": "assets/songs/mitski-first-love-late-spring.jpg",
     "url": "https://music.apple.com/us/album/first-love-late-spring/1070245429?i=1070245510&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fd/44/38/fd4438dc-a1ef-6942-346f-db68e8511fca/mzaf_10414107169942300844.plus.aac.p.m4a",
     "name": "First Love/Late Spring",
-    "source": "itunes"
+    "album": "Bury Me At Makeout Creek",
+    "year": "2014",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|The Beatles|Hey Jude": {
     "artwork": "assets/songs/the-beatles-hey-jude.jpg",
     "url": "https://music.apple.com/us/album/hey-jude/1441133100?i=1441133277&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3d/08/f5/3d08f5d7-1e0a-99d9-1085-d50ecc972bb9/mzaf_1689604474306790314.plus.aac.p.m4a",
     "name": "Hey Jude",
-    "source": "itunes"
+    "album": "The Beatles 1967-1970 (The Blue Album)",
+    "year": "1968",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Caetano Veloso|Pecado": {
     "artwork": "assets/songs/caetano-veloso-pecado.jpg",
     "url": "https://music.apple.com/br/album/pecado/1443361511?i=1443361835&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e3/dd/9e/e3dd9ec1-7ee5-871c-c701-f28e405fe4db/mzaf_6526188591201488272.plus.aac.p.m4a",
     "name": "Pecado",
-    "source": "itunes"
+    "album": "Fina Estampa",
+    "year": "1994",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Milton Nascimento|Cais": {
     "artwork": "assets/songs/milton-nascimento-cais.jpg",
     "url": "https://music.apple.com/br/album/cais/1473446573?i=1473446727&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/50/3f/ba/503fba70-8e27-aae4-7656-2106d6525a1b/mzaf_16804197125626818128.plus.aac.p.m4a",
     "name": "Cais",
-    "source": "itunes"
+    "album": "Clube da Esquina",
+    "year": "1972",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Masayoshi Takanaka|Beleza Pula": {
     "artwork": "assets/songs/masayoshi-takanaka-beleza-pula.jpg",
     "url": "https://music.apple.com/jp/album/beleza-pula/1603369881?i=1603369893&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2f/e7/25/2fe72518-b266-1593-feb2-18bb658c8523/mzaf_11120807249677246955.plus.aac.p.m4a",
     "name": "BELEZA PULA",
-    "source": "itunes"
+    "album": "TAKANAKA ALL TIME SUPER BEST",
+    "year": "1992",
+    "source": "itunes",
+    "spotify": ""
   },
   "song|Blood Orange|Augustine": {
     "artwork": "assets/songs/blood-orange-augustine.jpg",
     "url": "https://music.apple.com/us/album/augustine/1120719798?i=1120720345&uo=4",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/d5/62/d8d56246-bd25-ff88-ffe3-8f3a3b1778cd/mzaf_8648023887807872757.plus.aac.p.m4a",
     "name": "Augustine",
-    "source": "itunes"
+    "album": "Freetown Sound",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": ""
+  },
+  "song|Slom|아니라고": {
+    "artwork": "assets/songs/slom-아니라고.jpg",
+    "url": "https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm",
+    "preview": "",
+    "name": "WEATHER REPORT",
+    "album": "WEATHER REPORT",
+    "year": "2022",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm"
+  },
+  "song|House Rulez|House": {
+    "artwork": "assets/songs/house-rulez-house.jpg",
+    "url": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj",
+    "preview": "",
+    "name": "Mojito",
+    "album": "Mojito",
+    "year": "2007",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj"
+  },
+  "song|Jeebanoff|낯선 사람": {
+    "artwork": "assets/songs/jeebanoff-낯선-사람.jpg",
+    "url": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK",
+    "preview": "",
+    "name": "Misery",
+    "album": "Misery",
+    "year": "2025",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK"
   }
 }

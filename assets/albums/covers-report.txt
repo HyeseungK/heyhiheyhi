@@ -1,10 +1,36 @@
-2026-10-27T01:54:51.766Z
-✗ song Slom — 아니라고
-✗ song House Rulez — House
-✗ song Jeebanoff — 낯선 사람
+2026-10-27T02:05:28.809Z
+✓ album EXO — Call Me Baby  (itunes: The 2nd Album ‘EXODUS’ · The 2nd Album ‘EXODUS’, 2015)
+✓ album Lamp — 恋人へ (For Lovers)  (itunes: 恋人へ · 恋人へ, 2004)
+✓ album Fiona Apple — When the Pawn...  (deezer: When The Pawn... · When The Pawn..., 1999)
+✓ album Casker — 여정 (旅程)  (itunes: 여정 · 여정, 2012)
+✓ album FKA twigs — CAPRISONGS  (deezer: CAPRISONGS · CAPRISONGS, 2022)
+✓ album The Internet — Ego Death  (spotify: Ego Death · Ego Death, 2015)
+  musicbrainz.org → HTTP 503
+✓ album Hiroshi Yoshimura — Wet Land  (coverartarchive: Wet Land)
+✓ album Steely Dan — Aja  (itunes: Aja · Aja, 1977)
+✓ album Takako Mamiya — Love Trip  (itunes: LOVE TRIP · LOVE TRIP, 1982)
+✓ album KiiiKiii — WhyKiiiKiii  (itunes: WhyKiiiKiii - EP · WhyKiiiKiii - EP, 2026)
+✓ song Brian Eno — By This River  (itunes: By This River · Before and After Science - Ten Pictures, 1977)
+✓ song Mitski — First Love / Late Spring  (itunes: First Love/Late Spring · Bury Me At Makeout Creek, 2014)
+✓ song The Beatles — Hey Jude  (itunes: Hey Jude · The Beatles 1967-1970 (The Blue Album), 1968)
+✓ song Caetano Veloso — Pecado  (itunes: Pecado · Fina Estampa, 1994)
+✓ song Milton Nascimento — Cais  (itunes: Cais · Clube da Esquina, 1972)
+✓ song Masayoshi Takanaka — Beleza Pula  (itunes: BELEZA PULA · TAKANAKA ALL TIME SUPER BEST, 1992)
+✓ song Yusef Lateef — Love Theme from Spartacus  (itunes: Love Theme From Spartacus (Remastered 2023) · Eastern Sounds (Remastered 2023), 1960)
+✗ song The Strokes — Ode to the Mets
+✓ song Billy Joel — Vienna  (itunes: Vienna · The Stranger, 1977)
+✗ song Cortex — Poxa
+✓ song Daniel Caesar — Who Knows  (itunes: Who Knows · Son Of Spergy, 2025)
+✓ song Slom — 아니라고  (spotify: WEATHER REPORT · WEATHER REPORT, 2022)
+✓ song Four Tet — 31 Bloom  (itunes: 31 Bloom · Three +, 2024)
+✓ song NMIXX — Phoenix  (itunes: Phoenix · Blue Valentine, 2025)
+✓ song capsule — I Wish You  (itunes: I wish You · rewind BEST-1 (2012→2006), 2010)
+✓ song Perfume — 575  (itunes: 575 · VOICE - EP, 2010)
+✓ song House Rulez — House  (spotify: Mojito · Mojito, 2007)
+✓ song Jeebanoff — 낯선 사람  (spotify: Misery · Misery, 2025)
+✓ song Blood Orange — Augustine  (itunes: Augustine · Freetown Sound, 2016)
 
-26/29 found.
+27/29 found.
 Not found:
-  Slom — 아니라고
-  House Rulez — House
-  Jeebanoff — 낯선 사람
+  The Strokes — Ode to the Mets
+  Cortex — Poxa
