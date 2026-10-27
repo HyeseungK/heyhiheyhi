@@ -93,14 +93,14 @@ export const work = {
       period: '2021 — 2026',
       org: 'Yonsei University',
       role: 'Bachelor of Business Administration',
-      text: 'GPA 4.21 / 4.30, academic honours in three semesters.',
+      text: 'GPA 4.21 / 4.30, academic honours in three semesters. I think I did everything a university lets you do, and somehow I still miss it.',
     },
     {
       group: 'Education & activities',
       period: '2023',
       org: 'New York University',
       role: 'Visiting Student',
-      text: 'A spring in New York: supply chains and accounting by day, the film rolls you’ll find in Frames by night.',
+      text: 'One spring, and it changed the plan. New York is where my love for film, photography and music really grew (the rolls are in Frames). I left wanting to work there one day, set on working or studying abroad, and with an MBA quietly added to the list.',
     },
     {
       group: 'Education & activities',
