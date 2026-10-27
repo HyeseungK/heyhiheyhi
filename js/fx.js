@@ -58,21 +58,36 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 async function pixel(x, y, label, onCovered) {
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const size = Math.round(Math.max(26, Math.min(58, W / 22)));
-  const cols = Math.ceil(W / size), rows = Math.ceil(H / size);
   const maxD = Math.hypot(Math.max(x, W - x), Math.max(y, H - y));
+  // blocks get finer toward two opposite corners (top-left + bottom-right, or the other diagonal)
+  const flipDiag = Math.random() < 0.5;
+  const nearCorner = (cx, cy) => {
+    const u = cx / W, v = flipDiag ? 1 - cy / H : cy / H;
+    return Math.max(0, 1 - Math.min(Math.hypot(u, v), Math.hypot(1 - u, 1 - v)) / 0.8);
+  };
   const cells = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const cx = c * size + size / 2, cy = r * size + size / 2;
-      const d = Math.hypot(cx - x, cy - y) / maxD;
-      cells.push({
-        x: c * size, y: r * size,
-        din: d * 0.62 + Math.random() * 0.2,
-        dout: (1 - d) * 0.35 + Math.random() * 0.5,
-        accent: Math.random() < 0.05,
-      });
-    }
-  }
+  const add = (bx, by, bs) => {
+    const cx = bx + bs / 2, cy = by + bs / 2;
+    const d = Math.hypot(cx - x, cy - y) / maxD;
+    cells.push({
+      x: bx, y: by, s: bs,
+      din: d * 0.62 + Math.random() * 0.2,
+      dout: (1 - d) * 0.35 + Math.random() * 0.5,
+      accent: Math.random() < 0.05,
+    });
+  };
+  // quadtree: big blocks in the middle, splitting into smaller ones near the corners
+  const split = (bx, by, bs, level) => {
+    if (bx >= W || by >= H) return;
+    const near = nearCorner(bx + bs / 2, by + bs / 2);
+    if (level < 3 && near > 0.12 + level * 0.24 + Math.random() * 0.16) {
+      const h = bs / 2;
+      split(bx, by, h, level + 1); split(bx + h, by, h, level + 1);
+      split(bx, by + h, h, level + 1); split(bx + h, by + h, h, level + 1);
+    } else add(bx, by, bs);
+  };
+  const big = size * 2;
+  for (let by = 0; by < H; by += big) for (let bx = 0; bx < W; bx += big) split(bx, by, big, 0);
   const grow = 0.16;
   const drawCells = (prog, key, invert) => {
     ctx.clearRect(0, 0, W, H);
@@ -81,9 +96,9 @@ async function pixel(x, y, label, onCovered) {
       if (invert) s = 1 - s;
       if (s <= 0) continue;
       const k = easeOut(s);
-      const inset = (size * (1 - k)) / 2;
+      const inset = (cell.s * (1 - k)) / 2;
       ctx.fillStyle = cell.accent && k < 1 ? accent : INK;
-      ctx.fillRect(cell.x + inset, cell.y + inset, size * k + 0.5, size * k + 0.5);
+      ctx.fillRect(cell.x + inset, cell.y + inset, cell.s * k + 0.5, cell.s * k + 0.5);
     }
   };
   await animate(820, (t) => drawCells(t * (0.82 + grow), 'din', false));
