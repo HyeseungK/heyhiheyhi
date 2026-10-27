@@ -789,6 +789,7 @@ export const music = {
     },
   ],
   // The burned CD. `side`: 'analog' or 'modern' — names in `sides`.
+  // A song that won't play: paste its Apple Music link (Share → Copy link, the one with ?i=) as `apple: '…'`.
   // Artwork, previews, album and year are found automatically; add `spotify: 'https://open.spotify.com/…'`
   // to pin a cover, or `album` / `year` to override what was found.
   mixtape: {

@@ -71,6 +71,13 @@ async function spotifyMeta(link) {
 }
 
 async function lookup(q, kind) {
+  // a pasted Apple Music song link (…?i=<id>) gives the exact track, preview included
+  const appleId = /[?&]i=(\d+)/.exec(q.apple || '')?.[1];
+  if (appleId) {
+    const store = /music\.apple\.com\/(\w\w)\//.exec(q.apple)?.[1] || 'us';
+    const r = (await getJSON(`https://itunes.apple.com/lookup?id=${appleId}&country=${store}`))?.results?.[0];
+    if (r) return { source: 'itunes', artwork: (r.artworkUrl100 || '').replace(/\/\d+x\d+bb\./, '/600x600bb.'), url: r.trackViewUrl, preview: r.previewUrl || '', name: r.trackName, album: r.collectionName || '', year: (r.releaseDate || '').slice(0, 4) };
+  }
   // a pasted Spotify link wins (open.spotify.com/album/… or /track/…)
   if (q.spotify) {
     const d = await getJSON(`https://open.spotify.com/oembed?url=${encodeURIComponent(q.spotify)}`);
@@ -168,21 +175,21 @@ const jobs = [
   // favourite tracks inside each album: looked up as songs, for their 30-second previews
   ...music.albums.flatMap((al) => (al.tracks || []).map((t) => ({
     kind: 'song', dir: 'assets/songs',
-    a: { artist: al.artist, title: t.name, spotify: t.spotify || '', itunes: { ...(al.itunes || {}), titles: t.titles || [] } },
+    a: { artist: al.artist, title: t.name, spotify: t.spotify || '', apple: t.apple || '', itunes: { ...(al.itunes || {}), titles: t.titles || [] } },
   }))),
 ];
 let found = 0, missing = [];
 for (const { kind, a, dir } of jobs) {
   const key = `${kind}|${a.artist}|${a.title}`;
   const rel = `${dir}/${slug(`${a.artist}-${a.title}`)}.jpg`;
-  const have = manifest[key] && 'album' in manifest[key] && (manifest[key].spotify || '') === (a.spotify || '') && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
+  const have = manifest[key] && 'album' in manifest[key] && (manifest[key].spotify || '') === (a.spotify || '') && (manifest[key].apple || '') === (a.apple || '') && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
   if (have || a.cover) { found++; continue; }
-  const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) }, kind);
+  const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, apple: a.apple, ...(a.itunes || {}) }, kind);
   if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); log(`✗ ${kind} ${a.artist} — ${a.title}`); continue; }
   try {
     await download(r.artwork, path.join(root, rel));
     if (r.album && !r.year) r.year = await albumInfo(a.artist, r.album);
-    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, previewUrl: r.previewUrl || '', name: r.name, album: r.album || '', year: r.year || '', source: r.source, spotify: a.spotify || '' };
+    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, previewUrl: r.previewUrl || '', name: r.name, album: r.album || '', year: r.year || '', source: r.source, spotify: a.spotify || '', apple: a.apple || '' };
     found++;
     log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name}${r.album ? ` · ${r.album}` : ''}${r.year ? `, ${r.year}` : ''})`);
   } catch (e) {
