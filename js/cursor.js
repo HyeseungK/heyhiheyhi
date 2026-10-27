@@ -5,6 +5,7 @@ const LABELS = [
   ['#hero-canvas', '✦'],
   ['.sleeve', 'open'],
   ['.mix-track', 'play'],
+  ['.tt-hit', 'spin'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
   ['.muse-btn', 'open'],

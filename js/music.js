@@ -2,6 +2,7 @@ import { music } from './content.js';
 import { openModal } from './modal.js';
 import { flowCoverURL, isDark, mulberry32, hashString } from './gen.js';
 import { createGuitar } from './guitar3d.js';
+import { createTurntable } from './turntable.js';
 import { findAlbum, findSong, freshPreview } from './itunes.js';
 import { sound } from './sound.js';
 
@@ -72,6 +73,7 @@ export function renderMusic(root) {
 
   renderTickets(root);
   renderMixtape(root);
+  renderStage(root.querySelector('.stage-list'));
 
   const guitar = root.querySelector('.guitar');
   const rig = root.querySelector('.guitar-rig');
@@ -89,7 +91,7 @@ export function renderMusic(root) {
   guitar.addEventListener('click', (e) => {
     if (guitar.dataset.thrown) { e.preventDefault(); return; } // the end of a throw, not a click
     strum();
-    setTimeout(openStage, 700);
+    guitar3d?.strum();
   });
   guitar.addEventListener('pointerenter', () => guitar3d?.nudge());
   makeThrowable(guitar, root.querySelector('.shelf'));
@@ -298,41 +300,25 @@ function shuffleRack(shelf) {
   });
 }
 
-// ── the burned CD ───────────────────────────────────────────
+// ── favourite songs on a brick turntable ─────────────────────
 let player = null;
 // "Artist · Album, 1999" once the lookup has found the record
 const subLine = (s) => esc([s.artist, [s.album || s.found?.album, s.year || s.found?.year].filter(Boolean).join(', ')].filter(Boolean).join(' · '));
 
-function discHTML(label, sub) {
-  return `<div class="burn-disc" aria-hidden="true">
-    <span class="burn-rings"></span><span class="burn-holo"></span><span class="burn-shine"></span><span class="burn-hub"></span>
-    <span class="burn-label">${esc(label)}</span><span class="burn-note">${esc(sub)}</span>
-  </div>`;
-}
-
-// a double jewel case: open it, pick disc A or B, play a track and that disc spins
+// one record, two sides: pick a side and the needle drops; pick the other and the record flips
 function renderMixtape(root) {
   const gsap = window.gsap;
   const m = music.mixtape;
   if (!m) return;
   const box = root.querySelector('.mixtape');
-  const caseEl = box.querySelector('.dcase');
-  const cover = box.querySelector('.dcase-cover');
   const sides = Object.entries(m.sides || {});
   const songsOf = (key) => m.songs.map((s, i) => [s, i]).filter(([s]) => s.side === key);
+  const letter = (key) => 'AB'[sides.findIndex(([k]) => k === key)] || 'A';
+  box.querySelector('.mix-title').textContent = m.label;
+  box.querySelector('.mix-note').textContent = m.note || '';
 
-  // paper insert on the front
-  box.querySelector('.ins-label').textContent = m.label;
-  box.querySelector('.ins-vol').textContent = m.note || '';
-  box.querySelector('.ins-sides').innerHTML = sides.map(([, label], k) => `<span>${'AB'[k] || k + 1} — ${esc(label.replace(/^Side \w+ · /, ''))}</span>`).join('');
-
-  // one burned disc per side: A sits in the cover, B in the base
-  const slots = [...box.querySelectorAll('.disc-slot')].sort((x, y) => x.dataset.side - y.dataset.side);
-  sides.forEach(([key, label], k) => {
-    if (!slots[k]) return;
-    slots[k].dataset.key = key;
-    slots[k].innerHTML = discHTML(m.label, `${'AB'[k] || k + 1} · ${label.replace(/^Side \w+ · /, '')}`);
-  });
+  const deck = createTurntable(box.querySelector('.tt-canvas'));
+  if (!deck) box.querySelector('.deck-stage').hidden = true;
 
   box.querySelector('.side-tabs').innerHTML = sides
     .map(([key, label]) => `<button class="chip" role="tab" data-key="${esc(key)}">${esc(label)} <span>${songsOf(key).length}</span></button>`)
@@ -355,84 +341,53 @@ function renderMixtape(root) {
       c.classList.toggle('is-on', c.dataset.key === side);
       c.setAttribute('aria-selected', c.dataset.key === side);
     });
-    slots.forEach((sl) => sl.classList.toggle('is-picked', sl.dataset.key === side));
     if (animate) gsap.from(list.querySelectorAll('li'), { x: 24, opacity: 0, stagger: 0.035, duration: 0.45, ease: 'power3.out' });
   }
-
-  // open / close the case: the cover swings on its left hinge, the case slides to stay centred
-  let open = false;
-  function setOpen(v) {
-    if (open === v) return;
-    open = v;
-    caseEl.dataset.open = v;
-    box.querySelector('.case-hint').textContent = v ? 'Pick a disc' : 'Open the case';
-    gsap.to(cover, { rotationY: v ? -180 : 0, duration: 1.1, ease: 'power3.inOut' });
-    gsap.to(caseEl, { xPercent: v ? 50 : 0, duration: 1.1, ease: 'power3.inOut' });
-    if (v) gsap.fromTo(slots.map((s) => s.querySelector('.burn-disc')), { rotation: -40 }, { rotation: 0, duration: 1.4, ease: 'power3.out', stagger: 0.1 });
-  }
-  box.querySelector('.dcase-hit').addEventListener('click', () => setOpen(true));
-  caseEl.addEventListener('click', (e) => {
-    if (!open) return;
-    const slot = e.target.closest('.disc-slot');
-    if (slot) pickSide(slot.dataset.key);
-    else if (!e.target.closest('.dcase-hit')) setOpen(false);
-  });
 
   function pickSide(key, quiet) {
     if (!key) return;
     const changed = key !== side;
     side = key;
     paintList(changed && !quiet);
-    const slot = slots.find((s) => s.dataset.key === key);
-    if (slot && changed) gsap.fromTo(slot.querySelector('.burn-disc'), { rotation: -90 }, { rotation: 0, duration: 1, ease: 'power3.out' });
   }
   box.querySelector('.side-tabs').addEventListener('click', (e) => {
     const c = e.target.closest('.chip');
     if (!c) return;
-    setOpen(true);
+    if (playing !== null && m.songs[playing].side !== c.dataset.key) stopAudio();
     pickSide(c.dataset.key);
+    deck?.play(letter(c.dataset.key));
+  });
+  // clicking the deck itself starts or stops the record
+  box.querySelector('.tt-hit').addEventListener('click', () => {
+    if (!deck) return;
+    if (deck.on) stop();
+    else deck.play(letter(side));
   });
 
-  // playback: the chosen disc keeps spinning until you stop it; previews play through
-  // the side like a real CD, moving on to the next track when one ends
+  // playback: previews play through the side like a real record, moving on when one ends
   const audio = new Audio();
   audio.preload = 'none';
   audio.muted = !sound.on;
   sound.onChange((on) => (audio.muted = !on));
   let playing = null;
-  let spin = null;
-  let spinning = null;
-  function spinDisc(key) {
-    const slot = slots.find((sl) => sl.dataset.key === key);
-    if (!slot || spinning === slot) return;
-    stopSpin();
-    spinning = slot;
-    slot.classList.add('is-spinning');
-    spin = gsap.to(slot.querySelector('.burn-disc'), { rotation: '+=360', duration: 1.8, ease: 'none', repeat: -1 });
-    gsap.fromTo(spin, { timeScale: 0.1 }, { timeScale: 1, duration: 1.2, ease: 'power2.out' });
-  }
-  function stopSpin() {
-    if (spin) { const sp = spin; gsap.to(sp, { timeScale: 0, duration: 1.4, ease: 'power2.out', onComplete: () => sp.kill() }); }
-    spin = null;
-    spinning?.classList.remove('is-spinning');
-    spinning = null;
-  }
   function mark(i) {
     list.querySelectorAll('.mix-track').forEach((b) => b.classList.toggle('is-playing', +b.dataset.i === i));
   }
-  function stop() {
+  function stopAudio() {
     audio.pause();
     playing = null;
     mark(-1);
-    stopSpin();
+  }
+  function stop() {
+    stopAudio();
+    deck?.pause();
   }
   function play(i) {
     const s = m.songs[i];
     playing = i;
-    setOpen(true);
     if (s.side !== side) pickSide(s.side, true);
     mark(i);
-    spinDisc(s.side);
+    deck?.play(letter(s.side));
     if (s.found?.preview) {
       audio.src = s.found.preview;
       audio.play().catch(() => {});
@@ -451,7 +406,7 @@ function renderMixtape(root) {
       window.open(url, '_blank', 'noopener');
     }
   }
-  // when a preview ends, go on to the next track on the same disc that has one
+  // when a preview ends, go on to the next track on the same side that has one
   audio.addEventListener('ended', () => {
     if (playing === null) return;
     const order = songsOf(m.songs[playing].side).map(([, i]) => i);
@@ -469,9 +424,12 @@ function renderMixtape(root) {
     play(i);
   });
 
-  // artwork + previews (saved covers first, live lookup for the rest), once in view
+  // artwork + previews (saved covers first, live lookup for the rest), once in view;
+  // the deck only renders while it is on screen
   let looked = false;
   new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) deck?.start();
+    else deck?.stop();
     if (!e.isIntersecting || looked) return;
     looked = true;
     m.songs.forEach((s, i) => {
@@ -485,19 +443,6 @@ function renderMixtape(root) {
       }).catch(() => {});
     });
   }, { rootMargin: '300px' }).observe(box);
-
-  // the case tilts a little toward the cursor; the discs catch the light
-  const stage = box.querySelector('.burn-stage');
-  const qx = gsap.quickTo(caseEl, 'rotationY', { duration: 0.8, ease: 'power3' });
-  const qy = gsap.quickTo(caseEl, 'rotationX', { duration: 0.8, ease: 'power3' });
-  stage.addEventListener('pointermove', (e) => {
-    const r = stage.getBoundingClientRect();
-    const fx = (e.clientX - r.left) / r.width;
-    qx((fx - 0.5) * 12);
-    qy(-((e.clientY - r.top) / r.height - 0.5) * 8);
-    box.style.setProperty('--shine', `${fx * 360}deg`);
-  });
-  stage.addEventListener('pointerleave', () => { qx(0); qy(0); });
 
   paintList(false);
 }
@@ -676,12 +621,11 @@ function strum() {
   }
 }
 
-const drawer = document.querySelector('.stage-drawer');
-function openStage() {
+// the bands I have sung in, next to the guitar
+function renderStage(host) {
   const s = music.stage;
-  drawer.querySelector('.drawer-body').innerHTML = `
-    <p class="eyebrow">On stage</p>
-    <h3>Where I’ve played</h3>
+  if (!host || !s) return;
+  host.innerHTML = `
     <p class="intro">${esc(s.intro)}</p>
     <ul class="perf">
       ${s.performances
@@ -693,8 +637,6 @@ function openStage() {
         .join('')}
     </ul>
     ${s.soundcloud ? `<a class="sc-btn" href="${esc(s.soundcloud)}" target="_blank" rel="noopener">Listen on SoundCloud ↗</a>` : ''}`;
-  openModal(drawer, { from: { x: '100%', opacity: 1 } });
-  window.gsap.from(drawer.querySelectorAll('.drawer-body > *, .perf li'), { y: 20, opacity: 0, stagger: 0.05, duration: 0.5, delay: 0.15, ease: 'power3.out' });
 }
 
 export function initMusicScroll(root) {
@@ -712,6 +654,10 @@ export function initMusicScroll(root) {
   gsap.from(root.querySelector('.guitar-rig'), {
     y: 60, opacity: 0, duration: 1, ease: 'power3.out',
     scrollTrigger: { trigger: root.querySelector('.guitar-wrap'), start: 'top 92%' },
+  });
+  gsap.from(root.querySelectorAll('.perf li'), {
+    y: 24, opacity: 0, stagger: 0.08, duration: 0.7, ease: 'power3.out',
+    scrollTrigger: { trigger: root.querySelector('.stage-list'), start: 'top 85%' },
   });
   // render the 3D guitar only while it is on screen
   renderWhileVisible(root.querySelector('.guitar-wrap'));

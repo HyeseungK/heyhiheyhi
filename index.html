@@ -22,14 +22,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&family=Nanum+Pen+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=8e3e612b" />
+  <link rel="stylesheet" href="css/style.css?v=65241b70" />
   <script type="importmap">
     {
       "imports": {
         "three": "./vendor/three.module.min.js?v=2992ecd7",
         "./js/bricks.js": "./js/bricks.js?v=4eb2489c",
-        "./js/content.js": "./js/content.js?v=d3c66d75",
-        "./js/cursor.js": "./js/cursor.js?v=ed64d36b",
+        "./js/content.js": "./js/content.js?v=e6c63ab5",
+        "./js/cursor.js": "./js/cursor.js?v=dc1f1954",
         "./js/fx.js": "./js/fx.js?v=6ff55346",
         "./js/gen.js": "./js/gen.js?v=6ccfc483",
         "./js/guitar3d.js": "./js/guitar3d.js?v=07299b71",
@@ -37,8 +37,9 @@
         "./js/itunes.js": "./js/itunes.js?v=7e3bf0a7",
         "./js/main.js": "./js/main.js?v=d6a5b199",
         "./js/modal.js": "./js/modal.js?v=c2e0d811",
-        "./js/music.js": "./js/music.js?v=47d516b4",
+        "./js/music.js": "./js/music.js?v=fa34f29e",
         "./js/sound.js": "./js/sound.js?v=6916e9d4",
+        "./js/turntable.js": "./js/turntable.js?v=e7b9fb94",
         "./js/visual.js": "./js/visual.js?v=3f173d3c",
         "./js/work.js": "./js/work.js?v=949dc7fa"
       }
@@ -200,47 +201,37 @@
       </div>
 
       <div class="room">
+        <div class="block-head"><p class="label">On the rack</p></div>
         <div class="shelf-wrap">
           <div class="shelf" aria-label="Album shelf"></div>
           <div class="rack-foot"><p class="hint">Pick a record</p><button class="shuffle-btn" type="button">Shuffle Rack ⤮</button></div>
         </div>
-        <div class="guitar-wrap">
-          <div class="guitar-rig">
-            <canvas class="amp-canvas" aria-hidden="true"></canvas>
-            <button class="guitar" aria-label="Guitar: strum it, throw it, and see where I’ve played"><canvas class="guitar-canvas"></canvas></button>
-          </div>
-          <p class="hint">Strum me</p>
-        </div>
       </div>
 
       <div class="mixtape">
-        <div class="burn-stage">
-          <div class="dcase" data-open="false">
-            <div class="dcase-base">
-              <div class="tray"><span class="tray-teeth"></span></div>
-              <div class="disc-slot" data-side="1"></div>
-            </div>
-            <div class="dcase-cover">
-              <div class="dcase-front">
-                <div class="insert">
-                  <span class="ins-label"></span>
-                  <span class="ins-vol"></span>
-                  <span class="ins-sides"></span>
-                  <span class="ins-sticker">2 CD</span>
-                </div>
-              </div>
-              <div class="dcase-inside">
-                <div class="tray"><span class="tray-teeth"></span></div>
-                <div class="disc-slot" data-side="0"></div>
-              </div>
-            </div>
-            <button class="dcase-hit" aria-label="Open the CD case"></button>
+        <div class="block-head"><p class="label mix-title">Favorite songs</p><p class="hint mix-note"></p></div>
+        <div class="mix-body">
+          <div class="deck-stage">
+            <canvas class="tt-canvas" aria-hidden="true"></canvas>
+            <button class="tt-hit" aria-label="Start or stop the record"></button>
           </div>
-          <p class="hint case-hint">Open the case</p>
+          <div class="mix-panel">
+            <div class="chips side-tabs" role="tablist"></div>
+            <div class="mix-list" aria-label="Favorite songs"></div>
+          </div>
         </div>
-        <div class="mix-panel">
-          <div class="chips side-tabs" role="tablist"></div>
-          <div class="mix-list" aria-label="Favorite songs"></div>
+      </div>
+
+      <div class="stage-block">
+        <div class="block-head"><p class="label">On stage</p><p class="hint">Strum it, or throw it</p></div>
+        <div class="stage-body">
+          <div class="guitar-wrap">
+            <div class="guitar-rig">
+              <canvas class="amp-canvas" aria-hidden="true"></canvas>
+              <button class="guitar" aria-label="Guitar: strum it or throw it"><canvas class="guitar-canvas"></canvas></button>
+            </div>
+          </div>
+          <div class="stage-list"></div>
         </div>
       </div>
 
@@ -312,11 +303,6 @@
     <button class="modal-x" aria-label="Close">Close</button>
     <article class="colophon-body"></article>
   </div>
-
-  <aside class="drawer stage-drawer" hidden aria-label="Performances">
-    <button class="modal-x" aria-label="Close">Close</button>
-    <div class="drawer-body"></div>
-  </aside>
 
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>

@@ -638,7 +638,7 @@ export const visual = {
 // ── MUSIC ────────────────────────────────────────────────────
 // Covers: put images in assets/albums and set `cover`.
 export const music = {
-  lead: 'Albums I keep coming back to, and a CD I burned myself. Pull a record off the rack; the guitar knows where I’ve played.',
+  lead: 'Albums I keep coming back to, the songs I play on repeat, and the bands I’ve sung in.',
   // 10 records, 5 per ledge. Covers are found automatically (iTunes, then Deezer) from
   // the artist + title; `itunes` holds extra search hints. If a cover comes out wrong,
   // paste the album's Spotify link into `spotify` (Share → Copy link) and that one is used.
@@ -749,7 +749,7 @@ export const music = {
   // to pin a cover, or `album` / `year` to override what was found.
   mixtape: {
     label: 'Favorite Songs',
-    note: '2026 · for whoever is listening', // [PLACEHOLDER] the small scribble under the title
+    note: 'Pick a side', // the small line next to the title
     sides: { analog: 'Side A · Analog', modern: 'Side B · Modern' },
     songs: [
       { artist: 'Brian Eno', title: 'By This River', side: 'analog', itunes: { titles: ['By This River'] } },
