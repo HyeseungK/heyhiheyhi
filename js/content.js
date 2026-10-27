@@ -725,8 +725,8 @@ export const music = {
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
         { n: 3, name: 'Under Control' },
-        { n: 5, name: 'Just Sayin / I Tried' },
-        { n: 10, name: 'Partners in Crime Part Three' },
+        { n: 5, name: 'Just Sayin / I Tried', titles: ['Just Sayin/I Tried', 'Just Sayin'] },
+        { n: 10, name: 'Partners in Crime Part Three', titles: ['Partners In Crime Part Three', 'Partners in Crime Pt. 3'] },
       ],
     },
     {
@@ -741,7 +741,7 @@ export const music = {
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
         { n: 2, name: 'Happiness Is Me and You' },
-        { n: 8, name: 'The Word II' },
+        { n: 8, name: 'The Word II', titles: ['The Word Ⅱ', 'The Word 2'] },
       ],
     },
     {
