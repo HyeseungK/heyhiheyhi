@@ -1,15 +1,9 @@
-2026-10-27T14:58:53.748Z
+2026-10-27T15:03:12.468Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
-✓ song Slom — 아니라고  (itunes: ANIRAGO (feat. Zion.T) · WEATHER REPORT, 2022)
-✓ song House Rulez — House  (itunes: Home (feat. Youme) · Mojito, 2007)
-✓ song Jeebanoff — 낯선 사람  (itunes: Stranger · Misery, 2025)
+✓ song STUTS — 愛をさわれたら (If I Could Touch Love)  (itunes: 愛をさわれたら · 愛をさわれたら - Single, 2024)
 ✗ song KiiiKiii — 딸기게임 (Strawberry Game)
 ✗ song Fisherman — 아마 난 (feat. Zion.T)
-✓ song EXO — 백색소음 (White Noise)  (itunes: White Noise · EX’ACT - The 3rd Album, 2016)
-✓ song Fiona Apple — Get Gone  (itunes: Get Gone · When the Pawn..., 1999)
-✓ song FKA twigs — meta angel  (itunes: meta angel · CAPRISONGS, 2022)
-✓ song FKA twigs — oh my love  (itunes: oh my love · CAPRISONGS, 2022)
 ✗ song The Internet — Under Control
 ✗ song The Internet — Just Sayin / I Tried
 ✗ song The Internet — Partners in Crime Part Three
@@ -17,7 +11,7 @@
 ✗ song SUMIN & Slom — 째깍째깍
 ✗ song SUMIN & Slom — 텅빈밤
 
-51/61 found.
+52/62 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa

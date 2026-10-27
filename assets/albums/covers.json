@@ -622,5 +622,17 @@
     "source": "itunes",
     "spotify": "",
     "apple": "https://music.apple.com/us/song/oh-my-love/1603753482"
+  },
+  "song|STUTS|愛をさわれたら (If I Could Touch Love)": {
+    "artwork": "assets/songs/stuts-愛をさわれたら-if-i-could-touch-love.jpg",
+    "url": "https://music.apple.com/jp/album/%E6%84%9B%E3%82%92%E3%81%95%E3%82%8F%E3%82%8C%E3%81%9F%E3%82%89/1781057822?i=1781057824&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bd/75/b3/bd75b33b-7177-f162-0634-6f8d343c2520/mzaf_12241211544683161976.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "愛をさわれたら",
+    "album": "愛をさわれたら - Single",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
   }
 }
