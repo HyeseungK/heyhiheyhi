@@ -73,8 +73,8 @@ export function createCoffee(canvas) {
 
   const dark = new THREE.Color('#2b1a12'), light = new THREE.Color('#8a6142');
   function melt(k) {
-    // the drink rises a little as the ice turns to water, and goes from black to a watery brown
-    const level = 8 + k * 1.6;
+    // sip by sip the level drops, and what is left goes from black to a watery brown
+    const level = 9 - k * 6; // sipped while working: the drink goes down as the ice melts
     let n = 0;
     coffeeCells.forEach(([x, y, z]) => {
       if (y > level) return;
