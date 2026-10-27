@@ -1,12 +1,8 @@
-2026-10-27T15:10:02.726Z
-✓ album The Internet — Ego Death  (spotify: Ego Death · Ego Death, 2015)
+2026-10-27T15:12:29.327Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
-✓ song The Internet — Under Control  (itunes: Under Control · Ego Death, 2015)
-✓ song The Internet — Just Sayin / I Tried  (itunes: Just Sayin/I Tried · Ego Death, 2015)
-✓ song The Internet — Partners in Crime Part Three  (itunes: Partners in Crime Part Three · Ego Death, 2015)
 
-60/62 found.
+59/61 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa
