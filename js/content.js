@@ -33,7 +33,7 @@ export const profile = {
   nickname: 'Helen',
   tagline: 'Consultant by day; film, photography and music lover 24/7.',
   intro:
-    'Hi, I’m Helen. I work on strategy problems with consulting teams, and spend the rest of my time with a camera, an editing timeline, or a guitar. This page is my business card, an archive of both sides.', // [PLACEHOLDER]
+    'Hi, I’m Helen. I work on strategy problems with consulting teams, and spend the rest of my time with a camera, some headphones, or a guitar. This page is an archive of both sides.',
   location: 'Seoul', // [PLACEHOLDER]
   // business card (end of the home screen) + downloadable contact file
   card: {
