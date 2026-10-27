@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&family=Nanum+Pen+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=223f6ce0" />
+  <link rel="stylesheet" href="css/style.css?v=44e1f429" />
   <script type="importmap">
     {
       "imports": {
@@ -38,10 +38,11 @@
         "./js/main.js": "./js/main.js?v=fe2e858b",
         "./js/modal.js": "./js/modal.js?v=c2e0d811",
         "./js/music.js": "./js/music.js?v=4fa6ae19",
+        "./js/person3d.js": "./js/person3d.js?v=f8abb1d2",
         "./js/sound.js": "./js/sound.js?v=6916e9d4",
         "./js/turntable.js": "./js/turntable.js?v=5910361e",
         "./js/visual.js": "./js/visual.js?v=3e0391e7",
-        "./js/work.js": "./js/work.js?v=db13d615"
+        "./js/work.js": "./js/work.js?v=56f8937f"
       }
     }
   </script>
@@ -136,7 +137,7 @@
       </div>
 
       <div class="career">
-        <div class="career-side"><p class="label">Career path</p></div>
+        <div class="career-side"><div class="career-stick"><p class="label">Career path</p><canvas class="person-canvas" aria-hidden="true"></canvas><p class="hint person-hint">drag to turn me around</p></div></div>
         <ol class="career-list"></ol>
       </div>
 

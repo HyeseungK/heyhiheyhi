@@ -1,5 +1,6 @@
 import { work } from './content.js';
 import { openModal, closeModal } from './modal.js';
+import { createPerson } from './person3d.js';
 
 const deckModal = document.querySelector('.deck-modal');
 
@@ -67,7 +68,7 @@ export function renderWork(root) {
     tl = gsap
       .timeline({ onComplete: () => (laptop.dataset.open = 'false') })
       .to(off, { opacity: 1, duration: 0.25 })
-      .to(laptop, { '--lid': '-86deg', duration: 1, ease: 'power3.inOut' })
+      .to(laptop, { '--lid': '-90deg', duration: 1, ease: 'power3.inOut' })
       .to(prompt, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
     hint.textContent = 'Click the laptop to open it';
   }
@@ -167,6 +168,8 @@ function makeProject(host, start, onBack) {
   return { onKey, destroy: () => {} };
 }
 
+let person = null;
+
 // scroll animations, created each time the tab is shown
 export function initWorkScroll(root) {
   const gsap = window.gsap;
@@ -176,6 +179,21 @@ export function initWorkScroll(root) {
       scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
     });
   });
+  // the brick figure: consultant at the top of the list, student in the middle, baby at the bottom
+  const canvas = root.querySelector('.person-canvas');
+  if (canvas && window.matchMedia('(min-width: 861px)').matches) {
+    person = person || createPerson(canvas);
+    if (person) {
+      window.ScrollTrigger.create({
+        trigger: root.querySelector('.career-list'), start: 'top 35%', end: 'bottom 85%',
+        onUpdate: (self) => person.set(self.progress * 2),
+      });
+      window.ScrollTrigger.create({
+        trigger: root.querySelector('.career'), start: 'top bottom', end: 'bottom top',
+        onToggle: (self) => (self.isActive ? person.start() : person.stop()),
+      });
+    }
+  }
   gsap.from(root.querySelector('.laptop'), {
     y: 80, scale: 0.9, opacity: 0.4, ease: 'none',
     scrollTrigger: { trigger: root.querySelector('.laptop-section'), start: 'top bottom', end: 'top 30%', scrub: 0.8 },

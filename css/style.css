@@ -222,7 +222,12 @@ img { display: block; max-width: 100%; }
   padding: 0 var(--gutter) clamp(80px, 10vw, 140px);
   display: grid; grid-template-columns: 1fr 2.4fr; gap: 40px;
 }
-.career-side .label { position: sticky; top: calc(var(--topbar) + 28px); }
+.career-stick { position: sticky; top: calc(var(--topbar) + 28px); }
+/* the brick figure that grows younger down the list (desktop only) */
+.person-canvas { display: block; width: 100%; max-width: 300px; aspect-ratio: 3 / 4; margin-top: 18px; cursor: grab; touch-action: pan-y; }
+.person-canvas:active { cursor: grabbing; }
+.person-hint { font-size: 14px; margin-top: 4px; }
+@media (max-width: 860px) { .person-canvas, .person-hint { display: none; } }
 .career-list { list-style: none; margin: 0; padding: 0; }
 .career-group { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); padding: 34px 0 10px; }
 .career-group:first-child { padding-top: 0; }
@@ -258,7 +263,7 @@ img { display: block; max-width: 100%; }
   padding-top: 20px;
 }
 .laptop {
-  --lid: -86deg;
+  --lid: -90deg; /* closed: flat on the base, so it always reads as a closed lid while you scroll */
   position: relative;
   width: var(--w);
   height: calc(var(--lidh) + var(--w) * .1);
@@ -964,7 +969,7 @@ body.lock { overflow: hidden; }
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 860px) {
   .career { grid-template-columns: 1fr; gap: 12px; }
-  .career-side .label { position: static; }
+  .career-stick { position: static; }
   .album-view { grid-template-columns: 1fr; justify-items: center; }
   .album-info { width: 100%; }
   .case-stage { --s: min(250px, 54vw); padding-left: calc(var(--s) * .22); }
