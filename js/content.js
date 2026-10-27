@@ -549,9 +549,10 @@ export const visual = {
     {
       type: 'Director',
       title: 'Denis Villeneuve',
-      credit: 'Film director',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      credit: 'Film director · Arrival, Incendies',
+      works: ['assets/muses/denis-villeneuve-1.jpg', 'assets/muses/denis-villeneuve-2.jpg'],
+      layout: 'stack',
+      why: 'Imagination made visible, carried by a deeply human story: put together, an unbeatable director. Never too heavy, never too light. A kind guide who talks you into a serious, beautiful world and its hardest questions. Big enough for everyone, still asking what art films ask. One of the best working today.',
       url: '',
       instagram: '',
       tone: '#d9d2c4',
