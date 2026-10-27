@@ -379,13 +379,17 @@ img { display: block; max-width: 100%; }
 }
 .video-card:hover img { transform: scale(1.04); opacity: 1; }
 .play {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(255, 255, 255, .92); display: grid; place-items: center;
-  transition: transform .35s var(--ease);
+  /* a little paper sticker with a hand-written "play" */
+  position: absolute; left: 10px; bottom: 10px; rotate: -5deg;
+  padding: 3px 10px 1px 9px; background: #fbf8f0; color: #2b2b2b;
+  font-family: 'Reenie Beanie', var(--serif); font-size: 21px; line-height: 1;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 6px 12px -6px rgba(0,0,0,.4);
+  clip-path: polygon(0 4%, 96% 0, 100% 92%, 3% 100%);
+  transition: rotate .35s var(--ease), scale .35s var(--ease);
+  pointer-events: none;
 }
-.play::before { content: ''; margin-left: 4px; border-left: 15px solid var(--ink); border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
-.video-card:hover .play { transform: translate(-50%, -50%) scale(1.1); }
+.play::before { content: '▸ play'; }
+.video-card:hover .play, .muse:hover .play, .stack:hover .play { rotate: 0deg; scale: 1.06; }
 .video-card .soon { position: absolute; left: 14px; bottom: 12px; font-size: 12px; color: rgba(255,255,255,.6); letter-spacing: .08em; }
 .video-meta { display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; }
 .video-meta .t { font-weight: 600; letter-spacing: -.01em; }
@@ -407,7 +411,7 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 0 0 1px rgba(0,0,0,.05), 0 10px 22px -16px rgba(0,0,0,.28);
 }
 .print img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.print .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.8); }
+.print .play { font-size: 18px; }
 .stack-label { display: flex; flex-direction: column; gap: 2px; }
 /* desktop: piles a little larger */
 @media (min-width: 861px) {
@@ -497,6 +501,8 @@ img { display: block; max-width: 100%; }
 .muse-media img { width: 100%; height: 100%; object-fit: cover; }
 .muse-media.collage { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px; background: #fff; }
 .muse-media.collage img:first-child { grid-row: 1 / 3; }
+.muse-media.collage img:nth-child(2):last-child { grid-row: 1 / 3; } /* two photos: side by side */
+.muse-media.collage:has(img:nth-child(2):last-child) { grid-template-columns: 1fr 1fr; }
 .muse-media.ph { display: grid; place-items: center; }
 .muse-media.ph em { font-family: var(--serif); font-size: clamp(30px, 3vw, 44px); color: rgba(0,0,0,.28); }
 .muse-media.dark em { color: rgba(255,255,255,.3); }
