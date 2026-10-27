@@ -102,10 +102,11 @@ function drawCardPNG(qr) {
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   g.fillStyle = '#fff';
   g.fillRect(0, 0, W, H);
-  g.fillStyle = '#0f0f0f';
-  g.beginPath(); g.arc(96, 96, 30, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#fff'; g.font = '600 28px "Inter Tight", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillText('H', 96, 97);
+  // the brick icons, as they appear on the card
+  const ico = (sel) => document.querySelector(sel);
+  const draw = (img, x, y, s) => img?.complete && img.naturalWidth && g.drawImage(img, x, y, s, s);
+  draw(ico('.bc-mark'), 58, 58, 76);
+  ['work', 'visual', 'music'].forEach((k, i) => draw(ico(`.bc-icons img[data-icon="${k}"]`), W - 66 - 3 * 66 + i * 66, 64, 64));
   g.textAlign = 'left'; g.textBaseline = 'alphabetic';
   g.fillStyle = '#0f0f0f'; g.font = '600 76px "Inter Tight", sans-serif';
   g.fillText(profile.name, 66, 300);
@@ -276,10 +277,14 @@ function activate(name) {
   document.title = name === 'home' ? 'Hyeseung Kim — Helen' : `${labels[name]} — Hyeseung Kim`;
 }
 
+// the Frames tab lives at #frames (old #visual links still work)
+const hashOf = (name) => (name === 'visual' ? 'frames' : name);
+const tabOf = (hash) => (hash === 'frames' ? 'visual' : hash);
+
 function go(name, { fx = 'pixel', x, y, then } = {}) {
   if (name === current && then) return then();
   if (!tabs[name] || name === current || isBusy()) return;
-  if (location.hash.slice(1) !== name) history.pushState(null, '', name === 'home' ? '#' : `#${name}`);
+  if (location.hash.slice(1) !== hashOf(name)) history.pushState(null, '', name === 'home' ? '#' : `#${hashOf(name)}`);
   if (reduceMotion) { activate(name); return then?.(); }
   if (x == null) { x = window.innerWidth / 2; y = window.innerHeight / 2; }
   if (current === 'home' && fx === 'ripple') hero?.ripple(x, y);
@@ -311,7 +316,7 @@ document.addEventListener('click', (e) => {
 });
 
 window.addEventListener('popstate', () => {
-  const name = location.hash.slice(1) || 'home';
+  const name = tabOf(location.hash.slice(1)) || 'home';
   if (tabs[name] && name !== current) go(name, { fx: 'pixel' });
 });
 
@@ -416,7 +421,8 @@ function paintIcons() {
 initCursor();
 
 // first paint
-// a fresh visit starts at home; a refresh stays on the tab in the URL (#work, #visual, #music)
-const initial = tabs[location.hash.slice(1)] ? location.hash.slice(1) : 'home';
+// a fresh visit starts at home; a refresh stays on the tab in the URL (#work, #frames, #music)
+const initial = tabs[tabOf(location.hash.slice(1))] ? tabOf(location.hash.slice(1)) : 'home';
+if (location.hash === '#visual') history.replaceState(null, '', '#frames');
 activate(initial);
 bootHero();

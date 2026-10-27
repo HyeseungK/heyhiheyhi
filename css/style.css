@@ -767,7 +767,15 @@ body.lock { overflow: hidden; }
 }
 .bcard-back { transform: rotateY(180deg); background: var(--ink); color: #fff; }
 .bc-top, .bc-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.bc-mark { width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 12px; letter-spacing: 0; }
+.bc-mark { width: 30px; height: 30px; object-fit: contain; }
+/* three tiny brick icons in the corner; they hop when you hover the card */
+.bc-icons { display: flex; gap: 2px; }
+.bc-icons img { width: 26px; height: 26px; object-fit: contain; }
+.bc-mark:not([src]), .bc-icons img:not([src]) { visibility: hidden; }
+.bcard:hover .bc-icons img { animation: bc-hop .55s cubic-bezier(.3, 1.6, .5, 1) both; }
+.bcard:hover .bc-icons img:nth-child(2) { animation-delay: .07s; }
+.bcard:hover .bc-icons img:nth-child(3) { animation-delay: .14s; }
+@keyframes bc-hop { 40% { transform: translateY(-5px) rotate(-6deg); } 100% { transform: none; } }
 .bc-hi { font-family: var(--serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: 18px; color: var(--accent); }
 .bc-name { font-size: clamp(26px, 5.4vw, 38px); font-weight: 600; letter-spacing: -.04em; line-height: 1; margin-top: auto; }
 .bc-nick { font-family: var(--serif); font-style: italic; font-size: clamp(18px, 3.4vw, 24px); color: var(--ink-2); margin-bottom: auto; }
