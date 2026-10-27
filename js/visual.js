@@ -176,13 +176,23 @@ export function renderVisual(root) {
 
   renderMuses(root);
 
-  // the club note, taped next to the title
+  // the club note: a slip of paper folded in half next to the lead; press to unfold it
   const cn = visual.clubNote, note = root.querySelector('.club-note');
   if (cn && note) {
     const ig = (h) => (h ? ` <a href="https://www.instagram.com/${encodeURIComponent(h.replace(/^@/, ''))}/" target="_blank" rel="noopener">@${esc(h.replace(/^@/, ''))}</a>` : '');
-    note.insertAdjacentHTML('beforeend', `<p>${esc(cn.text)}</p><ul>${cn.clubs
-      .map((c) => `<li><b>${esc(c.name)}</b>, ${esc(c.what)} <span>${esc(c.years)}</span>${ig(c.instagram)}</li>`)
-      .join('')}</ul>`);
+    const line = (c) => `<li><b>${esc(c.name)}</b>, ${esc(c.what)} <span>${esc(c.years)}</span>${ig(c.instagram)}</li>`;
+    const [first, ...rest] = cn.clubs;
+    note.innerHTML = `
+      <span class="fold-top"><span class="tape" aria-hidden="true"></span><span class="fold-p">${esc(cn.text)}</span><ul>${first ? line(first) : ''}</ul></span>
+      <span class="fold-bottom">
+        <span class="fold-front"><ul>${rest.map(line).join('')}</ul></span>
+        <span class="fold-back" aria-hidden="true">psst, unfold me</span>
+      </span>`;
+    note.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const open = note.getAttribute('aria-expanded') !== 'true';
+      note.setAttribute('aria-expanded', open);
+    });
   } else note?.remove();
 
   spread.querySelector('.spread-back').addEventListener('click', () => closeModal(spread));
