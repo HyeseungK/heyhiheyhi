@@ -72,7 +72,7 @@ export const work = {
       period: '2026 — Now',
       org: 'Kearney, Seoul',
       role: 'Business Analyst',
-      text: 'Due diligence and market entry, hypothesis first. So far: semiconductor consumables, power transformers, an indie K-beauty brand and the global drone market, with a lot of expert calls along the way.',
+      text: 'Due diligence, market entry and cost work, hypothesis first. So far: power transformers, an indie K-beauty brand, the global drone market, semiconductor consumables and, right now, head-up displays in cars. A lot of expert calls along the way.',
     },
     {
       group: 'Experience',
@@ -111,28 +111,59 @@ export const work = {
     },
     {
       group: 'Education & activities',
-      period: 'Yonsei',
-      org: 'Prometheus · Yonyoung',
+      period: '2022 — 2025',
+      org: 'Yonyoung · Prometheus',
       role: 'Film and photography clubs',
-      text: 'Where the creative side of this site started.',
+      text: 'Yonyoung in 2022 and 2023, Prometheus in 2025. Where the creative side of this site started.',
     },
     {
       group: 'Also',
       period: '2026',
       org: 'Kearney Vibe Coding Contest',
       role: 'Winner',
-      text: 'Built and shipped web apps by talking to Claude. This site is the sequel.',
+      text: 'My first try at building with Claude: a map of the good places to eat near the office, made as a new joiner to share with coworkers. Even the CEO dropped a pin for a favourite spot. This site is the sequel.',
     },
   ],
-  // Inside the laptop: one brick object and a short label per project, nothing more.
-  // `icon`: transformer · skincare · probecard · drone · hud (drawn in js/bricks.js).
-  // `label`: the hint shown under the object. `about`: read aloud to screen readers only.
+  // Inside the laptop: one brick object per project, with a label and a date.
+  // Click one to read a few lines about it. `icon`: transformer · skincare · drone · probecard · hud
+  // (drawn in js/bricks.js). `now: true` marks a project that is still running.
   projects: [
-    { icon: 'transformer', label: 'Due Diligence', about: 'Power transformer manufacturer' },
-    { icon: 'skincare', label: 'Investment Thesis', about: 'Indie K-beauty skincare brand' },
-    { icon: 'probecard', label: 'Market Entry', about: 'Semiconductor back-end consumables' },
-    { icon: 'drone', label: 'Market Mapping', about: 'Global drone market' },
-    { icon: 'hud', label: 'Growth Strategy', about: 'Automotive head-up displays' }, // [PLACEHOLDER] label
+    {
+      icon: 'transformer',
+      label: 'CDD',
+      period: 'Apr — May 2026',
+      about: 'A Korean power transformer maker',
+      text: 'Sales had dipped, and the question was whether they would come back. I built the root-cause tree, pressure-tested the likeliest stories in 15+ customer and market interviews, and landed on a clear view of the recovery and of what the customer and vendor contracts really allow.',
+    },
+    {
+      icon: 'skincare',
+      label: 'Go-to-Market',
+      period: 'May 2026',
+      about: 'An indie K-beauty skincare brand',
+      text: 'I came up with the core story: a “third-generation K-beauty” winner. Experts backed it, and so did the data. I vibe-coded a scraper across three platforms to measure how fast each product was piling up reviews, a neat proxy for how fast people were falling for it.',
+    },
+    {
+      icon: 'drone',
+      label: 'Market Scan',
+      period: 'Jun 2026',
+      about: 'A global drone company',
+      text: 'The global drone market had no clean map, so I drew one: players sorted by how integrated they are and what they actually sell. Then I tied the target’s assets, expansion path and position into one story of why its lead holds.',
+    },
+    {
+      icon: 'probecard',
+      label: 'Market Entry',
+      period: 'Aug — Sep 2026',
+      about: 'A Korean maker of semiconductor back-end consumables',
+      text: 'Where could the technology go next? Quick technical deep dives across chip types, checked against expert calls, with a closer look at image sensors (CIS), the segment that mattered most.',
+    },
+    {
+      icon: 'hud',
+      label: 'Cost Competitiveness',
+      period: 'Oct 2026 — Now',
+      now: true,
+      about: 'Head-up displays in cars',
+      text: 'A light read of the HUD technology used in Greater China, then a handful of best-selling cars for each type of HUD, to see what goes into them and where the cost sits.',
+    },
   ],
 };
 

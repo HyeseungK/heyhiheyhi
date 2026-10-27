@@ -11,7 +11,7 @@ const LABELS = [
   ['.muse', 'flip'],
   ['.bcard', 'flip'],
   ['.laptop-hit', 'open'],
-  ['.os-obj', 'boop'],
+  ['.os-obj', 'open'],
   ['.chapter, .tab-btn, .brand', 'go'],
   ['a', 'open'],
   ['button, [role="button"]', ''],
