@@ -483,7 +483,7 @@ export const visual = {
     },
     {
       type: 'Photographer',
-      title: '윤송이 Yoon Songi', // [CHECK] romanisation
+      title: '윤송이 Yoon Songyi',
       credit: 'Photographer · fashion',
       works: ['assets/muses/yoon-songi-1.jpg'],
       why: 'A gift for drawing people as a dream. Fashion photographs where you can read the photographer, someone who thinks a lot. A pretty kind of melancholy, bluish and see-through, like light through paper doors.',
