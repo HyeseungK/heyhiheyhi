@@ -779,7 +779,7 @@ export const music = {
   // Newest first. `stars`: 1–5, punched into the stub. `memo`: the back of the ticket, keep it short.
   tickets: [
     { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'Massive Attack · Jang Pil-soon · HYUKOH', date: '2026.08.01', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#e2492f', stars: 3, memo: 'Massive Attack: no festival mood, but maybe that is what rock is, protest through music. Jang Pil-soon was lovely. Still sad I missed The Jesus and Mary Chain.' },
-    { type: 'Festival', name: 'DMZ Peace Train Music Festival', lineup: 'Sailor Honeymoon · Nourished by Time · The Volunteers', date: '2026.06.13', venue: 'Goseokjeong', city: 'Cheorwon', color: '#3d6b48', stars: 5, memo: 'A whole day with strangers from the festival app, better for it. Ramen at dawn, a fountain in the middle of it all. Felt born for this one.' },
+    { type: 'Festival', name: 'DMZ Peace Train Music Festival', lineup: 'Effie · Sailor Honeymoon · Nourished by Time · The Volunteers', date: '2026.06.13', venue: 'Goseokjeong', city: 'Cheorwon', color: '#3d6b48', stars: 5, memo: 'A whole day with strangers from the festival app, better for it. Effie at night was unreal. Ramen at dawn, a fountain in the middle of it all. Born for this one.' },
     { type: 'Festival', name: 'Busan International Rock Festival', lineup: 'The Smashing Pumpkins · MIKA · Porter Robinson', date: '2025.09.27 — 28', venue: 'Samnak Ecological Park', city: 'Busan', color: '#1f3a5f', stars: 5, memo: 'Rain turned it to mud and we danced anyway. MIKA right in front of me, pure energy. Everyone dancing to Tokyo Ska Paradise Orchestra: perfect.' },
     { type: 'Concert', name: 'Yaeji — With A Hammer Asia Tour', lineup: 'Live in Seoul', date: '2025.08.25', venue: 'Bluesquare SOL Travel Hall', city: 'Seoul', color: '#cdb4db', stars: 2, memo: 'Not quite what I hoped. The staging fell flat, or maybe it was just my seat at the back.' },
     { type: 'Festival', name: 'Asian Pop Festival', lineup: 'Lamp · Y2K92 · Yogee New Waves · mindfreakk', date: '2025.06.22', venue: 'Paradise City', city: 'Incheon', color: '#f2c14e', stars: 5, memo: 'Lamp, back in Korea after almost ten years. My favourite album, live, right there.' },
@@ -793,9 +793,9 @@ export const music = {
     soundcloud: '', // optional: a SoundCloud link shows a button at the bottom
     // Newest first. `next`: an upcoming show, highlighted. `instagram`: the band's handle, without @.
     performances: [
-      { title: '활천 Hwalchun', sub: 'Based in the College of Engineering', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third performance', instagram: 'hwalchun' },
-      { title: '오도 Odo', sub: 'Based in the School of Business, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: 'band_odoyonsei' },
-      { title: '청년 Puruni', sub: 'Based in the Colleges of Science and Life Sciences', date: '2021 — 2022', role: 'Vocals and guitar · one busking set, one concert', instagram: 'ys_puruni' },
+      { title: 'Hwalchun', sub: 'Based in the College of Engineering', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third performance', instagram: 'hwalchun' },
+      { title: 'Odo', sub: 'Based in the School of Business, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: 'band_odoyonsei' },
+      { title: 'Puruni', sub: 'Based in the Colleges of Science and Life Sciences', date: '2021 — 2022', role: 'Vocals and guitar · one busking set, one concert', instagram: 'ys_puruni' },
     ],
   },
 };
