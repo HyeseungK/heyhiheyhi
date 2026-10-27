@@ -23,13 +23,31 @@ const matches = (a, b) => {
 const slug = (s) => s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 60);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+const report = [];
+const log = (line) => { report.push(line); console.log(line); };
+
+// polite fetch: per-host spacing, retries on rate limits (HTTP 403/429/503, Deezer quota errors)
+const lastCall = {};
+const GAP = { 'itunes.apple.com': 3200, 'api.deezer.com': 250, 'musicbrainz.org': 1100 };
 async function getJSON(url) {
-  for (let attempt = 0; attempt < 3; attempt++) {
+  const host = new URL(url).host;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const wait = (lastCall[host] || 0) + (GAP[host] || 500) - Date.now();
+    if (wait > 0) await sleep(wait);
+    lastCall[host] = Date.now();
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': 'helen-site-covers/1.0' } });
-      if (res.ok) return await res.json();
-    } catch (e) { /* retry */ }
-    await sleep(1500 * (attempt + 1));
+      const res = await fetch(url, { headers: { 'User-Agent': 'helen-site-covers/1.0 (github.com/HyeseungK/heyhiheyhi)', Accept: 'application/json' } });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.error?.code === 4) { await sleep(5000); continue; } // Deezer quota
+        return data;
+      }
+      log(`  ${host} → HTTP ${res.status}`);
+      if (![403, 429, 500, 502, 503].includes(res.status)) return null;
+    } catch (e) {
+      log(`  ${host} → ${e.message}`);
+    }
+    await sleep(4000 * (attempt + 1));
   }
   return null;
 }
@@ -42,14 +60,15 @@ function pick(rows, q, artistOf, nameOf) {
 
 async function lookup(q, kind) {
   const artists = [q.artist, ...(q.artists || [])];
-  const titles = [q.title, ...(q.titles || [])];
+  const plain = q.title.replace(/\s*\(.*?\)\s*/g, ' ').trim();
+  const titles = [...new Set([q.title, plain, ...(q.titles || [])])];
+  q = { ...q, titles };
   // iTunes
   const entity = kind === 'album' ? 'album' : 'song';
   const nameOf = (r) => (kind === 'album' ? r.collectionName : r.trackName);
-  for (const country of [...new Set([q.country, 'us', 'kr', 'jp'].filter(Boolean))]) {
+  for (const country of [...new Set([q.country || 'us', 'us'])]) {
     for (const t of titles) {
       const data = await getJSON(`https://itunes.apple.com/search?term=${encodeURIComponent(`${artists[0]} ${t}`)}&entity=${entity}&limit=15&country=${country}`);
-      await sleep(400); // be gentle: iTunes allows ~20 calls a minute
       const best = data && pick(data.results || [], q, (r) => r.artistName, nameOf);
       if (best) {
         return {
@@ -64,11 +83,27 @@ async function lookup(q, kind) {
   }
   // Deezer
   for (const t of titles) {
-    const data = await getJSON(`https://api.deezer.com/search/${kind === 'album' ? 'album' : 'track'}?q=${encodeURIComponent(`${artists[0]} ${t}`)}&limit=15`);
+    const field = kind === 'album' ? 'album' : 'track';
+    const data = await getJSON(`https://api.deezer.com/search/${field}?q=${encodeURIComponent(`artist:"${artists[0]}" ${field}:"${t}"`)}&limit=15`)
+      || await getJSON(`https://api.deezer.com/search/${field}?q=${encodeURIComponent(`${artists[0]} ${t}`)}&limit=15`);
     const best = data && pick(data.data || [], q, (r) => r.artist?.name, (r) => r.title);
     if (best) {
       const album = kind === 'album' ? best : best.album || {};
       return { source: 'deezer', artwork: album.cover_xl || album.cover_big || '', url: best.link, preview: best.preview || '', name: best.title };
+    }
+  }
+  // MusicBrainz + Cover Art Archive (albums only; covers older and smaller releases)
+  if (kind === 'album') {
+    for (const a of artists) {
+      for (const t of titles) {
+        const data = await getJSON(`https://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(`releasegroup:"${t}" AND artist:"${a}"`)}&fmt=json&limit=10`);
+        const groups = (data?.['release-groups'] || []).filter((g) => matches(g.title, t) && (g['artist-credit'] || []).some((c) => artists.some((x) => matches(c.name || c.artist?.name, x))));
+        for (const g of groups) {
+          const art = `https://coverartarchive.org/release-group/${g.id}/front-500`;
+          const head = await fetch(art, { method: 'HEAD', redirect: 'follow' }).catch(() => null);
+          if (head?.ok) return { source: 'coverartarchive', artwork: art, url: `https://musicbrainz.org/release-group/${g.id}`, preview: '', name: g.title };
+        }
+      }
     }
   }
   return null;
@@ -95,17 +130,18 @@ for (const { kind, a, dir } of jobs) {
   const have = manifest[key] && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
   if (have || a.cover) { found++; continue; }
   const r = await lookup({ artist: a.artist, title: a.title, ...(a.itunes || {}) }, kind);
-  if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); continue; }
+  if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); log(`✗ ${kind} ${a.artist} — ${a.title}`); continue; }
   try {
     await download(r.artwork, path.join(root, rel));
     manifest[key] = { artwork: rel, url: r.url, preview: r.preview, name: r.name, source: r.source };
     found++;
-    console.log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name})`);
+    log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name})`);
   } catch (e) {
     missing.push(`${a.artist} — ${a.title} (download failed)`);
   }
 }
 await fs.mkdir(path.dirname(manifestPath), { recursive: true });
 await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
-console.log(`\n${found}/${jobs.length} found.`);
-if (missing.length) console.log(`Not found:\n  ${missing.join('\n  ')}`);
+log(`\n${found}/${jobs.length} found.`);
+if (missing.length) log(`Not found:\n  ${missing.join('\n  ')}`);
+await fs.writeFile(path.join(root, 'assets/albums/covers-report.txt'), `${new Date().toISOString()}\n${report.join('\n')}\n`);
