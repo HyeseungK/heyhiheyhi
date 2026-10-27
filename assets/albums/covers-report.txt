@@ -1,5 +1,4 @@
-2026-10-27T12:47:09.286Z
-✓ album Shigeo Sekito — The Word  (spotify: 華麗なるエレクトーン -ザ・ワード- · 華麗なるエレクトーン -ザ・ワード-, 1975)
+2026-10-27T12:47:42.170Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
 
