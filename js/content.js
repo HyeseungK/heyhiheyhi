@@ -610,30 +610,11 @@ export const visual = {
     },
     {
       type: 'Artist',
-      title: '고태호 Ko Taeho', // [CHECK] romanisation
-      credit: 'Webtoon artist · 당신의 과녁',
-      works: [],
-      why: '', // [PLACEHOLDER]
-      url: '',
-      instagram: '', // [PLACEHOLDER] handle
-      tone: '#e2dccf',
-    },
-    {
-      type: 'Artist',
-      title: '조은영 Cho Eunyoung', // [CHECK] romanisation
-      credit: 'Webtoon artist · 저궤도인간',
-      works: [],
-      why: '', // [PLACEHOLDER]
-      url: '',
-      instagram: '', // [PLACEHOLDER] handle
-      tone: '#d5dde6',
-    },
-    {
-      type: 'Artist',
       title: 'Karel Martens',
       credit: 'Graphic designer, the Netherlands',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      works: ['assets/muses/karel-martens-1.jpg'],
+      ratio: '3 / 2',
+      why: 'Beauty by taking things away: a designer who played freely with colour and shape on a flat page. The best know when enough is enough. Busy but never too much, simple but never plain.',
       url: '',
       instagram: '',
       tone: '#e7e1d2',
