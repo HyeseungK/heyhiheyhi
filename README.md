@@ -26,7 +26,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **CD**: `music.mixtape`. 곡마다 `side`로 A면/B면을 나눕니다.
 - **Inspiration**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고(Photographers · Directors · Videos · Other Artwork, 이름과 순서는 `visual.museTypes`), 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
 - **티켓**: `music.tickets`.
-- **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`. 전환 화면 문구("Hey Hi, I’m listening" 등)는 `site.greeting`에서 바꿉니다.
+- **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`. 전환 화면 문구("Hey Hi, I’m playing" 등)는 `site.greeting`에서 바꿉니다.
 
 ## 앨범 커버 자동 저장
 
