@@ -28,7 +28,7 @@ const log = (line) => { report.push(line); console.log(line); };
 
 // polite fetch: per-host spacing, retries on rate limits (HTTP 403/429/503, Deezer quota errors)
 const lastCall = {};
-const GAP = { 'itunes.apple.com': 3200, 'api.deezer.com': 250, 'musicbrainz.org': 1100 };
+const GAP = { 'open.spotify.com': 300, 'itunes.apple.com': 3200, 'api.deezer.com': 250, 'musicbrainz.org': 1100 };
 async function getJSON(url) {
   const host = new URL(url).host;
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -59,6 +59,11 @@ function pick(rows, q, artistOf, nameOf) {
 }
 
 async function lookup(q, kind) {
+  // a pasted Spotify link wins (open.spotify.com/album/… or /track/…)
+  if (q.spotify) {
+    const d = await getJSON(`https://open.spotify.com/oembed?url=${encodeURIComponent(q.spotify)}`);
+    if (d?.thumbnail_url) return { source: 'spotify', artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title };
+  }
   const artists = [q.artist, ...(q.artists || [])];
   const plain = q.title.replace(/\s*\(.*?\)\s*/g, ' ').trim();
   const titles = [...new Set([q.title, plain, ...(q.titles || [])])];
@@ -129,7 +134,7 @@ for (const { kind, a, dir } of jobs) {
   const rel = `${dir}/${slug(`${a.artist}-${a.title}`)}.jpg`;
   const have = manifest[key] && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
   if (have || a.cover) { found++; continue; }
-  const r = await lookup({ artist: a.artist, title: a.title, ...(a.itunes || {}) }, kind);
+  const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) }, kind);
   if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); log(`✗ ${kind} ${a.artist} — ${a.title}`); continue; }
   try {
     await download(r.artwork, path.join(root, rel));
