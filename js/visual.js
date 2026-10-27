@@ -180,6 +180,17 @@ export function renderVisual(root) {
     const it = e.target.closest('.spread-item');
     if (it && current) openLightbox(current.allPhotos, +it.dataset.j);
   });
+
+  // open a pile from elsewhere on the site, by place id (e.g. 'new-york')
+  return {
+    open(id) {
+      const i = series.findIndex((s) => s.id === id || s.id.startsWith(`${id}-`));
+      const st = table.querySelector(`.stack[data-i="${i}"]`);
+      if (!st) return;
+      st.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      setTimeout(() => openSeries(i), 650);
+    },
+  };
 }
 
 // ── Inspiration: a moodboard of people and work I love ────────────

@@ -5,6 +5,9 @@ const deckModal = document.querySelector('.deck-modal');
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// [label](frames:new-york) in a career line links to that pile in Frames
+const links = (html) => html.replace(/\[([^\]]+)\]\(frames:([\w-]+)\)/g, '<a href="#visual" class="inline-go" data-go="visual" data-open="$2">$1</a>');
+
 export function renderWork(root) {
   // career, grouped (Experience / Education & activities …)
   const groups = [...new Set(work.career.map((c) => c.group || ''))];
@@ -19,7 +22,7 @@ export function renderWork(root) {
         <div>
           <h3 class="career-org">${esc(c.org)}</h3>
           <p class="career-role">${esc(c.role)}</p>
-          <p class="career-text">${esc(c.text)}</p>
+          <p class="career-text">${links(esc(c.text))}</p>
         </div>
       </li>`;
   }

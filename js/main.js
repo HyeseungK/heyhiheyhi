@@ -126,7 +126,7 @@ function drawCardPNG(qr) {
 // ── sections ────────────────────────────────────────────────
 const tabs = Object.fromEntries($$('.tab').map((el) => [el.dataset.tab, el]));
 const workApi = renderWork(tabs.work);
-renderVisual(tabs.visual);
+const visualApi = renderVisual(tabs.visual);
 renderMusic(tabs.music);
 
 // ── hero ────────────────────────────────────────────────────
@@ -276,16 +276,20 @@ function activate(name) {
   document.title = name === 'home' ? 'Hyeseung Kim — Helen' : `${labels[name]} — Hyeseung Kim`;
 }
 
-function go(name, { fx = 'pixel', x, y } = {}) {
+function go(name, { fx = 'pixel', x, y, then } = {}) {
+  if (name === current && then) return then();
   if (!tabs[name] || name === current || isBusy()) return;
   if (location.hash.slice(1) !== name) history.pushState(null, '', name === 'home' ? '#' : `#${name}`);
-  if (reduceMotion) return activate(name);
+  if (reduceMotion) { activate(name); return then?.(); }
   if (x == null) { x = window.innerWidth / 2; y = window.innerHeight / 2; }
   if (current === 'home' && fx === 'ripple') hero?.ripple(x, y);
   transition(fx, {
     x, y,
     label: site.greeting ? { lead: site.greeting.lead, word: site.greeting[name] || labels[name] } : labels[name],
-    onCovered: async () => activate(name),
+    onCovered: async () => {
+      activate(name);
+      if (then) setTimeout(then, 700); // once the transition has cleared
+    },
   });
 }
 
@@ -301,7 +305,9 @@ document.addEventListener('click', (e) => {
     hero?.ripple(x, y);
     gsap.fromTo(t, { scale: 1 }, { scale: 1.15, duration: 0.25, yoyo: true, repeat: 1, ease: 'power2.out' });
   }
-  go(t.dataset.go, { fx: t.dataset.fx || 'pixel', x, y });
+  // data-open: a Frames pile to open on arrival
+  const then = t.dataset.open ? () => visualApi.open(t.dataset.open) : undefined;
+  go(t.dataset.go, { fx: t.dataset.fx || 'pixel', x, y, then });
 });
 
 window.addEventListener('popstate', () => {
