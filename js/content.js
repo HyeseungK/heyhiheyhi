@@ -784,7 +784,7 @@ export const music = {
     { type: 'Concert', name: 'Yaeji — With A Hammer Asia Tour', lineup: 'Live in Seoul', date: '2025.08.25', venue: 'Bluesquare SOL Travel Hall', city: 'Seoul', color: '#cdb4db', stars: 2, memo: 'Not quite what I hoped. The staging fell flat, or maybe it was just my seat at the back.' },
     { type: 'Festival', name: 'Asian Pop Festival', lineup: 'Lamp · Y2K92 · Yogee New Waves · mindfreakk', date: '2025.06.22', venue: 'Paradise City', city: 'Incheon', color: '#f2c14e', stars: 5, memo: 'Lamp, back in Korea after almost ten years. My favourite album, live, right there.' },
     { type: 'Concert', name: 'Coldplay — Music of the Spheres World Tour', lineup: 'Live in Korea', date: '2025.04.25', venue: 'Goyang Stadium', city: 'Goyang', color: '#2f4cff', stars: 4, memo: 'The new songs aren’t for me, the old ones are. Grown men singing Yellow at the piano got me. Obvious love songs, and I took them anyway.' },
-    { type: 'Concert', name: 'Olivia Rodrigo — GUTS World Tour', lineup: 'Live in Seoul', date: '2024.09.21', venue: 'Jamsil Indoor Stadium', city: 'Seoul', color: '#7d4bb3', stars: 4, memo: 'A pop star, impossibly pretty. Went with friends and danced the whole way through.' },
+    { type: 'Concert', name: 'Olivia Rodrigo — GUTS World Tour', lineup: 'Live in Seoul', date: '2024.09.21', venue: 'Jamsil Indoor Stadium', city: 'Seoul', color: '#7d4bb3', stars: 3, memo: 'A pop star, impossibly pretty. Went with friends and danced the whole way through.' },
     { type: 'Festival', name: 'Incheon Pentaport Rock Festival', lineup: 'The Strokes · Silica Gel · 250', date: '2023.08.05', venue: 'Songdo Moonlight Festival Park', city: 'Incheon', color: '#111111', stars: 4, memo: 'Here for The Strokes. Julian came on tipsy, sang one song three times, no Ode to the Mets. Silica Gel’s Desert Eagle was huge; raved to 250 at midnight.' },
     { type: 'Concert', name: 'Hiatus Kaiyote', lineup: 'Live in Brooklyn', date: '2023.04.29', venue: 'Brooklyn Steel', city: 'New York', color: '#d9643a', stars: 3, memo: 'One of my most New York nights. Brooklyn at its truest, in a crowd of wonderful weirdos.' },
     { type: 'Concert', name: 'Billy Joel', lineup: 'Live at The Garden', date: '2023.03.26', venue: 'Madison Square Garden', city: 'New York', color: '#b0413e', stars: 5, memo: 'Exchange semester, slow to settle in. Then the song I needed: “But I’m taking a Greyhound on the Hudson River Line.” New York finally felt real.' },
@@ -809,8 +809,8 @@ export const colophon = {
     'This site was built over two days of conversation. I described what I wanted, mostly in Korean and half in feelings, and Claude Code wrote, tested and shipped every line. I steered; it built.',
   stats: [
     { value: '2', label: 'days' },
-    { value: '~5.4k', label: 'lines of code, none typed by me' },
-    { value: '100+', label: 'commits' },
+    { value: '~5.6k', label: 'lines of code, none typed by me' },
+    { value: '170+', label: 'commits' },
     { value: '73', label: 'photos from my own rolls' },
   ],
   sections: [
