@@ -247,7 +247,7 @@ function renderMuses(root) {
       const tilt = ((i * 37) % 7) - 3;
       const handle = (m.instagram || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/.*$/, '');
       const ig = handle ? `https://www.instagram.com/${encodeURIComponent(handle)}/` : '';
-      return `<div class="muse" data-type="${esc(typesOf(m).join('|'))}" role="button" tabindex="0" aria-pressed="false" style="--tilt:${tilt}deg;--ratio:${(video && !imgs.length ? '16 / 9' : RATIO[typesOf(m)[0]]) || '4 / 5'}" aria-label="${esc(m.title)}. Press to read why">
+      return `<div class="muse" data-type="${esc(typesOf(m).join('|'))}" role="button" tabindex="0" aria-pressed="false" style="--tilt:${tilt}deg;--ratio:${m.ratio || (video && !imgs.length ? '16 / 9' : RATIO[typesOf(m)[0]]) || '4 / 5'}" aria-label="${esc(m.title)}. Press to read why">
         <span class="tape" aria-hidden="true"></span>
         <span class="muse-inner">
           <span class="muse-front">

@@ -438,7 +438,7 @@ export const visual = {
   // whether it is a person, an album concept or a single music video.
   // `type` drives the filter. `image` / `works`: put files in assets/muses/ (credit the source!).
   // `url`: the original (artist site, YouTube…). Videos with a YouTube / Vimeo url play in place.
-  // `links`: more buttons on the back, [{ label, url }].
+  // `links`: more buttons on the back, [{ label, url }]. `ratio`: the picture's shape, e.g. '12 / 5' for a wide print.
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   musesNote: 'frames I keep coming back to',
   // Every card is a person. Their favourite works hang off the card: `works` (images) and
@@ -525,9 +525,10 @@ export const visual = {
       type: 'Photographer',
       title: 'Richard Avedon',
       credit: 'Photographer · In the American West',
-      works: [],
-      why: '', // [PLACEHOLDER] In the American West is the one
-      url: '',
+      works: ['assets/muses/richard-avedon-1.jpg'],
+      ratio: '1 / 1', // a wide print, cropped to its middle panel
+      why: 'The master of the black-and-white portrait, maybe. At a wall-sized show in New York the resolution stopped me first, then the people: placed just so, perfectly scattered, perfectly odd together. Past the famous faces, see In the American West.',
+      url: 'https://www.avedonfoundation.org',
       instagram: '',
       tone: '#e8e8e6',
     },
