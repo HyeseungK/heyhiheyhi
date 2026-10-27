@@ -37,7 +37,7 @@ export const profile = {
   location: 'Seoul', // [PLACEHOLDER]
   // business card (end of the home screen) + downloadable contact file
   card: {
-    title: 'Strategy Consultant', // [PLACEHOLDER]
+    title: 'Strategy Consultant',
     org: 'Kearney',
     email: 'hyeseungkim.kr@gmail.com', // personal
     phone: '', // optional, e.g. '+82 10 0000 0000'
@@ -179,8 +179,8 @@ export const visual = {
   clubNote: {
     text: 'Always been a visuals person.',
     clubs: [
-      { name: 'Yonyoung', what: 'Yonsei’s photography club', years: '2022 — 2023', instagram: '' }, // [PLACEHOLDER] handle
-      { name: 'Prometheus', what: 'Yonsei’s film club', years: '2025', instagram: '' }, // [PLACEHOLDER] handle
+      { name: 'Yonyoung', what: 'Yonsei’s photography club', years: '2022 — 2023', instagram: 'yonyoungpage' },
+      { name: 'Prometheus', what: 'Yonsei’s film club', years: '2025', instagram: 'prometheus_yonsei' },
     ],
   },
   // Places on the globe. Click a pin and its photos spill out.
@@ -384,13 +384,13 @@ export const visual = {
       name: 'Suncheon',
       lat: 34.95, lon: 127.49,
       kind: 'Film · video',
-      year: '2025', // [PLACEHOLDER]
+      year: '2026',
       photos: [],
       // films play in place when the pin opens. `url`: YouTube or Vimeo
       videos: [
         {
           title: 'Suncheon is Silent',
-          role: 'Shot on a camcorder · music made in Ableton · edited in Movavi', // camcorder model to come
+          role: 'Shot on a JVC camcorder · music made in Ableton · edited in Movavi',
           url: 'https://youtu.be/a2JeC39Gv_U',
         },
       ],
