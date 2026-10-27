@@ -1,8 +1,41 @@
-2026-10-27T14:02:44.704Z
+2026-10-27T14:17:16.928Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
+✓ song EXO — CALL ME BABY  (itunes: CALL ME BABY · The 2nd Album ‘EXODUS’, 2015)
+✓ song EXO — 시선 둘, 시선 하나 (What If...)  (itunes: What If.. · The 2nd Album ‘EXODUS’, 2015)
+✓ song EXO — EXODUS  (itunes: EXODUS · The 2nd Album ‘EXODUS’, 2015)
+✓ song Lamp — 最終列車は25時 (Last Train at 25 O’clock)  (itunes: 最終列車は25時 · 恋人へ, 2004)
+✓ song Lamp — 恋は月の蔭に (Behind the Moon Shadow)  (itunes: 恋は月の蔭に · 恋人へ, 2004)
+✓ song Fiona Apple — Paper Bag  (itunes: Paper Bag · When the Pawn..., 1999)
+✗ song Fiona Apple — Get Gone
+✓ song Casker — 나쁘게  (itunes: 나쁘게 · 여정, 2012)
+✓ song Casker — 편지  (itunes: 편지 · 여정, 2012)
+✓ song Casker — 천개의 태양  (itunes: 천 개의 태양 · 여정, 2012)
+✗ song FKA twigs — meta angel
+✗ song FKA twigs — oh my love
+✓ song FKA twigs — lightbeamers  (itunes: lightbeamers · CAPRISONGS, 2022)
+✓ song FKA twigs — darjeeling (feat. jorja smith & unknown t)  (itunes: darjeeling (feat jorja smith & unknown t) · CAPRISONGS, 2022)
+✗ song The Internet — Under Control
+✗ song The Internet — Just Sayin / I Tried
+✗ song The Internet — Partners in Crime Part Three
+✓ song Shigeo Sekito — Happiness Is Me and You  (itunes: Happiness Is Me and You · Special Sound Series, Vol. 2: The Word, 1975)
+✗ song Shigeo Sekito — The Word II
+✓ song Steely Dan — Dirty Work  (itunes: Dirty Work · Citizen Steely Dan 1972-1980, 1972)
+✓ song Steely Dan — Fire in the Hole  (itunes: Fire in the Hole · Citizen Steely Dan 1972-1980, 1972)
+✓ song Takako Mamiya — チャイニーズ・レストラン (Chinese Restaurant)  (itunes: チャイニーズ・レストラン · LOVE TRIP, 1982)
+✓ song Takako Mamiya — 真夜中のジョーク (Midnight Joke)  (itunes: 真夜中のジョーク · LOVE TRIP, 1982)
+✓ song KiiiKiii — Hey Hi  (itunes: Hey Hi · WhyKiiiKiii - EP, 2026)
+✓ song KiiiKiii — Sweet Sour  (itunes: SWEET SOUR · WhyKiiiKiii - EP, 2026)
+✓ song KiiiKiii — Blue Hour  (itunes: Blue Hour · WhyKiiiKiii - EP, 2026)
 
-29/31 found.
+48/57 found.
 Not found:
   The Strokes — Ode to the Mets
   Cortex — Poxa
+  Fiona Apple — Get Gone
+  FKA twigs — meta angel
+  FKA twigs — oh my love
+  The Internet — Under Control
+  The Internet — Just Sayin / I Tried
+  The Internet — Partners in Crime Part Three
+  Shigeo Sekito — The Word II
