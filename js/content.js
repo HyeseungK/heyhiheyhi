@@ -602,10 +602,10 @@ export const visual = {
       url: '',
       videos: [
         { title: 'IVE — Dear Cupid', url: 'https://www.youtube.com/watch?v=x_CQ36iwRrs' },
-        { title: 'IVE — Summer Film', url: 'https://www.youtube.com/watch?v=jibz3MwJpj8' },
+        { title: 'IVE — Summer', url: 'https://www.youtube.com/watch?v=jibz3MwJpj8' },
         { title: 'JAEHYUN — Poetic Beauty', url: 'https://www.youtube.com/watch?v=VB6j33QjazA' },
-        { title: 'THE BOYZ — Be Your Own King', url: 'https://www.youtube.com/watch?v=IYo55ma5PaY' },
-        { title: 'NCT — Irregular Office', url: 'https://www.youtube.com/watch?v=Pne7e_FGGsM' },
+        { title: 'THE BOYZ', url: 'https://www.youtube.com/watch?v=IYo55ma5PaY' },
+        { title: 'NCT — Office', url: 'https://www.youtube.com/watch?v=Pne7e_FGGsM' },
       ],
       instagram: 'rohsangyoon',
       tone: '#dcd4e6',
