@@ -919,6 +919,7 @@ body.lock { overflow: hidden; }
 .t-stub .admit { position: absolute; top: 10px; font-size: 9px; letter-spacing: .14em; writing-mode: horizontal-tb; }
 .ticket:not(.torn):hover .t-stub { transform: rotate(4deg) translateX(3px); transform-origin: 0 100%; transition: transform .3s var(--ease); }
 .ticket.light .t-stub { border-left-color: rgba(0,0,0,.25); }
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 80; pointer-events: none; }
 /* the rating: star-shaped holes punched through the stub */
 .t-stub .t-stars { position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 3px; writing-mode: horizontal-tb; opacity: 1; }
 .t-stars i {

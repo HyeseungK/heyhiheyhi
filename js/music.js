@@ -194,6 +194,51 @@ export const guitarLoop = {
 };
 
 // ── ticket book ─────────────────────────────────────────────
+// a burst of paper confetti from the left and right edges of the screen
+function confetti(colors) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = document.createElement('canvas');
+  cv.className = 'confetti';
+  document.body.appendChild(cv);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = window.innerWidth, H = window.innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const g = cv.getContext('2d');
+  g.scale(dpr, dpr);
+  const palette = [...new Set([...colors, '#2f4cff', '#f2c14e', '#e2492f', '#7d4bb3', '#3d6b48', '#f3b3c1'])];
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const bits = [];
+  for (const side of [-1, 1]) {
+    for (let i = 0; i < 90; i++) {
+      bits.push({
+        x: side < 0 ? -10 : W + 10, y: rnd(H * 0.45, H * 0.85),
+        vx: -side * rnd(5, 15), vy: rnd(-17, -8),
+        w: rnd(6, 11), h: rnd(9, 16), r: rnd(0, Math.PI), vr: rnd(-0.25, 0.25),
+        c: palette[(Math.random() * palette.length) | 0], round: Math.random() < 0.25, wob: rnd(0, 6),
+      });
+    }
+  }
+  const t0 = performance.now();
+  (function frame(now) {
+    const t = (now - t0) / 1000;
+    g.clearRect(0, 0, W, H);
+    for (const b of bits) {
+      b.vx *= 0.985; b.vy = b.vy * 0.985 + 0.38;
+      b.x += b.vx + Math.sin(t * 6 + b.wob) * 0.6; b.y += b.vy; b.r += b.vr;
+      g.save();
+      g.translate(b.x, b.y); g.rotate(b.r);
+      g.scale(1, Math.cos(t * 8 + b.wob)); // flutter
+      g.fillStyle = b.c;
+      g.globalAlpha = Math.max(0, Math.min(1, 4.2 - t));
+      if (b.round) { g.beginPath(); g.arc(0, 0, b.w / 2, 0, Math.PI * 2); g.fill(); }
+      else g.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      g.restore();
+    }
+    if (t < 4.3) requestAnimationFrame(frame);
+    else cv.remove();
+  })(t0);
+}
+
 function renderTickets(root) {
   const gsap = window.gsap;
   const book = root.querySelector('.ticket-book');
@@ -229,8 +274,17 @@ function renderTickets(root) {
       gsap.timeline()
         .to(stub, { rotation: 6, x: 4, duration: 0.12, ease: 'power1.out', transformOrigin: '0% 100%' })
         .to(stub, { rotation: 32, x: 40, y: 70, opacity: 0, duration: 0.55, ease: 'power2.in' })
-        .add(() => t.classList.add('torn'), 0.2);
+        .add(() => t.classList.add('torn'), 0.2)
+        .add(() => {
+          // every stub torn off: confetti from both sides of the page
+          const all = [...book.querySelectorAll('.ticket')];
+          if (!book.dataset.party && all.every((x) => x.classList.contains('torn'))) {
+            book.dataset.party = '1'; // once, until a stub is put back
+            confetti(music.tickets.map((x) => x.color).filter(Boolean));
+          }
+        }, 0.35);
     } else {
+      delete book.dataset.party;
       t.classList.remove('torn');
       gsap.fromTo(stub, { rotation: -12, x: 30, y: -20, opacity: 0 }, { rotation: 0, x: 0, y: 0, opacity: 1, duration: 0.6, delay: 0.3, ease: 'back.out(1.6)' });
     }
