@@ -525,7 +525,7 @@
     "year": "2024",
     "source": "itunes",
     "spotify": "",
-    "apple": ""
+    "apple": "https://music.apple.com/us/album/miniseries-2/1757545844"
   },
   "song|Fantastic Plastic Machine|City Lights": {
     "artwork": "assets/songs/fantastic-plastic-machine-city-lights.jpg",
@@ -646,5 +646,65 @@
     "source": "itunes",
     "spotify": "",
     "apple": "https://music.apple.com/us/song/strawberry-cheesegame/1830522534"
+  },
+  "song|STUTS|愛をさわれたら (Shape of Love)": {
+    "artwork": "assets/songs/stuts-愛をさわれたら-shape-of-love.jpg",
+    "url": "https://music.apple.com/us/album/ai-wo-sawaretara-shape-of-love/1781057822?i=1781057824&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bd/75/b3/bd75b33b-7177-f162-0634-6f8d343c2520/mzaf_12241211544683161976.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Ai Wo Sawaretara (Shape of Love)",
+    "album": "Ai Wo Sawaretara (Shape of Love) - Single",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": "https://music.apple.com/us/song/ai-wo-sawaretara-shape-of-love/1781057824"
+  },
+  "song|EXO|Cloud 9": {
+    "artwork": "assets/songs/exo-cloud-9.jpg",
+    "url": "https://music.apple.com/us/album/cloud-9/1121473062?i=1121473195&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/26/ff/99/26ff9901-d1e0-2fc9-8abf-0ef81eb52653/mzaf_8186604057263016070.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Cloud 9",
+    "album": "EX’ACT - The 3rd Album",
+    "year": "2016",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|SUMIN & Slom|보통의 이별": {
+    "artwork": "assets/songs/sumin-slom-보통의-이별.jpg",
+    "url": "https://music.apple.com/us/album/just-a-breakup/1757545844?i=1757545845&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/aa/8f/84/aa8f84f9-74ce-2eb1-5955-ce77e82bda00/mzaf_4888314295546444961.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "JUST A BREAKUP",
+    "album": "MINISERIES 2",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|SUMIN & Slom|째깍째깍": {
+    "artwork": "assets/songs/sumin-slom-째깍째깍.jpg",
+    "url": "https://music.apple.com/us/album/why-why-why/1757545844?i=1757545846&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/df/cc/b4/dfccb4df-7d04-3e4e-1fe6-9c82799343c5/mzaf_14868039022435307750.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "WHY, WHY, WHY",
+    "album": "MINISERIES 2",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|SUMIN & Slom|텅빈밤": {
+    "artwork": "assets/songs/sumin-slom-텅빈밤.jpg",
+    "url": "https://music.apple.com/us/album/endless-night/1757545844?i=1757546240&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/23/5c/e7/235ce756-d686-a317-7476-357ded4f75c3/mzaf_17419781626504122263.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "ENDLESS NIGHT",
+    "album": "MINISERIES 2",
+    "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
   }
 }
