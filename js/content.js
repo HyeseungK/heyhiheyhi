@@ -679,7 +679,7 @@ export const music = {
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
         { n: 5, name: 'Paper Bag' },
-        { n: 9, name: 'Get Gone' },
+        { n: 9, name: 'Get Gone', apple: 'https://music.apple.com/us/song/get-gone/153019968' },
       ],
     },
     {
@@ -707,8 +707,8 @@ export const music = {
       why: '', // [PLACEHOLDER] one line on why
       // favourite tracks: `n` is the track number on the album, `why` optional
       tracks: [
-        { n: 3, name: 'meta angel' },
-        { n: 5, name: 'oh my love' },
+        { n: 3, name: 'meta angel', apple: 'https://music.apple.com/us/song/meta-angel/1603753478' },
+        { n: 5, name: 'oh my love', apple: 'https://music.apple.com/us/song/oh-my-love/1603753482' },
         { n: 8, name: 'lightbeamers' },
         { n: 15, name: 'darjeeling (feat. jorja smith & unknown t)' },
       ],
@@ -788,7 +788,7 @@ export const music = {
     },
   ],
   // The burned CD. `side`: 'analog' or 'modern' — names in `sides`.
-  // A song that won't play: paste its Apple Music link (Share → Copy link, the one with ?i=) as `apple: '…'`.
+  // A song that won't play: paste its Apple Music song link (Share → Copy link) as `apple: '…'`.
   // Artwork, previews, album and year are found automatically; add `spotify: 'https://open.spotify.com/…'`
   // to pin a cover, or `album` / `year` to override what was found.
   mixtape: {
@@ -808,17 +808,18 @@ export const music = {
       { artist: 'Cortex', title: 'Poxa', side: 'analog', album: 'Cortex, Vol. 2', year: '1977', itunes: {} },
       { artist: 'Daniel Caesar', title: 'Who Knows', side: 'analog', itunes: {  } },
       { artist: 'Steely Dan', title: 'Deacon Blues', side: 'analog', album: 'Aja', year: '1977', itunes: {  } },
-      { artist: 'Slom', title: '아니라고', side: 'modern', spotify: 'https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm', itunes: { artists: ['슬롬'], country: 'kr' } },
+      { artist: 'Slom', title: '아니라고', side: 'modern', apple: 'https://music.apple.com/us/song/anirago-feat-zion-t/1698683643', spotify: 'https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm', itunes: { artists: ['슬롬'], country: 'kr' } },
       { artist: 'Four Tet', title: '31 Bloom', side: 'modern', itunes: {  } },
       { artist: 'NMIXX', title: 'Phoenix', side: 'modern', itunes: { artists: ['엔믹스'], country: 'kr' } },
       { artist: 'capsule', title: 'I Wish You', side: 'modern', spotify: 'https://open.spotify.com/track/3cUNYZbxke9SvwvsayCNvx', itunes: { country: 'jp' } },
       { artist: 'Perfume', title: '575', side: 'modern', itunes: { country: 'jp' } },
-      { artist: 'House Rulez', title: 'House', side: 'modern', spotify: 'https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
-      { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
+      { artist: 'House Rulez', title: 'House', side: 'modern', apple: 'https://music.apple.com/us/song/home-feat-youme/354643930', spotify: 'https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
+      { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', apple: 'https://music.apple.com/us/song/stranger/1810176751', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
       { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
       { artist: 'Lily Allen', title: 'Trigger Bang', side: 'modern', itunes: { titles: ['Trigger Bang (feat. Giggs)'] } },
       { artist: 'Fantastic Plastic Machine', title: 'City Lights', side: 'modern', itunes: { titles: ['CITY LIGHTS'], country: 'jp' } },
       { artist: 'Aphex Twin', title: 'CIRCLONT6A [141.98][syrobonkus mix]', side: 'modern', itunes: { titles: ['CIRCLONT6A (syrobonkus mix)', 'CIRCLONT6A'] } },
+      { artist: 'KiiiKiii', title: '딸기게임 (Strawberry Game)', side: 'modern', itunes: { artists: ['키키'], titles: ['Strawberry Game', '딸기게임', '딸기 게임'], country: 'kr' } },
       { artist: 'Fisherman', title: '아마 난 (feat. Zion.T)', side: 'modern', itunes: { artists: ['피셔맨'], titles: ['아마 난'], country: 'kr' } },
     ],
   },

@@ -72,7 +72,7 @@ async function spotifyMeta(link) {
 
 async function lookup(q, kind) {
   // a pasted Apple Music song link (…?i=<id>) gives the exact track, preview included
-  const appleId = /[?&]i=(\d+)/.exec(q.apple || '')?.[1];
+  const appleId = /[?&]i=(\d+)/.exec(q.apple || '')?.[1] || /\/song\/[^/]+\/(\d+)/.exec(q.apple || '')?.[1];
   if (appleId) {
     const store = /music\.apple\.com\/(\w\w)\//.exec(q.apple)?.[1] || 'us';
     const r = (await getJSON(`https://itunes.apple.com/lookup?id=${appleId}&country=${store}`))?.results?.[0];
