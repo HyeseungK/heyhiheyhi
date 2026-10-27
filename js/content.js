@@ -443,10 +443,10 @@ export const visual = {
   // `instagram`: the artist's handle without @ (living artists only). Leave '' to hide it.
   // Every card is a person. Their favourite works hang off the card: `works` (images) and
   // `videos` (films that play in place). Filter chips, in this order. A card's `type` is one
-  // of these, or a list of them (e.g. ['Photographer', 'Videographer']) to show under both.
+  // of these, or a list of them (e.g. ['Photographer', 'Filmmaker']) to show under both.
   museTypes: [
     { type: 'Photographer', label: 'Photographers' },
-    { type: 'Videographer', label: 'Videographers' },
+    { type: 'Filmmaker', label: 'Filmmakers' },
     { type: 'Designer', label: 'Designers' },
   ],
   muses: [
@@ -492,7 +492,7 @@ export const visual = {
       tone: '#e9dfe0',
     },
     {
-      type: ['Photographer', 'Videographer'],
+      type: ['Photographer', 'Filmmaker'],
       title: 'Annie Chung',
       credit: 'Photographer and director · lifeimages film',
       works: ['assets/muses/annie-chung-4.jpg', 'assets/muses/annie-chung-5.jpg'],
@@ -507,7 +507,7 @@ export const visual = {
       tone: '#e4dfd6',
     },
     {
-      type: ['Photographer', 'Videographer'],
+      type: ['Photographer', 'Filmmaker'],
       title: '이혜인 Lee Hye-in',
       credit: 'Photographer and music video director',
       works: ['assets/muses/lee-hyein-1.jpg'],
@@ -541,7 +541,7 @@ export const visual = {
       tone: '#d6d6d4',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: 'Denis Villeneuve',
       credit: 'Film director · Arrival, Incendies',
       works: ['assets/muses/denis-villeneuve-1.jpg', 'assets/muses/denis-villeneuve-2.jpg'],
@@ -552,7 +552,7 @@ export const visual = {
       tone: '#d9d2c4',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: 'Wim Wenders',
       credit: 'Film director · Paris, Texas',
       works: ['assets/muses/wim-wenders-1.jpg'],
@@ -563,7 +563,7 @@ export const visual = {
       tone: '#d3dbe0',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: 'Rimayoon',
       credit: 'Music video director · Legend Film',
       works: ['assets/muses/rimayoon-1.jpg'],
@@ -579,7 +579,7 @@ export const visual = {
       tone: '#2a2a2a',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: '송민규 Song Mingyu',
       credit: 'Commercial director · FILM KAI',
       works: ['assets/muses/song-mingyu-1.jpg'],
@@ -591,7 +591,7 @@ export const visual = {
       tone: '#262626',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: '노상윤 Roh Sangyoon',
       credit: 'Music video director',
       works: ['assets/muses/roh-sangyoon-1.jpg', 'assets/muses/roh-sangyoon-2.jpg'],
@@ -618,7 +618,7 @@ export const visual = {
       tone: '#e7e1d2',
     },
     {
-      type: 'Videographer',
+      type: 'Filmmaker',
       title: 'Gawx',
       credit: 'Video artist · YouTube',
       works: [],
