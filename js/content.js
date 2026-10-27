@@ -586,7 +586,7 @@ export const visual = {
     },
     {
       type: 'Director',
-      title: '송민규 Song Mingyu', // [CHECK] romanisation
+      title: '송민규 Song Mingyu',
       credit: 'Commercial director · FILM KAI',
       works: ['assets/muses/song-mingyu-1.jpg'],
       ratio: '11 / 6',
