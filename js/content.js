@@ -454,7 +454,7 @@ export const visual = {
     {
       type: 'Photographer',
       title: '박현경 Park Hyunkyung', // [CHECK] romanisation
-      credit: 'Photographer · KiiiKiii’s first two albums',
+      credit: 'Photographer · on every KiiiKiii release',
       works: ['assets/muses/park-hyunkyung-1.jpg'],
       ratio: '4 / 3',
       why: 'One of the few who can hold KiiiKiii’s whole vibe, the person who turns their creative director’s imagination into photographs. A very Gen Z eye: flash-bright, a little odd, never too polished. A KiiiKiii photo book on the way to work makes the best morning.',
