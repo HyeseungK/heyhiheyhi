@@ -518,5 +518,16 @@
     "year": "2026",
     "source": "itunes",
     "spotify": ""
+  },
+  "song|Shigeo Sekito|The Word II": {
+    "artwork": "assets/songs/shigeo-sekito-the-word-ii.jpg",
+    "url": "https://music.apple.com/us/album/the-word-2/1524254347?i=1524254363&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/34/a3/e0/34a3e06f-3a61-5a54-55eb-24392e718617/mzaf_17964051952298777393.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "The Word 2",
+    "album": "Nick Luscombe Presents Tokyo Dreaming",
+    "year": "2018",
+    "source": "itunes",
+    "spotify": ""
   }
 }
