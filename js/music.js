@@ -242,7 +242,7 @@ const rackOrder = () => [...document.querySelectorAll('.shelf .sleeve')].map((el
 function loadCovers(shelf) {
   music.albums.forEach((a, i) => {
     if (a.cover) return;
-    findAlbum({ artist: a.artist, title: a.title, ...(a.itunes || {}) }).then((r) => {
+    findAlbum({ artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) }).then((r) => {
       if (!r?.artwork) return;
       a.official = r;
       const img = shelf.querySelector(`.sleeve[data-i="${i}"] img`);
@@ -314,7 +314,7 @@ function renderMixtape(root) {
     if (looked) return;
     looked = true;
     m.songs.forEach((s, i) => {
-      findSong({ artist: s.artist, title: s.title, ...(s.itunes || {}) }).then((r) => {
+      findSong({ artist: s.artist, title: s.title, spotify: s.spotify, ...(s.itunes || {}) }).then((r) => {
         if (!r) return;
         s.found = r;
         const art = box.querySelector(`.mix-track[data-i="${i}"] .art`);
@@ -389,7 +389,7 @@ function paintAlbum(a) {
     <h3>${esc(a.title)}</h3>
     <p class="artist">${esc(a.artist)}</p>
     ${a.why ? `<p class="why">${esc(a.why)}</p>` : ''}
-    ${a.official?.url ? `<p><a class="listen" href="${esc(a.official.url)}" target="_blank" rel="noopener">Listen on Apple Music ↗</a></p>` : ''}
+    ${a.official?.url ? `<p><a class="listen" href="${esc(a.official.url)}" target="_blank" rel="noopener">Listen ↗</a></p>` : ''}
     ${a.tracks.length ? '' : '<p class="tracks-soon">Favourite tracks, coming soon.</p>'}
     <ol class="tracks">
       ${a.tracks

@@ -550,14 +550,16 @@ export const visual = {
 // Covers: put images in assets/albums and set `cover`.
 export const music = {
   lead: 'Albums I keep coming back to, and a CD I burned myself. Pull a record off the rack; the guitar knows where I’ve played.',
-  // 10 records, 5 per ledge. Covers come from the iTunes Search API (`itunes`: search hints);
-  // set `cover: 'assets/albums/…'` to use your own image instead.
+  // 10 records, 5 per ledge. Covers are found automatically (iTunes, then Deezer) from
+  // the artist + title; `itunes` holds extra search hints. If a cover comes out wrong,
+  // paste the album's Spotify link into `spotify` (Share → Copy link) and that one is used.
   albums: [
     {
       title: 'Call Me Baby',
       artist: 'EXO',
       year: '2015', // [CHECK]
       color: '#d9d4cc', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['엑소'], titles: ['EXODUS', 'The 2nd Album EXODUS'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -567,6 +569,7 @@ export const music = {
       artist: 'Lamp',
       year: '2004', // [CHECK]
       color: '#e8dccb', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['恋人へ', 'Koibito e'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -576,6 +579,7 @@ export const music = {
       artist: 'Fiona Apple',
       year: '1999', // [CHECK]
       color: '#c94f3d', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { titles: ['When the Pawn'] },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -585,6 +589,7 @@ export const music = {
       artist: 'Casker',
       year: '2008', // [CHECK]
       color: '#7a8b6f', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['캐스커'], titles: ['여정', '旅程'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -594,6 +599,7 @@ export const music = {
       artist: 'FKA twigs',
       year: '2022', // [CHECK]
       color: '#e3d3e0', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -603,6 +609,7 @@ export const music = {
       artist: 'The Internet',
       year: '2015', // [CHECK]
       color: '#2f4cff', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -612,6 +619,7 @@ export const music = {
       artist: 'Hiroshi Yoshimura',
       year: '1993', // [CHECK]
       color: '#cfe0e6', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['吉村弘'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -621,6 +629,7 @@ export const music = {
       artist: 'Steely Dan',
       year: '1977', // [CHECK]
       color: '#111111', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -630,6 +639,7 @@ export const music = {
       artist: 'Takako Mamiya',
       year: '1982', // [CHECK]
       color: '#f0d2c2', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['間宮貴子'], country: 'jp' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -639,12 +649,14 @@ export const music = {
       artist: 'KiiiKiii',
       year: '2025', // [CHECK]
       color: '#f2f0ea', // used until the official cover loads
+      spotify: '', // optional: https://open.spotify.com/album/…
       itunes: { artists: ['키키'], country: 'kr' },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
   ],
   // The burned CD. `side`: 'east' (Seoul · Tokyo) or 'west' (everywhere else) — see `sides`.
+  // Artwork and previews are found automatically; add `spotify: 'https://open.spotify.com/track/…'` to pin one.
   mixtape: {
     label: 'Favorite Songs',
     note: '2026 · for whoever is listening', // [PLACEHOLDER] the small scribble under the title
