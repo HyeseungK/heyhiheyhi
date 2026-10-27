@@ -257,7 +257,7 @@ function renderMuses(root) {
           <span class="muse-back">
             <span class="muse-type">${esc(typesOf(m).join(' · '))}</span>
             <b>${esc(m.title)}</b>
-            ${m.why ? `<span class="muse-why">“${ko(esc(m.why))}”</span>` : ''}
+            ${m.why ? `<span class="muse-why">${ko(esc(m.why))}</span>` : ''}
             <span class="muse-actions">
               ${films.map((v, k) => `<button class="muse-btn" data-play="${i}" data-k="${k}">▶ ${esc(v.title || 'Watch')}</button>`).join('')}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}

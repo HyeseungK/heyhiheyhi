@@ -210,7 +210,7 @@ function renderTickets(root) {
           </span>
           <span class="t-back">
             <span class="t-type">${esc(t.date)} · ${esc(t.venue)}</span>
-            <span class="t-memo">“${esc(t.memo)}”</span>
+            <span class="t-memo">${esc(t.memo)}</span>
             <span class="t-type">Tap to put it back</span>
           </span>
         </span>
