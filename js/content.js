@@ -478,6 +478,16 @@ export const visual = {
     },
     {
       type: 'Photographer',
+      title: '윤송이 Yoon Songi', // [CHECK] romanisation
+      credit: 'Photographer, Seoul',
+      works: [],
+      why: '', // [PLACEHOLDER]
+      url: '',
+      instagram: 'songgge',
+      tone: '#e9dfe0',
+    },
+    {
+      type: 'Photographer',
       title: 'Annie Chung',
       credit: 'Photographer · lifeimages film · worked with KiiiKiii',
       works: [],
