@@ -782,13 +782,13 @@ export const music = {
     { type: 'Concert', name: 'Artist D', lineup: 'Live at the Garden', date: '2024.10.02', venue: 'Madison Square Garden', city: 'New York', seat: 'Sec 112 · Row 8', color: '#e8dccb', memo: 'My first concert in New York.' },
   ],
   stage: {
-    intro: 'In college I was a band nomad: life sciences, then business, then engineering. Only one of those is my major. I sang in all three.',
+    intro: 'In college I was a band nomad: science, then business, then engineering. Only one of those is my major. I sang in all three.',
     soundcloud: '', // optional: a SoundCloud link shows a button at the bottom
     // Newest first. `next`: an upcoming show, highlighted. `instagram`: the band's handle, without @.
     performances: [
-      { title: '활천 Hwalcheon', sub: 'Engineering band', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third show', instagram: '' },
-      { title: '오도방정 Odobangjeong', sub: 'Business School, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: '' },
-      { title: '청년 Puruni', sub: 'Life sciences band', date: '2022', role: 'Vocals and guitar · one busking set, one concert', instagram: '' },
+      { title: '활천 Hwalchun', sub: 'Engineering band', date: '2025 — Now', role: 'Vocals · two concerts and the Yonsei festival stage', next: '2026.11.21, the third show', instagram: 'hwalchun' },
+      { title: '오도 Odo', sub: 'Business School, Class 5', date: '2023 — 2025', role: 'Vocals · two concerts', instagram: 'band_odoyonsei' },
+      { title: '청년 Puruni', sub: 'Science × life sciences band', date: '2021 — 2022', role: 'Vocals and guitar · one busking set, one concert', instagram: 'ys_puruni' },
     ],
   },
 };
