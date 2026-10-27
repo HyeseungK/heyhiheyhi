@@ -3,6 +3,7 @@ import { openModal } from './modal.js';
 import { flowCoverURL, isDark, mulberry32, hashString } from './gen.js';
 import { createGuitar } from './guitar3d.js';
 import { findAlbum, findSong } from './itunes.js';
+import { sound } from './sound.js';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -299,6 +300,9 @@ function shuffleRack(shelf) {
 
 // ── the burned CD ───────────────────────────────────────────
 let player = null;
+// "Artist · Album, 1999" once the lookup has found the record
+const subLine = (s) => esc([s.artist, [s.found?.album || s.album, s.found?.year || s.year].filter(Boolean).join(', ')].filter(Boolean).join(' · '));
+
 function discHTML(label, sub) {
   return `<div class="burn-disc" aria-hidden="true">
     <span class="burn-rings"></span><span class="burn-holo"></span><span class="burn-shine"></span><span class="burn-hub"></span>
@@ -343,7 +347,7 @@ function renderMixtape(root) {
       .map(([s, i]) => `<li><button class="mix-track${playing === i ? ' is-playing' : ''}" data-i="${i}">
           <span class="n">${String(offset + ++n).padStart(2, '0')}</span>
           <span class="art"${s.found?.artwork ? ` style="background-image:url('${esc(s.found.artwork.replace('600x600bb', '200x200bb'))}')"` : ''}></span>
-          <span class="tt"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></span>
+          <span class="tt"><b>${esc(s.title)}</b><span class="sub">${subLine(s)}</span></span>
           <span class="pl" aria-hidden="true"></span>
         </button></li>`)
       .join('')}</ol>`;
@@ -389,44 +393,71 @@ function renderMixtape(root) {
     pickSide(c.dataset.key);
   });
 
-  // playback: preview audio, the chosen disc spins
+  // playback: the chosen disc keeps spinning until you stop it; previews play through
+  // the side like a real CD, moving on to the next track when one ends
   const audio = new Audio();
   audio.preload = 'none';
+  audio.muted = !sound.on;
+  sound.onChange((on) => (audio.muted = !on));
   let playing = null;
   let spin = null;
+  let spinning = null;
+  function spinDisc(key) {
+    const slot = slots.find((sl) => sl.dataset.key === key);
+    if (!slot || spinning === slot) return;
+    stopSpin();
+    spinning = slot;
+    slot.classList.add('is-spinning');
+    spin = gsap.to(slot.querySelector('.burn-disc'), { rotation: '+=360', duration: 1.8, ease: 'none', repeat: -1 });
+    gsap.fromTo(spin, { timeScale: 0.1 }, { timeScale: 1, duration: 1.2, ease: 'power2.out' });
+  }
+  function stopSpin() {
+    if (spin) { const sp = spin; gsap.to(sp, { timeScale: 0, duration: 1.4, ease: 'power2.out', onComplete: () => sp.kill() }); }
+    spin = null;
+    spinning?.classList.remove('is-spinning');
+    spinning = null;
+  }
+  function mark(i) {
+    list.querySelectorAll('.mix-track').forEach((b) => b.classList.toggle('is-playing', +b.dataset.i === i));
+  }
   function stop() {
     audio.pause();
     playing = null;
-    list.querySelectorAll('.mix-track.is-playing').forEach((b) => b.classList.remove('is-playing'));
-    if (spin) { const sp = spin; gsap.to(sp, { timeScale: 0, duration: 1.2, onComplete: () => sp.kill() }); spin = null; }
-    slots.forEach((s) => s.classList.remove('is-spinning'));
+    mark(-1);
+    stopSpin();
   }
-  audio.addEventListener('ended', stop);
+  function play(i) {
+    const s = m.songs[i];
+    playing = i;
+    setOpen(true);
+    if (s.side !== side) pickSide(s.side, true);
+    mark(i);
+    spinDisc(s.side);
+    if (s.found?.preview) {
+      audio.src = s.found.preview;
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+      const url = s.found?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.artist} ${s.title}`)}`;
+      window.open(url, '_blank', 'noopener');
+    }
+  }
+  // when a preview ends, go on to the next track on the same disc that has one
+  audio.addEventListener('ended', () => {
+    if (playing === null) return;
+    const order = songsOf(m.songs[playing].side).map(([, i]) => i);
+    const next = order.slice(order.indexOf(playing) + 1).find((i) => m.songs[i].found?.preview);
+    if (next !== undefined) play(next);
+    else stop();
+  });
   player = { stop };
 
   list.addEventListener('click', (e) => {
     const b = e.target.closest('.mix-track');
     if (!b) return;
     const i = +b.dataset.i;
-    const s = m.songs[i];
     if (playing === i) return stop();
-    if (s.found?.preview) {
-      stop();
-      setOpen(true);
-      audio.src = s.found.preview;
-      audio.play().catch(() => {});
-      playing = i;
-      b.classList.add('is-playing');
-      const slot = slots.find((sl) => sl.dataset.key === s.side);
-      if (slot) {
-        slot.classList.add('is-spinning');
-        spin = gsap.to(slot.querySelector('.burn-disc'), { rotation: '+=360', duration: 1.6, ease: 'none', repeat: -1 });
-        gsap.fromTo(spin, { timeScale: 0.1 }, { timeScale: 1, duration: 1.2, ease: 'power2.out' });
-      }
-      return;
-    }
-    const url = s.found?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.artist} ${s.title}`)}`;
-    window.open(url, '_blank', 'noopener');
+    play(i);
   });
 
   // artwork + previews (saved covers first, live lookup for the rest), once in view
@@ -440,6 +471,8 @@ function renderMixtape(root) {
         s.found = r;
         const art = list.querySelector(`.mix-track[data-i="${i}"] .art`);
         if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '200x200bb')}")`;
+        const sub = list.querySelector(`.mix-track[data-i="${i}"] .sub`);
+        if (sub) sub.innerHTML = subLine(s);
       }).catch(() => {});
     });
   }, { rootMargin: '300px' }).observe(box);
@@ -622,6 +655,7 @@ function pluck(freq, when, gain = 0.18) {
 
 function strum() {
   guitar3d?.strum();
+  if (!sound.on) return;
   try {
     audio = audio || new (window.AudioContext || window.webkitAudioContext)();
     audio.resume();

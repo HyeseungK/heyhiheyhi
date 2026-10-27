@@ -609,7 +609,7 @@ export const music = {
       artist: 'The Internet',
       year: '2015', // [CHECK]
       color: '#2f4cff', // used until the official cover loads
-      spotify: '', // optional: https://open.spotify.com/album/…
+      spotify: 'https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q', // the orange cover
       itunes: {  },
       why: '', // [PLACEHOLDER] one line on why
       tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
@@ -673,13 +673,13 @@ export const music = {
       { artist: 'Billy Joel', title: 'Vienna', side: 'analog', itunes: {  } },
       { artist: 'Cortex', title: 'Poxa', side: 'analog', itunes: {} },
       { artist: 'Daniel Caesar', title: 'Who Knows', side: 'analog', itunes: {  } },
-      { artist: 'Slom', title: '아니라고', side: 'modern', itunes: { artists: ['슬롬'], country: 'kr' } },
+      { artist: 'Slom', title: '아니라고', side: 'modern', spotify: 'https://open.spotify.com/album/7fovUQYXBmAfq8FGN8eEzm', itunes: { artists: ['슬롬'], country: 'kr' } },
       { artist: 'Four Tet', title: '31 Bloom', side: 'modern', itunes: {  } },
       { artist: 'NMIXX', title: 'Phoenix', side: 'modern', itunes: { artists: ['엔믹스'], country: 'kr' } },
       { artist: 'capsule', title: 'I Wish You', side: 'modern', itunes: { country: 'jp' } },
       { artist: 'Perfume', title: '575', side: 'modern', itunes: { country: 'jp' } },
-      { artist: 'House Rulez', title: 'House', side: 'modern', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
-      { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', itunes: { artists: ['지바노프'], country: 'kr' } },
+      { artist: 'House Rulez', title: 'House', side: 'modern', spotify: 'https://open.spotify.com/album/3YgAlfZsB8TBpUxh0mwoJj', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
+      { artist: 'Jeebanoff', title: '낯선 사람', side: 'modern', spotify: 'https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK', itunes: { artists: ['지바노프'], country: 'kr' } },
       { artist: 'Blood Orange', title: 'Augustine', side: 'modern', itunes: {  } },
     ],
   },

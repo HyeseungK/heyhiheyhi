@@ -75,7 +75,7 @@ async function fromSpotify(q) {
   const res = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(q.spotify)}`);
   if (!res.ok) throw new Error('spotify');
   const d = await res.json();
-  return d.thumbnail_url ? { artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title } : null;
+  return d.thumbnail_url ? { artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title, album: /\/album\//.test(q.spotify) ? d.title : '', year: '' } : null;
 }
 
 // 2. iTunes
@@ -102,6 +102,8 @@ async function fromITunes(q, kind) {
           url: kind === 'album' ? best.collectionViewUrl : best.trackViewUrl,
           preview: best.previewUrl || '',
           name: nameOf(best),
+          album: best.collectionName || '',
+          year: (best.releaseDate || '').slice(0, 4),
         };
       }
     }
@@ -120,7 +122,7 @@ async function fromDeezer(q, kind) {
     const best = pick(data?.data || [], q, (r) => r.artist?.name, (r) => r.title);
     if (best) {
       const album = kind === 'album' ? best : best.album || {};
-      return { artwork: album.cover_xl || album.cover_big || album.cover_medium || '', url: best.link, preview: best.preview || '', name: best.title };
+      return { artwork: album.cover_xl || album.cover_big || album.cover_medium || '', url: best.link, preview: best.preview || '', name: best.title, album: album.title || '', year: '' };
     }
   }
   return null;

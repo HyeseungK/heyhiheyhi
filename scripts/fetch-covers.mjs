@@ -62,7 +62,7 @@ async function lookup(q, kind) {
   // a pasted Spotify link wins (open.spotify.com/album/… or /track/…)
   if (q.spotify) {
     const d = await getJSON(`https://open.spotify.com/oembed?url=${encodeURIComponent(q.spotify)}`);
-    if (d?.thumbnail_url) return { source: 'spotify', artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title };
+    if (d?.thumbnail_url) return { source: 'spotify', artwork: d.thumbnail_url, url: q.spotify, preview: '', name: d.title, album: /\/album\//.test(q.spotify) ? d.title : '', year: '' };
   }
   const artists = [q.artist, ...(q.artists || [])];
   const plain = q.title.replace(/\s*\(.*?\)\s*/g, ' ').trim();
@@ -82,6 +82,8 @@ async function lookup(q, kind) {
           url: kind === 'album' ? best.collectionViewUrl : best.trackViewUrl,
           preview: best.previewUrl || '',
           name: nameOf(best),
+          album: best.collectionName || '',
+          year: (best.releaseDate || '').slice(0, 4),
         };
       }
     }
@@ -94,7 +96,8 @@ async function lookup(q, kind) {
     const best = data && pick(data.data || [], q, (r) => r.artist?.name, (r) => r.title);
     if (best) {
       const album = kind === 'album' ? best : best.album || {};
-      return { source: 'deezer', artwork: album.cover_xl || album.cover_big || '', url: best.link, preview: best.preview || '', name: best.title };
+      const full = album.id ? await getJSON(`https://api.deezer.com/album/${album.id}`) : null;
+      return { source: 'deezer', artwork: album.cover_xl || album.cover_big || '', url: best.link, preview: best.preview || '', name: best.title, album: album.title || '', year: (full?.release_date || '').slice(0, 4) };
     }
   }
   // MusicBrainz + Cover Art Archive (albums only; covers older and smaller releases)
@@ -112,6 +115,17 @@ async function lookup(q, kind) {
     }
   }
   return null;
+}
+
+// Spotify's oEmbed has no release date: try to fill album / year from iTunes, then Deezer
+async function albumInfo(artist, album) {
+  const it = await getJSON(`https://itunes.apple.com/search?term=${encodeURIComponent(`${artist} ${album}`)}&entity=album&limit=10`);
+  const a = (it?.results || []).find((r) => matches(r.artistName, artist) && matches(r.collectionName, album));
+  if (a?.releaseDate) return a.releaseDate.slice(0, 4);
+  const dz = await getJSON(`https://api.deezer.com/search/album?q=${encodeURIComponent(`${artist} ${album}`)}&limit=10`);
+  const d = (dz?.data || []).find((r) => matches(r.artist?.name, artist) && matches(r.title, album));
+  const full = d ? await getJSON(`https://api.deezer.com/album/${d.id}`) : null;
+  return (full?.release_date || '').slice(0, 4);
 }
 
 async function download(url, file) {
@@ -132,15 +146,16 @@ let found = 0, missing = [];
 for (const { kind, a, dir } of jobs) {
   const key = `${kind}|${a.artist}|${a.title}`;
   const rel = `${dir}/${slug(`${a.artist}-${a.title}`)}.jpg`;
-  const have = manifest[key] && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
+  const have = manifest[key] && 'album' in manifest[key] && (manifest[key].spotify || '') === (a.spotify || '') && (await fs.stat(path.join(root, manifest[key].artwork)).catch(() => null));
   if (have || a.cover) { found++; continue; }
   const r = await lookup({ artist: a.artist, title: a.title, spotify: a.spotify, ...(a.itunes || {}) }, kind);
   if (!r?.artwork) { missing.push(`${a.artist} — ${a.title}`); log(`✗ ${kind} ${a.artist} — ${a.title}`); continue; }
   try {
     await download(r.artwork, path.join(root, rel));
-    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, name: r.name, source: r.source };
+    if (r.album && !r.year) r.year = await albumInfo(a.artist, r.album);
+    manifest[key] = { artwork: rel, url: r.url, preview: r.preview, name: r.name, album: r.album || '', year: r.year || '', source: r.source, spotify: a.spotify || '' };
     found++;
-    log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name})`);
+    log(`✓ ${kind} ${a.artist} — ${a.title}  (${r.source}: ${r.name}${r.album ? ` · ${r.album}` : ''}${r.year ? `, ${r.year}` : ''})`);
   } catch (e) {
     missing.push(`${a.artist} — ${a.title} (download failed)`);
   }

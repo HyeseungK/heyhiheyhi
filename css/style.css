@@ -77,6 +77,13 @@ img { display: block; max-width: 100%; }
 .accent-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-left: -8px; }
 .accent-dot i { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--line); }
 .accent-wrap { position: relative; flex: none; }
+.sound-btn { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; margin-left: 4px; transition: background .2s; }
+.sound-btn:hover { background: var(--soft); }
+.sound-btn svg { width: 20px; height: 20px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sound-btn .spk { fill: var(--ink); }
+.sound-btn .mute { display: none; stroke: var(--accent); }
+.sound-btn.is-off .wave { display: none; }
+.sound-btn.is-off .mute { display: block; }
 .accent-dot:hover i { transform: scale(1.15); }
 .accent-dot i { transition: transform .3s var(--ease); }
 .swatches {
@@ -624,7 +631,7 @@ img { display: block; max-width: 100%; }
 .mix-track .art { width: 36px; height: 36px; border-radius: 3px; background: var(--soft) center / cover no-repeat; box-shadow: inset 0 0 0 1px var(--line); }
 .mix-track .tt { display: flex; flex-direction: column; min-width: 0; }
 .mix-track .tt b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mix-track .tt span { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-track .tt .sub { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mix-track .pl { width: 14px; height: 12px; justify-self: end; background: linear-gradient(var(--muted), var(--muted)) left bottom / 3px 40% no-repeat, linear-gradient(var(--muted), var(--muted)) center bottom / 3px 70% no-repeat, linear-gradient(var(--muted), var(--muted)) right bottom / 3px 50% no-repeat; opacity: 0; }
 .mix-track:hover .pl { opacity: .6; }
 .mix-track.is-playing .tt b, .mix-track.is-playing .n { color: var(--accent); }

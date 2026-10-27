@@ -6,6 +6,7 @@ import { renderVisual, initVisualScroll } from './visual.js';
 import { renderMusic, initMusicScroll, guitarLoop, stopMixtape } from './music.js';
 import { renderBrickIcons } from './bricks.js';
 import { initCursor } from './cursor.js';
+import { sound } from './sound.js';
 import { currentModal, closeModal } from './modal.js';
 
 const gsap = window.gsap;
@@ -265,6 +266,7 @@ function activate(name) {
   });
   if (name !== 'work') workApi.close();
   if (name !== 'music') { guitarLoop.stop(); stopMixtape(); }
+  $('.sound-btn').hidden = name !== 'music';
   window.scrollTo(0, 0);
   if (name === 'home') { hero?.relayout(); hero?.start(); }
   else hero?.stop();
@@ -316,6 +318,20 @@ new IntersectionObserver(([entry]) => {
   if (!hero || current !== 'home') return;
   entry.isIntersecting ? hero.start() : hero.stop();
 }).observe($('.hero'));
+
+// ── sound switch (shown on the Music tab) ──────────────────
+function paintSound() {
+  const b = $('.sound-btn');
+  b.classList.toggle('is-off', !sound.on);
+  b.setAttribute('aria-pressed', sound.on);
+  b.setAttribute('aria-label', sound.on ? 'Sound on. Turn off' : 'Sound off. Turn on');
+}
+$('.sound-btn').addEventListener('click', () => {
+  sound.toggle();
+  paintSound();
+  gsap.fromTo('.sound-btn svg', { scale: 0.7 }, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+});
+paintSound();
 
 // ── accent colour (dot in the top bar opens a palette) ──────
 const accents = site.accents;
