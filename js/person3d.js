@@ -3,42 +3,43 @@
 // The same bricks fly from one figure to the next; drag to turn it around.
 import * as THREE from 'three';
 import { addLights, INK, COBALT } from './bricks.js';
+import { sound } from './sound.js';
 
 const SKIN = '#f1c9a5', HAIR = '#2a211c';
 const FIGURES = [
-  { // the consultant: suit, tie, briefcase
+  { // the consultant: long hair, a jacket over a white blouse, a skirt, a laptop bag
     map: [
       '....HHHHH....',
       '...HHHHHHH...',
-      '...HSSSSSH...',
-      '...SESSSES...',
-      '...SSSSSSS...',
-      '....SSRSS....',
-      '.....SSS.....',
-      '..JJJWTWJJJ..',
-      '.JJJJWTWJJJJ.',
-      '.JJJJJTJJJJJ.',
-      '.JJ.JJTJJ.JJ.',
+      '..HHSSSSSHH..',
+      '..HSESSSESH..',
+      '..HSSSSSSSH..',
+      '..HHSSRSSHH..',
+      '..HH.SSS.HH..',
+      '..JJJWWWJJJ..',
+      '.JJJJWWWJJJJ.',
+      '.JJJJJWJJJJJ.',
       '.JJ.JJJJJ.JJ.',
-      '.SS.JJJJJ.SS.',
-      '....PPPPP.BBB',
-      '....PP.PP.BBB',
-      '....PP.PP.BBB',
-      '....PP.PP....',
-      '...KKK.KKK...',
+      '.JJ.JJJJJ.JJ.',
+      '.SS.KKKKK.SS.',
+      '....KKKKK.BBB',
+      '....KKKKK.BBB',
+      '.....S.S..BBB',
+      '.....S.S.....',
+      '....TT.TT....',
     ],
-    colors: { H: HAIR, S: SKIN, E: INK, R: '#d9826f', J: INK, W: '#f7f7f4', T: COBALT, P: '#3b3b3e', K: '#151515', B: '#8a5a35' },
+    colors: { H: HAIR, S: SKIN, E: INK, R: '#d9826f', J: INK, W: '#f7f7f4', K: '#3b3b3e', B: COBALT, T: '#151515' },
   },
-  { // the student: a graduation cap and a hoodie
+  { // the student: long hair under a graduation cap, a hoodie, jeans
     map: [
       '..CCCCCCCCC..',
       '....CCCCC.Q..',
-      '...HHHHHHHQ..',
-      '...HSSSSSH...',
-      '...SESSSES...',
-      '...SSSSSSS...',
-      '....SSRSS....',
-      '..UUUUUUUUU..',
+      '..HHHHHHHHHQ.',
+      '..HHSSSSSHH..',
+      '..HSESSSESH..',
+      '..HSSSSSSSH..',
+      '..HHSSRSSHH..',
+      '..HUUUUUUUH..',
       '.UUUUUUUUUUU.',
       '.UU.UUUUU.UU.',
       '.SS.UUUUU.SS.',
@@ -49,8 +50,9 @@ const FIGURES = [
     ],
     colors: { C: INK, Q: '#f2c14e', H: HAIR, S: SKIN, E: INK, R: '#d9826f', U: COBALT, D: '#6f8fb8', W: '#f7f7f4' },
   },
-  { // the baby: a pacifier and a onesie
+  { // the baby: a little bow, a pacifier and a onesie
     map: [
+      '....PP.PP....',
       '.....HHH.....',
       '...SSSSSSS...',
       '..SSSSSSSSS..',
@@ -64,7 +66,7 @@ const FIGURES = [
       '...OOO.OOO...',
       '...SS...SS...',
     ],
-    colors: { H: HAIR, S: SKIN, E: INK, A: COBALT, O: '#f6dfa8' },
+    colors: { P: '#f3a6b8', H: HAIR, S: SKIN, E: INK, A: COBALT, O: '#f6dfa8' },
   },
 ];
 
@@ -80,6 +82,35 @@ function bricksOf(fig) {
   return out.sort((a, b) => a.y - b.y || a.x - b.x || a.z - b.z);
 }
 const accentNow = () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || COBALT;
+
+let ac;
+function whee(age) {
+  if (!sound.on) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    ac.resume();
+    const t = ac.currentTime + 0.01, base = 200 * Math.pow(2, age * 0.75); // ~200 Hz grown-up → ~570 Hz baby
+    const o = ac.createOscillator(), g = ac.createGain(), f1 = ac.createBiquadFilter(), f2 = ac.createBiquadFilter();
+    const vib = ac.createOscillator(), vg = ac.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(base, t);
+    o.frequency.exponentialRampToValueAtTime(base * 1.9, t + 0.28); // "whee" rising…
+    o.frequency.exponentialRampToValueAtTime(base * 1.25, t + 0.85); // …and falling away
+    vib.frequency.value = 6; vg.gain.value = base * 0.03;
+    vib.connect(vg).connect(o.frequency);
+    // two vowel formants for an "ee"
+    f1.type = 'bandpass'; f1.frequency.value = 330 + age * 60; f1.Q.value = 6;
+    f2.type = 'bandpass'; f2.frequency.value = 2400 + age * 400; f2.Q.value = 9;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.5, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+    o.connect(f1).connect(g);
+    o.connect(f2).connect(g);
+    g.connect(ac.destination);
+    o.start(t); vib.start(t);
+    o.stop(t + 0.95); vib.stop(t + 0.95);
+  } catch (e) { /* no audio */ }
+}
 
 export function createPerson(canvas) {
   let renderer;
@@ -149,9 +180,16 @@ export function createPerson(canvas) {
   fit();
 
   // drag to spin; it eases back to a gentle sway when let go
-  let spin = 0, vel = 0, drag = null;
+  let spin = 0, vel = 0, drag = null, turned = 0;
   canvas.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, s: spin }; canvas.setPointerCapture?.(e.pointerId); });
-  canvas.addEventListener('pointermove', (e) => { if (drag) { const s = drag.s + (e.clientX - drag.x) * 0.012; vel = s - spin; spin = s; } });
+  canvas.addEventListener('pointermove', (e) => { if (drag) { const s = drag.s + (e.clientX - drag.x) * 0.012; vel = s - spin; turn(vel); spin = s; } });
+  // a whole turn says "wheee": a grown-up voice at the top of the list, a tiny one at the bottom
+  function turn(d) {
+    turned += d;
+    if (Math.abs(turned) < Math.PI * 2) return;
+    turned = 0;
+    whee(cur);
+  }
   const end = () => { drag = null; };
   canvas.addEventListener('pointerup', end);
   canvas.addEventListener('pointercancel', end);
@@ -161,7 +199,7 @@ export function createPerson(canvas) {
     raf = requestAnimationFrame(frame);
     cur += (target - cur) * 0.08;
     if (Math.abs(cur - shown) > 0.0005) { pose(cur); shown = cur; }
-    if (!drag) { spin += vel; vel *= 0.94; }
+    if (!drag) { spin += vel; turn(vel); vel *= 0.94; }
     group.rotation.y = spin + Math.sin((now - t0) / 1600) * 0.25 - 0.35;
     renderer.render(scene, camera);
   }

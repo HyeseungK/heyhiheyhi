@@ -272,7 +272,6 @@ function renderMuses(root) {
               ${films.map((v, k) => `<button class="muse-btn" data-play="${i}" data-k="${k}">▶ ${esc(v.title || 'Watch')}</button>`).join('')}
               ${m.url && !video ? `<a class="muse-btn" href="${esc(m.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
               ${(m.links || []).map((l) => `<a class="muse-btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}
-              ${ig ? `<a class="muse-btn" href="${ig}" target="_blank" rel="noopener">Instagram ↗</a>` : ''}
             </span>
           </span>
         </span>

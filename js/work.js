@@ -1,6 +1,7 @@
 import { work } from './content.js';
 import { openModal, closeModal } from './modal.js';
 import { createPerson } from './person3d.js';
+import { createCoffee } from './coffee3d.js';
 
 const deckModal = document.querySelector('.deck-modal');
 
@@ -42,6 +43,9 @@ export function renderWork(root) {
     .join('');
 
   const laptop = root.querySelector('.laptop');
+  // the iced coffee next to it renders only while the laptop section is on screen
+  const coffee = createCoffee(root.querySelector('.coffee-canvas'));
+  if (coffee) new IntersectionObserver(([e]) => (e.isIntersecting ? coffee.start() : coffee.stop())).observe(root.querySelector('.laptop-stage'));
   const off = root.querySelector('.screen-off');
   const hint = root.querySelector('.laptop-hint');
   const prompt = root.querySelector('.laptop-prompt');
@@ -52,23 +56,27 @@ export function renderWork(root) {
   function open() {
     if (laptop.dataset.open === 'true') return;
     laptop.dataset.open = 'true';
+    coffee?.setOpen(true);
     tl?.kill();
     tl = gsap
       .timeline()
       .to(prompt, { opacity: 0, y: -20, duration: 0.35, ease: 'power2.in' })
-      .to(laptop, { '--lid': small() ? '0deg' : '4deg', duration: 1.25, ease: 'power3.inOut' }, 0.1) // flat on phones: a tilted screen is harder to tap
+      .to(laptop, { '--lid': small() ? '0deg' : '4deg', duration: 1.25, ease: 'power3.inOut' }, 0.1)
+      .to(laptop.parentElement, { '--po': '-30%', duration: 1.25, ease: 'power3.inOut' }, 0.1) // flat on phones: a tilted screen is harder to tap
       .to(off, { opacity: 0, duration: 0.5, ease: 'power1.out' }, '-=0.2')
       .from(root.querySelectorAll('.os-obj'), { y: 24, opacity: 0, scale: 0.8, stagger: 0.07, duration: 0.6, ease: 'back.out(1.8)' }, '-=0.25');
     hint.textContent = 'Details under NDA';
   }
   function close() {
     if (laptop.dataset.open !== 'true') return;
+    coffee?.setOpen(false);
     hideDetail(true);
     tl?.kill();
     tl = gsap
       .timeline({ onComplete: () => (laptop.dataset.open = 'false') })
       .to(off, { opacity: 1, duration: 0.25 })
       .to(laptop, { '--lid': '-90deg', duration: 1, ease: 'power3.inOut' })
+      .to(laptop.parentElement, { '--po': '55%', duration: 1, ease: 'power3.inOut' }, '<')
       .to(prompt, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
     hint.textContent = 'Click the laptop to open it';
   }
@@ -181,7 +189,7 @@ export function initWorkScroll(root) {
   });
   // the brick figure: consultant at the top of the list, student in the middle, baby at the bottom
   const canvas = root.querySelector('.person-canvas');
-  if (canvas && window.matchMedia('(min-width: 861px)').matches) {
+  if (canvas) {
     person = person || createPerson(canvas);
     if (person) {
       window.ScrollTrigger.create({
@@ -189,8 +197,11 @@ export function initWorkScroll(root) {
         onUpdate: (self) => person.set(self.progress * 2),
       });
       window.ScrollTrigger.create({
-        trigger: root.querySelector('.career'), start: 'top bottom', end: 'bottom top',
-        onToggle: (self) => (self.isActive ? person.start() : person.stop()),
+        trigger: root.querySelector('.career'), start: 'top 70%', end: 'bottom 35%',
+        onToggle: (self) => {
+          canvas.classList.toggle('on', self.isActive);
+          self.isActive ? person.start() : person.stop();
+        },
       });
     }
   }
