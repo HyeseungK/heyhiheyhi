@@ -1,9 +1,6 @@
-2026-10-27T13:06:22.465Z
-✓ album Steely Dan — Can’t Buy a Thrill  (itunes: Can't Buy A Thrill · Can't Buy A Thrill, 1972)
+2026-10-27T14:02:44.704Z
 ✗ song The Strokes — Ode to the Mets
 ✗ song Cortex — Poxa
-✓ song Steely Dan — Deacon Blues  (itunes: Deacon Blues · Aja, 1977)
-✓ song Lily Allen — Trigger Bang  (itunes: Trigger Bang (feat. Giggs) · No Shame, 2017)
 
 29/31 found.
 Not found:
