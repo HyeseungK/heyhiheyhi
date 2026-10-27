@@ -3,7 +3,7 @@ import { createHero } from './hero.js';
 import { transition, isBusy } from './fx.js';
 import { renderWork, initWorkScroll } from './work.js';
 import { renderVisual, initVisualScroll } from './visual.js';
-import { renderMusic, initMusicScroll, guitarLoop, stopMixtape } from './music.js';
+import { renderMusic, initMusicScroll, guitarLoop, stopAllMusic } from './music.js';
 import { renderBrickIcons } from './bricks.js';
 import { initCursor } from './cursor.js';
 import { sound } from './sound.js';
@@ -266,7 +266,7 @@ function activate(name) {
     else b.removeAttribute('aria-current');
   });
   if (name !== 'work') workApi.close();
-  if (name !== 'music') { guitarLoop.stop(); stopMixtape(); }
+  if (name !== 'music') { guitarLoop.stop(); stopAllMusic(); }
   $('.sound-btn').hidden = name !== 'music';
   window.scrollTo(0, 0);
   if (name === 'home') { hero?.relayout(); hero?.start(); }

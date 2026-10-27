@@ -600,6 +600,7 @@ img { display: block; max-width: 100%; }
 .shuffle-btn { font-size: 13px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); transition: background .2s, color .2s, border-color .2s; }
 .shuffle-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 .tracks-soon { font-family: var(--serif); font-style: italic; color: var(--muted); margin: 0 0 20px; }
+.listen-row { display: flex; gap: 18px; }
 .listen { font-size: 14px; color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
 
 /* ── favourite songs: the brick turntable ──────────────── */
@@ -726,6 +727,11 @@ img { display: block; max-width: 100%; }
 .track .n { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; width: 22px; }
 .track .name { flex: 1; font-weight: 500; }
 .track .pm { color: var(--muted); transition: transform .3s var(--ease); }
+.track-row .pl { width: 14px; height: 12px; opacity: 0; background: linear-gradient(var(--muted), var(--muted)) left bottom / 3px 40% no-repeat, linear-gradient(var(--muted), var(--muted)) center bottom / 3px 70% no-repeat, linear-gradient(var(--muted), var(--muted)) right bottom / 3px 50% no-repeat; }
+.track-row:hover .pl { opacity: .6; }
+.track-row:hover .name { color: var(--accent); }
+.track-row.is-playing .name, .track-row.is-playing .n { color: var(--accent); }
+.track-row.is-playing .pl { opacity: 1; background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)); animation: eq .9s ease-in-out infinite alternate; }
 .track.open .pm { transform: rotate(45deg); }
 .track .note { overflow: hidden; height: 0; }
 .track .note p { margin: 0 0 16px 36px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--ink-2); }
@@ -947,6 +953,8 @@ body.lock { overflow: hidden; }
 .layout-compact .chips { margin-top: 0; }
 .layout-compact .career { padding-bottom: clamp(48px, 6vw, 80px); }
 .layout-compact .laptop-section { padding-top: clamp(40px, 5vw, 72px); }
+/* phones: the prompt sits higher, clear of the closed lid */
+@media (max-width: 640px) { .laptop-prompt { top: 8%; } }
 .layout-compact .laptop-stage { --w: min(800px, 86vw); }
 .layout-compact .v-block, .layout-compact .room, .layout-compact .tickets-block { max-width: 1440px; }
 @media (max-width: 860px) {

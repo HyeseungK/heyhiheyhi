@@ -451,6 +451,7 @@ function renderMixtape(root) {
   }
   function play(i) {
     const s = m.songs[i];
+    stopTrack();
     playing = i;
     if (s.side !== side) pickSide(s.side, true);
     mark(i);
@@ -514,6 +515,7 @@ function renderMixtape(root) {
   paintList(false);
 }
 export const stopMixtape = () => player?.stop();
+export const stopAllMusic = () => { player?.stop(); stopTrack(); };
 
 // ── album ───────────────────────────────────────────────────
 const modal = document.querySelector('.album-modal');
@@ -521,6 +523,46 @@ const modal = document.querySelector('.album-modal');
 let current = -1;
 let spin = null;
 const sleeveOf = (i) => document.querySelector(`.sleeve[data-i="${i}"]`);
+
+const trackAudio = new Audio();
+trackAudio.preload = 'none';
+sound.onChange((on) => (trackAudio.muted = !on));
+let trackOn = null;
+function stopTrack() {
+  trackAudio.pause();
+  trackOn?.classList.remove('is-playing');
+  trackOn = null;
+}
+trackAudio.addEventListener('ended', stopTrack);
+async function trackPreview(album, i, btn) {
+  if (trackOn === btn) return stopTrack();
+  stopTrack();
+  stopMixtape();
+  const t = album.tracks[i];
+  trackOn = btn;
+  btn.classList.add('is-playing');
+  const r = await officialFor('song', { artist: album.artist, title: t.name, spotify: t.spotify, itunes: { ...(album.itunes || {}), titles: t.titles || [] } }).catch(() => null);
+  if (trackOn !== btn) return;
+  if (!r?.preview) {
+    stopTrack();
+    const url = r?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${album.artist} ${t.name}`)}`;
+    return window.open(url, '_blank', 'noopener');
+  }
+  let src = r.preview;
+  if (/deezer\.com/.test(r.previewUrl || r.url || '')) src = (await freshPreview(r).catch(() => null)) || src;
+  if (trackOn !== btn) return;
+  trackAudio.muted = !sound.on;
+  trackAudio.src = src;
+  trackAudio.play().catch(() => {});
+}
+
+// Deezer doesn't open in Korea: use the album's own link, Apple Music / Spotify, or a search
+function listenLinks(a) {
+  const found = a.official?.url && !/deezer\.com/.test(a.official.url) ? a.official.url : '';
+  const url = a.listen || a.spotify || found || `https://music.apple.com/search?term=${encodeURIComponent(`${a.artist} ${a.title.replace(/\s*\(.*?\)\s*/g, ' ')}`)}`;
+  const review = a.review ? ` <a class="listen" href="${esc(a.review)}" target="_blank" rel="noopener">Review ↗</a>` : '';
+  return `<p class="listen-row"><a class="listen" href="${esc(url)}" target="_blank" rel="noopener">Listen ↗</a>${review}</p>`;
+}
 
 function paintAlbum(a) {
   const gsap = window.gsap;
@@ -536,7 +578,7 @@ function paintAlbum(a) {
     <h3>${esc(a.title)}</h3>
     <p class="artist">${esc(a.artist)}</p>
     ${a.why ? `<p class="why">${esc(a.why)}</p>` : ''}
-    ${a.official?.url ? `<p><a class="listen" href="${esc(a.official.url)}" target="_blank" rel="noopener">Listen ↗</a></p>` : ''}
+    ${listenLinks(a)}
     ${a.tracks.length ? '' : '<p class="tracks-soon">Favourite tracks, coming soon.</p>'}
     <ol class="tracks">
       ${a.tracks
@@ -546,12 +588,16 @@ function paintAlbum(a) {
             // a track opens only when there is a note to read
             return t.why
               ? `<li class="track"><button aria-expanded="false">${n}<span class="pm">+</span></button><div class="note"><p>${esc(t.why)}</p></div></li>`
-              : `<li class="track"><div class="track-row">${n}</div></li>`;
+              : `<li class="track"><button class="track-row" data-t="${i}" aria-label="Play ${esc(t.name)}">${n}<span class="pl" aria-hidden="true"></span></button></li>`;
           }
         )
         .join('')}
     </ol>`;
-  info.querySelectorAll('.track button').forEach((b) =>
+  // favourite tracks play a 30-second preview (looked up like the CD's songs)
+  info.querySelectorAll('.track-row').forEach((b) =>
+    b.addEventListener('click', () => trackPreview(a, +b.dataset.t, b))
+  );
+  info.querySelectorAll('.track button:not(.track-row)').forEach((b) =>
     b.addEventListener('click', () => {
       const li = b.parentElement;
       const open = !li.classList.contains('open');
@@ -580,7 +626,7 @@ function playIn(dir = 0) {
   if (dir) tl.fromTo(caseEl, { x: dir * 80, opacity: 0, y: 0, rotateX: 0, rotateZ: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'power3.out' });
   else tl.fromTo(caseEl, { y: 90, x: 0, rotateX: 28, rotateZ: -6, opacity: 0 }, { y: 0, rotateX: 0, rotateZ: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);
   tl.to(cover, { rotateY: -128, duration: dir ? 0.8 : 1.1, ease: 'power3.inOut' }, dir ? 0.25 : 0.95)
-    .to(cd, { x: small ? '42%' : '56%', duration: 0.8, ease: 'power3.out' }, dir ? 0.75 : 1.6)
+    .to(cd, { x: small ? '16%' : '56%', duration: 0.8, ease: 'power3.out' }, dir ? 0.75 : 1.6)
     .add(() => {
       spin?.kill();
       spin = gsap.to(art, { rotation: '+=360', duration: 2.6, ease: 'none', repeat: -1 });
@@ -592,6 +638,7 @@ function playIn(dir = 0) {
 // CD goes back in, cover closes, case leaves
 function playOut(dir = 0) {
   const gsap = window.gsap;
+  stopTrack();
   spin?.kill();
   return gsap
     .timeline()

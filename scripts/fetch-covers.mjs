@@ -165,6 +165,11 @@ try { manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8')); } catch (e
 const jobs = [
   ...music.albums.map((a) => ({ kind: 'album', a, dir: 'assets/albums' })),
   ...(music.mixtape?.songs || []).map((a) => ({ kind: 'song', a, dir: 'assets/songs' })),
+  // favourite tracks inside each album: looked up as songs, for their 30-second previews
+  ...music.albums.flatMap((al) => (al.tracks || []).map((t) => ({
+    kind: 'song', dir: 'assets/songs',
+    a: { artist: al.artist, title: t.name, spotify: t.spotify || '', itunes: { ...(al.itunes || {}), titles: t.titles || [] } },
+  }))),
 ];
 let found = 0, missing = [];
 for (const { kind, a, dir } of jobs) {

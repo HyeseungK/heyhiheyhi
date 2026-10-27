@@ -635,6 +635,7 @@ export const visual = {
 // Covers: put images in assets/albums and set `cover`.
 export const music = {
   lead: 'Albums I keep coming back to, the songs I play on repeat, and the bands I’ve sung in.',
+  // `listen`: a link for the Listen button (else Spotify / Apple Music). `review`: a review link, e.g. Pitchfork.
   // 10 records, 5 per ledge. Covers are found automatically (iTunes, then Deezer) from
   // the artist + title; `itunes` holds extra search hints. If a cover comes out wrong,
   // paste the album's Spotify link into `spotify` (Share → Copy link) and that one is used.

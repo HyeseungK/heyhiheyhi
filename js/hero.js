@@ -159,12 +159,12 @@ export function createHero(canvas, words, getCard) {
   camera.position.set(0, 0, 10);
 
   const isSmall = Math.min(window.innerWidth, window.innerHeight) < 700;
-  const COUNT = isSmall ? 3600 : 7600;
+  const COUNT = isSmall ? 2600 : 7600; // fewer on phones: the words are smaller there, so the dots crowd
 
   const uniforms = {
     uProgress: { value: 0 },
     uTime: { value: 0 },
-    uSize: { value: isSmall ? 2.3 : 2.1 },
+    uSize: { value: isSmall ? 2 : 2.1 },
     uPixelRatio: { value: pr },
     uMouse: { value: new THREE.Vector2(99, 99) },
     uRipple: { value: new THREE.Vector3(0, 0, -99) },
@@ -214,8 +214,11 @@ export function createHero(canvas, words, getCard) {
     const capH = (view.h * (view.w < view.h ? 0.2 : 0.3)) / 270;
     const yOff = view.w < view.h ? 0.15 : 0.05;
     const r = mulberry32(7);
+    // on a tall screen the words share one size (the longest still fits), so Helen isn't twice Hyeseung
+    const portrait = view.w < view.h;
+    const common = Math.min(...samples.map((s) => fitW / s.width));
     samples.forEach((s, idx) => {
-      const scale = Math.min(fitW / s.width, capH);
+      const scale = portrait ? Math.min(common * 1.25, fitW / s.width, capH) : Math.min(fitW / s.width, capH);
       const n = s.pts.length / 2;
       const arr = new Float32Array(COUNT * 3);
       for (let i = 0; i < COUNT; i++) {
