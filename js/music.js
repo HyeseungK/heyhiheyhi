@@ -2,12 +2,14 @@ import { music } from './content.js';
 import { openModal } from './modal.js';
 import { flowCoverURL, isDark, mulberry32, hashString } from './gen.js';
 import { createGuitar } from './guitar3d.js';
+import { findAlbum, findSong } from './itunes.js';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const coverCache = new Map();
 function coverSrc(a) {
   if (a.cover) return a.cover;
+  if (a.official?.artwork) return a.official.artwork;
   const key = a.title + a.artist;
   if (!coverCache.has(key)) coverCache.set(key, flowCoverURL(key, a.color || '#2f4cff'));
   return coverCache.get(key);
@@ -38,6 +40,8 @@ export function renderMusic(root) {
     const s = e.target.closest('.sleeve');
     if (s) openAlbum(+s.dataset.i);
   });
+  root.querySelector('.shuffle-btn').addEventListener('click', () => shuffleRack(shelf));
+  loadCovers(shelf);
 
   // hover like a dock: the record under the cursor rises most, its neighbours a little
   const gsap = window.gsap;
@@ -66,6 +70,7 @@ export function renderMusic(root) {
   });
 
   renderTickets(root);
+  renderMixtape(root);
 
   const guitar = root.querySelector('.guitar');
   guitar3d = createGuitar(guitar.querySelector('canvas'));
@@ -231,6 +236,138 @@ function renderTickets(root) {
   });
 }
 
+// ── rack: official covers + shuffle ──────────────────────────
+const rackOrder = () => [...document.querySelectorAll('.shelf .sleeve')].map((el) => +el.dataset.i);
+
+function loadCovers(shelf) {
+  music.albums.forEach((a, i) => {
+    if (a.cover) return;
+    findAlbum({ artist: a.artist, title: a.title, ...(a.itunes || {}) }).then((r) => {
+      if (!r?.artwork) return;
+      a.official = r;
+      const img = shelf.querySelector(`.sleeve[data-i="${i}"] img`);
+      if (!img) return;
+      const next = new Image();
+      next.onload = () => {
+        img.src = r.artwork;
+        window.gsap.fromTo(img, { opacity: 0.2 }, { opacity: 1, duration: 0.6 });
+      };
+      next.src = r.artwork;
+    }).catch(() => {});
+  });
+}
+
+// shuffle the records across both ledges, with a little hop (FLIP: measure, move, animate back)
+function shuffleRack(shelf) {
+  const gsap = window.gsap;
+  const sleeves = [...shelf.querySelectorAll('.sleeve')];
+  const before = new Map(sleeves.map((el) => [el, el.getBoundingClientRect()]));
+  const order = gsap.utils.shuffle(sleeves.slice());
+  const rows = [...shelf.querySelectorAll('.shelf-row')];
+  const per = Math.ceil(order.length / rows.length);
+  order.forEach((el, k) => rows[Math.floor(k / per)].appendChild(el));
+  order.forEach((el, k) => {
+    const a = before.get(el), b = el.getBoundingClientRect();
+    gsap.fromTo(el,
+      { x: a.left - b.left, y: a.top - b.top, rotation: gsap.utils.random(-25, 25) },
+      { x: 0, y: 0, rotation: +el.dataset.tilt, duration: 0.9, delay: k * 0.03, ease: 'power3.inOut',
+        overwrite: true });
+    gsap.fromTo(el, { scale: 1 }, { scale: 1.08, duration: 0.45, delay: k * 0.03, yoyo: true, repeat: 1, ease: 'sine.inOut' });
+  });
+}
+
+// ── the burned CD ───────────────────────────────────────────
+let player = null;
+function renderMixtape(root) {
+  const gsap = window.gsap;
+  const m = music.mixtape;
+  if (!m) return;
+  const box = root.querySelector('.mixtape');
+  box.querySelector('.burn-label').textContent = m.label;
+  box.querySelector('.burn-note').textContent = m.note || '';
+  const sides = Object.entries(m.sides || { all: '' });
+  let n = 0;
+  box.querySelector('.mix-list').innerHTML = sides
+    .map(([key, label]) => {
+      const songs = m.songs.map((s, i) => [s, i]).filter(([s]) => (s.side || 'all') === key);
+      if (!songs.length) return '';
+      return `<div class="mix-side"><p class="label">${esc(label)}</p><ol>${songs
+        .map(([s, i]) => `<li><button class="mix-track" data-i="${i}">
+            <span class="n">${String(++n).padStart(2, '0')}</span>
+            <span class="art"></span>
+            <span class="tt"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></span>
+            <span class="pl" aria-hidden="true"></span>
+          </button></li>`)
+        .join('')}</ol></div>`;
+    })
+    .join('');
+
+  const disc = box.querySelector('.burn-disc');
+  const spin = gsap.to(disc, { rotation: '+=360', duration: 9, ease: 'none', repeat: -1, paused: true });
+  const audio = new Audio();
+  audio.preload = 'none';
+  let playing = null;
+
+  // fetch artwork + previews once the section comes into view
+  let looked = false;
+  const look = () => {
+    if (looked) return;
+    looked = true;
+    m.songs.forEach((s, i) => {
+      findSong({ artist: s.artist, title: s.title, ...(s.itunes || {}) }).then((r) => {
+        if (!r) return;
+        s.found = r;
+        const art = box.querySelector(`.mix-track[data-i="${i}"] .art`);
+        if (art && r.artwork) art.style.backgroundImage = `url("${r.artwork.replace('600x600bb', '100x100bb')}")`;
+      }).catch(() => {});
+    });
+  };
+  new IntersectionObserver(([e]) => e.isIntersecting && look(), { rootMargin: '300px' }).observe(box);
+
+  function stop() {
+    audio.pause();
+    box.querySelectorAll('.mix-track.is-playing').forEach((b) => b.classList.remove('is-playing'));
+    playing = null;
+    gsap.to(spin, { timeScale: 0, duration: 1.2, onComplete: () => spin.pause() });
+    box.classList.remove('is-spinning');
+  }
+  audio.addEventListener('ended', stop);
+  player = { stop };
+
+  box.querySelector('.mix-list').addEventListener('click', (e) => {
+    const b = e.target.closest('.mix-track');
+    if (!b) return;
+    const i = +b.dataset.i;
+    const s = m.songs[i];
+    if (playing === i) return stop();
+    if (s.found?.preview) {
+      stop();
+      audio.src = s.found.preview;
+      audio.play().catch(() => {});
+      playing = i;
+      b.classList.add('is-playing');
+      box.classList.add('is-spinning');
+      spin.play();
+      gsap.fromTo(spin, { timeScale: 0.2 }, { timeScale: 6, duration: 1.4, ease: 'power2.out' });
+      return;
+    }
+    // no preview: open the song elsewhere
+    const url = s.found?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${s.artist} ${s.title}`)}`;
+    window.open(url, '_blank', 'noopener');
+  });
+
+  // the disc tilts a little toward the cursor
+  const qx = gsap.quickTo(disc.parentElement, 'rotationY', { duration: 0.8, ease: 'power3' });
+  const qy = gsap.quickTo(disc.parentElement, 'rotationX', { duration: 0.8, ease: 'power3' });
+  box.addEventListener('pointermove', (e) => {
+    const r = box.getBoundingClientRect();
+    qx(((e.clientX - r.left) / r.width - 0.5) * 14);
+    qy(-((e.clientY - r.top) / r.height - 0.5) * 10);
+    disc.style.setProperty('--shine', `${((e.clientX - r.left) / r.width) * 360}deg`);
+  });
+}
+export const stopMixtape = () => player?.stop();
+
 // ── album ───────────────────────────────────────────────────
 const modal = document.querySelector('.album-modal');
 
@@ -246,12 +383,14 @@ function paintAlbum(a) {
   modal.querySelector('.cover-face').innerHTML = `<img src="${esc(src)}" alt="${esc(a.title)} cover" />`;
   modal.querySelector('.cover-back').innerHTML = `${esc(a.artist)}<br>${esc(a.title)}<br>${esc(a.year)}`;
   modal.querySelector('.cd-art').innerHTML = `<img src="${esc(src)}" alt="" />`;
-  modal.querySelector('.album-count').textContent = `${String(current + 1).padStart(2, '0')} / ${String(music.albums.length).padStart(2, '0')}`;
+  modal.querySelector('.album-count').textContent = `${String(rackOrder().indexOf(current) + 1).padStart(2, '0')} / ${String(music.albums.length).padStart(2, '0')}`;
   info.innerHTML = `
     <p class="year">${esc(a.year)}</p>
     <h3>${esc(a.title)}</h3>
     <p class="artist">${esc(a.artist)}</p>
-    <p class="why">${esc(a.why)}</p>
+    ${a.why ? `<p class="why">${esc(a.why)}</p>` : ''}
+    ${a.official?.url ? `<p><a class="listen" href="${esc(a.official.url)}" target="_blank" rel="noopener">Listen on Apple Music ↗</a></p>` : ''}
+    ${a.tracks.length ? '' : '<p class="tracks-soon">Favourite tracks, coming soon.</p>'}
     <ol class="tracks">
       ${a.tracks
         .map(
@@ -318,7 +457,8 @@ let switching = false;
 async function step(d) {
   if (switching || current < 0) return;
   switching = true;
-  const next = (current + d + music.albums.length) % music.albums.length;
+  const order = rackOrder();
+  const next = order[(order.indexOf(current) + d + order.length) % order.length];
   await playOut(d);
   liftSleeve(current, false);
   current = next;

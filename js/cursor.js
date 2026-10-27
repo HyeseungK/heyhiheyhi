@@ -4,6 +4,7 @@ const LABELS = [
   ['.stack', 'open'],
   ['#hero-canvas', '✦'],
   ['.sleeve', 'open'],
+  ['.mix-track', 'play'],
   ['.guitar', 'strum'],
   ['.ticket', 'tear'],
   ['.muse-btn', 'open'],

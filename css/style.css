@@ -526,6 +526,72 @@ img { display: block; max-width: 100%; }
 .guitar-canvas { display: block; width: 100%; height: 100%; }
 .guitar-fallback { width: 100%; height: 100%; display: grid; place-items: center; font-family: var(--serif); font-style: italic; font-size: 28px; }
 
+/* rack footer + shuffle */
+.rack-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; }
+.shelf-wrap .rack-foot .hint { margin-top: 0; }
+.shuffle-btn { font-size: 13px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); transition: background .2s, color .2s, border-color .2s; }
+.shuffle-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tracks-soon { font-family: var(--serif); font-style: italic; color: var(--muted); margin: 0 0 20px; }
+.listen { font-size: 14px; color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+
+/* ── the burned CD ───────────────────────────────────────── */
+.mixtape {
+  max-width: var(--maxw); margin: 0 auto; padding: clamp(40px, 6vw, 80px) var(--gutter) clamp(90px, 11vw, 150px);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: center;
+}
+.burn-stage { perspective: 1200px; display: grid; place-items: center; align-self: start; position: sticky; top: calc(var(--topbar) + 40px); }
+.burn-disc {
+  --shine: 30deg;
+  position: relative; width: min(440px, 82vw); aspect-ratio: 1; border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 7.2%, rgba(255,255,255,.55) 7.4% 15.5%, #d5d8de 15.8% 16.6%, transparent 16.9%),
+    radial-gradient(circle at 35% 30%, #fbfbfc, #dfe2e7 55%, #c7cbd2 100%);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 30px 60px -28px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.7);
+  -webkit-mask: radial-gradient(circle, transparent 0 7.1%, #000 7.3%); mask: radial-gradient(circle, transparent 0 7.1%, #000 7.3%);
+  transform-style: preserve-3d;
+}
+.burn-disc > span { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+/* the data area: fine grooves and the rainbow sheen of a burned disc */
+.burn-rings {
+  background: repeating-radial-gradient(circle, rgba(0,0,0,.035) 0 1px, transparent 1px 3px);
+  -webkit-mask: radial-gradient(circle, transparent 0 18%, #000 18.5% 97%, transparent 97.5%); mask: radial-gradient(circle, transparent 0 18%, #000 18.5% 97%, transparent 97.5%);
+}
+.burn-holo {
+  background: conic-gradient(from var(--shine), rgba(255,64,160,.32), rgba(255,210,70,.28), rgba(60,240,180,.3), rgba(70,150,255,.34), rgba(190,90,255,.3), rgba(255,64,160,.32));
+  mix-blend-mode: color-burn; opacity: .55;
+  -webkit-mask: radial-gradient(circle, transparent 0 18%, #000 30% 96%, transparent 97%); mask: radial-gradient(circle, transparent 0 18%, #000 30% 96%, transparent 97%);
+  transition: background .2s;
+}
+.burn-shine {
+  background: conic-gradient(from calc(var(--shine) * -1), transparent 0 8%, rgba(255,255,255,.9) 11%, transparent 15% 50%, rgba(255,255,255,.75) 53%, transparent 57%);
+  mix-blend-mode: soft-light;
+  -webkit-mask: radial-gradient(circle, transparent 0 17%, #000 18% 98%); mask: radial-gradient(circle, transparent 0 17%, #000 18% 98%);
+}
+.burn-hub { background: radial-gradient(circle, transparent 0 7.2%, rgba(0,0,0,.06) 7.4% 7.8%, transparent 8% 15.6%, rgba(0,0,0,.08) 15.8% 16.2%, transparent 16.4%); }
+.burn-disc > .burn-label, .burn-disc > .burn-note {
+  inset: auto; left: 50%; translate: -50% 0; white-space: nowrap; border-radius: 0;
+  font-family: 'Reenie Beanie', 'Nanum Pen Script', cursive; color: #1b1b22;
+}
+.burn-disc > .burn-label { top: 24%; font-size: clamp(42px, 5.6vw, 64px); line-height: 1; rotate: -7deg; }
+.burn-disc > .burn-note { top: 66%; font-size: clamp(20px, 2.4vw, 26px); color: #3a3a46; rotate: 4deg; }
+.mix-list { display: grid; gap: 30px; }
+.mix-side ol { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.mix-track {
+  width: 100%; text-align: left; display: grid; grid-template-columns: 26px 36px minmax(0, 1fr) 18px; gap: 12px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--line); transition: background .2s;
+}
+.mix-track:hover { background: var(--soft); }
+.mix-track .n { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.mix-track .art { width: 36px; height: 36px; border-radius: 3px; background: var(--soft) center / cover no-repeat; box-shadow: inset 0 0 0 1px var(--line); }
+.mix-track .tt { display: flex; flex-direction: column; min-width: 0; }
+.mix-track .tt b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-track .tt span { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mix-track .pl { width: 14px; height: 12px; justify-self: end; background: linear-gradient(var(--muted), var(--muted)) left bottom / 3px 40% no-repeat, linear-gradient(var(--muted), var(--muted)) center bottom / 3px 70% no-repeat, linear-gradient(var(--muted), var(--muted)) right bottom / 3px 50% no-repeat; opacity: 0; }
+.mix-track:hover .pl { opacity: .6; }
+.mix-track.is-playing .tt b, .mix-track.is-playing .n { color: var(--accent); }
+.mix-track.is-playing .pl { opacity: 1; background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)); animation: eq .9s ease-in-out infinite alternate; }
+@keyframes eq { 0% { background-size: 3px 30%, 3px 90%, 3px 50%; } 50% { background-size: 3px 90%, 3px 40%, 3px 80%; } 100% { background-size: 3px 50%, 3px 70%, 3px 30%; } }
+
 /* ── Modals ──────────────────────────────────────────────── */
 .modal {
   position: fixed; inset: 0; z-index: 60;
@@ -829,6 +895,9 @@ body.lock { overflow: hidden; }
   .album-info { width: 100%; }
   .case-stage { --s: min(250px, 54vw); padding-left: calc(var(--s) * .22); }
   .room { grid-template-columns: minmax(0, 1fr); padding-bottom: 56px; }
+  .mixtape { grid-template-columns: minmax(0, 1fr); }
+  .burn-stage { position: static; }
+  .burn-disc { width: min(320px, 76vw); }
   .guitar { width: min(300px, 80vw); }
 }
 @media (max-width: 640px) {
@@ -855,7 +924,7 @@ body.lock { overflow: hidden; }
   .chapter:nth-child(2) { --x: 38% !important; --y: 24% !important; }
   .chapter:nth-child(3) { --x: 48% !important; --y: 70% !important; }
   .shelf { gap: 34px; }
-  .shelf-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 0 6px; }
+  .shelf-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 0 4px; }
   .sleeve { --s: auto; width: 100%; }
   .sleeve + .sleeve { margin-left: 0; }
   .os-row { grid-template-columns: 1fr auto; }

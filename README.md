@@ -9,7 +9,7 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 | **Home** | Hyeseung → Helen → Hey Hi → 명함 | Three.js 파티클 글자가 스크롤에 따라 바뀌고 마지막에 명함 테두리로 모입니다. 글자를 클릭하면 반짝이며 흩어졌다가 다시 모입니다. 명함은 눌러서 뒤집고(뒷면에 연락처와 QR), 연락처(.vcf)나 명함 이미지(.png)로 저장할 수 있습니다. 떠다니는 챕터는 끌어서 아무 데나 놓을 수 있고(살짝 던지면 미끄러짐), 놓은 자리 근처에서 다시 떠다닙니다. |
 | **Work** | 커리어 패스 + 프로젝트 | CSS 3D 노트북을 열면 프로젝트 목록이 나오고, 프로젝트는 장표(Exec summary → Issue tree → Approach → Impact)로 넘겨 봅니다. 슬라이드 좌우 클릭, 진행 막대, ←→, 스와이프로 이동합니다. |
 | **Frames** | 사진 테이블 | 흰 테이블 위에 시리즈마다 사진 더미가 놓여 있고 맨 위에 표지 사진이 보입니다. 마우스를 올리면 부채처럼 펼쳐지고, 누르면 사진이 쏟아지듯 펼쳐집니다. 서울처럼 한 지역에 프로젝트가 여럿이면 프로젝트마다 더미가 하나씩 생깁니다. 아래에 Inspiration 무드보드가 있습니다. |
-| **Music** | 앨범 진열대 + 티켓 북 + 브릭 기타 | 앨범을 누르면 케이스가 열리고 CD가 돕니다(←→로 다음 앨범). 티켓은 절취선을 뜯어 뒷면 메모를 봅니다. 기타를 누르면 코드가 울리고 공연·SoundCloud 서랍이 열립니다. 기타를 끌어서 앨범 진열대로 던지면 앨범들이 튕기고 기타는 제자리로 돌아옵니다. |
+| **Music** | 앨범 랙 + 직접 구운 CD + 티켓 북 + 브릭 기타 | 앨범 10장이 5장씩 두 줄로 놓이고, 공식 커버는 iTunes Search API에서 방문자 브라우저가 직접 가져옵니다(일주일 캐시). Shuffle Rack으로 순서를 섞을 수 있고, 앨범을 누르면 케이스가 열리고 CD가 돕니다(←→로 다음 앨범). 손글씨 'Favorite Songs' CD의 곡을 누르면 30초 미리듣기가 재생됩니다(없으면 Apple Music·YouTube로 연결). 티켓은 절취선을 뜯어 뒷면 메모를 봅니다. 기타를 누르면 코드가 울리고 공연·SoundCloud 서랍이 열립니다. 기타를 끌어서 앨범 진열대로 던지면 앨범들이 튕기고 기타는 제자리로 돌아옵니다. |
 
 포인트 컬러는 Cobalt 하나입니다. `site.accents`에 색을 두 개 이상 넣으면 상단 바에 색 팔레트 버튼이 생깁니다(Red · Ink · Film orange · Pink가 주석으로 준비돼 있음).
 
@@ -22,7 +22,8 @@ Hyeseung (Helen) Kim의 자기소개 웹사이트입니다. 명함 대신 보여
 - **명함**: `profile.card`. 실제 명함 스캔이 있으면 `image: 'assets/card.jpg'`로 넣으면 "Save card"가 그 파일을 내려받습니다.
 - **사진**: `assets/photos/new-york/`처럼 지역별 폴더에 넣고 (서울처럼 `projects`로 프로젝트별 묶음도 가능) `visual.places[].photos`의 `src`에 경로를 적습니다. 지역을 추가하려면 블록을 복사하고 `lat`, `lon`(위도, 경도)을 바꿉니다. `src`가 비어 있으면 색 플레이스홀더가 보입니다.
 - **영상**: 지역의 `videos`에 YouTube나 Vimeo 링크를 넣습니다(예: Suncheon).
-- **앨범 커버**: `assets/albums/`에 넣고 `cover`에 경로를 적습니다. 비어 있으면 제목을 시드로 한 플로우 필드 아트가 그려집니다.
+- **앨범**: `music.albums`. 공식 커버는 `itunes`의 검색 힌트(다른 표기 `artists`/`titles`, 나라 `country`)로 자동으로 찾습니다. 틀린 커버가 나오면 힌트를 고치거나 `cover: 'assets/albums/…'`로 직접 지정합니다. 커버를 못 찾으면 플로우 필드 아트가 그려집니다.
+- **CD**: `music.mixtape`. 곡마다 `side`로 A면/B면을 나눕니다.
 - **Inspiration**: `visual.muses`. 카드 한 장 = 좋아하는 것 하나(사람이든 작품이든). `type`이 필터가 되고(Photographers · Directors · Videos · Other Artwork, 이름과 순서는 `visual.museTypes`), 사람은 `works`에 대표작 이미지 2~3장, 작품은 `image` 한 장을 넣습니다. `instagram`에 아이디를 적으면 카드에 @아이디와 인스타 버튼이 생깁니다(살아 있는 작가만). 다른 작가의 이미지는 출처를 밝히고 `url`에 원본 링크를 넣어 주세요.
 - **티켓**: `music.tickets`.
 - **전환 효과**: `index.html`의 `data-fx="pixel"` 또는 `data-fx="ripple"`. 전환 화면 문구("Hey Hi, I’m listening" 등)는 `site.greeting`에서 바꿉니다.

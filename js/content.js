@@ -549,88 +549,128 @@ export const visual = {
 // ── MUSIC ────────────────────────────────────────────────────
 // Covers: put images in assets/albums and set `cover`.
 export const music = {
-  lead: 'Albums I keep coming back to. Pull one off the shelf to see what is inside. The guitar knows where I’ve played.', // [PLACEHOLDER]
+  lead: 'Albums I keep coming back to, and a CD I burned myself. Pull a record off the rack; the guitar knows where I’ve played.',
+  // 10 records, 5 per ledge. Covers come from the iTunes Search API (`itunes`: search hints);
+  // set `cover: 'assets/albums/…'` to use your own image instead.
   albums: [
     {
-      title: 'Hey Hi',
-      artist: 'Artist name',
-      year: '2020',
-      cover: '',
-      color: '#2f4cff',
-      why: 'The song this site is named after. It sounds exactly like saying hello to someone you missed.',
-      tracks: [
-        { name: 'Hey Hi', why: 'The first eight bars are the warmest greeting I know.' },
-        { name: 'Track 2', why: '[PLACEHOLDER] Why this track matters to me.' },
-      ],
+      title: 'Call Me Baby',
+      artist: 'EXO',
+      year: '2015', // [CHECK]
+      color: '#d9d4cc', // used until the official cover loads
+      itunes: { artists: ['엑소'], titles: ['EXODUS', 'The 2nd Album EXODUS'], country: 'kr' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Two',
-      artist: 'Artist B',
-      year: '2016',
-      cover: '',
-      color: '#111111',
-      why: '[PLACEHOLDER] The album I played on repeat during my first job.',
-      tracks: [
-        { name: 'Opening track', why: 'That bass line.' },
-        { name: 'Closer', why: 'Best last song on any record.' },
-      ],
+      title: '恋人へ (For Lovers)',
+      artist: 'Lamp',
+      year: '2004', // [CHECK]
+      color: '#e8dccb', // used until the official cover loads
+      itunes: { titles: ['恋人へ', 'Koibito e'], country: 'jp' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Three',
-      artist: 'Artist C',
-      year: '1999',
-      cover: '',
-      color: '#e8dccb',
-      why: '[PLACEHOLDER] Found it in my dad’s CD shelf.',
-      tracks: [{ name: 'Side A, 3', why: 'Sounds like a summer afternoon.' }],
+      title: 'When the Pawn...',
+      artist: 'Fiona Apple',
+      year: '1999', // [CHECK]
+      color: '#c94f3d', // used until the official cover loads
+      itunes: { titles: ['When the Pawn'] },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Four',
-      artist: 'Artist D',
-      year: '2012',
-      cover: '',
-      color: '#c94f3d',
-      why: '[PLACEHOLDER]',
-      tracks: [{ name: 'Single', why: 'Learned it on guitar first.' }],
+      title: '여정 (旅程)',
+      artist: 'Casker',
+      year: '2008', // [CHECK]
+      color: '#7a8b6f', // used until the official cover loads
+      itunes: { artists: ['캐스커'], titles: ['여정', '旅程'], country: 'kr' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Five',
-      artist: 'Artist E',
-      year: '2008',
-      cover: '',
-      color: '#7a8b6f',
-      why: '[PLACEHOLDER]',
-      tracks: [{ name: 'Track 5', why: 'Late-night bus soundtrack.' }],
+      title: 'CAPRISONGS',
+      artist: 'FKA twigs',
+      year: '2022', // [CHECK]
+      color: '#e3d3e0', // used until the official cover loads
+      itunes: {  },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Six',
-      artist: 'Artist F',
-      year: '2021',
-      cover: '',
-      color: '#d9c8a9',
-      why: '[PLACEHOLDER]',
-      tracks: [{ name: 'Track 1', why: '' }],
+      title: 'Ego Death',
+      artist: 'The Internet',
+      year: '2015', // [CHECK]
+      color: '#2f4cff', // used until the official cover loads
+      itunes: {  },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Seven',
-      artist: 'Artist G',
-      year: '1994',
-      cover: '',
-      color: '#3b3f5c',
-      why: '[PLACEHOLDER]',
-      tracks: [{ name: 'Track 9', why: '' }],
+      title: 'Wet Land',
+      artist: 'Hiroshi Yoshimura',
+      year: '1993', // [CHECK]
+      color: '#cfe0e6', // used until the official cover loads
+      itunes: { artists: ['吉村弘'], country: 'jp' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
     {
-      title: 'Album Eight',
-      artist: 'Artist H',
-      year: '2018',
-      cover: '',
-      color: '#f2f0ea',
-      why: '[PLACEHOLDER]',
-      tracks: [{ name: 'Track 4', why: '' }],
+      title: 'Aja',
+      artist: 'Steely Dan',
+      year: '1977', // [CHECK]
+      color: '#111111', // used until the official cover loads
+      itunes: {  },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+    },
+    {
+      title: 'Love Trip',
+      artist: 'Takako Mamiya',
+      year: '1982', // [CHECK]
+      color: '#f0d2c2', // used until the official cover loads
+      itunes: { artists: ['間宮貴子'], country: 'jp' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
+    },
+    {
+      title: 'WhyKiiiKiii',
+      artist: 'KiiiKiii',
+      year: '2025', // [CHECK]
+      color: '#f2f0ea', // used until the official cover loads
+      itunes: { artists: ['키키'], country: 'kr' },
+      why: '', // [PLACEHOLDER] one line on why
+      tracks: [], // favourite tracks, coming later: { name: '...', why: '...' }
     },
   ],
-  // Ticket book: festivals and concerts. Click a ticket to tear the stub and read the back.
+  // The burned CD. `side`: 'east' (Seoul · Tokyo) or 'west' (everywhere else) — see `sides`.
+  mixtape: {
+    label: 'Favorite Songs',
+    note: '2026 · for whoever is listening', // [PLACEHOLDER] the small scribble under the title
+    sides: { east: 'Side A · Seoul & Tokyo', west: 'Side B · Elsewhere' },
+    songs: [
+      { artist: 'Brian Eno', title: 'By This River', side: 'west', itunes: { titles: ['By This River'] } },
+      { artist: 'Mitski', title: 'First Love / Late Spring', side: 'west', itunes: {  } },
+      { artist: 'Slom', title: '아니라고', side: 'east', itunes: { artists: ['슬롬'], country: 'kr' } },
+      { artist: 'Four Tet', title: '31 Bloom', side: 'west', itunes: {  } },
+      { artist: 'The Beatles', title: 'Hey Jude', side: 'west', itunes: {  } },
+      { artist: 'Caetano Veloso', title: 'Pecado', side: 'west', itunes: { country: 'br' } },
+      { artist: 'Milton Nascimento', title: 'Cais', side: 'west', itunes: { country: 'br' } },
+      { artist: 'Masayoshi Takanaka', title: 'Beleza Pula', side: 'east', itunes: { artists: ['高中正義'], country: 'jp' } },
+      { artist: 'Yusef Lateef', title: 'Love Theme from Spartacus', side: 'west', itunes: { titles: ['Love Theme'] } },
+      { artist: 'The Strokes', title: 'Ode to the Mets', side: 'west', itunes: {  } },
+      { artist: 'Billy Joel', title: 'Vienna', side: 'west', itunes: {  } },
+      { artist: 'Cortex', title: 'Pouchkine', side: 'west', itunes: { titles: ['Poxa'] } },
+      { artist: 'NMIXX', title: 'Phoenix', side: 'east', itunes: { artists: ['엔믹스'], country: 'kr' } },
+      { artist: 'capsule', title: 'I Wish You', side: 'east', itunes: { country: 'jp' } },
+      { artist: 'Perfume', title: '575', side: 'east', itunes: { country: 'jp' } },
+      { artist: 'House Rulez', title: 'House', side: 'east', itunes: { artists: ['하우스룰즈'], country: 'kr' } },
+      { artist: 'Jeebanoff', title: '낯선 사람', side: 'east', itunes: { artists: ['지바노프'], country: 'kr' } },
+      { artist: 'Blood Orange', title: 'Augustine', side: 'west', itunes: {  } },
+      { artist: 'Daniel Caesar', title: 'Who Knows', side: 'west', itunes: {  } },
+    ],
+  },
   tickets: [
     // [PLACEHOLDER]
     { type: 'Festival', name: 'Pentaport Rock Festival', lineup: 'Day 2', date: '2024.08.03', venue: 'Songdo Moonlight Park', city: 'Incheon', color: '#2f4cff', memo: 'Rain all afternoon, then the headliner played under clear sky.' },
