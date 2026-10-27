@@ -34,5 +34,10 @@ jobs:
             echo "No new covers."
           else
             git commit -m "Save album covers"
-            git push
+            # someone may have pushed while this ran: catch up and try again
+            for i in 1 2 3 4; do
+              git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push && exit 0
+              sleep $((i * 5))
+            done
+            exit 1
           fi
