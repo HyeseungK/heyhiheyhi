@@ -651,7 +651,7 @@ export const music = {
       // favourite tracks: `n` is the track number on the album
       tracks: [
         { n: 3, name: 'Artificial Love' },
-        { n: 6, name: '백색소음 (White Noise)', titles: ['White Noise', '백색소음'] },
+        { n: 6, name: '백색소음 (White Noise)' }, // the Korean version, not the Chinese one
       ],
     },
     {

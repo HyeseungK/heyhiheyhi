@@ -568,17 +568,5 @@
     "source": "itunes",
     "spotify": "",
     "apple": ""
-  },
-  "song|EXO|백색소음 (White Noise)": {
-    "artwork": "assets/songs/exo-백색소음-white-noise.jpg",
-    "url": "https://music.apple.com/us/album/white-noise-chinese-version/1121473062?i=1121473245&uo=4",
-    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/66/83/b366836f-2163-b23b-88e2-a11c29a25344/mzaf_13378816187272781067.plus.aac.p.m4a",
-    "previewUrl": "",
-    "name": "White Noise (Chinese Version)",
-    "album": "EX’ACT - The 3rd Album",
-    "year": "2016",
-    "source": "itunes",
-    "spotify": "",
-    "apple": ""
   }
 }
