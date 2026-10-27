@@ -819,7 +819,7 @@ export const music = {
       { artist: 'Lily Allen', title: 'Trigger Bang', side: 'modern', itunes: { titles: ['Trigger Bang (feat. Giggs)'] } },
       { artist: 'Fantastic Plastic Machine', title: 'City Lights', side: 'modern', itunes: { titles: ['CITY LIGHTS'], country: 'jp' } },
       { artist: 'Aphex Twin', title: 'CIRCLONT6A [141.98][syrobonkus mix]', side: 'modern', itunes: { titles: ['CIRCLONT6A (syrobonkus mix)', 'CIRCLONT6A'] } },
-      { artist: 'STUTS', title: '愛をさわれたら (If I Could Touch Love)', side: 'modern', album: 'with SIKK-O & Mamiko Suzuki', itunes: { artists: ['STUTS × SIKK-O × 鈴木真海子', 'STUTS & SIKK-O & 鈴木真海子', 'STUTS'], titles: ['愛をさわれたら'], country: 'jp' } },
+      { artist: 'STUTS', title: '愛をさわれたら (If I Could Touch Love)', side: 'modern', itunes: { artists: ['STUTS × SIKK-O × 鈴木真海子', 'STUTS & SIKK-O & 鈴木真海子', 'STUTS'], titles: ['愛をさわれたら'], country: 'jp' } },
       { artist: 'KiiiKiii', title: '딸기게임 (Strawberry Game)', side: 'modern', itunes: { artists: ['키키'], titles: ['Strawberry Game', '딸기게임', '딸기 게임'], country: 'kr' } },
       { artist: 'Fisherman', title: '아마 난 (feat. Zion.T)', side: 'modern', itunes: { artists: ['피셔맨'], titles: ['아마 난'], country: 'kr' } },
     ],
