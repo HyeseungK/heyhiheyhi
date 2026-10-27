@@ -802,8 +802,8 @@ export const colophon = {
     'This site was built over two days of conversation. I described what I wanted, mostly in Korean and half in feelings, and Claude Code wrote, tested and shipped every line. I steered; it built.',
   stats: [
     { value: '2', label: 'days' },
-    { value: '~5.6k', label: 'lines of code, none typed by me' },
-    { value: '170+', label: 'commits' },
+    { value: '~5.7k', label: 'lines of code, none typed by me' },
+    { value: '280+', label: 'commits' },
     { value: '73', label: 'photos from my own rolls' },
   ],
   sections: [
@@ -818,9 +818,9 @@ export const colophon = {
     {
       title: 'The stack',
       items: [
-        ['Three.js', 'the particle name on the home screen (a custom shader), the brick guitar, amp and icons'],
+        ['Three.js', 'the particle name on the home screen (a custom shader), the brick guitar, amp, turntable and icons'],
         ['GSAP + ScrollTrigger', 'every scroll, flip, fan-out and spin'],
-        ['Canvas 2D', 'the pixel and ripple page transitions'],
+        ['Canvas 2D', 'the pixel and ripple page transitions, and the confetti'],
         ['Web Audio', 'the guitar chord, synthesised string by string (Karplus–Strong)'],
         ['Plain HTML, CSS, JS', 'no framework and no build step; hosted on GitHub Pages'],
       ],
