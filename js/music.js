@@ -73,7 +73,17 @@ export function renderMusic(root) {
   renderMixtape(root);
 
   const guitar = root.querySelector('.guitar');
-  guitar3d = createGuitar(guitar.querySelector('canvas'));
+  const rig = root.querySelector('.guitar-rig');
+  // the amp stays put on its own canvas; the guitar canvas on top is the one you can throw
+  const ampScene = createGuitar(root.querySelector('.amp-canvas'), { part: 'amp', hoverEl: rig });
+  const guitarScene = createGuitar(guitar.querySelector('canvas'), { part: 'guitar', hoverEl: rig });
+  guitar3d = guitarScene && {
+    start() { ampScene?.start(); guitarScene.start(); },
+    stop() { ampScene?.stop(); guitarScene.stop(); },
+    strum: () => guitarScene.strum(),
+    nudge: () => guitarScene.nudge(),
+    recolor() { ampScene?.recolor(); guitarScene.recolor(); },
+  };
   if (!guitar3d) guitar.innerHTML = '<span class="guitar-fallback">♪ Guitar</span>';
   guitar.addEventListener('click', (e) => {
     if (guitar.dataset.thrown) { e.preventDefault(); return; } // the end of a throw, not a click
@@ -572,7 +582,7 @@ export function initMusicScroll(root) {
       scrollTrigger: { trigger: row, start: 'top 90%' },
     });
   });
-  gsap.from(root.querySelector('.guitar'), {
+  gsap.from(root.querySelector('.guitar-rig'), {
     y: 60, opacity: 0, duration: 1, ease: 'power3.out',
     scrollTrigger: { trigger: root.querySelector('.guitar-wrap'), start: 'top 92%' },
   });

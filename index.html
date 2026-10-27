@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+KR:wght@500;700&family=Nanum+Pen+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=b5c5e663" />
+  <link rel="stylesheet" href="css/style.css?v=f5792fb4" />
   <script type="importmap">
     {
       "imports": {
@@ -21,12 +21,12 @@
         "./js/cursor.js": "./js/cursor.js?v=9c697a20",
         "./js/fx.js": "./js/fx.js?v=6ff55346",
         "./js/gen.js": "./js/gen.js?v=6ccfc483",
-        "./js/guitar3d.js": "./js/guitar3d.js?v=801da228",
+        "./js/guitar3d.js": "./js/guitar3d.js?v=07299b71",
         "./js/hero.js": "./js/hero.js?v=1fef5737",
         "./js/itunes.js": "./js/itunes.js?v=3a7dafff",
         "./js/main.js": "./js/main.js?v=32b784db",
         "./js/modal.js": "./js/modal.js?v=c2e0d811",
-        "./js/music.js": "./js/music.js?v=5d48b4b5",
+        "./js/music.js": "./js/music.js?v=cc45d830",
         "./js/visual.js": "./js/visual.js?v=79a159e9",
         "./js/work.js": "./js/work.js?v=c5b8a30b"
       }
@@ -189,7 +189,10 @@
           <div class="rack-foot"><p class="hint">Pick a record</p><button class="shuffle-btn" type="button">Shuffle Rack ⤮</button></div>
         </div>
         <div class="guitar-wrap">
-          <button class="guitar" aria-label="Guitar: strum it, and see performances and SoundCloud"><canvas class="guitar-canvas"></canvas></button>
+          <div class="guitar-rig">
+            <canvas class="amp-canvas" aria-hidden="true"></canvas>
+            <button class="guitar" aria-label="Guitar: strum it, throw it, and see performances and SoundCloud"><canvas class="guitar-canvas"></canvas></button>
+          </div>
           <p class="hint">Strum me</p>
         </div>
       </div>

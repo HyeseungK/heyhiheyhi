@@ -52,7 +52,10 @@ const COLORS = {
   N: '#151515', K: '#151515', C: '#151515', D: '#4a4a48',
 };
 
-export function createGuitar(canvas) {
+// `part`: 'all', 'amp' or 'guitar' — the amp and the guitar can live on separate
+// canvases stacked on top of each other, so the guitar can be thrown while the amp stays.
+// `hoverEl`: element whose pointer position tilts the scene (defaults to the canvas).
+export function createGuitar(canvas, { part = 'all', hoverEl = canvas } = {}) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -93,6 +96,8 @@ export function createGuitar(canvas) {
   guitarPivot.add(guitar);
   rig.add(amp, guitarPivot);
   scene.add(rig);
+  if (part === 'amp') guitarPivot.visible = false;
+  if (part === 'guitar') amp.visible = false;
 
   // soft contact shadow
   const sc = document.createElement('canvas');
@@ -109,7 +114,7 @@ export function createGuitar(canvas) {
   );
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.set(-1, -23.6, -2);
-  scene.add(shadow);
+  if (part !== 'guitar') scene.add(shadow);
 
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -126,12 +131,12 @@ export function createGuitar(canvas) {
   }
 
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  canvas.addEventListener('pointermove', (e) => {
-    const r = canvas.getBoundingClientRect();
+  hoverEl.addEventListener('pointermove', (e) => {
+    const r = hoverEl.getBoundingClientRect();
     pointer.tx = ((e.clientX - r.left) / r.width) * 2 - 1;
     pointer.ty = ((e.clientY - r.top) / r.height) * 2 - 1;
   });
-  canvas.addEventListener('pointerleave', () => (pointer.tx = pointer.ty = 0));
+  hoverEl.addEventListener('pointerleave', () => (pointer.tx = pointer.ty = 0));
 
   let running = false, strumT = -10, hoverT = -10;
   const clock = new THREE.Clock();
