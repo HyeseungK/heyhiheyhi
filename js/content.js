@@ -100,7 +100,7 @@ export const work = {
       period: '2023',
       org: 'New York University',
       role: 'Visiting Student',
-      text: 'One spring, and it changed the plan. New York is where my love for film, photography and music really grew (the rolls are in Frames). I left wanting to work there one day, set on working or studying abroad, and with an MBA quietly added to the list.',
+      text: 'One spring, and it changed the plan. New York is where my love for film, photography and music really grew (the rolls are in Frames). I left wanting to work there one day, and set on working or studying abroad.',
     },
     {
       group: 'Education & activities',
