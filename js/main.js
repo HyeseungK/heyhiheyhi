@@ -378,7 +378,8 @@ try {
   const k = accents.findIndex((a) => a.name === saved);
   if (k >= 0) accentIdx = k;
 } catch (e) { /* storage blocked */ }
-if (accents.length < 2) $('.accent-wrap').hidden = true;
+// hidden in the HTML so it never flashes on load; shown only when there is more than one colour to pick
+$('.accent-wrap').hidden = accents.length < 2;
 const swatches = $('.swatches');
 swatches.innerHTML = accents
   .map((a, i) => `<button class="swatch" role="option" data-i="${i}" style="--c:${a.hex}"><i></i><span>${a.name}</span></button>`)
