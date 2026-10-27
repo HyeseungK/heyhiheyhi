@@ -567,6 +567,16 @@ export const visual = {
       tone: '#d5dde6',
     },
     {
+      type: 'Artist',
+      title: 'Gawx',
+      credit: 'Video artist · YouTube',
+      works: [],
+      why: 'Every trip comes out nostalgic, in exactly the colours I love, and the music is always the right pick.',
+      url: 'https://www.youtube.com/@Gawx2',
+      instagram: '',
+      tone: '#e6d9c8',
+    },
+    {
       type: 'Work',
       title: 'KiiiKiii — Delulu',
       credit: 'Music video', // [CHECK] director: listed online as a track film by Song Seo-yoon
