@@ -511,11 +511,13 @@ export const visual = {
     },
     {
       type: ['Photographer', 'Director'],
-      title: '이혜인 Lee Hyein', // [CHECK] romanisation
-      credit: 'Photographer · music video director',
-      works: [],
-      why: '', // [PLACEHOLDER]
+      title: '이혜인 Lee Hye-in',
+      credit: 'Photographer and music video director',
+      works: ['assets/muses/lee-hyein-1.jpg'],
+      why: 'Strong contrast and a blue cast: cool, a little mysterious. The work with IVE is exactly my taste, Off The Record above all.',
       url: '',
+      videos: [{ title: 'IVE — Off The Record', url: 'https://www.youtube.com/watch?v=_ApV7Lm87cg' }],
+      links: [{ label: 'Vimeo', url: 'https://vimeo.com/2eehyein' }],
       instagram: '2eehyein',
       tone: '#dfe3dc',
     },
