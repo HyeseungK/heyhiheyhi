@@ -128,11 +128,13 @@
     "artwork": "assets/albums/the-internet-ego-death.jpg",
     "url": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q",
     "preview": "",
+    "previewUrl": "",
     "name": "Ego Death",
     "album": "Ego Death",
     "year": "2015",
     "source": "spotify",
-    "spotify": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q"
+    "spotify": "https://open.spotify.com/album/69g3CtOVg98TPOwqmI2K7Q",
+    "apple": "https://music.apple.com/us/album/ego-death/999127640"
   },
   "album|Takako Mamiya|Love Trip": {
     "artwork": "assets/albums/takako-mamiya-love-trip.jpg",
@@ -703,6 +705,42 @@
     "name": "ENDLESS NIGHT",
     "album": "MINISERIES 2",
     "year": "2024",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|The Internet|Under Control": {
+    "artwork": "assets/songs/the-internet-under-control.jpg",
+    "url": "https://music.apple.com/us/album/under-control/999127640?i=999127647&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/81/e8/47/81e84774-1018-89bd-a76c-2fcd003d2595/mzaf_1728104401221333428.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Under Control",
+    "album": "Ego Death",
+    "year": "2015",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|The Internet|Just Sayin / I Tried": {
+    "artwork": "assets/songs/the-internet-just-sayin-i-tried.jpg",
+    "url": "https://music.apple.com/us/album/just-sayin-i-tried/999127640?i=999128077&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0e/e2/97/0ee29702-1b78-90ba-c446-817cb2e1f568/mzaf_16253873030710942567.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Just Sayin/I Tried",
+    "album": "Ego Death",
+    "year": "2015",
+    "source": "itunes",
+    "spotify": "",
+    "apple": ""
+  },
+  "song|The Internet|Partners in Crime Part Three": {
+    "artwork": "assets/songs/the-internet-partners-in-crime-part-three.jpg",
+    "url": "https://music.apple.com/us/album/partners-in-crime-part-three/999127640?i=999128088&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/43/d2/3b/43d23bad-0968-fffa-c4d0-f334fa687720/mzaf_12859419232254695741.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Partners in Crime Part Three",
+    "album": "Ego Death",
+    "year": "2015",
     "source": "itunes",
     "spotify": "",
     "apple": ""
