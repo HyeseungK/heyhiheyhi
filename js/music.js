@@ -687,7 +687,7 @@ function openStage() {
       ${s.performances
         .map((p) => {
           const ig = (p.instagram || '').replace(/^@/, '');
-          const inner = `<span class="t">${esc(p.title)}${p.url ? ' ↗' : ''}${p.sub ? `<small>${esc(p.sub)}</small>` : ''}</span><span class="d">${esc(p.date)}</span><span class="r">${esc(p.role)}</span>${p.next ? `<span class="next">Next · ${esc(p.next)}</span>` : ''}${ig ? `<span class="r"><a class="perf-ig" href="https://www.instagram.com/${encodeURIComponent(ig)}/" target="_blank" rel="noopener">@${esc(ig)}</a></span>` : ''}`;
+          const inner = `<span class="t">${esc(p.title)}${p.url ? ' ↗' : ''}${p.sub ? `<small>${esc(p.sub)}</small>` : ''}</span><span class="d">${esc(p.date)}</span><span class="r">${esc(p.role)}</span>${p.next ? `<span class="next">Upcoming · ${esc(p.next)}</span>` : ''}${ig ? `<span class="r"><a class="perf-ig" href="https://www.instagram.com/${encodeURIComponent(ig)}/" target="_blank" rel="noopener">@${esc(ig)}</a></span>` : ''}`;
           return `<li>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`}</li>`;
         })
         .join('')}
