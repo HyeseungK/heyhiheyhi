@@ -276,5 +276,38 @@
     "year": "1975",
     "source": "spotify",
     "spotify": "https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7"
+  },
+  "album|Steely Dan|Can’t Buy a Thrill": {
+    "artwork": "assets/albums/steely-dan-can-t-buy-a-thrill.jpg",
+    "url": "https://music.apple.com/us/album/cant-buy-a-thrill/1650885288?uo=4",
+    "preview": "",
+    "previewUrl": "",
+    "name": "Can't Buy A Thrill",
+    "album": "Can't Buy A Thrill",
+    "year": "1972",
+    "source": "itunes",
+    "spotify": ""
+  },
+  "song|Steely Dan|Deacon Blues": {
+    "artwork": "assets/songs/steely-dan-deacon-blues.jpg",
+    "url": "https://music.apple.com/us/album/deacon-blues/1706428459?i=1706428464&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7d/8b/cb/7d8bcb40-06ac-011d-04ca-a410eb75e625/mzaf_3669432319389931140.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Deacon Blues",
+    "album": "Aja",
+    "year": "1977",
+    "source": "itunes",
+    "spotify": ""
+  },
+  "song|Lily Allen|Trigger Bang": {
+    "artwork": "assets/songs/lily-allen-trigger-bang.jpg",
+    "url": "https://music.apple.com/us/album/trigger-bang-feat-giggs/1356199338?i=1356199992&uo=4",
+    "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/5f/ca/83/5fca8373-36c2-faff-79ee-98e2fcfd5ca3/mzaf_1689100293219067484.plus.aac.p.m4a",
+    "previewUrl": "",
+    "name": "Trigger Bang (feat. Giggs)",
+    "album": "No Shame",
+    "year": "2017",
+    "source": "itunes",
+    "spotify": ""
   }
 }
