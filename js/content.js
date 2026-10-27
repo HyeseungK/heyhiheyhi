@@ -502,7 +502,7 @@ export const visual = {
       why: 'Another one lighting up KiiiKiii’s world. Sees everything warm and glittering, and keeps film’s soft, hazy colour even on digital. The personal film work is lovely too. KiiiKiii’s first-album concept photos and Sweet & Sour are legendary.',
       url: '',
       links: [
-        { label: 'Films', url: 'https://lifeimagesfilm.com/film' },
+        { label: 'Website', url: 'https://lifeimagesfilm.com/film' },
         { label: 'Sweet & Sour', url: 'https://kiiikiii.kr/sweetsour' },
       ],
       instagram: 'lifeimagesfilm',
