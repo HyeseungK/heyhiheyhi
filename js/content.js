@@ -582,17 +582,17 @@ export const visual = {
       credit: 'Music video · Legend Film', // [CHECK] dir. Yoon Seung-rim, per press
       image: '',
       why: '', // [PLACEHOLDER]
-      url: '', // [PLACEHOLDER] YouTube link
+      url: 'https://www.youtube.com/watch?v=zq5mr3ePY1I',
       instagram: '',
       tone: '#2a2a2a',
     },
     {
       type: 'Work',
-      title: '필름카이 Film Kai', // [CHECK] couldn't find this one online yet
-      credit: 'dir. 송민규 Song Mingyu',
+      title: 'FILM KAI',
+      credit: 'dir. 송민규 Song Mingyu', // [CHECK] romanisation
       image: '',
       why: '', // [PLACEHOLDER]
-      url: '', // [PLACEHOLDER]
+      url: 'https://www.youtube.com/watch?v=VjjKbrFJoxY',
       instagram: '',
       tone: '#262626',
     },
