@@ -275,5 +275,16 @@
     "year": "2025",
     "source": "spotify",
     "spotify": "https://open.spotify.com/album/0Z91ePA53qNIvmafwpBDQK"
+  },
+  "album|Shigeo Sekito|The Word": {
+    "artwork": "assets/albums/shigeo-sekito-the-word.jpg",
+    "url": "https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7",
+    "preview": "",
+    "previewUrl": "",
+    "name": "華麗なるエレクトーン -ザ・ワード-",
+    "album": "華麗なるエレクトーン -ザ・ワード-",
+    "year": "1975",
+    "source": "spotify",
+    "spotify": "https://open.spotify.com/album/2rwQ71x5mXHX162ce5ypy7"
   }
 }
