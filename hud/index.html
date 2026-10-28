@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zeekr 7X AR-HUD 해부도</title>
+<meta name="description" content="Zeekr 7X AR-HUD(HA1SZK63E)를 분해 사진으로 재구성한 인터랙티브 3D 해부도. 부품별 보기, 분해, 광로 시뮬레이션.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: full-bleed 3D bench; part index left, part sheet right, control dock along the bottom. One dark look, by choice. */
+:root {
+  --bg: #0b0e12;
+  --panel: rgba(16, 20, 26, 0.88);
+  --panel-solid: #121820;
+  --line: #243040;
+  --fg: #e6ebef;
+  --muted: #8b98a5;
+  --accent: #ffb547;   /* LED amber: controls, selection */
+  --ray: #6fe7ff;      /* HUD light */
+  --ok: #7fdca0;
+  --warn: #ff8a5c;
+  --sans: 'IBM Plex Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+.top { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 14px); left: calc(env(safe-area-inset-left, 0px) + 16px); right: calc(env(safe-area-inset-right, 0px) + 16px); display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; pointer-events: none; z-index: 5; }
+.top > * { pointer-events: auto; }
+.brand { display: grid; gap: 2px; }
+.brand .eyebrow { font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--accent); text-transform: uppercase; }
+.brand h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+.brand p { margin: 0; color: var(--muted); font-size: 12px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); font-size: 12px; color: var(--fg); white-space: nowrap; }
+.chip:hover { border-color: #3a4a5c; }
+.chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+
+.panel { position: fixed; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 4; }
+#parts { left: calc(env(safe-area-inset-left, 0px) + 16px); top: 108px; bottom: 132px; width: 232px; overflow: auto; padding: 10px 6px 10px 10px; }
+#parts h2, #info h2 { font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--muted); text-transform: uppercase; margin: 12px 4px 6px; }
+#parts h2:first-child { margin-top: 2px; }
+.pitem { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 6px; border-radius: 8px; text-align: left; }
+.pitem:hover { background: rgba(255,255,255,.04); }
+.pitem.on { background: rgba(255,181,71,.10); }
+.pitem.on .pname { color: var(--accent); }
+.pitem.sub { padding-left: 24px; }
+.pitem .dot { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.pitem .pname { text-align: left; flex: 1; min-width: 0; font-size: 13px; line-height: 1.3; }
+.pitem .pname small { display: block; color: var(--muted); font: 400 10.5px/1.3 var(--mono); }
+.pitem .eye { flex: none; width: 22px; height: 22px; border-radius: 6px; color: var(--muted); display: grid; place-items: center; }
+.pitem .eye:hover { background: rgba(255,255,255,.08); color: var(--fg); }
+.pitem.hiddenpart .pname { opacity: .4; }
+
+#info { right: calc(env(safe-area-inset-right, 0px) + 16px); top: 108px; bottom: 132px; width: 360px; overflow: auto; padding: 14px 16px 18px; }
+#info h3 { margin: 0; font-size: 19px; line-height: 1.3; text-wrap: balance; }
+#info .en { font: 400 12px/1.4 var(--mono); color: var(--muted); margin-top: 3px; }
+#info p { line-height: 1.65; margin: 10px 0; color: #cfd7de; }
+#info ul { margin: 8px 0; padding-left: 18px; display: grid; gap: 7px; }
+#info li { line-height: 1.6; color: #cfd7de; }
+.badge { display: inline-block; font: 500 10.5px/1 var(--mono); padding: 4px 6px; border-radius: 4px; border: 1px solid; margin-right: 4px; letter-spacing: .02em; }
+.badge.photo { color: var(--ok); border-color: rgba(127,220,160,.4); }
+.badge.guess { color: var(--warn); border-color: rgba(255,138,92,.4); }
+.specs { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 12px 0; font-size: 12.5px; }
+.specs dt { color: var(--muted); }
+.specs dd { margin: 0; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 0; overflow-wrap: anywhere; }
+.thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; }
+.thumbs button { aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.thumbs button:hover img { transform: scale(1.06); }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+.btn { padding: 7px 11px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.03); font-size: 12.5px; }
+.btn:hover { border-color: #3a4a5c; }
+.btn.primary { border-color: var(--accent); color: var(--accent); }
+.journey { list-style: none; padding: 0 !important; margin: 8px 0; display: grid; gap: 4px !important; counter-reset: j; }
+.journey li { counter-increment: j; }
+.journey button { width: 100%; text-align: left; display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 7px 8px; border-radius: 8px; line-height: 1.45; }
+.journey button::before { content: counter(j); font: 500 11px/20px var(--mono); text-align: center; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); color: var(--ray); }
+.journey button:hover { background: rgba(111,231,255,.06); }
+.journey button.on { background: rgba(111,231,255,.10); }
+.journey b { font-weight: 600; color: var(--fg); }
+.journey b, .journey span { grid-column: 2; }
+.journey span { color: var(--muted); font-size: 12.5px; }
+.journey button::before { grid-row: 1 / span 2; }
+.readout { font: 400 12px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+.readout b { color: var(--ray); font-weight: 500; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+#dock { left: calc(env(safe-area-inset-left, 0px) + 16px); right: calc(env(safe-area-inset-right, 0px) + 16px); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); padding: 10px 12px; display: flex; gap: 8px 18px; align-items: center; overflow-x: auto; scrollbar-width: thin; }
+.ctl { display: grid; gap: 5px; flex: none; }
+.ctl > label, .ctl > .lab { font: 500 10.5px/1 var(--mono); letter-spacing: .08em; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+.ctl output { color: var(--accent); text-transform: none; letter-spacing: 0; margin-left: 4px; }
+.ctl input[type=range] { width: 140px; accent-color: var(--accent); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { padding: 5px 9px; font-size: 12px; white-space: nowrap; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: rgba(255,181,71,.14); color: var(--accent); }
+.tog { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; white-space: nowrap; padding: 5px 9px; border: 1px solid var(--line); border-radius: 8px; }
+.tog::before { content: ""; width: 26px; height: 14px; border-radius: 7px; background: #2a3440; box-shadow: inset 0 0 0 1px #3a4756; transition: background .2s; flex: none; background-image: radial-gradient(circle at 7px 7px, #9aa6b2 5px, transparent 5.5px); }
+.tog[aria-pressed="true"] { border-color: rgba(255,181,71,.5); }
+.tog[aria-pressed="true"]::before { background-color: var(--accent); background-image: radial-gradient(circle at 19px 7px, #1a1206 5px, transparent 5.5px); }
+.vsep { width: 1px; align-self: stretch; background: var(--line); flex: none; }
+
+#tip { position: fixed; pointer-events: none; z-index: 8; padding: 5px 8px; border-radius: 6px; background: var(--panel-solid); border: 1px solid var(--line); font-size: 12px; transform: translate(12px, 12px); white-space: nowrap; }
+#labels { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+.lbl { position: absolute; transform: translate(-50%, -100%); font-size: 11.5px; white-space: nowrap; padding: 3px 7px; border-radius: 5px; background: rgba(11,14,18,.82); border: 1px solid var(--line); color: var(--fg); }
+.lbl::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 10px; background: var(--muted); }
+.lbl.env { color: var(--ray); border-color: rgba(111,231,255,.35); }
+.mtoggle { display: none; }
+#hint { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); font-size: 12px; color: var(--muted); z-index: 2; pointer-events: none; text-align: center; }
+
+#lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(5,7,10,.92); display: grid; grid-template-rows: 1fr auto; padding: calc(env(safe-area-inset-top, 0px) + 50px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); }
+#lightbox img { max-width: 100%; max-height: 100%; margin: auto; object-fit: contain; display: block; min-height: 0; }
+#lightbox .lbbar { display: flex; gap: 10px; align-items: center; justify-content: center; padding-top: 12px; color: var(--muted); font-size: 13px; }
+#lightbox .close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); }
+
+@media (max-width: 860px) {
+  .brand h1 { font-size: 16px; }
+  .brand p { display: none; }
+  #parts { top: auto; bottom: 120px; left: 12px; right: 12px; width: auto; max-height: 46vh; }
+  #info { top: auto; bottom: 120px; left: 12px; right: 12px; width: auto; max-height: 46vh; }
+  #dock { left: 12px; right: 12px; }
+  .mtoggle { display: inline-flex; }
+  #hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .thumbs img { transition: none; } }
+</style>
+<script type="importmap">{ "imports": { "three": "../vendor/three.module.min.js" } }</script>
+</head>
+<body>
+<canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠/핀치로 확대, 우클릭 또는 두 손가락으로 이동."></canvas>
+
+<header class="top">
+  <div class="brand">
+    <span class="eyebrow">Teardown · HA1SZK63E</span>
+    <h1>Zeekr 7X AR-HUD 해부도</h1>
+    <p>분해 사진 52장으로 재구성한 추정 3D 모델 · 공급사 ADAYO · 2,053 g</p>
+  </div>
+  <nav class="presets" aria-label="카메라 시점">
+    <button class="chip" data-view="hud" aria-pressed="true">HUD 본체</button>
+    <button class="chip" data-view="side">측면 단면</button>
+    <button class="chip" data-view="top">위에서</button>
+    <button class="chip" data-view="path">전체 광로</button>
+    <button class="chip" data-view="driver">운전자 시점</button>
+    <button class="chip mtoggle" id="toggleParts" aria-pressed="false">부품 목록</button>
+    <button class="chip mtoggle" id="toggleInfo" aria-pressed="false">설명</button>
+  </nav>
+</header>
+
+<aside id="parts" class="panel" aria-label="부품 목록"></aside>
+<aside id="info" class="panel" aria-live="polite"></aside>
+
+<div id="dock" class="panel" role="toolbar" aria-label="보기 설정">
+  <div class="ctl"><label for="explode">분해 <output id="explodeOut">0%</output></label><input id="explode" type="range" min="0" max="1" step="0.01" value="0"></div>
+  <div class="ctl"><span class="lab">하우징</span>
+    <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">실물</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div></div>
+  <div class="vsep"></div>
+  <div class="ctl"><span class="lab">빛</span>
+    <div style="display:flex;gap:6px"><button class="tog" id="light" aria-pressed="true">광원</button><button class="tog" id="rays" aria-pressed="true">광선</button></div></div>
+  <div class="ctl"><label for="speed">광자 속도 <output id="speedOut">1.0×</output></label><input id="speed" type="range" min="0" max="3" step="0.1" value="1"></div>
+  <div class="ctl"><label for="tilt">미러 각도 <output id="tiltOut">0.0°</output></label><input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"></div>
+  <div class="ctl"><span class="lab">영상 · 환경</span>
+    <div style="display:flex;gap:6px"><button class="tog" id="warp" aria-pressed="true">워프 보정</button><button class="tog" id="env" aria-pressed="true">차량 환경</button><button class="tog" id="sun" aria-pressed="false">햇빛 역유입</button><button class="tog" id="labelsT" aria-pressed="false">라벨</button></div></div>
+</div>
+
+<div id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 드래그 이동 · 부품을 누르면 설명, 두 번 누르면 단독 보기</div>
+<div id="tip" hidden></div>
+<div id="labels"></div>
+<div id="lightbox" hidden>
+  <button class="btn close" id="lbClose">닫기 (Esc)</button>
+  <img id="lbImg" alt="">
+  <div class="lbbar"><button class="btn" id="lbPrev">‹ 이전</button><span id="lbCap"></span><button class="btn" id="lbNext">다음 ›</button></div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ───────────────────────── content ───────────────────────── */
+const PHOTO = {
+  'side':'측면 전체','label':'제품 라벨 (HA1SZK63E, ADAYO)','rear-heatsink':'뒷면 히트싱크 창','rear-angle':'뒤쪽 비스듬히','connector-side':'측면 커넥터',
+  'top-housing':'상부 하우징 외관','housing-detail':'하우징 리브 구조','heatsink-top':'히트싱크 핀','weight':'무게 측정','weight-scale':'저울 2,053 g',
+  'heatsink-back':'히트싱크 정면','upper-inside':'상부 하우징 안쪽','opening':'상·하부 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
+  'motor-bay':'모터 베이','ffc':'FFC와 커넥터','tcon-mounted':'LCD 구동 FPC 장착 상태','pcb-shield':'메인 PCB (차폐 캔 장착)','pcb-noshield':'메인 PCB (차폐 캔 제거)',
+  'pcb-out':'메인 PCB 단품','pcb-back-out':'메인 PCB 뒷면 단품','heatsink-fins':'히트싱크 단품','bracket-inside':'하우징 속 브래킷과 PGU','pgu-pad':'PGU 뒷면 써멀 패드',
+  'lens-array':'콜리메이터 렌즈 어레이','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'육각 렌즈/확산 시트','mirror-housing':'미러 하우징 (두 미러)','pcb-housing':'PCB 하우징 전체',
+  'pcb-front':'메인 PCB 앞면','pcb-mcu':'MCU와 EPSON IC','pcb-warp':'EPSON 워프 IC · MAX9278A','pcb-power':'커넥터와 전원부','pcb-back':'메인 PCB 뒷면','pcb-back-detail':'뒷면 상세',
+  'tft-board':'LCD 구동 FPC','tft-panel':'TFT-LCD 패널 모서리','motor':'스텝 모터와 웜','bracket-back':'다이캐스트 브래킷 뒷면','bracket-front':'다이캐스트 브래킷 앞면',
+  'bracket-mark':'브래킷 각인 HA-DZK-617 / ADC12','pgu-module':'PGU 모듈과 써멀 패드','cover-top':'커버 글라스 (보호필름)'
+};
+const GROUPS = { '광학':'#6fe7ff', 'PGU':'#ffd36b', '열 관리':'#ff8a5c', '전자':'#7fdca0', '구동':'#c79bff', '케이블':'#9aa6b2', '하우징':'#5f7085' };
+const PARTS = [
+ { id:'cover', g:'광학', name:'커버 글라스', en:'Cover glass', conf:'photo', ex:[0,44,0], photos:['cover-top','weight'],
+   desc:'HUD 맨 위의 곡면 투명 창입니다. 오목 미러에서 올라온 빛이 이 창을 지나 윈드실드로 갑니다. 먼지를 막고 하우징을 밀폐합니다.',
+   points:['곡면인 이유: 평면이면 햇빛이나 실내 조명이 운전자 눈으로 곧장 반사됩니다. 곡률을 주어 반사광을 눈 밖으로 돌립니다.','사진 표면의 필름은 출고 보호필름입니다.','짙은 틴트는 밖에서 내부가 덜 보이게 하고 미광을 줄입니다. 틴트 정도는 사진 기준 추정입니다.'],
+   specs:[['형상','원통형 곡면 (사진)'],['위치','미러 하우징 상단 개구부']] },
+ { id:'concave', g:'광학', name:'오목 미러 (메인)', en:'Concave freeform mirror', conf:'photo', ex:[0,24,18], photos:['mirror-housing'],
+   desc:'HUD 광학계의 핵심입니다. 작은 LCD 영상을 크게 확대하고, 영상이 운전자 앞 수 m 거리에 떠 있는 것처럼 보이게(허상) 만듭니다. 모터가 각도를 바꿔 운전자 눈높이에 맞춥니다.',
+   points:['LCD가 미러의 초점거리보다 안쪽에 있으면 확대된 허상이 생깁니다(돋보기 원리). LCD가 초점에 가까울수록 허상은 멀어집니다. AR-HUD는 이 거리를 길게 잡아 도로 위에 그래픽을 겹칩니다.','실제 미러는 자유곡면(freeform)이고 윈드실드 곡률까지 함께 보정합니다. 이 모델은 구면으로 근사했습니다.','사진에서 보랏빛으로 비치는 코팅은 가시광은 반사하고 적외선은 투과시키는 콜드 미러 코팅일 가능성이 큽니다(햇빛 열 차단, 추정).','하단 미러 각도 슬라이더를 움직이면 모터가 돌고 아이박스(눈 위치)가 위아래로 움직입니다.'],
+   specs:[['형상','자유곡면 (모델: 구면 R ≈ {R} cm)'],['구동','스텝 모터 + 리드스크류'],['코팅','콜드 미러 추정']] },
+ { id:'fold', g:'광학', name:'폴드 미러', en:'Fold mirror', conf:'photo', ex:[0,24,-18], photos:['mirror-housing'],
+   desc:'LCD에서 위로 올라온 빛을 오목 미러 쪽으로 꺾어 보내는 작은 미러입니다. 광로를 접어서 긴 광학 거리를 좁은 대시보드 안에 넣습니다.',
+   points:['광로를 한 번 접으면 같은 부피에서 LCD와 오목 미러 사이 거리를 늘릴 수 있습니다. 이 거리가 허상 거리와 확대율을 정합니다.','사진의 가장자리가 청록색인 유리 미러입니다(유리 단면 색). 약간 휘어 보이지만 이 모델은 평면으로 단순화했습니다.'],
+   specs:[['형상','평면/약곡면 (모델: 평면)'],['역할','광로 접기']] },
+ { id:'lcd', g:'PGU', name:'TFT-LCD 패널', en:'TFT-LCD · TL051XFKP01', conf:'photo', ex:[0,15,0], photos:['tft-panel','tft-board','lower-open'],
+   desc:'HUD 영상을 만드는 화면입니다. 스스로 빛을 내지 않고, 뒤에서 오는 백라이트를 픽셀마다 통과시키거나 막는 빛의 밸브입니다.',
+   points:['검은 픽셀은 빛을 막습니다. 애니메이션에서 백라이트 광자 대부분은 LCD에서 사라지고, 그림이 있는 픽셀을 지난 광자만 미러로 갑니다.','LCD 위 영상은 좌우가 뒤집히고 휘어 있습니다. 미러 2장과 윈드실드를 지나며 생길 반전과 왜곡을 미리 거꾸로 걸어 둔 것입니다. 하단 워프 보정을 꺼 보세요.','이 모델의 LCD 위 영상은 실제 광선 추적으로 계산한 모양입니다. 미러 각도를 바꾸면 필요한 보정 모양도 바뀝니다.','라벨: TM PN TL051XFKP01-01, DATE 25-09-12. TM은 Tianma(천마) 패널로 추정합니다. 가장자리의 검은 폼과 실리콘 고정은 진동 대응입니다.'],
+   specs:[['P/N','TL051XFKP01-01 (라벨)'],['표시 영역','모델 ≈ {LW} × {LH} cm'],['제조일','2025-09-12 (라벨)']] },
+ { id:'tcon', g:'PGU', name:'LCD 구동 FPC', en:'LCD driver flex board', conf:'photo', ex:[0,15,-5], photos:['tft-board','tcon-mounted'],
+   desc:'LCD에 붙은 주황색 연성 기판입니다. 메인 보드에서 온 영상 신호를 받아 LCD 드라이버에 맞는 신호와 전압으로 바꿉니다.',
+   points:['차폐 FFC(은색 리본)가 메인 PCB와 이어집니다. 실크 표기 T_LVDS, SDI, SCL로 보아 LVDS 영상과 제어 버스 구성으로 보입니다.','큰 인덕터 두 개는 LCD 구동 전압(AVDD 등)을 만드는 DC-DC 부분입니다.','라벨: CUS PN 123420000260 · TM PN TL051XFKP01-01 · SN 05165.'],
+   specs:[['기판','폴리이미드 FPC'],['입력','LVDS 추정 (실크 T_LVDS)']] },
+ { id:'hex', g:'PGU', name:'육각 렌즈/확산 시트', en:'Hex micro-lens / diffuser', conf:'photo', ex:[0,10,0], photos:['hex-diffuser'],
+   desc:'콜리메이터를 지난 빛을 고르게 펴는 벌집 패턴 시트입니다. LED 점광원의 얼룩을 지우고, 빛이 아이박스 쪽으로만 가도록 각도를 다듬습니다.',
+   points:['HUD 백라이트는 햇빛 아래에서도 보여야 해서 아주 밝아야 합니다. 빛을 넓게 뿌리지 않고 아이박스 방향으로 모으는 것이 효율의 핵심입니다.','사진에서 육각 패턴이 보입니다. 확산판인지 플라이아이 렌즈인지는 사진만으로 확정할 수 없습니다(추정).'],
+   specs:[['패턴','육각 배열 (사진)']] },
+ { id:'lens', g:'PGU', name:'콜리메이터 렌즈 어레이', en:'TIR collimator array', conf:'photo', ex:[0,5.5,0], photos:['lens-array','lens-array-angle'],
+   desc:'LED 하나마다 작은 렌즈가 하나씩 놓인 투명 판입니다. 사방으로 퍼지는 LED 빛을 거의 평행한 빛으로 모읍니다.',
+   points:['렌즈가 LED 배열과 1:1로 대응합니다. 사진에서 약 100개가 보입니다.','평행광이어야 LCD를 거의 수직으로 지나고, 미러들이 받아낼 수 있는 각도 안에 들어옵니다.'],
+   specs:[['렌즈 수','약 100개 (사진)'],['재질','PC/PMMA 추정']] },
+ { id:'led', g:'PGU', name:'LED 백라이트 보드', en:'LED board + back plate', conf:'photo', ex:[0,2,0], photos:['pgu-module','pgu-pad','lens-array'],
+   desc:'광원입니다. 고휘도 LED 배열이 금속 백플레이트 위에 있고, 뒷면의 파란 써멀 패드를 통해 다이캐스트 브래킷으로 열을 넘깁니다.',
+   points:['HUD는 맑은 날에도 보여야 해서 백라이트가 매우 밝고 열이 많이 납니다. LED 온도가 밝기와 LCD 수명을 좌우합니다.','백플레이트 QR 라벨: 65-GD-60.','하단 광원 토글을 끄면 HUD 영상 전체가 꺼집니다.'],
+   specs:[['LED','고휘도 백색 LED 배열'],['열 경로','패드 → 브래킷 → 히트싱크']] },
+ { id:'pad', g:'열 관리', name:'써멀 패드', en:'Thermal pad', conf:'photo', ex:[0,-3,0], photos:['pgu-module','pgu-pad'],
+   desc:'PGU 백플레이트와 다이캐스트 브래킷 사이의 파란 실리콘 패드입니다. 두 금속 면 사이의 미세한 틈을 메워 열이 잘 건너가게 합니다.',
+   points:['공기는 열을 거의 전하지 못합니다. 패드가 틈을 채워 열저항을 크게 낮춥니다.'],
+   specs:[['색','파랑 (사진)'],['위치','PGU 뒷면 전체']] },
+ { id:'bracket', g:'열 관리', name:'다이캐스트 브래킷', en:'Die-cast bracket HA-DZK-617', conf:'photo', ex:[0,-7,0], photos:['bracket-front','bracket-mark','bracket-back','bracket-inside'],
+   desc:'PGU를 받치고 열을 히트싱크로 넘기는 알루미늄 다이캐스트 판입니다. 탭과 나사 구멍으로 하우징에 단단히 고정됩니다.',
+   points:['각인: HA-DZK-617, 재질 >ADC12<(알루미늄 다이캐스트 합금), 생산 연·월을 표시하는 날짜 휠.','표면의 얼룩 무늬는 다이캐스팅과 이형제 흔적입니다.','열 경로이면서 구조물입니다. 광학 부품 위치가 진동에 흔들리지 않게 잡아 줍니다.'],
+   specs:[['품번','HA-DZK-617 (각인)'],['재질','ADC12 (각인)']] },
+ { id:'heatsink', g:'열 관리', name:'히트싱크', en:'Aluminium fin heatsink', conf:'photo', ex:[0,-15,0], photos:['rear-heatsink','heatsink-top','heatsink-back','heatsink-fins'],
+   desc:'하우징 밖으로 드러난 알루미늄 핀입니다. LED와 보드에서 온 열을 대시보드 속 공기로 내보냅니다.',
+   points:['팬이 보이지 않습니다. 자연대류만으로 식히므로 핀 면적과 간격이 중요합니다.','실제 핀은 하우징 뒷면 창으로 드러나 있고 끝이 일부 휘어 있습니다(사진). 모델에서는 PGU 바로 아래에 단순화해 배치했습니다.'],
+   specs:[['방식','자연대류, 팬 없음 (사진)'],['핀 수','약 20개 (사진)']] },
+ { id:'pcb', g:'전자', name:'메인 PCB', en:'Main board HATZK630-0100', conf:'photo', ex:[-8,4,-16], photos:['pcb-front','pcb-shield','pcb-noshield','pcb-out','pcb-back','pcb-back-out','pcb-back-detail','lower-pcb'],
+   desc:'HUD의 두뇌입니다. 차량에서 영상과 전원을 받아 왜곡 보정을 거쳐 LCD로 보내고, 백라이트 밝기와 미러 모터를 제어합니다.',
+   points:['왼쪽 끝은 외부 커넥터와 전원부, 가운데는 차폐 캔 아래 영상 수신·왜곡 보정 IC, 오른쪽은 MCU와 내부 커넥터입니다.','실크 표기: 123015032578 / HATZK630-0100 / 2023-12-24 / VER:V03 / UL E340729 94V0.','뒷면은 비아와 소형 수동 소자 위주이고 SOIC-8 IC가 몇 개 있습니다.','목록의 하위 항목을 누르면 칩별 설명이 나옵니다.'],
+   specs:[['품번','HATZK630-0100 V03'],['설계일','2023-12-24 (실크)'],['난연','94V0']] },
+ { id:'epson', parent:'pcb', g:'전자', name:'왜곡 보정 IC', en:'EPSON S2D13V42F00A1', conf:'photo', photos:['pcb-warp','pcb-mcu','pcb-noshield'],
+   desc:'HUD 영상을 실시간으로 미리 거꾸로 휘어 주는 영상 처리 칩입니다.',
+   points:['윈드실드는 곡면이고 미러는 비스듬히 놓여 있어서, 영상을 그대로 띄우면 사다리꼴이나 활 모양으로 휩니다. 이 칩이 프레임마다 반대 방향으로 휜 영상을 만듭니다.','미러 각도가 바뀌면 왜곡도 바뀌므로 각도별 보정 테이블을 쓰는 것이 일반적입니다. 미러 각도 슬라이더를 움직이며 LCD 위 영상 모양을 보세요.','마킹: EPSON / S2D13V42F00A1 / G25279358 / JAPAN.'],
+   specs:[['마킹','S2D13V42F00A1'],['기능','HUD용 이미지 워핑 컨트롤러']] },
+ { id:'max', parent:'pcb', g:'전자', name:'GMSL 디시리얼라이저', en:'MAX9278A', conf:'photo', photos:['pcb-warp'],
+   desc:'차량 콕핏 컴퓨터가 동축 케이블로 보낸 고속 직렬 영상(GMSL)을 받아 병렬 영상 신호로 풀어 줍니다.',
+   points:['속도, 내비 화살표 같은 그래픽은 HUD가 아니라 차량의 콕핏 SoC가 그려서 보냅니다. HUD는 받아서 보정하고 띄웁니다.','같은 케이블로 제어 신호(I²C 등)도 반대 방향으로 오갈 수 있습니다.','마킹: MAX9278A / GTM/V.'],
+   specs:[['마킹','MAX9278A'],['입력','GMSL 동축']] },
+ { id:'mcu', parent:'pcb', g:'전자', name:'MCU', en:'Microcontroller · TF25910', conf:'photo', photos:['pcb-mcu'],
+   desc:'HUD 전체를 관리하는 마이컴입니다. CAN 통신, 전원 순서, 백라이트 밝기, 모터 제어, 온도 감시를 맡는 것으로 보입니다.',
+   points:['옆의 수정 발진자가 클럭을 만듭니다.','마킹: TF25910 / 1TC2523 / 16843. 제조사는 마킹만으로 확인하지 못했습니다.','제품 라벨의 HWSD · SWBL · SWLM은 하드웨어, 부트로더, 애플리케이션 소프트웨어 버전 번호입니다.'],
+   specs:[['패키지','QFP 100핀급 (사진)'],['마킹','TF25910']] },
+ { id:'power', parent:'pcb', g:'전자', name:'전원부', en:'Power stage', conf:'photo', photos:['pcb-power'],
+   desc:'차량 전원을 받아 보드, LED, LCD가 쓰는 전압으로 바꾸는 DC-DC 회로입니다.',
+   points:['100 µF / 35 V 전해 콘덴서 여러 개가 차량 전원의 노이즈와 순간 전압 변동을 흡수합니다. 35 V 내압은 차량 과도전압 대응입니다.','"100", "102", "MG220" 표기 부품은 전력 인덕터입니다.','DPAK 부품(15P60 표기)은 역전압 보호나 스위칭용 전력 소자로 보입니다(추정).'],
+   specs:[['콘덴서','100 µF / 35 V'],['입력','차량 12 V 계열 추정']] },
+ { id:'conn', parent:'pcb', g:'전자', name:'외부 커넥터', en:'Video coax + power', conf:'photo', photos:['pcb-power','connector-side'],
+   desc:'HUD가 차와 연결되는 두 커넥터입니다. 검은 원통은 영상용 동축 커넥터, 흰 4핀은 전원과 통신선입니다.',
+   points:['동축 커넥터로 GMSL 영상이 들어와 MAX9278A로 갑니다.','4핀은 전원(+B, GND)과 CAN 통신으로 추정합니다.','하우징 측면 밖으로 나와 차량 하네스가 꽂힙니다.'],
+   specs:[['영상','동축 (FAKRA 계열 추정)'],['전원·통신','4핀']] },
+ { id:'shield', parent:'pcb', g:'전자', name:'차폐 캔', en:'EMI shield can', conf:'photo', photos:['pcb-shield','pcb-noshield'],
+   desc:'고속 영상 회로(디시리얼라이저와 왜곡 보정 IC)를 덮는 금속 뚜껑입니다. 전자파가 새거나 들어오는 것을 막습니다.',
+   points:['캔을 벗긴 사진에서 주황색 구리 테두리(캔 납땜 자리)와 그 안의 EPSON, MAX 칩이 보입니다.','차량은 라디오와 레이더 때문에 전자파 규제가 엄격해서 고속 신호부를 거의 항상 차폐합니다.'],
+   specs:[['재질','주석도금 강판 추정']] },
+ { id:'motor', g:'구동', name:'미러 구동 모터', en:'Stepper · lead screw · sensor board', conf:'guess', ex:[16,22,10], photos:['motor','motor-bay','pcb-housing'],
+   desc:'오목 미러 각도를 바꾸는 구동부입니다. 은색 원통이 스텝 모터, 검은 나선이 웜/리드스크류(파란 것은 그리스), 옆의 작은 보드가 위치 감지 보드입니다.',
+   points:['운전자가 화면에서 HUD 높이를 바꾸면 이 모터가 돌아 미러를 기울입니다.','나사가 돌면 너트가 앞뒤로 움직이고 링크가 미러 아래쪽을 밀거나 당깁니다. 감속비가 커서 정밀하고, 전원이 꺼져도 각도가 유지됩니다.','작은 보드(HATDF579-0200, Ver:V01, 23-04-24)는 원점 위치를 감지하는 센서 보드로 보입니다(추정).','부품 자체는 사진으로 확인했지만, 실제 위치는 하부 하우징 모서리이고 미러와 잇는 링크는 보이지 않았습니다. 모델의 배치와 링크는 추정입니다.'],
+   specs:[['모터','PM 스텝 모터 추정'],['전달','리드스크류 + 너트'],['센서 보드','HATDF579-0200 V01']] },
+ { id:'ffc', g:'케이블', name:'차폐 FFC', en:'Shielded flat cable', conf:'photo', ex:[0,8,-10], photos:['ffc','pcb-housing'],
+   desc:'메인 PCB와 LCD 구동 FPC를 잇는 은색 평판 케이블입니다. 영상 신호가 지나갑니다.',
+   points:['은색은 전도성 차폐 원단입니다. 고속 신호의 노이즈 방사를 줄입니다.','양 끝 노란 부분은 커넥터 고정용 캡톤 테이프입니다.'], specs:[['종류','차폐 FFC']] },
+ { id:'harness', g:'케이블', name:'내부 배선', en:'Internal wiring', conf:'photo', ex:[0,2,0], photos:['motor-bay','ffc'],
+   desc:'메인 PCB에서 모터, 위치 센서 보드, LED 보드로 가는 가는 전선 묶음입니다.',
+   points:['하우징 리브 사이로 배선해 진동에 흔들리지 않게 고정합니다.'], specs:[] },
+ { id:'upper', g:'하우징', name:'미러 하우징 (상부)', en:'Upper optics housing', conf:'photo', housing:true, ex:[0,32,0], photos:['top-housing','mirror-housing','upper-inside','housing-detail','rear-angle'],
+   desc:'두 미러를 정해진 각도로 붙잡는 상부 케이스입니다. 안쪽은 무광 검정이고 바닥 가운데에 PGU 빛이 올라오는 사각 구멍이 있습니다.',
+   points:['안쪽의 무광 검정과 리브는 미광을 흡수해 고스트 이미지를 줄입니다.','바닥의 사각 개구부가 PGU(LCD) 출사창입니다. 미러 하우징 사진에서 보입니다.','라벨의 재질 표기는 PP+40%GF(유리섬유 40% 강화 폴리프로필렌)입니다. 열과 진동에 강합니다.'],
+   specs:[['재질','PP+40%GF (라벨)'],['내부','무광 검정, 광 트랩 리브']] },
+ { id:'lower', g:'하우징', name:'PCB 하우징 (하부)', en:'Lower housing', conf:'photo', housing:true, ex:[0,-26,0], photos:['pcb-housing','lower-open','lower-pcb','opening','label','side'],
+   desc:'메인 PCB와 PGU를 담는 아래 케이스입니다. 바깥에 제품 라벨, 커넥터 구멍, 차체 고정용 귀가 있습니다.',
+   points:['라벨: ZEEKR / HA1SZK63E / 752007 / 6608451043 / 차종 CX1E / 생산 2025.10.05 / 공급사 ADAYO / 부품명 抬头显示器(헤드업 디스플레이).','재질 표기 >PP+40%GF<.','전체 무게 실측 2,053 g (저울 사진).'],
+   specs:[['재질','PP+40%GF'],['전체 무게','2,053 g (실측)']] },
+];
+const PMAP = Object.fromEntries(PARTS.map(p => [p.id, p]));
+const JOURNEY = [
+  { seg:0, part:'led', t:'LED 발광', s:'고휘도 LED 배열이 빛을 냅니다.' },
+  { seg:0, part:'lens', t:'콜리메이터', s:'퍼지는 빛을 평행하게 모읍니다.' },
+  { seg:0, part:'hex', t:'육각 시트', s:'얼룩을 펴고 방향을 다듬습니다.' },
+  { seg:0, part:'lcd', t:'LCD 변조', s:'그림이 있는 픽셀만 빛을 통과시킵니다.' },
+  { seg:1, part:'fold', t:'폴드 미러', s:'빛을 오목 미러 쪽으로 꺾습니다.' },
+  { seg:2, part:'concave', t:'오목 미러', s:'영상을 확대하고 허상을 멀리 띄웁니다.' },
+  { seg:3, part:'cover', t:'커버 글라스', s:'HUD 밖, 윈드실드로 나갑니다.' },
+  { seg:4, part:null, t:'윈드실드 반사', s:'유리 안쪽 면이 운전자 눈으로 반사합니다.' },
+  { seg:5, part:null, t:'허상', s:'눈에는 영상이 유리 너머 도로 위에 떠 보입니다.' },
+];
+
+/* ───────────────────────── setup ───────────────────────── */
+const $ = s => document.querySelector(s);
+const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+const X = V(1, 0, 0), Y = V(0, 1, 0);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const canvas = $('#c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+renderer.localClippingEnabled = true;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0e12);
+const camera = new THREE.PerspectiveCamera(38, 1, 0.5, 8000);
+
+(function env() {
+  const s = new THREE.Scene();
+  const g = new THREE.SphereGeometry(50, 32, 16), cols = [], pos = g.attributes.position;
+  for (let i = 0; i < pos.count; i++) { const y = pos.getY(i) / 50; const c = new THREE.Color().setHSL(0.58, 0.18, 0.04 + 0.32 * Math.max(0, y)); cols.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  s.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
+  const panel = (w, h, x, y, z, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); s.add(m); };
+  panel(50, 12, 0, 40, 12, 0xffffff); panel(18, 30, -42, 12, 0, 0xffd9b0); panel(18, 30, 42, 6, -12, 0xb8dcff); panel(30, 8, 0, -10, -45, 0x667788);
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(s, 0.03).texture;
+})();
+scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1e24, 0.7));
+const sunL = new THREE.DirectionalLight(0xffffff, 1.6); sunL.position.set(40, 90, 60); scene.add(sunL);
+const fillL = new THREE.DirectionalLight(0x9fc4ff, 0.5); fillL.position.set(-60, 20, -40); scene.add(fillL);
+
+/* ───────────────────────── textures ───────────────────────── */
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.userData.canvas = c; return t;
+}
+const castTex = canvasTex(512, 256, (g, w, h) => {
+  const r = rng(7); g.fillStyle = '#a2a6a9'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 4200; i++) { const x = r() * w, y = r() * h, l = 2 + r() * 7, a = r() * Math.PI; g.strokeStyle = r() < .6 ? `rgba(60,64,68,${.15 + r() * .35})` : `rgba(235,238,240,${.2 + r() * .3})`; g.lineWidth = .6 + r(); g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); }
+  for (let i = 0; i < 10; i++) { const gr = g.createRadialGradient(r() * w, r() * h, 0, r() * w, r() * h, 60 + r() * 80); gr.addColorStop(0, 'rgba(80,84,88,.25)'); gr.addColorStop(1, 'rgba(80,84,88,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }
+});
+const PCB_L = 28, PCB_W = 6.5;
+const pcbTex = canvasTex(1400, 325, (g, w, h) => {
+  const r = rng(3), sx = w / PCB_L, sz = h / PCB_W; const P = (x, z) => [(x + PCB_L / 2) * sx, (z + PCB_W / 2) * sz];
+  g.fillStyle = '#1d6a3c'; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(70,150,90,.55)'; g.lineWidth = 2.2;
+  for (let i = 0; i < 160; i++) { let x = r() * w, y = r() * h; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 3; k++) { if (r() < .5) x += (r() - .5) * 220; else y += (r() - .5) * 120; g.lineTo(x, y); } g.stroke(); }
+  for (let i = 0; i < 520; i++) { const x = r() * w, y = r() * h; g.fillStyle = 'rgba(200,205,200,.85)'; g.beginPath(); g.arc(x, y, 2.2 + r() * 2, 0, 7); g.fill(); }
+  for (let i = 0; i < 300; i++) { const x = r() * w, y = r() * h; g.fillStyle = 'rgba(205,210,205,.9)'; g.fillRect(x, y, 6 + r() * 6, 3 + r() * 5); g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 1; g.strokeRect(x - 2, y - 2, 14, 10); }
+  let [a, b] = P(-2.2, -2.2), [c, d] = P(3.2, 1.8); g.strokeStyle = '#c9884f'; g.lineWidth = 9; g.strokeRect(a, b, c - a, d - b);
+  g.fillStyle = '#f2f2ee'; g.font = '600 30px "IBM Plex Mono", monospace';
+  [[0, '123015032578'], [1, 'HATZK630-0100'], [2, '2023-12-24'], [3, 'VER:V03']].forEach(([i, t]) => { const [x, y] = P(-7.4, -2.5 + i * .62); g.fillText(t, x, y); });
+  g.font = '500 24px "IBM Plex Mono", monospace'; let [tx, ty] = P(-7.4, .3); g.fillText('TW-8 2530  E340729 94V0', tx, ty);
+  [tx, ty] = P(-13.2, -2.9); g.fillText('THR', tx, ty);
+  for (const [x, z] of [[-13.2, 2.6], [12.9, 2.6], [12.9, -2.6]]) { const [px, py] = P(x, z); g.fillStyle = '#d9a26a'; g.beginPath(); g.arc(px, py, 18, 0, 7); g.fill(); g.fillStyle = '#0a0a0a'; g.beginPath(); g.arc(px, py, 9, 0, 7); g.fill(); }
+});
+function chipTex(lines, big) {
+  return canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#16171a'; g.fillRect(0, 0, w, h); g.fillStyle = '#26272b'; g.beginPath(); g.arc(34, 34, 12, 0, 7); g.fill();
+    g.fillStyle = '#b9bcc2'; g.textAlign = 'center';
+    lines.forEach((t, i) => { g.font = (i === 0 && big ? '700 46px ' : '500 26px ') + '"IBM Plex Mono", monospace'; g.fillText(t, w / 2, 96 + i * 42); });
+  });
+}
+const fpcTex = canvasTex(1024, 256, (g, w, h) => {
+  const r = rng(11); g.fillStyle = '#c96a1c'; g.fillRect(0, 0, w, h); g.fillStyle = '#a8501a';
+  g.beginPath(); g.moveTo(70, 40); g.lineTo(950, 40); g.lineTo(960, 200); g.lineTo(60, 210); g.fill();
+  for (let i = 0; i < 260; i++) { const x = 80 + r() * 860, y = 50 + r() * 150; g.fillStyle = r() < .7 ? '#d8d2c8' : '#2a2a2a'; g.fillRect(x, y, 8 + r() * 6, 5 + r() * 4); }
+  g.fillStyle = '#f4f2ee'; g.fillRect(110, 150, 300, 90); g.fillStyle = '#222'; g.font = '500 17px "IBM Plex Mono", monospace';
+  ['CUS PN:123420000260', 'TM PN:TL051XFKP01-01', 'DATE:25-09-12', 'SN:05165'].forEach((t, i) => g.fillText(t, 190, 172 + i * 20));
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) if (r() < .55) g.fillRect(122 + i * 10, 160 + j * 10, 10, 10);
+  g.fillStyle = '#f4f2ee'; g.font = '700 26px "IBM Plex Mono", monospace'; g.fillText('1540454491', 90, 70);
+});
+const hexTex = canvasTex(512, 256, (g, w, h) => {
+  g.fillStyle = 'rgba(220,235,245,0.35)'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 2;
+  const s = 16; for (let y = 0; y < h + s; y += s * 1.5) for (let x = 0; x < w + s; x += s * Math.sqrt(3)) {
+    const ox = x + ((Math.round(y / (s * 1.5)) % 2) ? s * Math.sqrt(3) / 2 : 0); g.beginPath();
+    for (let k = 0; k < 6; k++) { const a = Math.PI / 3 * k + Math.PI / 6; g.lineTo(ox + s * Math.cos(a), y + s * Math.sin(a)); } g.closePath(); g.stroke(); }
+});
+const labelTex = canvasTex(600, 300, (g, w, h) => {
+  g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, w, h); g.fillStyle = '#111';
+  g.font = '500 17px "IBM Plex Mono", monospace';
+  ['>PP+40%GF<', 'SN: 2510051668', 'HWSD:8896963628/C', 'SWBL:8896965321/D', 'SWLM:6608451110/A', '车型: CX1E', '零件名称: 抬头显示器', '生产日期: 2025.10.05', '供应商: ADAYO'].forEach((t, i) => g.fillText(t, 22, 34 + i * 25));
+  g.font = '500 32px "IBM Plex Sans KR", sans-serif'; ['ZEEKR', 'HA1SZK63E', '752007', '6608451043', '251005', 'MADE IN CHINA'].forEach((t, i) => g.fillText(t, 330, 48 + i * 38));
+  for (let i = 0; i < 70; i++) g.fillRect(22 + i * 7, 262, (i % 3) + 1, 26);
+});
+const epcTex = canvasTex(128, 128, g => { g.fillStyle = '#58d64a'; g.beginPath(); g.arc(64, 64, 62, 0, 7); g.fill(); g.fillStyle = '#123'; g.font = '700 26px sans-serif'; g.textAlign = 'center'; g.fillText('EPC', 64, 58); g.font = '500 20px sans-serif'; g.fillText('检验', 64, 86); });
+
+/* HUD graphic the cockpit computer sends: what the driver should see, unwarped */
+const hudCanvas = document.createElement('canvas'); hudCanvas.width = 1200; hudCanvas.height = 440;
+const hudTex = new THREE.CanvasTexture(hudCanvas); hudTex.colorSpace = THREE.SRGBColorSpace; hudTex.anisotropy = 8;
+let hudPixels = null;
+function drawHUD() {
+  const g = hudCanvas.getContext('2d'), W = hudCanvas.width, H = hudCanvas.height;
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  // AR lane guide converging to the horizon
+  g.strokeStyle = 'rgba(70,225,255,.85)'; g.lineWidth = 12;
+  g.beginPath(); g.moveTo(420, H - 20); g.lineTo(560, 250); g.moveTo(860, H - 20); g.lineTo(700, 250); g.stroke();
+  // navigation chevrons (turn right ahead)
+  g.strokeStyle = '#3fe3ff'; g.lineWidth = 26;
+  [[600, 390, 1], [640, 320, .78], [672, 266, .6]].forEach(([x, y, s]) => { g.beginPath(); g.moveTo(x - 70 * s, y + 34 * s); g.lineTo(x, y - 20 * s); g.lineTo(x + 70 * s, y + 34 * s); g.stroke(); });
+  g.lineWidth = 20; g.beginPath(); g.moveTo(690, 215); g.quadraticCurveTo(720, 150, 810, 150); g.stroke();
+  g.fillStyle = '#3fe3ff'; g.beginPath(); g.moveTo(860, 150); g.lineTo(800, 112); g.lineTo(800, 188); g.fill();
+  g.fillStyle = '#e9fbff'; g.font = '600 46px "IBM Plex Sans KR", sans-serif'; g.fillText('200 m', 830, 236);
+  // speed
+  g.fillStyle = '#ffffff'; g.font = '700 176px "IBM Plex Sans KR", sans-serif'; g.fillText('72', 70, 236);
+  g.font = '500 44px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#d7dde2'; g.fillText('km/h', 92, 300);
+  // speed limit
+  g.strokeStyle = '#ff4a3d'; g.lineWidth = 18; g.beginPath(); g.arc(1080, 120, 72, 0, 7); g.stroke();
+  g.fillStyle = '#ffffff'; g.font = '700 74px "IBM Plex Sans KR", sans-serif'; g.textAlign = 'center'; g.fillText('80', 1080, 146); g.textAlign = 'left';
+  // adaptive cruise: lead car + distance bars
+  g.strokeStyle = '#7dff9a'; g.lineWidth = 10; g.strokeRect(1030, 270, 100, 56);
+  for (let i = 0; i < 3; i++) { g.fillStyle = 'rgba(125,255,154,' + (0.9 - i * .25) + ')'; g.fillRect(1020 + i * 10, 344 + i * 22, 120 - i * 20, 12); }
+  hudTex.needsUpdate = true;
+  hudPixels = g.getImageData(0, 0, W, H).data;
+}
+drawHUD();
+function hudSample(iu, iv) { // iu,iv in [0,1], iv=0 top
+  const W = hudCanvas.width, H = hudCanvas.height;
+  const x = Math.min(W - 1, Math.max(0, Math.round(iu * (W - 1)))), y = Math.min(H - 1, Math.max(0, Math.round(iv * (H - 1))));
+  // look a few px around so thin strokes still count as lit
+  let best = [0, 0, 0];
+  for (const [dx, dy] of [[0, 0], [6, 0], [-6, 0], [0, 6], [0, -6]]) {
+    const xx = Math.min(W - 1, Math.max(0, x + dx)), yy = Math.min(H - 1, Math.max(0, y + dy)), i = (yy * W + xx) * 4;
+    if (hudPixels[i] + hudPixels[i + 1] + hudPixels[i + 2] > best[0] + best[1] + best[2]) best = [hudPixels[i], hudPixels[i + 1], hudPixels[i + 2]];
+  }
+  return best;
+}
+
+/* ───────────────────────── materials ───────────────────────── */
+const M = {
+  plastic: new THREE.MeshStandardMaterial({ color: 0x1c1f23, roughness: .82, metalness: 0 }),
+  matte: new THREE.MeshStandardMaterial({ color: 0x0f1012, roughness: .95, metalness: 0, side: THREE.DoubleSide }),
+  cast: new THREE.MeshStandardMaterial({ color: 0xffffff, map: castTex, roughness: .62, metalness: .75 }),
+  alu: new THREE.MeshStandardMaterial({ color: 0xc7ccd1, roughness: .32, metalness: .9 }),
+  sheet: new THREE.MeshStandardMaterial({ color: 0xd6dade, roughness: .38, metalness: .85 }),
+  pad: new THREE.MeshStandardMaterial({ color: 0x86aee8, roughness: .9, metalness: 0 }),
+  pcb: new THREE.MeshStandardMaterial({ color: 0xffffff, map: pcbTex, roughness: .55, metalness: .05 }),
+  pcbEdge: new THREE.MeshStandardMaterial({ color: 0x1a5a33, roughness: .6 }),
+  black: new THREE.MeshStandardMaterial({ color: 0x141518, roughness: .6, metalness: .1 }),
+  silver: new THREE.MeshStandardMaterial({ color: 0xd0d4d8, roughness: .28, metalness: .95 }),
+  white: new THREE.MeshStandardMaterial({ color: 0xece9e1, roughness: .6 }),
+  kapton: new THREE.MeshStandardMaterial({ color: 0xf0b232, roughness: .35, metalness: .1, transparent: true, opacity: .9 }),
+  fpc: new THREE.MeshStandardMaterial({ color: 0xffffff, map: fpcTex, roughness: .45, metalness: .15, side: THREE.DoubleSide }),
+  fpcPlain: new THREE.MeshStandardMaterial({ color: 0xc86d22, roughness: .45, metalness: .15, side: THREE.DoubleSide }),
+  ffc: new THREE.MeshStandardMaterial({ color: 0xa9a59a, roughness: .7, metalness: .4, side: THREE.DoubleSide }),
+  wire: new THREE.MeshStandardMaterial({ color: 0x111214, roughness: .5 }),
+  copper: new THREE.MeshStandardMaterial({ color: 0xd9a26a, roughness: .35, metalness: .8 }),
+  ledBoard: new THREE.MeshStandardMaterial({ color: 0xe8e8e2, roughness: .5 }),
+  led: new THREE.MeshBasicMaterial({ color: 0xfff1d6, toneMapped: false }),
+  clear: new THREE.MeshPhysicalMaterial({ color: 0xe9f4ff, roughness: .08, metalness: 0, transparent: true, opacity: .32, side: THREE.DoubleSide, depthWrite: false }),
+  hex: new THREE.MeshStandardMaterial({ color: 0xffffff, map: hexTex, transparent: true, opacity: .55, roughness: .3, side: THREE.DoubleSide, depthWrite: false }),
+  glass: new THREE.MeshPhysicalMaterial({ color: 0x2a3a4a, roughness: .03, metalness: .1, transparent: true, opacity: .3, side: THREE.DoubleSide, clearcoat: 1, depthWrite: false }),
+  mirrorBig: new THREE.MeshStandardMaterial({ color: 0xc9bde0, roughness: .05, metalness: 1, side: THREE.FrontSide }),
+  mirrorFold: new THREE.MeshStandardMaterial({ color: 0xe6f2f0, roughness: .05, metalness: 1 }),
+  glassEdge: new THREE.MeshStandardMaterial({ color: 0x6fcfbf, roughness: .2, metalness: .1, transparent: true, opacity: .85 }),
+  grease: new THREE.MeshStandardMaterial({ color: 0xa9bcff, roughness: .25, transparent: true, opacity: .55 }),
+  foam: new THREE.MeshStandardMaterial({ color: 0x232427, roughness: 1 }),
+  lcdGlass: new THREE.MeshStandardMaterial({ color: 0x07080a, roughness: .1, metalness: .3 }),
+};
+function box(w, h, d, mat, x = 0, y = 0, z = 0, parent) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); if (parent) parent.add(m); return m; }
+function cyl(r, h, mat, x = 0, y = 0, z = 0, parent, axis = 'y', seg = 24) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), mat); m.position.set(x, y, z); if (axis === 'x') m.rotation.z = Math.PI / 2; if (axis === 'z') m.rotation.x = Math.PI / 2; if (parent) parent.add(m); return m; }
+function topPlane(w, d, mat, x, y, z, parent) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat); m.rotation.x = -Math.PI / 2; m.position.set(x, y, z); parent.add(m); return m; }
+function ribbon(pts, width, mat, up = Y) {
+  const curve = new THREE.CatmullRomCurve3(pts), n = 48, pos = [], idx = [];
+  for (let i = 0; i <= n; i++) { const p = curve.getPoint(i / n), t = curve.getTangent(i / n); const s = t.clone().cross(up).normalize().multiplyScalar(width / 2); pos.push(p.x - s.x, p.y - s.y, p.z - s.z, p.x + s.x, p.y + s.y, p.z + s.z); if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return new THREE.Mesh(g, mat);
+}
+function wire(pts, r, mat) { return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, r, 6), mat); }
+
+/* ───────────────────────── optics (cm, x = lateral, y = up, z = toward the car's nose) ───────────────────────── */
+const Ly = 3.95, L = V(0, Ly, -4);           // LCD centre, facing up
+const F = V(0, 15.5, -10.5);                   // fold mirror centre
+const C = V(0, 15, 13);                        // concave mirror centre (pivot)
+const OUT = V(0, .777, -.629).normalize();     // design exit direction toward the glass
+const W0 = C.clone().addScaledVector(OUT, (60 - C.y) / OUT.y);  // windshield hit
+const WS_ANGLE = 27 * Math.PI / 180;
+const nW = V(0, -Math.cos(WS_ANGLE), -Math.sin(WS_ANGLE));      // windshield normal (cabin side)
+const EYE_DIST = 80, VID_TARGET = 750;
+const nF = V().subVectors(C, F).normalize().sub(V().subVectors(F, L).normalize()).normalize();
+const nC0 = OUT.clone().sub(V().subVectors(C, F).normalize()).normalize();
+const reflect = (d, n) => d.clone().addScaledVector(n, -2 * d.dot(n));
+function hitPlane(o, d, p0, n) { const den = d.dot(n); if (Math.abs(den) < 1e-6) return null; const t = V().subVectors(p0, o).dot(n) / den; return t > 1e-4 ? o.clone().addScaledVector(d, t) : null; }
+function hitSphere(o, d, c, R, near) {
+  const oc = V().subVectors(o, c), b = oc.dot(d), disc = b * b - (oc.lengthSq() - R * R); if (disc < 0) return null;
+  const s = Math.sqrt(disc); let best = null, bd = 1e9;
+  for (const t of [-b - s, -b + s]) if (t > 1e-4) { const p = o.clone().addScaledVector(d, t), dd = p.distanceTo(near); if (dd < bd) { bd = dd; best = p; } }
+  return best;
+}
+// paraxial design: pick the mirror radius that puts the virtual image near VID_TARGET
+const U_OBJ = L.distanceTo(F) + F.distanceTo(C);
+const Xv = VID_TARGET - C.distanceTo(W0) - EYE_DIST;
+const RAD = 2 * (U_OBJ * Xv / (Xv - U_OBJ));
+const NX = 28, NY = 10;
+let HFOV = 10 * Math.PI / 180, VFOV = 3.6 * Math.PI / 180;
+
+function trace(theta) {
+  const nC = nC0.clone().applyAxisAngle(X, theta), Sc = C.clone().addScaledVector(nC, RAD);
+  // forward chief ray from the LCD centre decides where the eyebox sits
+  let d = V().subVectors(F, L).normalize();
+  const pf = hitPlane(L, d, F, nF); d = reflect(d, nF);
+  const pc = hitSphere(pf, d, Sc, RAD, C); d = reflect(d, V().subVectors(Sc, pc).normalize());
+  const pw = hitPlane(pc, d, W0, nW); const r = reflect(d, nW);
+  const eye = pw.clone().addScaledVector(r, EYE_DIST);
+  const v0 = V().subVectors(pw, eye).normalize(), right = v0.clone().cross(Y).normalize(), up = right.clone().cross(v0).normalize();
+  const u = U_OBJ, f = RAD / 2, vi = 1 / (1 / f - 1 / u);
+  const vid = -vi + pc.distanceTo(pw) + EYE_DIST;
+  const rays = [];
+  for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
+    const iu = i / (NX - 1), iv = j / (NY - 1);
+    const dir = v0.clone().addScaledVector(right, Math.tan((iu - .5) * HFOV)).addScaledVector(up, Math.tan((.5 - iv) * VFOV)).normalize();
+    let q = hitPlane(eye, dir, W0, nW), dd = reflect(dir, nW);
+    const p1 = q; q = hitSphere(p1, dd, Sc, RAD, C); const p2 = q; dd = reflect(dd, V().subVectors(Sc, p2).normalize());
+    const p3 = hitPlane(p2, dd, F, nF); dd = reflect(dd, nF);
+    const p4 = hitPlane(p3, dd, L, Y);
+    rays.push({ iu, iv, dir, p1, p2, p3, p4, virt: eye.clone().addScaledVector(dir, vid) });
+  }
+  return { theta, nC, Sc, eye, pw, pc, v0, right, up, vid, rays };
+}
+// fit the field of view so the traced footprint fills a 5.1"-class panel (~11.6 × 4.3 cm)
+for (let k = 0; k < 4; k++) {
+  const t = trace(0); let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9;
+  t.rays.forEach(r => { x0 = Math.min(x0, r.p4.x); x1 = Math.max(x1, r.p4.x); z0 = Math.min(z0, r.p4.z); z1 = Math.max(z1, r.p4.z); });
+  HFOV = 2 * Math.atan(Math.tan(HFOV / 2) * 11.6 / (x1 - x0)); VFOV = 2 * Math.atan(Math.tan(VFOV / 2) * 4.3 / (z1 - z0));
+}
+let OPT = trace(0);
+const LCDR = (() => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; OPT.rays.forEach(r => { x0 = Math.min(x0, r.p4.x); x1 = Math.max(x1, r.p4.x); z0 = Math.min(z0, r.p4.z); z1 = Math.max(z1, r.p4.z); }); return { x0, x1, z0, z1, w: x1 - x0, d: z1 - z0, cx: (x0 + x1) / 2, cz: (z0 + z1) / 2 }; })();
+// orientation of the bare panel image (used when warp correction is off) so only distortion shows, not mirroring
+const ray = (i, j) => OPT.rays[j * NX + i];
+const flipU = ray(NX - 1, NY >> 1).p4.x < ray(0, NY >> 1).p4.x, flipV = ray(NX >> 1, NY - 1).p4.z < ray(NX >> 1, 0).p4.z;
+function rectImg(p) { let s = (p.x - LCDR.x0) / LCDR.w, t = (p.z - LCDR.z0) / LCDR.d; if (flipU) s = 1 - s; if (flipV) t = 1 - t; return [s, t]; }
+function localBox(points, origin, ax, ay) { let a0 = 1e9, a1 = -1e9, b0 = 1e9, b1 = -1e9; points.forEach(p => { const v = V().subVectors(p, origin); a0 = Math.min(a0, v.dot(ax)); a1 = Math.max(a1, v.dot(ax)); b0 = Math.min(b0, v.dot(ay)); b1 = Math.max(b1, v.dot(ay)); }); return { a0, a1, b0, b1 }; }
+const basisF = { x: X.clone(), z: nF.clone() }; basisF.y = basisF.z.clone().cross(basisF.x);
+const basisC = { x: X.clone(), z: nC0.clone() }; basisC.y = basisC.z.clone().cross(basisC.x);
+const fb = localBox(OPT.rays.map(r => r.p3), F, basisF.x, basisF.y);
+const cbs = [trace(-2.2 * Math.PI / 180), OPT, trace(2.2 * Math.PI / 180)].flatMap(t => t.rays.map(r => r.p2));
+const cb = localBox(cbs, C, basisC.x, basisC.y);
+const FOLD = { w: (fb.a1 - fb.a0) + 2.4, h: (fb.b1 - fb.b0) + 1.8, cx: (fb.a0 + fb.a1) / 2, cy: (fb.b0 + fb.b1) / 2 };
+const CONC = { w: Math.max(Math.abs(cb.a0), Math.abs(cb.a1)) * 2 + 2.6, h: Math.max(Math.abs(cb.b0), Math.abs(cb.b1)) * 2 + 2 };
+const YTOP = 28, YFLOOR = 8;
+const cross = (a, b, y) => { const t = (y - a.y) / (b.y - a.y); return a.clone().lerp(b, t); };
+const apPts = OPT.rays.map(r => cross(r.p2, r.p1, YTOP)), holePts = OPT.rays.map(r => cross(r.p4, r.p3, YFLOOR));
+const AP = { z0: Math.min(...apPts.map(p => p.z)) - 2, z1: Math.max(...apPts.map(p => p.z)) + 2, x: Math.max(...apPts.map(p => Math.abs(p.x))) + 2 };
+const HOLE = { z0: Math.min(...holePts.map(p => p.z)) - 1, z1: Math.max(...holePts.map(p => p.z)) + 1, x: Math.max(...holePts.map(p => Math.abs(p.x))) + 1 };
+
+/* ───────────────────────── parts ───────────────────────── */
+const root = new THREE.Group(); scene.add(root);
+const parts = {}, pickables = [], housingEdges = [];
+function register(id, obj) {
+  obj.userData.partId = id;
+  obj.traverse(o => {
+    if (o.isMesh || o.isLine) {
+      if (o.material && !o.userData.keepMat) {
+        o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+        (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.userData.op = m.opacity; m.userData.tr = m.transparent; m.userData.dw = m.depthWrite; if (m.emissive) m.userData.em = m.emissive.clone(); });
+      }
+      if (o.isMesh) { if (!o.userData.partId) o.userData.partId = id; if (!o.userData.nopick) pickables.push(o); }
+    }
+  });
+  const meta = PMAP[id];
+  parts[id] = { id, obj, base: obj.position.clone(), ex: V(...(meta.ex || [0, 0, 0])), meta };
+  root.add(obj);
+}
+
+// ── cover glass: curved panel over the aperture
+{
+  const g = new THREE.Group();
+  const w = AP.x * 2 + 4, z0 = AP.z0 - 1, z1 = AP.z1 + 1, sag = 1.4;
+  const geo = new THREE.PlaneGeometry(w, z1 - z0, 24, 24); const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), t = y / ((z1 - z0) / 2); p.setXYZ(i, x, sag * (1 - t * t), -y); }
+  geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, M.glass); m.position.set(0, YTOP + .1, (z0 + z1) / 2); g.add(m);
+  register('cover', g);
+}
+// ── concave mirror on a tilt pivot
+const concPivot = new THREE.Group(), concTilt = new THREE.Group();
+{
+  concPivot.position.copy(C); concPivot.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(basisC.x, basisC.y, basisC.z));
+  concPivot.add(concTilt);
+  const surf = (off) => { const geo = new THREE.PlaneGeometry(CONC.w, CONC.h, 40, 16), p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i); p.setZ(i, RAD - Math.sqrt(RAD * RAD - x * x - y * y) + off); } geo.computeVertexNormals(); return geo; };
+  concTilt.add(new THREE.Mesh(surf(0), M.mirrorBig));
+  const back = new THREE.Mesh(surf(-.7), M.plastic); back.material = M.plastic; concTilt.add(back);
+  // rim
+  const hw = CONC.w / 2, hh = CONC.h / 2;
+  for (const s of [-1, 1]) { box(.35, CONC.h, .9, M.plastic, s * hw, 0, -.3, concTilt); }
+  box(CONC.w, .35, .9, M.plastic, 0, hh, -.1, concTilt); box(CONC.w, .35, .9, M.plastic, 0, -hh, -.1, concTilt);
+  // pivot bosses and the ear the motor link grabs
+  for (const s of [-1, 1]) cyl(.6, 1.2, M.plastic, s * (hw + .5), 0, -.5, concTilt, 'x');
+  box(1.2, 1.6, .8, M.plastic, hw + .3, hh * .82, -.9, concTilt);
+  register('concave', concPivot);
+}
+// ── fold mirror
+{
+  const g = new THREE.Group(); g.position.copy(F); g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(basisF.x, basisF.y, basisF.z));
+  const mats = [M.glassEdge, M.glassEdge, M.glassEdge, M.glassEdge, M.mirrorFold, M.black];
+  const m = new THREE.Mesh(new THREE.BoxGeometry(FOLD.w, FOLD.h, .4), mats); m.position.set(FOLD.cx, FOLD.cy, -.2); g.add(m);
+  box(FOLD.w + .8, FOLD.h + .8, .5, M.plastic, FOLD.cx, FOLD.cy, -.7, g);
+  register('fold', g);
+}
+// ── PGU stack, sized from the traced LCD footprint
+const PG = { w: LCDR.w + 3.2, d: LCDR.d + 3.2, cx: LCDR.cx, cz: LCDR.cz };
+let ledMesh, lcdWarpMesh, lcdRectMesh;
+{
+  // LCD panel glass + bezel + foam
+  const g = new THREE.Group();
+  box(LCDR.w + 1.2, .3, LCDR.d + 1.1, M.lcdGlass, PG.cx, Ly - .16, PG.cz, g);
+  for (const s of [-1, 1]) box(.7, .12, LCDR.d * .8, M.foam, PG.cx + s * (LCDR.w / 2 + .25), Ly + .02, PG.cz, g);
+  // the image on the panel: warped (traced) mesh and plain rectangle
+  const pos = new Float32Array(NX * NY * 3), uv = new Float32Array(NX * NY * 2), idx = [];
+  for (let j = 0; j < NY - 1; j++) for (let i = 0; i < NX - 1; i++) { const a = j * NX + i; idx.push(a, a + NX, a + 1, a + 1, a + NX, a + NX + 1); }
+  OPT.rays.forEach((r, k) => { uv[k * 2] = r.iu; uv[k * 2 + 1] = 1 - r.iv; });
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); geo.setIndex(idx);
+  const dispMat = new THREE.MeshBasicMaterial({ map: hudTex, toneMapped: false, side: THREE.DoubleSide });
+  lcdWarpMesh = new THREE.Mesh(geo, dispMat); lcdWarpMesh.userData.keepMat = true; lcdWarpMesh.frustumCulled = false; g.add(lcdWarpMesh);
+  const rg = new THREE.PlaneGeometry(LCDR.w, LCDR.d, 1, 1); const ru = rg.attributes.uv, rp = rg.attributes.position;
+  for (let i = 0; i < rp.count; i++) { const p = V(PG.cx + rp.getX(i), Ly + .03, PG.cz - rp.getY(i)); const [s, t] = rectImg(p); ru.setXY(i, s, 1 - t); }
+  rg.rotateX(-Math.PI / 2); rg.translate(PG.cx, Ly + .03, PG.cz);
+  // rotateX moved the vertices; recompute positions from scratch for clarity
+  lcdRectMesh = new THREE.Mesh(rg, dispMat); lcdRectMesh.userData.keepMat = true; lcdRectMesh.visible = false; g.add(lcdRectMesh);
+  register('lcd', g);
+}
+{
+  // driver flex board behind the panel + flex tail into the panel edge
+  const g = new THREE.Group(); const zb = PG.cz - PG.d / 2 - 1.9;
+  const top = new THREE.Mesh(new THREE.BoxGeometry(LCDR.w + 1.5, .08, 3.2), [M.fpcPlain, M.fpcPlain, M.fpc, M.fpcPlain, M.fpcPlain, M.fpcPlain]); top.position.set(PG.cx, Ly + .05, zb); g.add(top);
+  const tail = ribbon([V(PG.cx, Ly + .05, zb + 1.4), V(PG.cx, Ly + .5, zb + 2.3), V(PG.cx, Ly - .15, PG.cz - LCDR.d / 2 - .3)], LCDR.w * .55, M.fpcPlain, X); g.add(tail);
+  for (const s of [-1, 1]) box(.7, .4, .7, M.black, PG.cx + 2.4 + s * .5, Ly + .3, zb + .3, g);
+  box(2.6, .3, .6, M.kapton, PG.cx - 1.2, Ly + .25, zb + 1.1, g);
+  register('tcon', g);
+}
+{
+  const g = new THREE.Group(); const y = 2.45;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(LCDR.w + .8, .18, LCDR.d + .8), M.hex); m.position.set(PG.cx, y, PG.cz); g.add(m);
+  register('hex', g);
+}
+const LEDS = [];
+{
+  const nx = 14, nz = 7, sx = (LCDR.w + .4) / (nx - 1), sz = (LCDR.d + .2) / (nz - 1);
+  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { if (j % 2 && i === nx - 1) continue; LEDS.push(V(PG.cx - (LCDR.w + .4) / 2 + i * sx + (j % 2 ? sx / 2 : 0), .8, PG.cz - (LCDR.d + .2) / 2 + j * sz)); }
+  const g = new THREE.Group();
+  box(LCDR.w + 1.4, .22, LCDR.d + 1.2, M.clear, PG.cx, 1.3, PG.cz, g);
+  const dome = new THREE.SphereGeometry(.36, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+  const inst = new THREE.InstancedMesh(dome, M.clear, LEDS.length); const mm = new THREE.Matrix4();
+  LEDS.forEach((p, k) => { mm.makeTranslation(p.x, 1.41, p.z); inst.setMatrixAt(k, mm); }); g.add(inst);
+  register('lens', g);
+}
+{
+  const g = new THREE.Group();
+  // PGU frame (black plastic) carries the stack; it belongs to the backlight module
+  const fw = PG.w, fd = PG.d, y0 = .55, y1 = Ly - .3, hgt = y1 - y0, ym = (y0 + y1) / 2;
+  box(fw, hgt, .7, M.plastic, PG.cx, ym, PG.cz - fd / 2 + .35, g); box(fw, hgt, .7, M.plastic, PG.cx, ym, PG.cz + fd / 2 - .35, g);
+  box(.7, hgt, fd, M.plastic, PG.cx - fw / 2 + .35, ym, PG.cz, g); box(.7, hgt, fd, M.plastic, PG.cx + fw / 2 - .35, ym, PG.cz, g);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) cyl(.45, hgt + .3, M.plastic, PG.cx + sx * (fw / 2 + .2), ym, PG.cz + sz * (fd / 2 - .6), g);
+  box(fw - .2, .14, fd - .2, M.sheet, PG.cx, .52, PG.cz, g);                // back plate
+  box(3.2, .14, 1.6, M.sheet, PG.cx - 1.5, .52, PG.cz - fd / 2 - .7, g);   // QR tab (65-GD-60)
+  box(LCDR.w + 1.6, .14, LCDR.d + 1.4, M.ledBoard, PG.cx, .66, PG.cz, g);
+  ledMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(.34, .12, .34), M.led, LEDS.length); const mm = new THREE.Matrix4();
+  LEDS.forEach((p, k) => { mm.makeTranslation(p.x, p.y, p.z); ledMesh.setMatrixAt(k, mm); }); ledMesh.userData.keepMat = true; g.add(ledMesh);
+  register('led', g);
+}
+{
+  const g = new THREE.Group(); box(PG.w - .6, .14, PG.d - .8, M.pad, PG.cx, .38, PG.cz, g); register('pad', g);
+}
+{
+  // die-cast bracket: main plate, side step, ears, raised pads and the latch loop seen in the photo
+  const g = new THREE.Group(); const bw = PG.w + 6, bd = PG.d + 3.2, y = .12;
+  box(bw, .4, bd, M.cast, PG.cx, y, PG.cz, g);
+  box(4.6, .7, bd, M.cast, PG.cx + bw / 2 - 2.3, y + .15, PG.cz, g);
+  for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { box(1.5, .3, 1.8, M.cast, PG.cx + sx * (bw / 2 - 1.8), y, PG.cz + sz * (bd / 2 + .8), g); cyl(.22, .32, M.black, PG.cx + sx * (bw / 2 - 1.8), y + .02, PG.cz + sz * (bd / 2 + 1.1), g); }
+  for (const [x, z] of [[0, -bd / 2 + 1], [-bw / 2 + 2, bd / 2 - 1], [bw / 2 - 7, bd / 2 - 1]]) box(1.4, .45, .9, M.cast, PG.cx + x, y + .4, PG.cz + z, g);
+  const lx = PG.cx + bw / 2 + 1.6, lz = PG.cz - 1; box(3.2, .3, .4, M.cast, lx, y + .6, lz - 1.1, g); box(3.2, .3, .4, M.cast, lx, y + .6, lz + 1.1, g); box(.4, .3, 2.6, M.cast, lx + 1.4, y + .6, lz, g); box(1.6, 1, 2.2, M.cast, lx - 1.3, y + .4, lz, g);
+  const tag = canvasTex(256, 96, (c, w, h) => { c.fillStyle = '#9da1a4'; c.fillRect(0, 0, w, h); c.strokeStyle = '#6d7174'; c.lineWidth = 3; c.strokeRect(4, 4, w - 8, h - 8); c.fillStyle = '#5d6164'; c.font = '600 26px "IBM Plex Mono", monospace'; c.fillText('HA-DZK-617', 60, 40); c.font = '500 18px "IBM Plex Mono", monospace'; c.fillText('>ADC12<', 14, 80); c.beginPath(); c.arc(140, 68, 18, 0, 7); c.stroke(); c.beginPath(); c.arc(196, 68, 18, 0, 7); c.stroke(); });
+  topPlane(4, 1.5, new THREE.MeshStandardMaterial({ map: tag, roughness: .6, metalness: .6 }), PG.cx + bw / 2 - 2.3, y + .51, PG.cz, g);
+  register('bracket', g);
+}
+{
+  const g = new THREE.Group(); const hw = PG.w + 2, hd = PG.d + 1;
+  box(hw, .6, hd, M.alu, PG.cx, -.4, PG.cz, g);
+  const n = 20; for (let i = 0; i < n; i++) box(.16, 5.2, hd - .4, M.alu, PG.cx - hw / 2 + .4 + i * (hw - .8) / (n - 1), -3.3, PG.cz, g);
+  register('heatsink', g);
+}
+// ── main PCB with its chips as selectable sub-parts
+const PCB_POS = V(-7.5, 1.4, -18);
+const shieldMeshes = [];
+{
+  const g = new THREE.Group(); g.position.copy(PCB_POS);
+  const board = new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]);
+  board.material[2] = M.pcb; g.add(board);
+  const pcbMap = M.pcb.map; pcbMap.wrapS = pcbMap.wrapT = THREE.ClampToEdgeWrapping;
+  const T = .08;
+  const sub = (o, id) => { o.traverse(c => { if (c.isMesh) c.userData.partId = id; }); g.add(o); return o; };
+  const qfp = (size, lines, big, x, z, id) => { const q = new THREE.Group(); box(size + .35, .05, size + .35, M.silver, 0, T + .03, 0, q); box(size, .2, size, M.black, 0, T + .15, 0, q); topPlane(size * .98, size * .98, new THREE.MeshBasicMaterial({ map: chipTex(lines, big), toneMapped: false }), 0, T + .256, 0, q); q.position.set(x, 0, z); return sub(q, id); };
+  qfp(1.7, ['EPSON', 'S2D13V42', 'F00A1', 'JAPAN'], true, -.6, -.6, 'epson');
+  qfp(.9, ['MAX9278A', 'GTM/V'], false, 1.9, .7, 'max');
+  qfp(1.8, ['TF25910', '1TC2523', '16843'], false, 6.6, -.9, 'mcu');
+  { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(5.1, 0, -2.1); sub(xt, 'mcu'); }
+  { const s = new THREE.Group(); const cw = 5.4, cd = 3.9; box(cw, .05, cd, M.silver, 0, T + .62, 0, s); for (const k of [-1, 1]) { box(cw, .6, .05, M.silver, 0, T + .3, k * cd / 2, s); box(.05, .6, cd, M.silver, k * cw / 2, T + .3, 0, s); } s.position.set(.5, 0, -.2); sub(s, 'shield'); s.traverse(c => c.isMesh && shieldMeshes.push(c)); }
+  { const pw = new THREE.Group(); const capMat = M.silver;
+    [[-9.8, 2.2], [-8.9, 2.2], [-8, 2.2], [-9.2, 1.2], [-7.6, 1.2], [-5.6, 1.3]].forEach(([x, z]) => { cyl(.33, .62, capMat, x, T + .31, z, pw); cyl(.3, .02, M.black, x, T + .63, z, pw); });
+    [[-11.2, .8, '102'], [-9.6, -.4, '100'], [-6.3, -1.4, '100'], [-5.4, .1, '100'], [-3.6, 1.5, 'MG220']].forEach(([x, z]) => box(.95, .45, .95, new THREE.MeshStandardMaterial({ color: 0x595d62, roughness: .7 }), x, T + .22, z, pw));
+    [[-8.2, -.2], [-10.4, 1.9], [-4.6, -.6]].forEach(([x, z]) => { box(.75, .25, .7, M.black, x, T + .13, z, pw); box(.5, .05, .3, M.silver, x, T + .02, z - .5, pw); });
+    sub(pw, 'power'); }
+  { const cn = new THREE.Group();
+    cyl(.75, 2.4, M.black, -14.3, .7, -1.4, cn, 'x'); box(1.4, 1.4, 1.4, M.silver, -12.6, .78, -1.4, cn);
+    box(2.4, 1.4, 2, M.white, -13.6, .78, 1.3, cn); for (let k = 0; k < 4; k++) box(1, .06, .06, M.silver, -12.1, .5, .6 + k * .45, cn);
+    sub(cn, 'conn'); }
+  // internal connectors + small parts (part of the board itself)
+  [[9.6, -2.3, 1.6], [11, -1, 1.1], [11.4, 1.6, 1.8], [5.2, 2.4, 1.7]].forEach(([x, z, w]) => box(w, .55, .6, M.white, x, T + .28, z, g));
+  box(2.5, .32, .65, M.kapton, 8.6, T + .16, 2.55, g);
+  { const r = rng(5), n = 140, inst = new THREE.InstancedMesh(new THREE.BoxGeometry(.18, .08, .1), M.black, n), mm = new THREE.Matrix4(); for (let i = 0; i < n; i++) { mm.makeTranslation(-11 + r() * 24, T + .04, -3 + r() * 6); inst.setMatrixAt(i, mm); } g.add(inst); }
+  register('pcb', g);
+}
+{
+  // shielded FFC: PCB connector → driver flex
+  const zb = PG.cz - PG.d / 2 - 1.9;
+  const a = V(PCB_POS.x + 8.6, PCB_POS.y + .35, PCB_POS.z + 2.55), b = V(PG.cx - 1.2, Ly + .35, zb + 1.1);
+  const g = new THREE.Group(); const r = ribbon([a, V(a.x + 1, a.y + 2.2, a.z + 2), V(b.x - 1.5, b.y + 2.5, b.z - 2), b], 2.2, M.ffc, X); g.add(r);
+  box(2.6, .1, 1.4, M.kapton, a.x, a.y + .2, a.z + .4, g); box(2.6, .1, 1.4, M.kapton, b.x, b.y + .1, b.z - .4, g);
+  register('ffc', g);
+}
+// ── motor, lead screw and link (placement estimated; parts from photos)
+const motor = { nut: null, screw: null, link: null, ear0: null, sy: 0, x: 0 };
+{
+  const g = new THREE.Group();
+  concPivot.updateMatrixWorld(true);
+  const ear = concTilt.localToWorld(V(CONC.w / 2 + .3, CONC.h / 2 * .82, -.9)); motor.ear0 = ear.clone();
+  motor.x = ear.x + 1.2; motor.sy = ear.y - 2.4;
+  const s = new THREE.Group(); s.position.set(motor.x, motor.sy, ear.z);
+  cyl(.28, 9, M.black, 0, 0, 0, s, 'z');
+  const pts = []; for (let i = 0; i <= 220; i++) { const t = i / 220, a = t * Math.PI * 2 * 14; pts.push(V(Math.cos(a) * .42, Math.sin(a) * .42, -4.4 + t * 8.8)); }
+  s.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, .12, 6), M.black));
+  const gp = []; for (let i = 0; i <= 120; i++) { const t = i / 120, a = t * Math.PI * 2 * 7; gp.push(V(Math.cos(a) * .5, Math.sin(a) * .5, -3 + t * 5)); }
+  s.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gp), 200, .14, 5), M.grease));
+  g.add(s); motor.screw = s;
+  const can = cyl(1.15, 1.9, M.silver, motor.x, motor.sy, ear.z + 5.6, g, 'z', 32); cyl(1.18, .15, M.sheet, motor.x, motor.sy, ear.z + 4.7, g, 'z', 32);
+  box(.6, 1.5, .4, M.silver, motor.x + .9, motor.sy + .6, ear.z + 4.6, g);
+  // bearing blocks + base rail
+  box(1.4, 1.4, .8, M.plastic, motor.x, motor.sy, ear.z - 4.6, g); box(1.4, 1.4, .8, M.plastic, motor.x, motor.sy, ear.z + 4.4, g);
+  box(1.6, .3, 10, M.plastic, motor.x, motor.sy - .9, ear.z, g);
+  // position sensor board HATDF579-0200
+  const sb = new THREE.Group(); box(.1, 1.1, 3.6, M.black, 0, 0, 0, sb); box(.2, .45, .45, M.white, .12, .1, -1.1, sb); box(.25, .45, .7, M.black, .14, 0, 1.2, sb); sb.position.set(motor.x - 1.1, motor.sy, ear.z - 1); g.add(sb);
+  const nut = box(1.1, 1.1, 1.2, M.white, motor.x, motor.sy, ear.z, g); motor.nut = nut;
+  const link = cyl(.18, 1, M.silver, 0, 0, 0, g); motor.link = link;
+  register('motor', g);
+}
+// ── harness wires
+{
+  const g = new THREE.Group(); const from = V(PCB_POS.x + 9.6, PCB_POS.y + .5, PCB_POS.z - 2.3);
+  const to = V(motor.x - 1, motor.sy, motor.ear0.z + 4.8);
+  for (let k = 0; k < 4; k++) { const o = (k - 1.5) * .22; g.add(wire([from.clone().add(V(o, 0, 0)), V(from.x + 3 + o, 1.5, from.z - 2.6), V(19.5 + o, 2, -10), V(20 + o, 4, 6), V(to.x + o, to.y - .4, to.z + 1.5), to.clone().add(V(o, 0, 0))], .09, M.wire)); }
+  const lf = V(PCB_POS.x + 11, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + PG.w / 2 - .4, .9, PG.cz + 1);
+  for (let k = 0; k < 2; k++) g.add(wire([lf.clone().add(V(0, 0, k * .22)), V(lf.x + 2, 1.6, lf.z + 3), V(lt.x + 1.2, 1.4, lt.z - 3), lt.clone().add(V(0, 0, k * .22))], .08, M.wire));
+  register('harness', g);
+}
+// ── housings: built as wall slabs so they can go see-through and be cut in half
+const cutPlane = new THREE.Plane(V(-1, 0, 0), 0);
+function slab(a, b, t, width, mat, parent, xOff = 0) { // a,b: {z,y}
+  const dz = b.z - a.z, dy = b.y - a.y, len = Math.hypot(dz, dy);
+  const m = new THREE.Mesh(new THREE.BoxGeometry(width, t, len), mat); m.position.set(xOff, (a.y + b.y) / 2, (a.z + b.z) / 2); m.rotation.x = Math.atan2(-dy, dz); parent.add(m); return m;
+}
+function addEdges(g) { const lines = []; g.traverse(o => { if (o.isMesh) lines.push(o); }); lines.forEach(o => { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: 0x6b7f93, transparent: true, opacity: .45 })); e.userData.nopick = true; o.add(e); housingEdges.push(e); }); }
+const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zmax: Math.max(C.z + 3, motor.ear0.z + 7.5), hw: Math.max(CONC.w / 2 + 3.8, FOLD.w / 2 + 2) };
+{
+  const g = new THREE.Group(), t = .4, W = UH.hw * 2, z0 = UH.zmin, z1 = UH.zmax;
+  const prof = [{ z: z0, y: YFLOOR }, { z: z1, y: YFLOOR }, { z: z1 + 2.2, y: 17 }, { z: z1 - .5, y: YTOP }, { z: z0 + 5, y: YTOP }, { z: z0, y: YTOP - 6 }];
+  // floor, split around the PGU window
+  slab({ z: z0, y: YFLOOR }, { z: HOLE.z0, y: YFLOOR }, t, W, M.plastic, g); slab({ z: HOLE.z1, y: YFLOOR }, { z: z1, y: YFLOOR }, t, W, M.plastic, g);
+  for (const s of [-1, 1]) slab({ z: HOLE.z0, y: YFLOOR }, { z: HOLE.z1, y: YFLOOR }, t, UH.hw - HOLE.x, M.plastic, g, s * (HOLE.x + (UH.hw - HOLE.x) / 2));
+  slab(prof[1], prof[2], t, W, M.plastic, g); slab(prof[2], prof[3], t, W, M.plastic, g);
+  // top: rim around the aperture
+  const a0 = Math.max(AP.z0, z0 + 5.2), a1 = Math.min(AP.z1, z1 - .7);
+  slab(prof[3], { z: a1, y: YTOP }, t, W, M.plastic, g); slab({ z: a0, y: YTOP }, prof[4], t, W, M.plastic, g);
+  for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, g, s * (AP.x + (UH.hw - AP.x) / 2));
+  slab(prof[4], prof[5], t, W, M.plastic, g); slab(prof[5], prof[0], t, W, M.plastic, g);
+  // end caps
+  const shape = new THREE.Shape(prof.map(p => new THREE.Vector2(p.z, p.y)));
+  for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.y = -Math.PI / 2; m.position.x = s > 0 ? UH.hw + t : -UH.hw; g.add(m); }
+  // inner light-trap ribs under the top rim
+  for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
+  addEdges(g); register('upper', g);
+}
+{
+  const g = new THREE.Group(), t = .45, x0 = -22, x1 = 22, z0 = -22.5, z1 = 10, y0 = -1, y1 = YFLOOR;
+  const hx0 = PG.cx - PG.w / 2 - 1.2, hx1 = PG.cx + PG.w / 2 + 1.2, hz0 = PG.cz - PG.d / 2 - .6, hz1 = PG.cz + PG.d / 2 + .6;
+  box(x1 - x0, t, hz0 - z0, M.plastic, 0, y0, (z0 + hz0) / 2, g); box(x1 - x0, t, z1 - hz1, M.plastic, 0, y0, (hz1 + z1) / 2, g);
+  box(hx0 - x0, t, hz1 - hz0, M.plastic, (x0 + hx0) / 2, y0, (hz0 + hz1) / 2, g); box(x1 - hx1, t, hz1 - hz0, M.plastic, (hx1 + x1) / 2, y0, (hz0 + hz1) / 2, g);
+  const hgt = y1 - y0, ym = (y0 + y1) / 2;
+  box(x1 - x0, hgt, t, M.plastic, 0, ym, z0, g); box(x1 - x0, hgt, t, M.plastic, 0, ym, z1, g);
+  box(t, hgt, z1 - z0, M.plastic, x1, ym, (z0 + z1) / 2, g);
+  // left wall has the connector openings
+  const cz = PCB_POS.z; box(t, hgt, (cz - 2.6) - z0, M.plastic, x0, ym, (z0 + cz - 2.6) / 2, g); box(t, hgt, z1 - (cz + 2.6), M.plastic, x0, ym, (cz + 2.6 + z1) / 2, g);
+  box(t, hgt - 3.2, 5.2, M.plastic, x0, y1 - (hgt - 3.2) / 2, cz, g);
+  // lid over the electronics bay (the mirror housing covers the rest)
+  box(x1 - x0, t, UH.zmin - z0 + .4, M.plastic, 0, y1, (z0 + UH.zmin + .4) / 2, g);
+  // mounting ears
+  for (const s of [-1, 1]) for (const z of [-15, 4]) { box(3.4, .5, 4.5, M.plastic, s * 24, 2, z, g); cyl(.6, .52, M.black, s * 24.6, 2, z, g); }
+  // product label + EPC sticker on the back wall
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), new THREE.MeshStandardMaterial({ map: labelTex, roughness: .8 })); lab.position.set(-4, 3.6, z0 - .25); lab.rotation.y = Math.PI; g.add(lab);
+  const epc = new THREE.Mesh(new THREE.CircleGeometry(1.4, 32), new THREE.MeshStandardMaterial({ map: epcTex, roughness: .8 })); epc.position.set(-11.5, 3, z0 - .25); epc.rotation.y = Math.PI; g.add(epc);
+  addEdges(g); register('lower', g);
+}
+
+/* ───────────────────────── car environment ───────────────────────── */
+const envG = new THREE.Group(); scene.add(envG);
+const wsMesh = new THREE.Mesh(new THREE.PlaneGeometry(150, 120), new THREE.MeshPhysicalMaterial({ color: 0x9fc6e6, transparent: true, opacity: .1, roughness: .02, side: THREE.DoubleSide, depthWrite: false }));
+wsMesh.position.copy(W0); wsMesh.lookAt(W0.clone().add(nW)); envG.add(wsMesh);
+const wsEdge = new THREE.LineSegments(new THREE.EdgesGeometry(wsMesh.geometry), new THREE.LineBasicMaterial({ color: 0x6fa8d0, transparent: true, opacity: .5 })); wsMesh.add(wsEdge);
+const eyeG = new THREE.Group(); envG.add(eyeG);
+const head = new THREE.Mesh(new THREE.SphereGeometry(9, 32, 20), new THREE.MeshStandardMaterial({ color: 0x3a4552, roughness: .9, transparent: true, opacity: .35, depthWrite: false })); head.scale.set(.85, 1.1, 1); head.position.set(0, 1, -8); eyeG.add(head);
+const eyeDot = new THREE.Mesh(new THREE.SphereGeometry(.9, 16, 10), new THREE.MeshBasicMaterial({ color: 0x6fe7ff, toneMapped: false })); eyeG.add(eyeDot);
+const eyebox = new THREE.Mesh(new THREE.BoxGeometry(13, 5, 4), new THREE.MeshBasicMaterial({ color: 0x6fe7ff, wireframe: true, transparent: true, opacity: .35 })); eyeG.add(eyebox);
+const road = new THREE.Group(); envG.add(road);
+{
+  const gy = OPT.eye.y - 125;
+  const asphalt = new THREE.Mesh(new THREE.PlaneGeometry(1400, 4000), new THREE.MeshStandardMaterial({ color: 0x15191e, roughness: 1 })); asphalt.rotation.x = -Math.PI / 2; asphalt.position.set(0, gy, 1700); road.add(asphalt);
+  const lm = new THREE.MeshBasicMaterial({ color: 0x8a939c });
+  for (const x of [-175, 175]) for (let z = -100; z < 3600; z += 900) { const s = new THREE.Mesh(new THREE.PlaneGeometry(12, 300), lm); s.rotation.x = -Math.PI / 2; s.position.set(x, gy + .5, z); road.add(s); }
+  for (const x of [-525, 525]) { const s = new THREE.Mesh(new THREE.PlaneGeometry(12, 4000), lm); s.rotation.x = -Math.PI / 2; s.position.set(x, gy + .5, 1700); road.add(s); }
+  // side road on the right for the turn arrow
+  const side = new THREE.Mesh(new THREE.PlaneGeometry(1600, 700), new THREE.MeshStandardMaterial({ color: 0x15191e, roughness: 1 })); side.rotation.x = -Math.PI / 2; side.position.set(-1300, gy + .2, 1500); road.add(side);
+}
+scene.fog = new THREE.Fog(0x0b0e12, 900, 3800);
+// floating virtual image
+const virtGeo = new THREE.BufferGeometry(); {
+  const idx = []; for (let j = 0; j < NY - 1; j++) for (let i = 0; i < NX - 1; i++) { const a = j * NX + i; idx.push(a, a + NX, a + 1, a + 1, a + NX, a + NX + 1); }
+  virtGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NX * NY * 3), 3)); virtGeo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(NX * NY * 2), 2)); virtGeo.setIndex(idx);
+}
+const virtMesh = new THREE.Mesh(virtGeo, new THREE.MeshBasicMaterial({ map: hudTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false, fog: false }));
+virtMesh.frustumCulled = false; envG.add(virtMesh);
+
+/* ───────────────────────── light: ray lines, beam, photons, sun ───────────────────────── */
+const lightG = new THREE.Group(); scene.add(lightG);
+const SUBI = [0, 3, 7, 10, 13, 17, 20, 24, 27], SUBJ = [0, 3, 6, 9];
+const rayLineGeo = new THREE.BufferGeometry(); rayLineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SUBI.length * SUBJ.length * 4 * 2 * 3), 3));
+const rayLines = new THREE.LineSegments(rayLineGeo, new THREE.LineBasicMaterial({ color: 0x6fe7ff, transparent: true, opacity: .28, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); rayLines.frustumCulled = false; lightG.add(rayLines);
+const beamGeo = new THREE.BufferGeometry(); beamGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(4 * 4 * 6 * 3), 3));
+const beam = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({ color: 0x6fe7ff, transparent: true, opacity: .07, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false })); beam.frustumCulled = false; lightG.add(beam);
+const virtLineGeo = new THREE.BufferGeometry(); virtLineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(5 * 2 * 3), 3));
+const virtLines = new THREE.LineSegments(virtLineGeo, new THREE.LineDashedMaterial({ color: 0x6fe7ff, dashSize: 6, gapSize: 6, transparent: true, opacity: .45, fog: false })); virtLines.frustumCulled = false; lightG.add(virtLines);
+const SUN_N = 21;
+const sunGeo = new THREE.BufferGeometry(); sunGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SUN_N * 3 * 2 * 3), 3));
+const sunLines = new THREE.LineSegments(sunGeo, new THREE.LineBasicMaterial({ color: 0xffa040, transparent: true, opacity: .6, blending: THREE.AdditiveBlending, depthWrite: false })); sunLines.frustumCulled = false; sunLines.visible = false; scene.add(sunLines);
+const hotSpot = new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: 0xff7a2a, transparent: true, opacity: .8, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); hotSpot.rotation.x = -Math.PI / 2; hotSpot.visible = false; scene.add(hotSpot);
+
+const SEG_T = [0.9, 0.8, 1.0, 1.4, 1.6];
+const SEG_C = SEG_T.reduce((a, t, i) => (a.push((a[i - 1] || 0) + t), a), []);
+const TOTAL = SEG_C[SEG_C.length - 1];
+const NP = 1600;
+const pGeo = new THREE.BufferGeometry();
+const pPos = new Float32Array(NP * 3), pCol = new Float32Array(NP * 3), pAl = new Float32Array(NP);
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3)); pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3)); pGeo.setAttribute('alpha', new THREE.BufferAttribute(pAl, 1));
+const pMat = new THREE.ShaderMaterial({
+  uniforms: { uScale: { value: 400 }, uSize: { value: .75 } },
+  vertexShader: `attribute vec3 color; attribute float alpha; varying vec3 vC; varying float vA; uniform float uScale; uniform float uSize;
+    void main(){ vC=color; vA=alpha; vec4 mv=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mv; gl_PointSize=clamp(uSize*uScale/-mv.z,1.5,28.0); }`,
+  fragmentShader: `varying vec3 vC; varying float vA; void main(){ float d=length(gl_PointCoord-0.5); float a=smoothstep(0.5,0.0,d); a=a*a; gl_FragColor=vec4(vC*a*vA*1.6, a*vA); }`,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+});
+const photons = new THREE.Points(pGeo, pMat); photons.frustumCulled = false; lightG.add(photons);
+const P = { ray: new Int32Array(NP), s: new Float32Array(NP), lit: [], all: [] };
+let paths = [], rayLit = [], rayCol = [];
+
+function rebuildLight() {
+  const warp = state.warp;
+  // per-ray pixel: with warp on, ray k shows image point (iu,iv); off, it shows whatever the plain panel has at its LCD point
+  paths = OPT.rays.map(r => { const led = V(r.p4.x, .85, r.p4.z); return [led, r.p4, r.p3, r.p2, r.p1, OPT.eye]; });
+  P.lit = []; rayLit = []; rayCol = [];
+  OPT.rays.forEach((r, k) => {
+    const [iu, iv] = warp ? [r.iu, r.iv] : rectImg(r.p4);
+    const c = hudSample(iu, iv), lum = (c[0] + c[1] + c[2]) / 765; const lit = lum > .18;
+    rayLit.push(lit); rayCol.push(lit ? [c[0] / 255, c[1] / 255, c[2] / 255] : [0, 0, 0]); if (lit) P.lit.push(k);
+  });
+  // lines
+  const lp = rayLineGeo.attributes.position.array; let o = 0;
+  for (const j of SUBJ) for (const i of SUBI) { const pth = paths[j * NX + i]; for (let s = 1; s < 5; s++) { const a = pth[s], b = pth[s + 1]; lp[o++] = a.x; lp[o++] = a.y; lp[o++] = a.z; lp[o++] = b.x; lp[o++] = b.y; lp[o++] = b.z; } }
+  rayLineGeo.attributes.position.needsUpdate = true;
+  const corners = [paths[0], paths[NX - 1], paths[NX * NY - 1], paths[NX * (NY - 1)]];
+  const bp = beamGeo.attributes.position.array; o = 0;
+  for (let s = 1; s < 5; s++) for (let c = 0; c < 4; c++) { const A = corners[c][s], B = corners[(c + 1) % 4][s], A2 = corners[c][s + 1], B2 = corners[(c + 1) % 4][s + 1]; for (const p of [A, B, A2, B, B2, A2]) { bp[o++] = p.x; bp[o++] = p.y; bp[o++] = p.z; } }
+  beamGeo.attributes.position.needsUpdate = true;
+  const vp = virtLineGeo.attributes.position.array; o = 0;
+  for (const k of [0, NX - 1, NX * NY - 1, NX * (NY - 1), (NY >> 1) * NX + (NX >> 1)]) { const r = OPT.rays[k]; for (const p of [OPT.eye, r.virt]) { vp[o++] = p.x; vp[o++] = p.y; vp[o++] = p.z; } }
+  virtLineGeo.attributes.position.needsUpdate = true; virtLines.computeLineDistances();
+  // virtual image + panel image
+  const va = virtGeo.attributes.position.array, vu = virtGeo.attributes.uv.array, la = lcdWarpMesh.geometry.attributes.position.array;
+  OPT.rays.forEach((r, k) => {
+    va[k * 3] = r.virt.x; va[k * 3 + 1] = r.virt.y; va[k * 3 + 2] = r.virt.z;
+    if (warp) { vu[k * 2] = r.iu; vu[k * 2 + 1] = 1 - r.iv; } else { const [s, t] = rectImg(r.p4); vu[k * 2] = s; vu[k * 2 + 1] = 1 - t; }
+    la[k * 3] = r.p4.x; la[k * 3 + 1] = Ly + .03; la[k * 3 + 2] = r.p4.z;
+  });
+  virtGeo.attributes.position.needsUpdate = true; virtGeo.attributes.uv.needsUpdate = true; virtGeo.computeBoundingSphere();
+  lcdWarpMesh.geometry.attributes.position.needsUpdate = true; lcdWarpMesh.geometry.computeBoundingSphere();
+  lcdWarpMesh.visible = warp; lcdRectMesh.visible = !warp;
+  eyeG.position.copy(OPT.eye); eyeG.lookAt(OPT.eye.clone().add(OPT.v0)); eyeG.rotateY(0);
+  if (state.sun) rebuildSun();
+}
+function spawn(i, fresh) { const useLit = P.lit.length && Math.random() < .55; P.ray[i] = useLit ? P.lit[(Math.random() * P.lit.length) | 0] : (Math.random() * OPT.rays.length) | 0; P.s[i] = fresh ? Math.random() * TOTAL : 0; }
+function rebuildSun() {
+  // sunlight entering backwards along the exit beam gets focused by the concave mirror onto the panel
+  const d = OUT.clone().negate(), right = X, up = OUT.clone().cross(X).normalize(); const sp = sunGeo.attributes.position.array; let o = 0, acc = V(), n = 0;
+  for (let j = 0; j < 3; j++) for (let i = 0; i < 7; i++) {
+    let p = C.clone().addScaledVector(OUT, 30).addScaledVector(right, (i - 3) * 2.6).addScaledVector(up, (j - 1) * 2.2), dd = d.clone();
+    const p2 = hitSphere(p, dd, OPT.Sc, RAD, C); dd = reflect(dd, V().subVectors(OPT.Sc, p2).normalize());
+    const p3 = hitPlane(p2, dd, F, nF); dd = reflect(dd, nF); const p4 = hitPlane(p3, dd, L, Y) || p3;
+    for (const [a, b] of [[p, p2], [p2, p3], [p3, p4]]) { sp[o++] = a.x; sp[o++] = a.y; sp[o++] = a.z; sp[o++] = b.x; sp[o++] = b.y; sp[o++] = b.z; }
+    acc.add(p4); n++;
+  }
+  sunGeo.attributes.position.needsUpdate = true; acc.multiplyScalar(1 / n); hotSpot.position.set(acc.x, Ly + .08, acc.z);
+}
+
+/* ───────────────────────── state + visuals ───────────────────────── */
+const state = { explode: 0, explodeT: 0, housing: 'ghost', light: true, rays: true, speed: 1, tilt: 0, tiltT: 0, warp: true, env: true, sun: false, labels: false,
+  selected: null, isolate: false, hidden: new Set(), hl: -1 };
+const topOf = id => (PMAP[id] && PMAP[id].parent) || id;
+function setOpacity(o, f) {
+  if (!o.material || o.userData.keepMat) return;
+  (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => {
+    const op = m.userData.op ?? 1; const tr = f < .999 || m.userData.tr;
+    if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; }
+    m.opacity = op * f; m.depthWrite = f < .6 ? false : (m.userData.dw ?? true);
+  });
+}
+function applyVisual() {
+  const sel = state.selected ? topOf(state.selected) : null;
+  for (const id in parts) {
+    const p = parts[id]; let f = 1;
+    if (p.meta.housing) f = state.housing === 'ghost' ? .14 : 1;
+    if (sel && !state.isolate && id !== sel) f = Math.min(f, p.meta.housing ? .08 : .3);
+    let vis = !state.hidden.has(id) && !(state.isolate && sel && id !== sel);
+    p.obj.visible = vis; p.fade = f;
+    p.obj.traverse(o => { if (o.isMesh) setOpacity(o, f); });
+    if (p.meta.housing) p.obj.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
+  }
+  parts.cover.obj.traverse(o => { if (o.material) o.material.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []; });
+  housingEdges.forEach(e => { e.visible = state.housing !== 'solid'; e.material.opacity = state.housing === 'ghost' ? .5 : .35; });
+  // the shield can steps aside when you look at the chips under it
+  const under = state.selected === 'epson' || state.selected === 'max';
+  shieldMeshes.forEach(m => { setOpacity(m, under ? .12 : (parts.pcb.fade ?? 1)); });
+  // highlight
+  pickables.forEach(o => { const id = o.userData.partId; const on = state.selected && (id === state.selected || (!PMAP[state.selected]?.parent && topOf(id) === state.selected && !PMAP[id]?.parent) || (topOf(id) === state.selected && PMAP[state.selected] && !PMAP[state.selected].parent)); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.emissive && m.userData.em) m.emissive.copy(on ? new THREE.Color(0x4a2e08) : m.userData.em); }); });
+  envG.visible = state.env;
+  lightG.visible = true;
+  sunLines.visible = hotSpot.visible = state.sun && state.explode < .05;
+  M.led.color.setHex(state.light ? 0xfff1d6 : 0x3a3630);
+  lcdWarpMesh.material.color.setScalar(state.light ? 1 : .04);
+  virtMesh.visible = state.light && state.env;
+  renderList();
+}
+
+/* ───────────────────────── camera controls ───────────────────────── */
+const cam = { target: V(0, 10, -2), r: 105, th: .9, ph: 1.05, gT: V(0, 10, -2), gR: 105, gTh: .9, gPh: 1.05 };
+const VIEWS = {
+  hud: () => ({ t: V(0, 10, -2), r: 105, th: .9, ph: 1.05, housing: null }),
+  side: () => ({ t: V(0, 12, 0), r: 92, th: Math.PI / 2, ph: Math.PI / 2 - .05, housing: 'cut' }),
+  top: () => ({ t: V(0, 8, -3), r: 100, th: 0.001, ph: .08, housing: null }),
+  path: () => ({ t: V(0, 32, -42), r: 300, th: 1.25, ph: 1.25, housing: null, env: true }),
+  driver: () => { const tgt = OPT.eye.clone().addScaledVector(OPT.v0, OPT.vid); return { t: tgt, r: OPT.vid, th: Math.PI, ph: Math.acos(-OPT.v0.y), housing: null, env: true }; },
+};
+function goView(name) {
+  const v = VIEWS[name](); cam.gT.copy(v.t); cam.gR = v.r; cam.gTh = v.th; cam.gPh = v.ph;
+  if (name === 'driver') { const d = OPT.eye.clone().sub(v.t); cam.gTh = Math.atan2(d.x, d.z); cam.gPh = Math.acos(d.y / d.length()); }
+  if (v.housing) setHousing(v.housing);
+  if (v.env && !state.env) { state.env = true; syncToggles(); applyVisual(); }
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === name));
+}
+function focusPart(id) {
+  const top = parts[topOf(id)]; if (!top) return; let obj = top.obj;
+  const box3 = new THREE.Box3();
+  if (PMAP[id]?.parent) { obj.traverse(o => { if (o.isMesh && o.userData.partId === id) box3.expandByObject(o); }); } else box3.setFromObject(obj);
+  if (box3.isEmpty()) return; const c = box3.getCenter(V()), s = box3.getSize(V()).length();
+  cam.gT.copy(c); cam.gR = Math.min(220, Math.max(9, s * 1.9));
+}
+const ptr = new Map(); let drag = null, downAt = null;
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  downAt = { x: e.clientX, y: e.clientY, t: performance.now() };
+  drag = (e.button === 2 || e.shiftKey) ? 'pan' : 'rot';
+});
+canvas.addEventListener('pointermove', e => {
+  const p = ptr.get(e.pointerId);
+  if (!p) { hover(e); return; }
+  const dx = e.clientX - p.x, dy = e.clientY - p.y;
+  if (ptr.size === 2) {
+    const [a, b] = [...ptr.values()]; const before = Math.hypot(a.x - b.x, a.y - b.y);
+    p.x = e.clientX; p.y = e.clientY; const [a2, b2] = [...ptr.values()]; const after = Math.hypot(a2.x - b2.x, a2.y - b2.y);
+    if (before > 0) cam.gR = Math.min(4000, Math.max(6, cam.gR * before / after));
+    pan(dx / 2, dy / 2); return;
+  }
+  p.x = e.clientX; p.y = e.clientY;
+  if (drag === 'rot') { cam.gTh -= dx * .006; cam.gPh = Math.min(3.1, Math.max(.03, cam.gPh - dy * .006)); }
+  else pan(dx, dy);
+  $('#tip').hidden = true;
+});
+function pan(dx, dy) {
+  const right = V().setFromMatrixColumn(camera.matrixWorld, 0), up = V().setFromMatrixColumn(camera.matrixWorld, 1);
+  const k = cam.r * .0016; cam.gT.addScaledVector(right, -dx * k).addScaledVector(up, dy * k);
+}
+canvas.addEventListener('pointerup', e => {
+  ptr.delete(e.pointerId);
+  if (downAt && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 6 && performance.now() - downAt.t < 500) click(e);
+  downAt = null;
+});
+canvas.addEventListener('pointercancel', e => ptr.delete(e.pointerId));
+canvas.addEventListener('wheel', e => { e.preventDefault(); cam.gR = Math.min(4000, Math.max(6, cam.gR * Math.exp(e.deltaY * .0012))); }, { passive: false });
+
+const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function visibleChain(o) { while (o) { if (!o.visible) return false; o = o.parent; } return true; }
+function pick(e) {
+  ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); raycaster.setFromCamera(ndc, camera);
+  const cands = pickables.filter(o => { const tp = parts[topOf(o.userData.partId)]; return tp && visibleChain(o) && (tp.fade ?? 1) > .2; });
+  const hit = raycaster.intersectObjects(cands, false).find(h => !(state.housing === 'cut' && PMAP[topOf(h.object.userData.partId)]?.housing && h.point.x > 0));
+  return hit ? hit.object.userData.partId : null;
+}
+let lastClick = { id: null, t: 0 };
+function click(e) {
+  const id = pick(e); const now = performance.now();
+  if (id && lastClick.id === id && now - lastClick.t < 380) { select(id, true); state.isolate = true; applyVisual(); renderInfo(); focusPart(id); }
+  else select(id);
+  lastClick = { id, t: now };
+}
+let hoverQueued = false;
+function hover(e) {
+  if (hoverQueued) return; hoverQueued = true;
+  requestAnimationFrame(() => { hoverQueued = false; const id = pick(e); const tip = $('#tip'); if (id) { tip.textContent = PMAP[id].name; tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } });
+}
+
+/* ───────────────────────── UI ───────────────────────── */
+function select(id, keepIso) {
+  state.selected = id; if (!keepIso) state.isolate = false; state.hl = -1;
+  applyVisual(); renderInfo();
+  if (id && innerWidth <= 860) showMobile('info');
+}
+function renderList() {
+  const el = $('#parts'); const groups = {};
+  PARTS.forEach(p => (groups[p.g] ||= []).push(p));
+  const eyeSvg = on => on ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c7 0 11 6 11 6a17 17 0 0 1-3.4 3.9M6.6 6.6C3.4 8.6 1 12 1 12s4 7 11 7a10 10 0 0 0 5.4-1.6"/></svg>';
+  el.innerHTML = Object.entries(groups).map(([g, list]) => `<h2>${g}</h2>` + list.map(p => {
+    const hid = state.hidden.has(p.id);
+    return `<div class="pitem ${p.parent ? 'sub' : ''} ${state.selected === p.id ? 'on' : ''} ${hid ? 'hiddenpart' : ''}"><span class="dot" style="background:${GROUPS[p.g]}"></span><button class="pname" data-sel="${p.id}">${p.name}<small>${p.en}</small></button>${p.parent ? '' : `<button class="eye" data-eye="${p.id}" aria-label="${p.name} ${hid ? '보이기' : '숨기기'}" title="${hid ? '보이기' : '숨기기'}">${eyeSvg(!hid)}</button>`}</div>`;
+  }).join('')).join('');
+}
+$('#parts').addEventListener('click', e => {
+  const s = e.target.closest('[data-sel]'), h = e.target.closest('[data-eye]');
+  if (h) { const id = h.dataset.eye; state.hidden.has(id) ? state.hidden.delete(id) : state.hidden.add(id); applyVisual(); return; }
+  if (s) { const id = s.dataset.sel; if (state.selected === id) { select(null); return; } select(id); focusPart(id); }
+});
+const fmt = (n, d = 1) => n.toFixed(d);
+function fill(s) { return s.replace('{R}', fmt(RAD, 0)).replace('{LW}', fmt(LCDR.w)).replace('{LH}', fmt(LCDR.d)); }
+function thumbs(list) { return `<div class="thumbs">${list.map((k, i) => `<button data-photo="${i}" data-set="${list.join(',')}" aria-label="${PHOTO[k] || k} 사진 크게 보기"><img src="photos/${k}.jpg" alt="${PHOTO[k] || k}" loading="lazy"></button>`).join('')}</div>`; }
+function readout() {
+  const dEye = OPT.eye.y - OPT0.eye.y;
+  return `<div class="readout">모델 허상 거리 <b>${fmt(OPT.vid / 100, 1)} m</b> · FOV <b>${fmt(HFOV * 180 / Math.PI)}° × ${fmt(VFOV * 180 / Math.PI)}°</b><br>허상 크기 <b>${fmt(2 * OPT.vid * Math.tan(HFOV / 2) / 100, 2)} × ${fmt(2 * OPT.vid * Math.tan(VFOV / 2) / 100, 2)} m</b> · 오목 미러 R <b>${fmt(RAD, 0)} cm</b><br>미러 <b>${fmt(state.tilt)}°</b> → 아이박스 높이 <b>${dEye >= 0 ? '+' : ''}${fmt(dEye)} cm</b> · 영상 픽셀 광선 <b>${P.lit.length}</b>/${OPT.rays.length}</div>`;
+}
+let OPT0 = OPT;
+function renderInfo() {
+  const el = $('#info'); const id = state.selected;
+  if (!id) {
+    el.innerHTML = `<h3>HA1SZK63E</h3><div class="en">Zeekr 7X · AR Head-Up Display · ADAYO</div>
+      <p>차량 콕핏 컴퓨터가 보낸 영상을 LCD에 띄우고, 미러 두 장과 윈드실드로 반사시켜 도로 위 수 m 앞에 떠 있는 것처럼 보여 주는 장치입니다.</p>
+      <dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E</dd><dt>생산</dt><dd>2025-10-05</dd><dt>공급사</dt><dd>ADAYO</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>방식</dt><dd>TFT-LCD PGU + 폴드·오목 미러</dd></dl>
+      <h2>빛의 여정 · 눌러서 따라가기</h2>
+      <ol class="journey">${JOURNEY.map((j, i) => `<li><button data-step="${i}" class="${state.hl === i ? 'on' : ''}"><b>${j.t}</b><span>${j.s}</span></button></li>`).join('')}</ol>
+      ${readout()}
+      <h2>사진</h2>${thumbs(['side', 'label', 'rear-heatsink', 'connector-side', 'weight-scale', 'opening'])}
+      <p class="note">치수와 배치는 사진 비례를 보고 만든 추정 모델이며 실측 CAD가 아닙니다. 광선은 이 모델 형상에서 실제 반사 법칙으로 계산합니다. 각 부품 설명의 <span class="badge photo">사진 확인</span><span class="badge guess">추정</span> 표시를 참고하세요.</p>`;
+    return;
+  }
+  const p = PMAP[id];
+  el.innerHTML = `<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><span class="badge" style="color:${GROUPS[p.g]};border-color:${GROUPS[p.g]}55">${p.g}</span>${p.conf === 'photo' ? '<span class="badge photo">사진 확인</span>' : '<span class="badge guess">배치 추정</span>'}</div>
+    <h3>${p.name}</h3><div class="en">${p.en}</div>
+    <div class="actions"><button class="btn primary" id="isoBtn">${state.isolate ? '전체 보기로 돌아가기' : '이 부품만 보기'}</button><button class="btn" id="focusBtn">확대</button><button class="btn" id="backBtn">목록</button></div>
+    <p>${p.desc}</p><ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>
+    ${p.specs.length ? `<dl class="specs">${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
+    <h2>실물 사진</h2>${thumbs(p.photos)}
+    ${['concave', 'motor', 'lcd', 'epson'].includes(id) ? readout() : ''}`;
+  $('#isoBtn').onclick = () => { state.isolate = !state.isolate; applyVisual(); renderInfo(); focusPart(id); };
+  $('#focusBtn').onclick = () => focusPart(id);
+  $('#backBtn').onclick = () => select(null);
+}
+$('#info').addEventListener('click', e => {
+  const st = e.target.closest('[data-step]');
+  if (st) { const i = +st.dataset.step; state.hl = state.hl === i ? -1 : i; const j = JOURNEY[i];
+    if (state.hl >= 0) { if (state.explodeT > 0) setExplode(0); if (j.part) { focusPart(j.part); } else if (j.seg === 4) { cam.gT.copy(OPT.pw); cam.gR = 160; } else goView('driver'); if (!state.env && !j.part) { state.env = true; syncToggles(); applyVisual(); } }
+    renderInfo(); return; }
+  const ph = e.target.closest('[data-photo]'); if (ph) openLB(ph.dataset.set.split(','), +ph.dataset.photo);
+});
+// lightbox
+let lb = { list: [], i: 0 };
+function openLB(list, i) { lb = { list, i }; showLB(); $('#lightbox').hidden = false; $('#lbClose').focus(); }
+function showLB() { const k = lb.list[lb.i]; $('#lbImg').src = `photos/${k}.jpg`; $('#lbImg').alt = PHOTO[k] || k; $('#lbCap').textContent = `${PHOTO[k] || k} · ${lb.i + 1}/${lb.list.length}`; }
+$('#lbClose').onclick = () => $('#lightbox').hidden = true;
+$('#lbPrev').onclick = () => { lb.i = (lb.i + lb.list.length - 1) % lb.list.length; showLB(); };
+$('#lbNext').onclick = () => { lb.i = (lb.i + 1) % lb.list.length; showLB(); };
+$('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') $('#lightbox').hidden = true; });
+addEventListener('keydown', e => {
+  if (!$('#lightbox').hidden) { if (e.key === 'Escape') $('#lightbox').hidden = true; if (e.key === 'ArrowLeft') $('#lbPrev').click(); if (e.key === 'ArrowRight') $('#lbNext').click(); return; }
+  if (e.key === 'Escape') { if (state.isolate) { state.isolate = false; applyVisual(); renderInfo(); } else select(null); }
+});
+// dock
+function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
+$('#explode').addEventListener('input', e => setExplode(+e.target.value));
+function setHousing(h) { state.housing = h; document.querySelectorAll('#housing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h === h)); applyVisual(); }
+$('#housing').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setHousing(b.dataset.h); });
+function syncToggles() { for (const k of ['light', 'rays', 'warp', 'env', 'sun']) $('#' + k).setAttribute('aria-pressed', state[k]); $('#labelsT').setAttribute('aria-pressed', state.labels); }
+for (const k of ['light', 'rays', 'warp', 'env', 'sun']) $('#' + k).addEventListener('click', () => { state[k] = !state[k]; syncToggles(); if (k === 'warp' || k === 'sun') rebuildLight(); applyVisual(); renderInfo(); });
+$('#labelsT').addEventListener('click', () => { state.labels = !state.labels; syncToggles(); if (!state.labels) $('#labels').innerHTML = ''; });
+$('#speed').addEventListener('input', e => { state.speed = +e.target.value; $('#speedOut').textContent = state.speed.toFixed(1) + '×'; });
+$('#tilt').addEventListener('input', e => { state.tiltT = +e.target.value; $('#tiltOut').textContent = (+e.target.value).toFixed(1) + '°'; });
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => goView(b.dataset.view)));
+function showMobile(which) {
+  const pe = $('#parts'), ie = $('#info');
+  const pOn = which === 'parts' ? pe.hidden : false, iOn = which === 'info' ? (which === 'info' && ie.hidden ? true : which === 'info' && state.selected ? true : !ie.hidden) : false;
+  pe.hidden = !pOn; ie.hidden = !iOn; $('#toggleParts').setAttribute('aria-pressed', pOn); $('#toggleInfo').setAttribute('aria-pressed', iOn);
+}
+$('#toggleParts').onclick = () => { const on = $('#parts').hidden; $('#parts').hidden = !on; $('#info').hidden = true; $('#toggleParts').setAttribute('aria-pressed', on); $('#toggleInfo').setAttribute('aria-pressed', false); };
+$('#toggleInfo').onclick = () => { const on = $('#info').hidden; $('#info').hidden = !on; $('#parts').hidden = true; $('#toggleInfo').setAttribute('aria-pressed', on); $('#toggleParts').setAttribute('aria-pressed', false); };
+function layoutMode() { const m = innerWidth <= 860; $('#parts').hidden = m; $('#info').hidden = m; $('#toggleParts').setAttribute('aria-pressed', false); $('#toggleInfo').setAttribute('aria-pressed', false); }
+
+/* ───────────────────────── labels ───────────────────────── */
+const anchors = {};
+function anchorFor(id) { if (anchors[id]) return anchors[id]; const o = parts[id].obj; const b = new THREE.Box3().setFromObject(o); const c = b.getCenter(V()); c.y = b.max.y; anchors[id] = o.worldToLocal(c.clone()); return anchors[id]; }
+function drawLabels() {
+  const el = $('#labels'); if (!state.labels) return; let html = '';
+  const add = (w, text, cls = '') => { const p = w.clone().project(camera); if (p.z > 1 || Math.abs(p.x) > 1.05 || Math.abs(p.y) > 1.05) return; html += `<div class="lbl ${cls}" style="left:${(p.x + 1) / 2 * innerWidth}px;top:${(1 - p.y) / 2 * innerHeight - 10}px">${text}</div>`; };
+  for (const id in parts) { const p = parts[id]; if (!p.obj.visible || (p.fade ?? 1) < .2 || p.meta.housing) continue; add(p.obj.localToWorld(anchorFor(id).clone()), p.meta.name); }
+  if (state.env) { add(OPT.pw.clone(), '윈드실드 반사점', 'env'); add(OPT.eye.clone().add(V(0, 3, 0)), '운전자 눈 · 아이박스', 'env'); add(OPT.rays[(NY >> 1) * NX + (NX >> 1)].virt.clone().add(V(0, 26, 0)), `허상 · ${fmt(OPT.vid / 100)} m 앞`, 'env'); }
+  el.innerHTML = html;
+}
+
+/* ───────────────────────── loop ───────────────────────── */
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); pMat.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
+addEventListener('resize', () => { resize(); layoutMode(); });
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let last = performance.now(), screwAngle = 0;
+for (let i = 0; i < NP; i++) spawn(i, true);
+const col = new THREE.Color();
+function tick(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const k = 1 - Math.exp(-dt * (reduced ? 30 : 7));
+  // camera
+  cam.target.lerp(cam.gT, k); cam.r += (cam.gR - cam.r) * k; cam.th += (cam.gTh - cam.th) * k; cam.ph += (cam.gPh - cam.ph) * k;
+  camera.position.set(cam.target.x + cam.r * Math.sin(cam.ph) * Math.sin(cam.th), cam.target.y + cam.r * Math.cos(cam.ph), cam.target.z + cam.r * Math.sin(cam.ph) * Math.cos(cam.th));
+  camera.lookAt(cam.target);
+  // explode
+  state.explode += (state.explodeT - state.explode) * k;
+  for (const id in parts) { const p = parts[id]; p.obj.position.copy(p.base).addScaledVector(p.ex, state.explode); }
+  // mirror motor: moves at a fixed angular speed, like the real stepper
+  const dTilt = state.tiltT - state.tilt;
+  if (Math.abs(dTilt) > 1e-4) {
+    const step = Math.sign(dTilt) * Math.min(Math.abs(dTilt), dt * (reduced ? 20 : 1.6)); state.tilt += step; screwAngle += step * 40;
+    concTilt.rotation.x = state.tilt * Math.PI / 180; OPT = trace(state.tilt * Math.PI / 180); rebuildLight();
+    if (state.selected === null || ['concave', 'motor', 'lcd', 'epson'].includes(state.selected)) { const ro = document.querySelector('#info .readout'); if (ro) ro.outerHTML = readout(); }
+  }
+  // link + nut follow the mirror ear
+  concPivot.updateMatrixWorld(true);
+  const ear = concTilt.localToWorld(V(CONC.w / 2 + .3, CONC.h / 2 * .82, -.9));
+  const mo = parts.motor.obj; const earL = mo.worldToLocal(ear.clone());
+  motor.nut.position.z = earL.z; motor.screw.rotation.z = screwAngle;
+  const nutTop = V(motor.x, motor.sy + .55, earL.z); const mid = nutTop.clone().add(earL).multiplyScalar(.5);
+  motor.link.position.copy(mid); motor.link.scale.set(1, nutTop.distanceTo(earL), 1); motor.link.quaternion.setFromUnitVectors(Y, V().subVectors(earL, nutTop).normalize());
+  motor.link.visible = state.explode < .03;
+  // light
+  const lightOn = state.light && state.explode < .05;
+  const showRays = state.rays && state.explode < .05;
+  rayLines.visible = beam.visible = showRays && state.light; virtLines.visible = showRays && state.env && state.light;
+  photons.visible = lightOn;
+  if (lightOn) {
+    const sp = reduced ? 0 : state.speed;
+    for (let i = 0; i < NP; i++) {
+      P.s[i] += dt * sp; if (P.s[i] >= TOTAL) spawn(i, false);
+      let s = P.s[i], seg = 0; while (seg < 4 && s > SEG_C[seg]) seg++;
+      const r = P.ray[i];
+      if (seg >= 1 && !rayLit[r]) { spawn(i, false); s = 0; seg = 0; }
+      if (seg === 4 && !state.env) { spawn(i, false); s = 0; seg = 0; }
+      const t0 = seg ? SEG_C[seg - 1] : 0, u = (s - t0) / SEG_T[seg];
+      const a = paths[r][seg], b = paths[r][seg + 1];
+      pPos[i * 3] = a.x + (b.x - a.x) * u; pPos[i * 3 + 1] = a.y + (b.y - a.y) * u; pPos[i * 3 + 2] = a.z + (b.z - a.z) * u;
+      let al = 1;
+      if (seg === 0) { col.setRGB(1, .9, .72); al = rayLit[r] ? .9 : (u > .8 ? (1 - u) * 5 * .9 : .9); }
+      else { const c = rayCol[r]; col.setRGB(c[0], c[1], c[2]); }
+      const hs = state.hl >= 0 ? JOURNEY[state.hl].seg : -1;
+      if (hs >= 0 && hs <= 4 && seg !== hs) al *= .12;
+      pCol[i * 3] = col.r; pCol[i * 3 + 1] = col.g; pCol[i * 3 + 2] = col.b; pAl[i] = al;
+    }
+    pGeo.attributes.position.needsUpdate = true; pGeo.attributes.color.needsUpdate = true; pGeo.attributes.alpha.needsUpdate = true;
+  }
+  if (hotSpot.visible) { const s = 1 + .25 * Math.sin(now / 160); hotSpot.scale.setScalar(s); }
+  renderer.render(scene, camera);
+  drawLabels();
+  requestAnimationFrame(tick);
+}
+
+resize(); layoutMode(); rebuildLight(); OPT0 = OPT; applyVisual(); renderInfo(); syncToggles();
+cam.target.copy(cam.gT); cam.r = cam.gR; cam.th = cam.gTh; cam.ph = cam.gPh;
+requestAnimationFrame(tick);
+document.fonts && document.fonts.ready.then(() => { drawHUD(); rebuildLight(); [pcbTex, fpcTex, labelTex].forEach(t => t.needsUpdate = true); renderInfo(); });
+window.__hud = { OPT: () => OPT, RAD, LCDR, HFOV: () => HFOV, VFOV: () => VFOV, state, parts };
+</script>
+</body>
+</html>
