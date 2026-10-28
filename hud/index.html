@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout: BOM tree on the left, 3D stage in the middle, part sheet docked under the stage. Light, plain engineering look. */
+/* Layout: BOM tree on the left (foldable), the 3D stage fills the rest, a small card bottom-left explains and plays steps. Light, plain engineering look. */
 :root {
   --bg: #f3f4f6;
   --panel: #ffffff;
@@ -58,8 +58,8 @@ header .sub { color: var(--muted); font-size: 12.5px; }
 .row .eye:hover { background: var(--line); color: var(--fg); }
 .row.off .nm { opacity: .4; }
 
-/* stage + toolbar + sheet */
-main { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; min-width: 0; }
+/* stage + toolbar + card */
+main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; }
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
 .ctl { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .ctl input[type=range] { width: 120px; accent-color: var(--accent); }
@@ -79,23 +79,33 @@ main { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 
 .lbl.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
 .lbl.sel::after { background: var(--accent); }
 .lbl.env { color: var(--muted); }
-.hint { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--muted); pointer-events: none; }
+.hint { position: absolute; right: 12px; top: 10px; transition: opacity .4s; font-size: 12px; color: var(--muted); pointer-events: none; }
 
-#sheet { background: var(--panel); border-top: 1px solid var(--line); height: clamp(220px, 36vh, 420px); overflow: auto; padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 20px) 20px; }
-#sheet.small { height: 46px; overflow: hidden; }
-.sheet-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px 32px; max-width: 1280px; }
-.sheet-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
-.sheet-top h2 { margin: 0; font-size: 18px; text-wrap: balance; }
-.sheet-top .en { font: 400 12.5px/1.3 var(--mono); color: var(--muted); }
-.sheet-top .sp { flex: 1; }
+#card { position: absolute; left: 16px; bottom: 16px; z-index: 4; width: min(580px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px 14px; box-shadow: 0 6px 24px rgba(20,30,40,.10); }
+.more { border-top: 1px solid var(--line-2); margin-top: 10px; padding-top: 4px; }
+.prog { height: 3px; background: var(--line-2); border-radius: 2px; overflow: hidden; margin: 10px 0 8px; }
+.prog i { display: block; height: 100%; width: 0; background: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.actions .sp { flex: 1; }
+.dots { display: flex; gap: 5px; }
+.dots button { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.dots button.on { background: var(--accent); }
+.dots button:hover { background: #9fb6dd; }
+.app.notree { grid-template-columns: 0 minmax(0, 1fr); }
+.app.notree #tree { display: none; }
+.hdr-btn { padding: 6px 11px; border-radius: 6px; font-size: 13px; border: 1px solid var(--line); }
+.card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.card-top h2 { margin: 0; font-size: 17px; text-wrap: balance; }
+.card-top .en { font: 400 12.5px/1.3 var(--mono); color: var(--muted); }
+.card-top .sp { flex: 1; }
 .crumb { font: 500 11.5px/1 var(--mono); color: var(--muted); margin-bottom: 6px; letter-spacing: .03em; }
 .badge { display: inline-block; font: 500 11px/1 var(--mono); padding: 4px 6px; border-radius: 4px; border: 1px solid; white-space: nowrap; }
 .badge.photo { color: var(--ok); border-color: #b5dcc4; background: #f1faf4; }
 .badge.bom { color: var(--accent); border-color: #c2d4f3; background: var(--accent-soft); }
 .badge.guess { color: var(--amber); border-color: #ecd2ad; background: #fdf6ec; }
-#sheet p { margin: 6px 0 10px; line-height: 1.7; max-width: 68ch; }
-#sheet ul, #sheet ol { margin: 6px 0; padding-left: 20px; display: grid; gap: 6px; max-width: 68ch; }
-#sheet li { line-height: 1.65; }
+#card p { margin: 4px 0 6px; line-height: 1.65; }
+#card ul, #card ol { margin: 6px 0; padding-left: 20px; display: grid; gap: 5px; }
+#card li { line-height: 1.65; }
 h3.sec { font: 600 11.5px/1 var(--mono); color: var(--muted); letter-spacing: .06em; margin: 14px 0 8px; text-transform: uppercase; }
 h3.sec:first-child { margin-top: 2px; }
 .specs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 13px; }
@@ -134,11 +144,9 @@ h3.sec:first-child { margin-top: 2px; }
   header { position: sticky; top: 0; z-index: 5; }
   .views { margin-left: 0; }
   main { grid-row: 2; }
-  .stage { height: 56vh; }
+  .stage { height: 72vh; }
   #tree { grid-row: 3; border-right: 0; border-top: 1px solid var(--line); max-height: none; }
-  #sheet { height: auto; min-height: 200px; }
-  #sheet.small { height: 46px; }
-  .sheet-grid { grid-template-columns: minmax(0, 1fr); }
+  #card { left: 8px; bottom: 8px; width: calc(100% - 16px); max-height: 52%; padding: 10px 12px; }
   .ctl input[type=range] { width: 96px; }
   .hint { display: none; }
 }
@@ -150,8 +158,9 @@ h3.sec:first-child { margin-top: 2px; }
   <header>
     <div>
       <h1>Zeekr 7X AR-HUD 해부도</h1>
-      <div class="sub">HA1SZK63E · ADAYO · 분해 사진 52장과 BOM으로 만든 추정 모델</div>
+      <div class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</div>
     </div>
+    <button class="hdr-btn" id="treeBtn" aria-pressed="true">부품 목록</button>
     <nav class="views" aria-label="시점">
       <button data-view="iso" aria-pressed="true">전체</button>
       <button data-view="side">측면 단면</button>
@@ -176,9 +185,9 @@ h3.sec:first-child { margin-top: 2px; }
       <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
       <div id="labels"></div>
       <div id="tip" hidden></div>
-      <div class="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
+      <div id="card" aria-live="polite"></div>
+      <div class="hint" id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
     </div>
-    <section id="sheet" aria-live="polite"></section>
   </main>
 </div>
 
@@ -193,7 +202,7 @@ import * as THREE from 'three';
 
 /* ───────────────────────── content ───────────────────────── */
 const PHOTO = {
-  'side':'측면 전체','label':'제품 라벨 (HA1SZK63E, ADAYO)','rear-heatsink':'뒷면 방열판 핀','rear-angle':'뒤쪽 비스듬히','connector-side':'측면 커넥터',
+  'side':'측면 전체','label':'제품 라벨 (HA1SZK63E)','rear-heatsink':'뒷면 방열판 핀','rear-angle':'뒤쪽 비스듬히','connector-side':'측면 커넥터',
   'top-housing':'상부 하우징 외관','housing-detail':'하우징 리브 구조','heatsink-top':'방열판 핀','weight':'무게 측정','weight-scale':'저울 2,053 g',
   'heatsink-back':'방열판 정면','upper-inside':'상부 하우징 안쪽','opening':'상·하부 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
   'motor-bay':'모터 베이','ffc':'FFC와 커넥터','tcon-mounted':'TFT 구동 FPCB 장착 상태','pcb-shield':'메인 PCB (차폐 캔 장착)','pcb-noshield':'메인 PCB (차폐 캔 제거)',
@@ -210,7 +219,7 @@ const P = {
     specs:[['소재','PP (BOM)'],['내부','무광 검정 · 광 트랩 리브']] },
   lower: { name:'하부 하우징', full:'하부 하우징 (PCB 기구, 중형)', en:'Lower housing · electronics carrier', mat:'PC+ABS', conf:'photo', housing:true, ex:[0,-28,0], photos:['pcb-housing','lower-open','lower-pcb','opening','label'],
     desc:'메인 PCB, PGU, 모터를 담는 아래 케이스입니다. 위에서 보면 L자 모양입니다. 긴 쪽에 메인 PCB, 가운데에 PGU, 모서리에 모터가 들어갑니다. 측면으로 커넥터가 나오고 차체 고정용 귀가 있습니다.',
-    points:['라벨: ZEEKR / HA1SZK63E / 752007 / 6608451043 / 차종 CX1E / 생산 2025.10.05 / 공급사 ADAYO / 부품명 抬头显示器(헤드업 디스플레이).','전체 무게 실측 2,053 g (저울 사진).'],
+    points:['라벨: ZEEKR / HA1SZK63E / 752007 / 6608451043 / 차종 CX1E / 생산 2025.10.05 / 부품명 抬头显示器(헤드업 디스플레이).','전체 무게 실측 2,053 g (저울 사진).'],
     specs:[['소재','PC+ABS (BOM)'],['전체 무게','2,053 g (실측)']] },
   baseplate: { name:'하부 Base Plate', full:'하부 Base Plate (방열판 기구, 소형)', en:'Heatsink base plate', mat:'PP+GF10', conf:'photo', ex:[0,-18,0], photos:['heatsink-fins','rear-heatsink','heatsink-back'],
     desc:'방열판을 하우징 바닥에 고정하는 작은 플라스틱 받침입니다. 방열판 핀이 이 틀의 창으로 밖에 드러납니다.',
@@ -327,14 +336,22 @@ const TREE = [
   { t:'기타 부자재', items:['foam','misc'] },
 ];
 const STEPS = [
-  { seg:-1, sel:'max', t:'영상 수신', s:'차량 콕핏 컴퓨터가 그린 그래픽이 동축 케이블(GMSL)로 들어오고, 명령은 LIN으로 따로 옵니다.' },
-  { seg:-1, sel:'epson', t:'왜곡 미리 보정', s:'왜곡처리 IC가 미러와 윈드실드가 만들 왜곡을 거꾸로 걸어 TFT로 보냅니다.' },
-  { seg:0, sel:'led', t:'백라이트', s:'LED 빛을 렌즈가 평행하게 모으고 광학 필름이 고르게 폅니다.' },
-  { seg:0, sel:'tft', t:'TFT', s:'그림이 있는 픽셀만 빛을 통과시킵니다.' },
-  { seg:1, sel:'fold', t:'평면경', s:'빛을 곡면경 쪽으로 꺾어 광로를 접습니다.' },
-  { seg:2, sel:'concave', t:'곡면경', s:'영상을 확대하고 허상을 멀리 띄웁니다. 모터로 눈높이를 맞춥니다.' },
-  { seg:3, sel:'cover', t:'방진 커버 → 윈드실드', s:'대시보드 위로 나간 빛이 윈드실드 안쪽 면에서 운전자 쪽으로 반사됩니다.' },
-  { seg:4, sel:null, view:'driver', t:'허상', s:'운전자 눈에는 영상이 유리 너머 도로 위 수 m 앞에 떠 보입니다.' },
+  { seg:-1, t:'영상 수신', s:'차량 콕핏 컴퓨터가 그린 그래픽(속도, 내비 화살표)이 동축 케이블로 들어오고, 영상처리 IC(Deserializer)가 받아서 풉니다. 켜기·밝기·높이 같은 명령은 LIN으로 따로 옵니다.',
+    run: () => { state.sel = { id:'max' }; partView('ghost'); focus(['max']); cam.gr = 38; } },
+  { seg:-1, t:'왜곡 미리 보정', s:'왜곡처리 IC가 미러와 윈드실드가 만들 휘어짐을 계산해 영상을 반대로 휘어 둡니다. 다음 단계에서 TFT 위 영상이 휘어 있는 이유입니다.',
+    run: () => { state.sel = { id:'epson' }; partView('ghost'); focus(['epson']); cam.gr = 38; } },
+  { seg:0, t:'백라이트', s:'LED가 빛을 내고, 렌즈가 퍼지는 빛을 평행하게 모으고, 광학 필름이 고르게 폅니다. 주황 점이 백라이트 빛입니다.',
+    run: () => { state.sel = { g:'backlight' }; partView('cut'); setCam(V(PG.cx, 2.5, PG.cz), 42, Math.PI / 2 - .5, 1.2); } },
+  { seg:0, t:'TFT', s:'TFT는 그림이 있는 픽셀만 빛을 통과시킵니다. 검은 픽셀에서 빛은 멈춥니다. 화면 위 영상이 좌우 반전에 휘어 있는 것은 2단계의 보정 때문입니다.',
+    run: () => { state.sel = { id:'tft' }; partView('ghost'); setCam(V(PG.cx, Ly, PG.cz), 30, .35, .55); } },
+  { seg:1, t:'평면경', s:'위로 올라온 빛을 평면경이 곡면경 쪽으로 꺾습니다. 광로를 접어 긴 거리를 좁은 대시보드 안에 넣습니다.',
+    run: () => { state.sel = { id:'fold' }; partView('cut'); setCam(V(0, 12, -2), 72, Math.PI / 2, Math.PI / 2 - .05); } },
+  { seg:2, t:'곡면경', s:'곡면경이 영상을 확대하고 허상을 수 m 앞으로 띄웁니다. 모터가 각도를 바꾸면 영상이 닿는 눈높이(아이박스)가 오르내립니다.', wiggle: true,
+    run: () => { state.sel = { id:'concave' }; partView('cut'); setCam(V(0, 14, 3), 72, Math.PI / 2, Math.PI / 2 - .05); } },
+  { seg:3, t:'윈드실드 반사', s:'빛은 방진 커버를 지나 대시보드 위로 나가고, 윈드실드 안쪽 면에서 운전자 쪽으로 반사됩니다. 이중상을 막기 위해 HUD용 유리는 중간막을 아주 약한 쐐기 모양으로 만듭니다.',
+    run: () => { state.sel = null; goView('car'); } },
+  { seg:4, t:'허상', s:'운전자 눈에는 영상이 유리 너머 도로 위 약 4.8 m 앞(모델 값)에 떠 보입니다. 눈의 초점을 멀리 둔 채로 정보를 읽을 수 있습니다.',
+    run: () => { state.sel = null; goView('driver'); } },
 ];
 const SOURCES = [
   ['Texas Instruments, AR HUD 요구사항 (허상거리 7.5–20 m, FOV 10–15°)', 'https://ti.com/lit/dlpy009'],
@@ -392,7 +409,7 @@ const pcbTex = canvasTex(1400, 325, (g, w, h) => {
 function chipTex(lines, big) { return canvasTex(256, 256, (g, w) => { g.fillStyle = '#16171a'; g.fillRect(0, 0, w, w); g.fillStyle = '#2a2b2f'; g.beginPath(); g.arc(34, 34, 12, 0, 7); g.fill(); g.fillStyle = '#c3c6cc'; g.textAlign = 'center'; lines.forEach((t, i) => { g.font = (i === 0 && big ? '700 46px ' : '500 28px ') + '"IBM Plex Mono", monospace'; g.fillText(t, w / 2, 100 + i * 42); }); }); }
 const fpcTex = canvasTex(1024, 256, (g, w, h) => { const r = rng(11); g.fillStyle = '#c96a1c'; g.fillRect(0, 0, w, h); g.fillStyle = '#a8501a'; g.fillRect(60, 40, 900, 170); for (let i = 0; i < 260; i++) { g.fillStyle = r() < .7 ? '#d8d2c8' : '#2a2a2a'; g.fillRect(80 + r() * 860, 50 + r() * 150, 8 + r() * 6, 5 + r() * 4); } g.fillStyle = '#f4f2ee'; g.fillRect(110, 150, 300, 90); g.fillStyle = '#222'; g.font = '500 17px "IBM Plex Mono", monospace'; ['CUS PN:123420000260', 'TM PN:TL051XFKP01-01', 'DATE:25-09-12', 'SN:05165'].forEach((t, i) => g.fillText(t, 190, 172 + i * 20)); });
 const hexTex = canvasTex(512, 256, (g, w, h) => { g.fillStyle = 'rgba(235,242,248,.5)'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(120,140,160,.8)'; g.lineWidth = 2; const s = 16; for (let y = 0, row = 0; y < h + s; y += s * 1.5, row++) for (let x = 0; x < w + s; x += s * Math.sqrt(3)) { const ox = x + (row % 2 ? s * Math.sqrt(3) / 2 : 0); g.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 3 * k + Math.PI / 6; g.lineTo(ox + s * Math.cos(a), y + s * Math.sin(a)); } g.closePath(); g.stroke(); } });
-const labelTex = canvasTex(600, 300, (g, w, h) => { g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, w, h); g.fillStyle = '#111'; g.font = '500 17px "IBM Plex Mono", monospace'; ['SN: 2510051668', 'HWSD:8896963628/C', 'SWBL:8896965321/D', 'SWLM:6608451110/A', '车型: CX1E', '零件名称: 抬头显示器', '生产日期: 2025.10.05', '供应商: ADAYO'].forEach((t, i) => g.fillText(t, 22, 40 + i * 27)); g.font = '500 32px "IBM Plex Sans KR", sans-serif'; ['ZEEKR', 'HA1SZK63E', '752007', '6608451043', 'MADE IN CHINA'].forEach((t, i) => g.fillText(t, 330, 50 + i * 40)); for (let i = 0; i < 70; i++) g.fillRect(22 + i * 7, 262, (i % 3) + 1, 26); });
+const labelTex = canvasTex(600, 300, (g, w, h) => { g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, w, h); g.fillStyle = '#111'; g.font = '500 17px "IBM Plex Mono", monospace'; ['SN: 2510051668', 'HWSD:8896963628/C', 'SWBL:8896965321/D', 'SWLM:6608451110/A', '车型: CX1E', '零件名称: 抬头显示器', '生产日期: 2025.10.05'].forEach((t, i) => g.fillText(t, 22, 40 + i * 27)); g.font = '500 32px "IBM Plex Sans KR", sans-serif'; ['ZEEKR', 'HA1SZK63E', '752007', '6608451043', 'MADE IN CHINA'].forEach((t, i) => g.fillText(t, 330, 50 + i * 40)); for (let i = 0; i < 70; i++) g.fillRect(22 + i * 7, 262, (i % 3) + 1, 26); });
 
 // the graphic the cockpit computer sends (unwarped); two copies: black ground for the panel, clear ground for the floating image
 const HUD_W = 1200, HUD_H = 440, ASPECT = HUD_W / HUD_H;
@@ -821,11 +838,11 @@ function goView(v) {
 function focus(ids) {
   const b = new THREE.Box3();
   ids.forEach(id => { const own = objs[ownerOf(id)]; if (!own) return; if (P[id].on) own.obj.traverse(o => { if (o.isMesh && o.userData.pid === id) b.expandByObject(o); }); else b.expandByObject(own.obj); });
-  if (b.isEmpty()) return; const s = b.getSize(V()).length(); cam.gt.copy(b.getCenter(V())); cam.gr = Math.min(180, Math.max(10, s * 1.9));
+  if (b.isEmpty()) return; const s = b.getSize(V()).length(); cam.gt.copy(b.getCenter(V())); cam.gr = Math.min(200, Math.max(14, s * 2.6));
 }
 const ptr = new Map(); let mode = null, down = null;
 canvas.addEventListener('contextmenu', e => e.preventDefault());
-canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; mode = e.button === 2 || e.shiftKey ? 'pan' : 'rot'; canvas.style.cursor = 'grabbing'; });
+canvas.addEventListener('pointerdown', e => { $('#hint').style.opacity = 0; canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; mode = e.button === 2 || e.shiftKey ? 'pan' : 'rot'; canvas.style.cursor = 'grabbing'; });
 canvas.addEventListener('pointermove', e => {
   const p = ptr.get(e.pointerId); if (!p) { hover(e); return; }
   const dx = e.clientX - p.x, dy = e.clientY - p.y;
@@ -847,33 +864,53 @@ function pick(e) {
   return h ? h.object.userData.pid : null;
 }
 let lastClick = { id: null, t: 0 };
-function click(e) { const id = pick(e), now = performance.now(); if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderSheet(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
+function click(e) { const id = pick(e), now = performance.now(); if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderCard(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
 let hq = false;
 function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq = false; const id = pick(e), tip = $('#tip'), r = stageEl.getBoundingClientRect(); if (id) { tip.textContent = P[id].full; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } }); }
 
 /* ───────────────────────── UI ───────────────────────── */
+const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 7;
+function markViews(v) { document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); }
+function partView(h) { state.car = false; markViews(''); setHousing(h); }
 function select(sel, doFocus = true) {
-  state.sel = sel; state.iso = false; state.step = -1; applyVisual(); renderSheet(); $('#sheet').classList.remove('small');
+  if (play.on) stopPlay(false);
+  if (sel && state.car) { state.car = false; markViews(''); }
+  state.sel = sel; state.iso = false; state.more = false; applyVisual(); renderCard();
   if (sel && doFocus) focus(selIds());
+}
+function startPlay() { play.on = true; play.paused = false; state.more = false; state.iso = false; setExplode(0); goStep(0); }
+function goStep(i) { play.i = i; play.t = 0; state.step = i; state.tiltT = 0; STEPS[i].run(); applyVisual(); renderCard(); }
+function stopPlay(reset = true) {
+  play.on = false; state.step = -1; state.tiltT = 0; $('#tilt').value = 0; $('#tiltOut').textContent = '0.0°';
+  if (reset) { state.sel = null; goView('iso'); setHousing('ghost'); }
+  applyVisual(); renderCard();
+}
+function playTick(dt) {
+  if (!play.on || play.paused) return;
+  play.t += dt;
+  if (STEPS[play.i].wiggle) state.tiltT = 1.6 * Math.sin(play.t * 1.4);
+  const pb = document.getElementById('progBar'); if (pb) pb.style.width = Math.min(100, play.t / STEP_T * 100) + '%';
+  if (play.t > STEP_T) { if (play.i < STEPS.length - 1) goStep(play.i + 1); else { play.paused = true; renderCard(); } }
 }
 const eyeSvg = on => on ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c7 0 11 6 11 6a17 17 0 0 1-3.4 3.9M6.6 6.6C3.4 8.6 1 12 1 12s4 7 11 7a10 10 0 0 0 5.4-1.6"/></svg>';
 function row(id, ind) {
-  const p = P[id], on = state.sel && !state.sel.g && state.sel.id === id, off = state.hidden.has(id), canHide = !p.on;
+  const p = P[id], on = !play.on && state.sel && !state.sel.g && state.sel.id === id, off = state.hidden.has(id), canHide = !p.on;
   return `<div class="row ${on ? 'on' : ''} ${off ? 'off' : ''}"><button class="nm" style="--ind:${ind}px" data-sel="${id}">${p.full}</button><span class="mat">${p.mat || ''}</span>${canHide ? `<button class="eye" data-eye="${id}" aria-label="${p.full} ${off ? '보이기' : '숨기기'}" title="${off ? '보이기' : '숨기기'}">${eyeSvg(!off)}</button>` : '<span></span>'}</div>`;
 }
 function renderTree() {
   $('#tree').innerHTML = `<div class="tree-head"><span>LV1 · LV2 · LV3</span><span>소재</span></div>` + TREE.map(b => `<div class="lv1"><div class="lv1-title">${b.t}</div>` + b.items.map(it => {
     if (typeof it === 'string') return row(it, 30);
-    const G = GROUPS[it.g], on = state.sel?.g === it.g;
+    const G = GROUPS[it.g], on = !play.on && state.sel?.g === it.g;
     return `<div class="row grp ${on ? 'on' : ''}"><button class="nm" style="--ind:30px" data-grp="${it.g}">${G.name}</button><span class="mat"></span><span></span></div>` + G.kids.map(k => row(k, 52)).join('');
   }).join('') + '</div>').join('');
 }
 $('#tree').addEventListener('click', e => {
   const h = e.target.closest('[data-eye]'), s = e.target.closest('[data-sel]'), g = e.target.closest('[data-grp]');
   if (h) { const id = h.dataset.eye; state.hidden.has(id) ? state.hidden.delete(id) : state.hidden.add(id); applyVisual(); return; }
-  if (s) { const id = s.dataset.sel; state.sel && !state.sel.g && state.sel.id === id ? select(null) : select({ id }); scrollToStageOnPhone(); }
-  if (g) { const id = g.dataset.grp; state.sel?.g === id ? select(null) : select({ g: id }); scrollToStageOnPhone(); }
+  if (s) { const id = s.dataset.sel; !play.on && state.sel && !state.sel.g && state.sel.id === id ? select(null) : select({ id }); scrollToStageOnPhone(); }
+  if (g) { const id = g.dataset.grp; !play.on && state.sel?.g === id ? select(null) : select({ g: id }); scrollToStageOnPhone(); }
 });
+$('#treeBtn').addEventListener('click', () => { const app = $('.app'), on = app.classList.toggle('notree'); $('#treeBtn').setAttribute('aria-pressed', !on); });
 function scrollToStageOnPhone() { if (innerWidth <= 900) stageEl.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }
 const fmt = (n, d = 1) => n.toFixed(d);
 const fill = s => s.replace('{R}', fmt(RAD, 0)).replace('{LW}', fmt(LCDR.w)).replace('{LH}', fmt(LCDR.d));
@@ -883,51 +920,57 @@ function readout() {
   const dEye = OPT.eye.y - OPT0.eye.y, w = 2 * OPT.vid * Math.tan(HFOV / 2), h = 2 * OPT.vid * Math.tan(VFOV / 2);
   return `<div class="readout">허상 거리 <b>${fmt(OPT.vid / 100)} m</b> · 크기 <b>${fmt(w / 100, 2)} × ${fmt(h / 100, 2)} m</b> (대각 ${fmt(Math.hypot(w, h) / 2.54, 1)}")<br>FOV <b>${fmt(HFOV * 180 / Math.PI)}° × ${fmt(VFOV * 180 / Math.PI)}°</b> · 곡면경 R <b>${fmt(RAD, 0)} cm</b><br>미러 각도 <b>${fmt(state.tilt)}°</b> → 아이박스 높이 <b>${dEye >= 0 ? '+' : ''}${fmt(dEye)} cm</b></div>`;
 }
-function renderSheet() {
-  const el = $('#sheet'), sel = state.sel;
-  const toggle = `<button class="btn" id="shrink">${el.classList.contains('small') ? '설명 펼치기' : '설명 접기'}</button>`;
-  if (!sel) {
-    el.innerHTML = `<div class="sheet-top"><h2>HUD는 차에서 이렇게 영상을 띄웁니다</h2><span class="sp"></span><button class="btn" data-go="car">차량 장착 보기</button><button class="btn" data-go="driver">운전자 시점</button>${toggle}</div>
-    <div class="sheet-grid"><div>
-      <p>HUD는 대시보드 속, 운전자 바로 앞에 묻혀 있습니다. 위로 보이는 것은 방진 커버뿐입니다. 안에서 만든 영상이 윈드실드 안쪽 면에 반사되어 운전자 눈으로 들어오고, 눈에는 그 영상이 유리 너머 도로 위에 떠 있는 것처럼 보입니다. 단계를 누르면 해당 부품과 빛의 구간을 보여 줍니다.</p>
-      <ol class="steps">${STEPS.map((s, i) => `<li><button data-step="${i}" class="${state.step === i ? 'on' : ''}"><b>${s.t}</b><span>${s.s}</span></button></li>`).join('')}</ol>
-      <h3 class="sec">윈드실드에서 일어나는 일</h3>
-      <ul><li>유리는 안쪽 면과 바깥 면 두 곳에서 반사해서 영상이 두 겹으로 보일 수 있습니다. HUD 차량은 보통 두 유리 사이의 PVB 중간막을 아주 약한 쐐기 모양(0.01°대)으로 만들어 두 반사를 한 점에 겹칩니다.</li>
-      <li>윈드실드는 곡면이라 영상을 휘게 만듭니다. 곡면경 형상과 왜곡처리 IC가 이것까지 보정합니다.</li>
-      <li>햇빛이 거꾸로 들어오면 곡면경이 그 빛을 TFT 위에 모아 뜨겁게 만들 수 있습니다. 툴바의 햇빛 역유입으로 확인할 수 있습니다. 그래서 적외선을 흘려보내는 미러 코팅과 방열 구조가 중요합니다.</li></ul>
-    </div><div>
-      <h3 class="sec">제품</h3>
-      <dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E (Zeekr 7X)</dd><dt>생산</dt><dd>2025-10-05</dd><dt>공급사</dt><dd>ADAYO</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>발표 사양</dt><dd>36.2" AR-HUD · 12,000 nit (Zeekr)</dd><dt>방식</dt><dd>TFT-LCD PGU + 평면경 + 곡면경</dd></dl>
-      <h3 class="sec">모델 광학값</h3>${readout()}
-      <p class="note">허상 거리와 FOV는 공개되지 않았습니다. 사진 속 TFT 크기(약 12 cm)로 36.2" 영상이 나오도록 모델 형상에서 역산한 값입니다. 부품 배치와 치수는 사진 비례로 잡은 추정이며 실측 CAD가 아닙니다.</p>
-      <h3 class="sec">사진</h3>${thumbs(['side', 'label', 'opening', 'mirror-housing', 'pcb-housing', 'weight-scale'])}
-      <h3 class="sec">참고 자료</h3><ol class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ol>
-    </div></div>`;
-  } else if (sel.g) {
-    const G = GROUPS[sel.g];
-    el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'} › ${G.name}</div><div class="sheet-top"><h2>${G.name}</h2><span class="sp"></span><button class="btn primary" id="iso">${state.iso ? '전체 보기' : '이것만 보기'}</button><button class="btn" id="back">전체 설명</button>${toggle}</div>
-      <div class="sheet-grid"><div><p>${G.desc}</p><h3 class="sec">구성 부품</h3><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div></div>
-      <div><h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 8))}</div></div>`;
-  } else {
-    const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
-    el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''} › ${p.full}</div>
-      <div class="sheet-top"><h2>${p.full}</h2><span class="en">${p.en}</span>${badge(p.conf)}<span class="sp"></span><button class="btn primary" id="iso">${state.iso ? '전체 보기' : '이것만 보기'}</button><button class="btn" id="back">전체 설명</button>${toggle}</div>
-      <div class="sheet-grid"><div><p>${p.desc}</p><ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}</div>
-      <div>${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
-      <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}</div></div>`;
+function renderCard() {
+  const el = $('#card'), sel = state.sel;
+  if (play.on) {
+    const s = STEPS[play.i];
+    el.innerHTML = `<div class="crumb">작동 원리 · ${play.i + 1} / ${STEPS.length}</div><div class="card-top"><h2>${s.t}</h2></div><p>${s.s}</p>
+      ${s.wiggle ? readout() : ''}<div class="prog"><i id="progBar" style="width:${Math.min(100, play.t / STEP_T * 100)}%"></i></div>
+      <div class="actions"><button class="btn" data-pl="prev" aria-label="이전 단계" ${play.i ? '' : 'disabled'}>‹ 이전</button><button class="btn primary" data-pl="toggle">${play.paused ? (play.i === STEPS.length - 1 && play.t > STEP_T ? '↺ 처음부터' : '▶ 계속') : '❚❚ 멈춤'}</button><button class="btn" data-pl="next" aria-label="다음 단계" ${play.i < STEPS.length - 1 ? '' : 'disabled'}>다음 ›</button>
+      <span class="sp"></span><div class="dots">${STEPS.map((x, i) => `<button data-go-step="${i}" class="${i === play.i ? 'on' : ''}" aria-label="${i + 1}단계 ${x.t}" title="${i + 1}. ${x.t}"></button>`).join('')}</div><button class="btn" data-pl="stop">끝내기</button></div>`;
+    return;
   }
-  const q = s => el.querySelector(s);
-  q('#shrink').onclick = () => { el.classList.toggle('small'); renderSheet(); resize(); };
-  if (q('#iso')) q('#iso').onclick = () => { state.iso = !state.iso; applyVisual(); renderSheet(); focus(selIds()); };
-  if (q('#back')) q('#back').onclick = () => select(null);
+  if (!sel) {
+    el.innerHTML = `<div class="card-top"><h2>HUD 작동 원리</h2></div>
+      <p>차량이 보낸 영상이 빛이 되어 미러 두 장과 윈드실드를 거쳐 도로 위 허상으로 보이기까지를 8단계로 재생합니다. 단계마다 멈추거나 앞뒤로 넘길 수 있습니다.</p>
+      <div class="actions"><button class="btn primary" data-pl="start">▶ 작동 원리 재생</button><button class="btn" data-more>${state.more ? '제품 정보 접기' : '제품 정보'}</button><span class="sp"></span><span class="note">부품은 왼쪽 목록이나 3D에서 선택</span></div>
+      ${state.more ? `<div class="more"><h3 class="sec">제품</h3><dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E (Zeekr 7X)</dd><dt>생산</dt><dd>2025-10-05</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>발표 사양</dt><dd>36.2" AR-HUD · 12,000 nit</dd><dt>방식</dt><dd>TFT-LCD + 평면경 + 곡면경</dd></dl>
+        <h3 class="sec">모델 광학값</h3>${readout()}<p class="note">허상 거리와 FOV는 공개되지 않았습니다. 사진 속 TFT(약 12 cm)로 36.2" 영상이 나오도록 모델에서 역산한 값입니다. 배치와 치수는 사진 비례로 잡은 추정입니다.</p>
+        <h3 class="sec">사진</h3>${thumbs(['side', 'label', 'opening', 'mirror-housing', 'pcb-housing', 'weight-scale'])}
+        <h3 class="sec">참고 자료</h3><ol class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ol></div>` : ''}`;
+    return;
+  }
+  const close = `<button class="btn" data-close aria-label="선택 해제">닫기</button>`, iso = `<button class="btn primary" data-iso>${state.iso ? '전체 보기' : '이것만 보기'}</button>`;
+  if (sel.g) {
+    const G = GROUPS[sel.g];
+    el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'} › ${G.name}</div><div class="card-top"><h2>${G.name}</h2></div><p>${G.desc}</p>
+      <div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
+      <div class="actions">${iso}<button class="btn" data-more>${state.more ? '사진 접기' : '사진'}</button><span class="sp"></span>${close}</div>
+      ${state.more ? `<div class="more">${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 8))}</div>` : ''}`;
+    return;
+  }
+  const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
+  el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div>
+    <div class="card-top"><h2>${p.full}</h2><span class="en">${p.en}</span>${badge(p.conf)}</div><p>${p.desc}</p>
+    <div class="actions">${iso}<button class="btn" data-more>${state.more ? '접기' : '자세히 · 사진'}</button><span class="sp"></span>${close}</div>
+    ${state.more ? `<div class="more"><ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
+      ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
+      <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}</div>` : ''}`;
 }
-$('#sheet').addEventListener('click', e => {
-  const st = e.target.closest('[data-step]'), k = e.target.closest('.kids [data-sel]'), go = e.target.closest('[data-go]'), phB = e.target.closest('[data-photo]');
-  if (st) { const i = +st.dataset.step, s = STEPS[i]; state.step = state.step === i ? -1 : i; setExplode(0);
-    if (state.step >= 0) { if (s.view) goView(s.view); else if (s.seg >= 3) { goView('car'); } else if (s.sel) { const keep = state.step; focus([s.sel]); state.step = keep; } }
-    renderSheet(); return; }
+$('#card').addEventListener('click', e => {
+  const t = e.target, pl = t.closest('[data-pl]'), gs = t.closest('[data-go-step]'), k = t.closest('.kids [data-sel]'), phB = t.closest('[data-photo]');
+  if (pl) { const a = pl.dataset.pl;
+    if (a === 'start') startPlay();
+    if (a === 'stop') stopPlay();
+    if (a === 'prev' && play.i > 0) goStep(play.i - 1);
+    if (a === 'next' && play.i < STEPS.length - 1) goStep(play.i + 1);
+    if (a === 'toggle') { if (play.paused && play.i === STEPS.length - 1 && play.t > STEP_T) goStep(0); play.paused = !play.paused; if (play.t > STEP_T && !play.paused) play.t = 0; renderCard(); }
+    return; }
+  if (gs) { goStep(+gs.dataset.goStep); return; }
+  if (t.closest('[data-more]')) { state.more = !state.more; renderCard(); return; }
+  if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderCard(); focus(selIds()); return; }
+  if (t.closest('[data-close]')) { select(null); return; }
   if (k) { select({ id: k.dataset.sel }); return; }
-  if (go) { goView(go.dataset.go); return; }
   if (phB) openLB(phB.dataset.set.split(','), +phB.dataset.photo);
 });
 let lb = { list: [], i: 0 };
@@ -939,7 +982,7 @@ $('#lbNext').onclick = () => { lb.i = (lb.i + 1) % lb.list.length; showLB(); };
 $('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') $('#lightbox').hidden = true; });
 addEventListener('keydown', e => {
   if (!$('#lightbox').hidden) { if (e.key === 'Escape') $('#lightbox').hidden = true; if (e.key === 'ArrowLeft') $('#lbPrev').click(); if (e.key === 'ArrowRight') $('#lbNext').click(); return; }
-  if (e.key === 'Escape') { if (state.iso) { state.iso = false; applyVisual(); renderSheet(); } else select(null); }
+  if (e.key === 'Escape') { if (state.iso) { state.iso = false; applyVisual(); renderCard(); } else select(null); }
 });
 function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
 $('#explode').addEventListener('input', e => setExplode(+e.target.value));
@@ -967,8 +1010,9 @@ function drawLabels() {
 }
 
 /* ───────────────────────── loop ───────────────────────── */
-function resize() { const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); pMat.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
-new ResizeObserver(resize).observe(stageEl);
+function frameOffset() { const w = stageEl.clientWidth, h = stageEl.clientHeight, c = $('#card'); if (!w || !h) return; const ch = c ? c.offsetHeight : 0; const dy = Math.min(h * .3, ch * .5); if (dy > 4 && innerWidth > 900) camera.setViewOffset(w, h, 0, dy, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix(); }
+function resize() { const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; frameOffset(); pMat.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
+new ResizeObserver(resize).observe(stageEl); new ResizeObserver(frameOffset).observe($('#card'));
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let last = performance.now(), screwA = 0;
 const col = new THREE.Color();
@@ -978,16 +1022,18 @@ function tick(now) {
   camera.position.set(cam.t.x + cam.r * Math.sin(cam.ph) * Math.sin(cam.th), cam.t.y + cam.r * Math.cos(cam.ph), cam.t.z + cam.r * Math.sin(cam.ph) * Math.cos(cam.th)); camera.lookAt(cam.t);
   state.explode += (state.explodeT - state.explode) * k;
   for (const id in objs) { const o = objs[id]; o.obj.position.copy(o.base).addScaledVector(o.ex, state.explode); }
+  playTick(dt);
   const dT = state.tiltT - state.tilt;
-  if (Math.abs(dT) > 1e-4) { const st = Math.sign(dT) * Math.min(Math.abs(dT), dt * (reduced ? 20 : 1.6)); state.tilt += st; screwA += st * 40; concTilt.rotation.x = state.tilt * Math.PI / 180; OPT = trace(state.tilt * Math.PI / 180); rebuildLight(); const ro = document.querySelector('#sheet .readout'); if (ro) ro.outerHTML = readout(); }
+  if (Math.abs(dT) > 1e-4) { const st = Math.sign(dT) * Math.min(Math.abs(dT), dt * (reduced ? 20 : 1.6)); state.tilt += st; screwA += st * 40; concTilt.rotation.x = state.tilt * Math.PI / 180; OPT = trace(state.tilt * Math.PI / 180); rebuildLight(); const ro = document.querySelector('#card .readout'); if (ro) ro.outerHTML = readout(); }
   concPivot.updateMatrixWorld(true);
   const ear = objs.motor.obj.worldToLocal(concTilt.localToWorld(V(CONC.w / 2 + .3, CONC.h / 2 * .82, -.9)));
   motor.nut.position.z = THREE.MathUtils.clamp(ear.z - 6, motor.z0 + .6, motor.z1 - .6); motor.screw.rotation.z = screwA;
   const nt = V(motor.x, motor.y + .55, motor.nut.position.z); motor.link.position.copy(nt).add(ear).multiplyScalar(.5); motor.link.scale.set(1, nt.distanceTo(ear), 1); motor.link.quaternion.setFromUnitVectors(Y, V().subVectors(ear, nt).normalize());
   motor.link.visible = state.explode < .03 && objs.motor.obj.visible;
   const assembled = state.explode < .05, hs = state.step >= 0 ? STEPS[state.step].seg : -1;
-  rayLines.visible = centerLine.visible = beam.visible = assembled && state.light !== 'off'; virtLines.visible = state.light !== 'off';
-  photons.visible = assembled && state.light === 'anim';
+  const sig = play.on && STEPS[play.i].seg === -1;
+  rayLines.visible = centerLine.visible = beam.visible = assembled && state.light !== 'off' && !sig; virtLines.visible = state.light !== 'off';
+  photons.visible = assembled && state.light === 'anim' && !sig;
   if (photons.visible) {
     const sp = reduced ? 0 : 1;
     for (let i = 0; i < NP; i++) {
@@ -1007,7 +1053,7 @@ function tick(now) {
 }
 for (let i = 0; i < NP; i++) spawn(i, true);
 rebuildLight(); for (let i = 0; i < NP; i++) spawn(i, true);
-resize(); applyVisual(); renderSheet();
+resize(); applyVisual(); renderCard();
 cam.t.copy(cam.gt); cam.r = cam.gr; cam.th = cam.gth; cam.ph = cam.gph;
 requestAnimationFrame(tick);
 document.fonts && document.fonts.ready.then(() => { drawHUD(); rebuildLight(); [pcbTex, fpcTex, labelTex].forEach(t => t.userData.redraw()); });
