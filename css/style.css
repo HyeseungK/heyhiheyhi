@@ -614,7 +614,7 @@ img { display: block; max-width: 100%; }
 /* rack footer + shuffle */
 .rack-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; }
 .shelf-wrap .rack-foot .hint { margin-top: 0; }
-.shuffle-btn { font-size: 13px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); transition: background .2s, color .2s, border-color .2s; }
+.shuffle-btn { flex: none; white-space: nowrap; font-size: 13px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); transition: background .2s, color .2s, border-color .2s; }
 .shuffle-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
 .tracks-soon { font-family: var(--serif); font-style: italic; color: var(--muted); margin: 0 0 20px; }
 .listen-row { display: flex; gap: 18px; }
