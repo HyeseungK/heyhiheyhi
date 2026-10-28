@@ -126,6 +126,13 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
 .readout b { color: var(--fg); font-weight: 500; }
 .note { font-size: 12px; color: var(--muted); line-height: 1.55; }
 .src { font-size: 12px; line-height: 1.6; padding-left: 16px; }
+.tablewrap { overflow-x: auto; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ptable th { text-align: left; font-weight: 600; color: var(--muted); padding: 4px 6px 4px 0; border-bottom: 1px solid var(--line); }
+.ptable td { padding: 5px 6px 5px 0; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.ptable td.mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+.ptable tbody tr { cursor: pointer; }
+.ptable tbody tr:hover { background: #f6f8fa; }
 .k-amber { color: var(--amber); } .k-blue { color: var(--accent); } .k-gray { color: #7d868f; }
 
 /* playback */
@@ -302,42 +309,49 @@ const P = {
     points:['한 번 접으면 같은 부피에서 TFT와 곡면경 사이 거리를 늘릴 수 있습니다. 이 거리가 확대율과 허상 거리를 정합니다.','사진에서 가장자리가 청록색인 유리 미러입니다(유리 단면 색).'],
     specs:[['형상','평면 (BOM)']] },
   pcb: { name:'Main PCB', full:'Main PCB', en:'Main board HATZK630-0100', mat:'', conf:'photo', ex:[-8,4,-16], photos:['pcb-front','pcb-shield','pcb-noshield','pcb-out','pcb-back','pcb-back-out','pcb-back-detail','lower-pcb'],
-    desc:'HUD의 두뇌입니다. 차량에서 영상과 전원을 받아 왜곡을 보정해 TFT로 보내고, 백라이트 밝기와 미러 모터를 제어합니다.',
-    points:['왼쪽 끝은 외부 커넥터와 전원부, 가운데는 차폐 캔 아래 영상 수신과 왜곡처리 IC, 오른쪽은 MCU와 내부 커넥터입니다.','실크 표기: 123015032578 / HATZK630-0100 / 2023-12-24 / VER:V03 / UL E340729 94V0.','외부 커넥터는 두 개입니다. 검은 원통은 영상용 동축 커넥터(GMSL), 흰 4핀은 전원과 LIN 통신입니다.'],
-    specs:[['품번','HATZK630-0100 V03'],['설계일','2023-12-24 (실크)']] },
-  epson: { name:'왜곡처리 IC', full:'왜곡처리 IC (Warp 보정)', en:'EPSON S2D13V42F00A1', conf:'photo', on:'pcb', photos:['pcb-warp','pcb-mcu','pcb-noshield'],
-    desc:'HUD 영상을 실시간으로 미리 거꾸로 휘어 주는 영상 처리 칩입니다.',
-    points:['윈드실드는 곡면이고 미러는 비스듬히 놓여 있어서, 영상을 그대로 띄우면 사다리꼴이나 활 모양으로 휩니다. 이 칩이 프레임마다 반대 방향으로 휜 영상을 만듭니다. 툴바의 워프 보정을 꺼 보세요.','미러 각도가 바뀌면 왜곡도 바뀌므로 각도별 보정값을 EEPROM에 두는 것이 일반적입니다.','마킹: EPSON / S2D13V42F00A1 / G25279358 / JAPAN. 차폐 캔 아래에 있습니다.'],
-    specs:[['마킹','S2D13V42F00A1'],['위치','차폐 캔 안 (사진)']] },
-  max: { name:'영상처리 IC', full:'영상처리 IC (Deserializer)', en:'Maxim MAX9278A', conf:'photo', on:'pcb', photos:['pcb-warp'],
-    desc:'차량 콕핏 컴퓨터가 동축 케이블로 보낸 고속 직렬 영상(GMSL)을 받아 병렬 영상 신호로 풀어 줍니다.',
-    points:['속도, 내비 화살표 같은 그래픽은 HUD가 아니라 차량 콕핏 컴퓨터가 그려서 보냅니다. HUD는 받아서 보정하고 띄웁니다.','마킹: MAX9278A / GTM/V. 차폐 캔 아래에 있습니다.'],
-    specs:[['마킹','MAX9278A'],['입력','GMSL 동축']] },
-  mcu: { name:'MCU', full:'MCU', en:'Microcontroller · TF25910', conf:'photo', on:'pcb', photos:['pcb-mcu'],
-    desc:'HUD 전체를 관리하는 마이컴입니다. LIN 통신, 전원 순서, 백라이트 밝기, 모터 제어, 온도 감시를 맡습니다.',
-    points:['옆의 수정 발진자가 클럭을 만듭니다.','마킹: TF25910 / 1TC2523 / 16843. 제조사는 마킹만으로 확인하지 못했습니다.','제품 라벨의 HWSD · SWBL · SWLM은 하드웨어, 부트로더, 애플리케이션 소프트웨어 버전 번호입니다.'],
-    specs:[['패키지','QFP 100핀급 (사진)'],['마킹','TF25910']] },
-  opamp: { name:'연산증폭기', full:'연산증폭기', en:'Op-amp', conf:'guess', on:'pcb', photos:['pcb-front','pcb-back-detail'],
-    desc:'작은 아날로그 신호를 키워 MCU가 읽을 수 있게 합니다.',
-    points:['HUD에서는 보통 온도 센서(NTC)나 LED·모터 전류 감지 신호를 증폭하는 데 씁니다(추정).','BOM에 있는 칩입니다. 보드 위 정확한 위치는 확인하지 못해 모델에서는 대표 위치에 놓았습니다.'], specs:[['위치','추정']] },
-  eeprom: { name:'EEPROM', full:'EEPROM', en:'Non-volatile memory', conf:'guess', on:'pcb', photos:['pcb-back-detail','pcb-back'],
-    desc:'전원이 꺼져도 지워지지 않는 작은 메모리입니다.',
-    points:['생산 라인에서 맞춘 보정값을 저장합니다. 예: 미러 각도별 워프 보정 테이블, 백라이트 밝기 보정, 고장 기록, 시리얼 번호.','뒷면의 SOIC-8 칩(표기 P4C08C1) 중 하나일 가능성이 있습니다(추정).'], specs:[['위치','추정']] },
-  ldohv: { name:'LDO (고전압)', full:'LDO (고전압)', en:'High-voltage LDO', conf:'guess', on:'pcb', photos:['pcb-power'],
-    desc:'차량 배터리 전압을 직접 받아 MCU 대기 전원 등을 만드는 고내압 선형 레귤레이터입니다.',
-    points:['차량 전원은 9~16 V를 오가고 순간적으로 훨씬 높아질 수 있어서 고내압 부품이 필요합니다.','시동이 꺼져 있어도 LIN 깨우기 신호를 기다리는 MCU에 적은 전류로 전원을 줍니다.'], specs:[['위치','추정']] },
-  ldolv: { name:'LDO (저전압)', full:'LDO (저전압)', en:'Low-voltage LDO', conf:'guess', on:'pcb', photos:['pcb-front'],
-    desc:'DC/DC가 만든 전압을 한 번 더 깨끗하게 낮춰 칩 코어 전원(1.x V 등)을 만듭니다.',
-    points:['스위칭 노이즈에 민감한 영상 IC, 클럭 회로에 씁니다.'], specs:[['위치','추정']] },
-  ledchip: { name:'LED 칩', full:'LED 칩', en:'LED driver IC', conf:'guess', on:'pcb', photos:['pcb-front'],
-    desc:'백라이트 LED를 정전류로 구동하는 드라이버입니다.',
-    points:['PWM으로 밝기를 바꿉니다. 조도 센서 정보와 운전자 설정에 따라 낮에는 최대, 밤에는 크게 낮춥니다.','LED 온도가 높아지면 전류를 줄여 보호합니다(일반적인 동작).'], specs:[['위치','추정']] },
-  dcdc: { name:'DC/DC 칩', full:'DC/DC 칩', en:'Buck converter IC', conf:'guess', on:'pcb', photos:['pcb-power'],
-    desc:'차량 전원을 효율 좋게 5 V, 3.3 V 같은 전압으로 낮추는 스위칭 레귤레이터입니다.',
-    points:['보드의 "100", "MG220" 표기 인덕터와 100 µF / 35 V 콘덴서가 이 회로의 짝입니다.'], specs:[['위치','추정']] },
-  lin: { name:'LIN 칩', full:'LIN 칩', en:'LIN transceiver', conf:'guess', on:'pcb', photos:['pcb-power','connector-side'],
-    desc:'차량 LIN 버스와 통신하는 트랜시버입니다. 영상은 동축 케이블로, 명령은 LIN으로 따로 받습니다.',
-    points:['HUD 켜기/끄기, 밝기, 높이 조절 같은 명령을 받고 상태와 고장 정보를 보냅니다.','흰 4핀 커넥터 옆에 두었습니다(위치 추정).'], specs:[['위치','추정']] },
+    desc:'HUD의 두뇌입니다. 전자부품을 연결하고 신호와 전력을 전달합니다. 차량에서 영상과 전원을 받아 왜곡을 보정해 TFT로 보내고, 백라이트 밝기와 미러 모터를 제어합니다.',
+    points:['왼쪽 끝은 외부 커넥터와 전원부, 가운데는 차폐 캔 아래 영상처리·왜곡처리 IC, 오른쪽은 MCU와 내부 커넥터입니다. EEPROM은 뒷면에 있습니다.','실크 표기: 123015032578 / HATZK630-0100 / 2023-12-24 / VER:V03 / TW-8 2530 / UL E340729 94V0. TW는 기판 제조사 Trustwin 표기로 보입니다.','외부 커넥터는 두 개입니다. 검은 원통은 영상용 동축 커넥터(GMSL), 흰 4핀은 전원과 LIN 통신입니다.','기판은 AEC-Q100 대상이 아닙니다. 대신 화재 안전 등급 94V-0(UL 난연)을 받았습니다.'],
+    specs:[['품번','HATZK630-0100 V03'],['제조사','Huizhou Trustwin Electronics'],['기판 P/N','미확인 (TW-8 · ASP1 계열 추정)'],['난연 등급','UL 94V-0'],['설계일','2023-12-24 (실크)']] },
+  epson: { name:'왜곡처리 IC', full:'왜곡처리 IC (Warp 보정)', en:'EPSON S2D13V42F00A100', conf:'photo', on:'pcb', maker:'EPSON', pn:'S2D13V42F00A100', grade:'Grade 2', photos:['pcb-warp','pcb-mcu','pcb-noshield'],
+    desc:'전면유리 곡률과 광학계 때문에 생기는 영상 왜곡을 보정하는 HUD 전용 칩입니다. 영상을 실시간으로 미리 거꾸로 휘어 둡니다.',
+    points:['윈드실드는 곡면이고 미러는 비스듬히 놓여 있어서, 영상을 그대로 띄우면 사다리꼴이나 활 모양으로 휩니다. 이 칩이 프레임마다 반대 방향으로 휜 영상을 만듭니다. 보기 설정의 워프 보정을 꺼 보세요.','미러 각도가 바뀌면 왜곡도 바뀌므로 각도별 보정값을 EEPROM에 두는 것이 일반적입니다.','마킹: EPSON / S2D13V42F00A1 / G25279358 / JAPAN. 차폐 캔 아래에 있습니다.'],
+    specs:[['제조사','EPSON'],['P/N','S2D13V42F00A100'],['패키지','QFP (사진)'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['수량','1']] },
+  max: { name:'영상처리 IC', full:'영상처리 IC (Deserializer)', en:'Maxim MAX9278AGTM/V+T', conf:'photo', on:'pcb', maker:'Maxim (ADI)', pn:'MAX9278AGTM/V+T', grade:'Grade 2', photos:['pcb-warp'],
+    desc:'차량에서 고속 직렬로 들어온 영상 데이터(GMSL)를 HUD가 처리할 수 있는 영상 신호로 바꿉니다.',
+    points:['속도, 내비 화살표 같은 그래픽은 HUD가 아니라 차량 콕핏 컴퓨터가 그려서 동축 케이블로 보냅니다. HUD는 받아서 보정하고 띄웁니다.','Maxim은 현재 ADI(Analog Devices)에 인수되어 ADI가 유통합니다.','마킹: MAX9278A / GTM/V. 차폐 캔 아래에 있습니다.'],
+    specs:[['제조사','Maxim (ADI 유통)'],['P/N','MAX9278AGTM/V+T'],['패키지','QFN (사진)'],['입력','GMSL 동축'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['수량','1']] },
+  mcu: { name:'MCU', full:'MCU', en:'Renesas R7F7016843AFP-C', conf:'photo', on:'pcb', maker:'Renesas', pn:'R7F7016843AFP-C', grade:'Grade 2', photos:['pcb-mcu'],
+    desc:'차량 제어 신호를 처리하고 HUD 구동과 주요 기능을 통합 제어하는 마이컴입니다.',
+    points:['하는 일: LIN 명령 처리, 전원 켜는 순서, 백라이트 밝기, 미러 모터, 온도와 전류 감시.','칩 마킹 16843은 품번 R7F70168 43의 일부입니다. 옆의 수정 발진자가 클럭을 만듭니다.','제품 라벨의 HWSD · SWBL · SWLM은 하드웨어, 부트로더, 애플리케이션 소프트웨어 버전 번호입니다.'],
+    specs:[['제조사','Renesas'],['P/N','R7F7016843AFP-C'],['패키지','QFP 100핀급 (사진)'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['수량','1']] },
+  opamp: { name:'연산증폭기', full:'연산증폭기', en:'TI INA199B1QDCKRQ1 · current-sense amp', conf:'guess', on:'pcb', maker:'TI', pn:'INA199B1QDCKRQ1', grade:'Grade 1', photos:['pcb-front'],
+    desc:'HUD 회로에 흐르는 전류를 정밀하게 측정해 전력을 모니터링하고 이상을 감지합니다.',
+    points:['INA199는 전류 감지 전용 증폭기입니다. 전류가 지나는 아주 작은 저항(션트)에 걸린 미세한 전압을 키워 MCU가 읽게 합니다.','과전류나 단선 같은 이상이 생기면 MCU가 이 값을 보고 백라이트를 줄이거나 고장 코드를 남깁니다(일반적 동작).','SC70-6 패키지라 아주 작아서 사진에서 위치를 특정하지 못했습니다. 모델 위치는 추정입니다.'],
+    specs:[['제조사','TI'],['P/N','INA199B1QDCKRQ1'],['패키지','SC70-6'],['차량용 인증','AEC-Q100 Grade 1 (−40~125 °C)'],['위치','추정']] },
+  eeprom: { name:'EEPROM', full:'EEPROM', en:'Puya P24C08C-SSH-MAR', conf:'photo', on:'pcb', maker:'Puya Semiconductor', pn:'P24C08C-SSH-MAR', grade:'Grade 1', photos:['pcb-back-detail','pcb-back'],
+    desc:'화면 위치, 밝기, 보정값 같은 설정을 전원이 꺼진 뒤에도 보존하는 메모리입니다.',
+    points:['메인 PCB 뒷면 SOIC-8 칩의 마킹 P4C08C1이 이 품번(P24C08C)과 맞습니다. 위치를 사진으로 확인했습니다.','8 Kbit(1 KB)급 I²C EEPROM입니다. 생산 라인에서 맞춘 미러 각도별 워프 보정값, 밝기 보정, 고장 기록 같은 데이터가 들어갑니다(일반적 용도).'],
+    specs:[['제조사','Puya Semiconductor'],['P/N','P24C08C-SSH-MAR'],['패키지','SOIC-8'],['위치','PCB 뒷면 (사진)'],['차량용 인증','AEC-Q100 Grade 1 (−40~125 °C)']] },
+  ldohv: { name:'LDO (고전압)', full:'LDO (고전압)', en:'MPS MPQ2019GN-AEC1-Z', conf:'guess', on:'pcb', maker:'MPS', pn:'MPQ2019GN-AEC1-Z', grade:'Grade 1', photos:['pcb-power'],
+    desc:'차량의 고전압 입력을 HUD 회로용 안정 전압으로 바꿔 공급합니다.',
+    points:['차량 전원을 직접 받는 고내압 선형 레귤레이터입니다. 차량 전원은 9~16 V를 오가고 시동 순간 등에는 더 크게 출렁입니다.','시동이 꺼져 있을 때도 LIN 깨우기 신호를 기다리는 회로에 적은 전류로 전원을 주는 용도로 많이 씁니다(일반적 용도).','보드 위 정확한 위치는 확인하지 못했습니다. 모델 위치는 추정입니다.'],
+    specs:[['제조사','MPS'],['P/N','MPQ2019GN-AEC1-Z'],['패키지','SOIC-8 계열'],['차량용 인증','AEC-Q100 Grade 1 (−40~125 °C)'],['위치','추정']] },
+  ldolv: { name:'LDO (저전압)', full:'LDO (저전압)', en:'RICOH RP111N001D-TR-AE', conf:'guess', on:'pcb', maker:'RICOH', pn:'RP111N001D-TR-AE', grade:'Grade 2', photos:['pcb-front'],
+    desc:'DC/DC가 만든 저전압을 한 번 더 정밀하게 조절해 각 전자부품에 공급합니다.',
+    points:['스위칭 노이즈에 민감한 영상 IC와 클럭 회로에 깨끗한 전원을 줍니다(일반적 용도).','보드 위 정확한 위치는 확인하지 못했습니다. 모델 위치는 추정입니다.'],
+    specs:[['제조사','RICOH'],['P/N','RP111N001D-TR-AE'],['패키지','SOT-23-5'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['위치','추정']] },
+  ledchip: { name:'LED 칩', full:'LED 칩', en:'MPS MPQ3367GR-AEC1-C04J · LED driver', conf:'guess', on:'pcb', maker:'MPS', pn:'MPQ3367GR-AEC1-C04J', grade:'Grade 1', photos:['pcb-front'],
+    desc:'백라이트 LED에 흐르는 전류를 정밀하게 제어해 화면 밝기와 구동 안정성을 확보합니다.',
+    points:['전압을 올려(승압) 여러 줄의 LED를 정전류로 구동하는 백라이트 드라이버입니다. 전류가 일정해야 LED마다 밝기가 고르게 나옵니다.','PWM으로 밝기를 조절합니다. 낮에는 최대(발표 사양 12,000 nit), 밤에는 크게 낮춥니다.','전원은 LED 기판의 전원 탭(흰 작은 기판)으로 갑니다. 보드 위 정확한 위치는 추정입니다.'],
+    specs:[['제조사','MPS'],['P/N','MPQ3367GR-AEC1-C04J'],['패키지','QFN'],['차량용 인증','AEC-Q100 Grade 1 (−40~125 °C)'],['위치','추정']] },
+  dcdc: { name:'DC/DC 칩', full:'DC/DC 칩', en:'MPS MPQ9840GL-AEC1-C835-Z · buck', conf:'guess', on:'pcb', maker:'MPS', pn:'MPQ9840GL-AEC1-C835-Z', grade:'Grade 1', photos:['pcb-power'],
+    desc:'차량 전압을 HUD 내부 회로에 필요한 저전압으로 효율 좋게 바꿉니다.',
+    points:['스위칭 방식(벅 컨버터)이라 LDO보다 열이 훨씬 적습니다. 큰 전류는 이 칩이 맡고, 정밀한 전원은 뒤의 LDO가 다듬습니다.','보드의 "100", "MG220" 표기 인덕터와 100 µF / 35 V 콘덴서가 이 회로의 짝입니다. 칩 위치는 추정입니다.'],
+    specs:[['제조사','MPS'],['P/N','MPQ9840GL-AEC1-C835-Z'],['패키지','QFN'],['차량용 인증','AEC-Q100 Grade 1 (−40~125 °C)'],['위치','추정']] },
+  lin: { name:'LIN 칩', full:'LIN 칩', en:'NXP TJA1021T/20/CM · LIN transceiver', conf:'guess', on:'pcb', maker:'NXP', pn:'TJA1021T/20/CM', grade:'등급 미확인', photos:['pcb-power','connector-side'],
+    desc:'HUD 제어장치와 차량 LIN 네트워크 사이에서 데이터를 주고받습니다.',
+    points:['HUD 켜기/끄기, 밝기, 높이 조절 같은 명령을 받고 상태와 고장 정보를 보냅니다. 영상은 동축 케이블로 따로 옵니다.','차량용 인증은 받았지만 등급은 확인하지 못했습니다.','흰 4핀 커넥터 옆에 두었습니다(위치 추정).'],
+    specs:[['제조사','NXP'],['P/N','TJA1021T/20/CM'],['패키지','SOIC-8'],['차량용 인증','AEC-Q100 (등급 미확인)'],['위치','추정']] },
   foam: { name:'방진 폼', full:'방진 폼', en:'Damping / sealing foam', mat:'', conf:'photo', ex:[0,18,0], photos:['tft-panel'],
     desc:'TFT 가장자리와 부품 사이에 붙은 검은 폼입니다. 진동을 흡수하고 먼지와 빛샘을 막습니다.',
     points:['사진의 TFT 모서리에서 검은 폼 테이프와 실리콘 고정이 보입니다.'], specs:[] },
@@ -347,7 +361,7 @@ const P = {
 };
 const GROUPS = {
   backlight: { name:'Backlight', kids:['led','fpcb','acf','ledboard','lens','film','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동 FPCB와 ACF도 여기에 포함했습니다.' },
-  chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB 위의 주변 칩들입니다. BOM에는 있지만 사진에서 하나하나 위치를 확인하지 못했습니다. 모델에서는 기능에 맞는 자리(전원부, 커넥터 옆 등)에 대표로 놓았습니다.' },
+  chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
 const TREE = [
   { t:'기구', items:['upper','lower','baseplate','heatsink','pad','cover','motor','motorcover'] },
@@ -655,23 +669,23 @@ const LEDS = [];
 const PCB_POS = V(-7.5, 1.4, -18), shieldMeshes = [];
 { const g = new THREE.Group(); g.position.copy(PCB_POS); const T = .08;
   g.add(new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]));
-  const chip = (id, w, d, h, lines, big, x, z, pinStyle = 'qfp') => {
+  const chip = (id, w, d, h, lines, big, x, z, pinStyle = 'qfp', back = false) => {
     const q = new THREE.Group();
     if (pinStyle === 'qfp') box(w + .35, .05, d + .35, M.silver, 0, T + .03, 0, q); else box(w * .9, .05, d + .3, M.silver, 0, T + .03, 0, q);
     box(w, h, d, M.black, 0, T + h / 2 + .03, 0, q);
     if (lines) topPlane(w * .96, d * .96, new THREE.MeshBasicMaterial({ map: chipTex(lines, big), toneMapped: false }), 0, T + h + .035, 0, q);
-    q.position.set(x, 0, z); g.add(tag(q, id)); chipCenters[id] = V(x, T + h, z);
+    q.position.set(x, 0, z); if (back) q.rotation.x = Math.PI; g.add(tag(q, id)); chipCenters[id] = V(x, back ? -(T + h) : T + h, z);
   };
   chip('epson', 1.7, 1.7, .2, ['EPSON', 'S2D13V42', 'F00A1', 'JAPAN'], true, -.6, -.6);
   chip('max', .9, .9, .15, ['MAX9278A', 'GTM/V'], false, 1.9, .7);
   chip('mcu', 1.8, 1.8, .2, ['TF25910', '1TC2523', '16843'], false, 6.6, -.9);
-  chip('eeprom', .5, .4, .15, null, false, 8.6, -2.3, 'so');
-  chip('opamp', .5, .4, .15, null, false, 3.9, 2.4, 'so');
-  chip('ldolv', .3, .3, .12, null, false, 4.6, -2.5, 'so');
-  chip('ldohv', .65, .7, .25, null, false, -8.2, -.2, 'so');
-  chip('dcdc', .6, .6, .12, null, false, -5.2, -1.2);
-  chip('ledchip', .6, .6, .12, null, false, 10.6, .4);
-  chip('lin', .5, .4, .15, null, false, -11, -1.9, 'so');
+  chip('eeprom', .5, .4, .15, ['P4C08C1'], false, 8.6, -1.6, 'so', true);
+  chip('opamp', .21, .2, .09, null, false, 3.9, 2.4, 'so');
+  chip('ldolv', .29, .16, .11, null, false, 4.6, -2.5, 'so');
+  chip('ldohv', .5, .4, .15, ['MPQ2019'], false, -8.2, -.2, 'so');
+  chip('dcdc', .3, .3, .09, null, false, -5.2, -1.2);
+  chip('ledchip', .4, .4, .09, null, false, 10.6, .4);
+  chip('lin', .5, .4, .15, ['TJA1021'], false, -11, -1.9, 'so');
   { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(5.1, 0, -2.1); g.add(tag(xt, 'mcu')); }
   { const s = new THREE.Group(), cw = 5.4, cd = 3.9; box(cw, .05, cd, M.silver, 0, T + .62, 0, s); for (const k of [-1, 1]) { box(cw, .6, .05, M.silver, 0, T + .3, k * cd / 2, s); box(.05, .6, cd, M.silver, k * cw / 2, T + .3, 0, s); } s.position.set(.5, 0, -.2); g.add(s); s.traverse(c => c.isMesh && shieldMeshes.push(c)); }
   [[-9.8, 2.2], [-8.9, 2.2], [-8, 2.2], [-9.2, 1.2], [-7.6, 1.2], [-5.6, 1.3]].forEach(([x, z]) => { cyl(.33, .62, M.silver, x, T + .31, z, g); cyl(.3, .02, M.black, x, T + .63, z, g); });
@@ -968,7 +982,7 @@ function select(sel, doFocus = true) {
   if (play.on) stopPlay(false);
   if (state.bl) { state.bl = false; state.blT = 0; }
   if (sel && state.car) { state.car = false; markViews(''); }
-  state.sel = sel; state.iso = false; applyVisual(); renderCard();
+  state.sel = sel; state.iso = false; applyVisual(); renderCard(); $('#infoBody').scrollTop = 0;
   if (sel) setPanel('info', true);
   if (sel && doFocus) focus(selIds());
 }
@@ -1057,6 +1071,7 @@ function renderInfo() {
     const G = GROUPS[sel.g]; title.textContent = '부품 정보';
     el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
       <div class="actions">${iso}${blBtn}${back}</div><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
+      ${sel.g === 'chips' ? `<h3 class="sec">주요 칩 · AEC-Q100</h3><div class="tablewrap"><table class="ptable"><thead><tr><th>부품</th><th>제조사</th><th>P/N</th><th>등급</th></tr></thead><tbody>${['mcu', 'max', 'epson', ...G.kids].map(k => `<tr data-sel="${k}"><td>${P[k].name}</td><td>${P[k].maker}</td><td class="mono">${P[k].pn}</td><td>${P[k].grade.replace('Grade ', 'G')}</td></tr>`).join('')}</tbody></table></div>` : ''}
       <h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 9))}`;
     return;
   }
@@ -1081,7 +1096,7 @@ $('#playBody').addEventListener('click', e => {
 });
 $('#infoBody').addEventListener('input', e => { if (e.target.id === 'blSpread') state.blT = +e.target.value; });
 $('#infoBody').addEventListener('click', e => {
-  const t = e.target, k = t.closest('.kids [data-sel]'), phB = t.closest('[data-photo]');
+  const t = e.target, k = t.closest('.kids [data-sel], .ptable [data-sel]'), phB = t.closest('[data-photo]');
   if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderInfo(); focus(selIds()); return; }
   if (t.closest('[data-close]')) { select(null); return; }
   if (t.closest('[data-bl]')) { enterBL(); return; }
