@@ -951,7 +951,7 @@ let hq = false;
 function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq = false; const id = pick(e), tip = $('#tip'), r = stageEl.getBoundingClientRect(); if (id) { tip.textContent = P[id].full; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } }); }
 
 /* ───────────────────────── UI ───────────────────────── */
-const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 7;
+const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 3.5;
 const mobile = () => innerWidth <= 900;
 function setPanel(name, open) {
   $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open;
@@ -982,7 +982,7 @@ function stopPlay(reset = true) {
 function playTick(dt) {
   if (!play.on || play.paused) return;
   play.t += dt;
-  if (STEPS[play.i].wiggle) state.tiltT = 1.6 * Math.sin(play.t * 1.4);
+  if (STEPS[play.i].wiggle) state.tiltT = 1.6 * Math.sin(play.t * 2.6);
   const pb = document.getElementById('progBar'); if (pb) pb.style.width = Math.min(100, play.t / STEP_T * 100) + '%';
   if (play.t > STEP_T) { if (play.i < STEPS.length - 1) goStep(play.i + 1); else { play.paused = true; renderPlay(); } }
 }
