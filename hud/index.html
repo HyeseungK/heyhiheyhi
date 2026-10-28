@@ -55,12 +55,15 @@ header .sub { color: var(--muted); font-size: 12px; white-space: nowrap; }
 #c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
 
 .float { position: absolute; z-index: 4; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(20,30,40,.10); display: flex; flex-direction: column; min-height: 0; }
-.phead { display: flex; align-items: center; gap: 8px; padding: 9px 10px 9px 14px; border-bottom: 1px solid var(--line-2); font-weight: 600; font-size: 13.5px; }
-.phead .x { margin-left: auto; width: 26px; height: 26px; border-radius: 6px; color: var(--muted); display: grid; place-items: center; }
-.phead .x:hover { background: var(--line-2); color: var(--fg); }
+.phead { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border-bottom: 1px solid var(--line-2); border-top: 3px solid var(--accent); border-radius: 10px 10px 0 0; font-weight: 700; font-size: 13.5px; }
+.phead .ic { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: 12px; flex: none; }
+.phead .x { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; }
+.phead .x:hover { background: var(--line-2); color: var(--fg); border-color: #b9c1c9; }
 .pbody { overflow: auto; min-height: 0; padding: 10px 14px 14px; }
-.fbtn { position: absolute; z-index: 4; padding: 8px 13px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(20,30,40,.08); font-size: 13px; font-weight: 500; white-space: nowrap; }
-.fbtn:hover { border-color: #b9c1c9; }
+.fbtn { position: absolute; z-index: 4; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 9px; background: var(--panel); border: 1px solid #c2d4f3; border-left: 3px solid var(--accent); box-shadow: 0 4px 14px rgba(20,30,40,.10); font-size: 13.5px; font-weight: 600; color: var(--fg); white-space: nowrap; }
+.fbtn .ic { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: 12px; }
+.fbtn .chev { color: var(--accent); font-size: 12px; font-weight: 500; }
+.fbtn:hover { background: var(--accent-soft); }
 .col { position: absolute; z-index: 4; top: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 .col > * { pointer-events: auto; }
 .lcol { left: max(12px, env(safe-area-inset-left, 0px)); width: 300px; align-items: flex-start; }
@@ -214,15 +217,15 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
   <div id="tip" hidden></div>
   <div class="hint" id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
   <div class="col lcol">
-    <button class="fbtn" id="leftBtn" aria-controls="left">☰ 부품 목록</button>
-    <aside id="left" class="float" hidden aria-label="부품 목록"><div class="phead"><span>부품 목록</span><button class="x" data-closep="left" aria-label="부품 목록 접기">✕</button></div><div class="pbody" id="leftBody"></div></aside>
+    <button class="fbtn" id="leftBtn" aria-controls="left" aria-expanded="false"><span class="ic">☰</span>부품 목록<span class="chev">펼치기 ›</span></button>
+    <aside id="left" class="float" hidden aria-label="부품 목록"><div class="phead"><span class="ic">☰</span><span>부품 목록</span><button class="x" data-closep="left" aria-label="부품 목록 접기">‹ 접기</button></div><div class="pbody" id="leftBody"></div></aside>
   </div>
   <div class="col rcol">
-    <button class="fbtn" id="playBtn" aria-controls="play" hidden>▶ 작동 원리</button>
-    <section id="play" class="float" aria-label="작동 원리 재생"><div class="phead"><span>HUD 작동 원리</span><button class="x" data-closep="play" aria-label="작동 원리 접기">✕</button></div><div class="pbody" id="playBody" aria-live="polite"></div></section>
+    <button class="fbtn" id="playBtn" aria-controls="play" hidden><span class="chev">‹ 펼치기</span>HUD 작동 원리<span class="ic">▶</span></button>
+    <section id="play" class="float" aria-label="작동 원리 재생"><div class="phead"><span class="ic">▶</span><span>HUD 작동 원리</span><button class="x" data-closep="play" aria-label="작동 원리 접기">접기 ›</button></div><div class="pbody" id="playBody" aria-live="polite"></div></section>
     <span class="sp"></span>
-    <button class="fbtn" id="infoBtn" aria-controls="info" hidden>ⓘ 정보</button>
-    <section id="info" class="float" aria-label="정보"><div class="phead"><span id="infoTitle">제품 정보</span><button class="x" data-closep="info" aria-label="정보 창 접기">✕</button></div><div class="pbody" id="infoBody"></div></section>
+    <button class="fbtn" id="infoBtn" aria-controls="info" hidden><span class="chev">‹ 펼치기</span><span id="infoBtnLabel">제품 정보</span><span class="ic">i</span></button>
+    <section id="info" class="float" aria-label="상세 정보"><div class="phead"><span class="ic">i</span><span id="infoTitle">제품 정보</span><button class="x" data-closep="info" aria-label="상세 정보 접기">접기 ›</button></div><div class="pbody" id="infoBody"></div></section>
   </div>
 </div>
 
@@ -330,7 +333,7 @@ const P = {
     specs:[['제조사','Maxim (ADI 유통)'],['P/N','MAX9278AGTM/V+T'],['패키지','QFN (사진)'],['입력','GMSL 동축'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['수량','1']] },
   mcu: { name:'MCU', full:'MCU', en:'Renesas R7F7016843AFP-C', conf:'photo', on:'pcb', maker:'Renesas', pn:'R7F7016843AFP-C', grade:'Grade 2', photos:['pcb-mcu'],
     desc:'차량 제어 신호를 처리하고 HUD 구동과 주요 기능을 통합 제어하는 마이컴입니다.',
-    points:['하는 일: LIN 명령 처리, 전원 켜는 순서, 백라이트 밝기, 미러 모터, 온도와 전류 감시.','칩 마킹 16843은 품번 R7F70168 43의 일부입니다. 옆의 수정 발진자가 클럭을 만듭니다.','제품 라벨의 HWSD · SWBL · SWLM은 하드웨어, 부트로더, 애플리케이션 소프트웨어 버전 번호입니다.'],
+    points:['하는 일: LIN 명령 처리, 전원 켜는 순서, 백라이트 밝기, 미러 모터, 온도와 전류 감시.','칩 마킹 16843은 품번 R7F7016843의 일부입니다. 옆의 수정 발진자가 클럭을 만듭니다.','제품 라벨의 HWSD · SWBL · SWLM은 하드웨어, 부트로더, 애플리케이션 소프트웨어 버전 번호입니다.'],
     specs:[['제조사','Renesas'],['P/N','R7F7016843AFP-C'],['패키지','QFP 100핀급 (사진)'],['차량용 인증','AEC-Q100 Grade 2 (−40~105 °C)'],['수량','1']] },
   opamp: { name:'연산증폭기', full:'연산증폭기', en:'TI INA199B1QDCKRQ1 · current-sense amp', conf:'guess', on:'pcb', maker:'TI', pn:'INA199B1QDCKRQ1', grade:'Grade 1', photos:['pcb-front'],
     desc:'HUD 회로에 흐르는 전류를 정밀하게 측정해 전력을 모니터링하고 이상을 감지합니다.',
@@ -976,7 +979,7 @@ function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq 
 const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 3.5;
 const mobile = () => innerWidth <= 900;
 function setPanel(name, open) {
-  $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open;
+  $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open; $('#' + name + 'Btn').setAttribute('aria-expanded', open);
   if (open && mobile()) for (const n of ['left', 'play', 'info']) if (n !== name) { $('#' + n).hidden = true; $('#' + n + 'Btn').hidden = false; }
   frameOffset();
 }
@@ -1047,7 +1050,7 @@ function renderInfo() {
   const el = $('#infoBody'), sel = state.sel, title = $('#infoTitle'), box = $('#info');
   box.classList.toggle('big', !!(sel || state.bl) && !play.on);
   if (state.bl) {
-    title.textContent = 'Backlight 단면';
+    title.textContent = 'Backlight 단면 상세'; $('#infoBtnLabel').textContent = 'Backlight 단면 상세';
     el.innerHTML = `<div class="crumb">광학 › Backlight</div><p>가운데 LED 한 줄을 자른 단면입니다. <b class="k-amber">주황</b> LED 빛, <b class="k-blue">파랑</b> TFT를 통과한 빛, <b class="k-gray">회색</b> 벽에 흡수되는 빛.</p>
       <label class="ctl" for="blSpread">층 벌리기 <input id="blSpread" type="range" min="0" max="1" step="0.01" value="${state.blT}"><span></span></label>
       <div class="actions"><button class="btn" data-blexit>단면 닫기</button></div>
@@ -1062,7 +1065,7 @@ function renderInfo() {
     return;
   }
   if (!sel || play.on) {
-    title.textContent = '제품 정보';
+    title.textContent = '제품 정보'; $('#infoBtnLabel').textContent = '제품 정보';
     el.innerHTML = `<dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E (Zeekr 7X)</dd><dt>생산</dt><dd>2025-10-05</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>발표 사양</dt><dd>36.2" AR-HUD · 12,000 nit</dd><dt>방식</dt><dd>TFT-LCD + 평면경 + 곡면경</dd></dl>
       <h3 class="sec">모델 광학값 (추정)</h3>${readout()}
       <details><summary class="note">용어 · 참고 자료 · 사진</summary>
@@ -1070,13 +1073,13 @@ function renderInfo() {
       <p class="note">허상 거리와 FOV는 공개되지 않았습니다. 사진 속 TFT(약 12 cm)로 36.2" 영상이 나오도록 모델에서 역산한 값입니다. 배치와 치수는 사진 비례로 잡은 추정입니다.</p>
       ${thumbs(['side', 'label', 'opening', 'mirror-housing', 'pcb-housing', 'weight-scale'])}
       <ol class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ol></details>
-      <p class="note" style="margin-top:8px">부품을 누르면 이 창에 부품 정보가 나옵니다.</p>`;
+      <p class="note" style="margin-top:8px">부품을 누르면 이 창이 부품 상세 정보로 바뀝니다.</p>`;
     return;
   }
   const iso = `<button class="btn primary" data-iso>${state.iso ? '전체 보기' : '이것만 보기'}</button>`, back = `<button class="btn" data-close>선택 해제</button>`;
   const blBtn = (sel.g === 'backlight' || (BL_SET.includes(sel.id) && !['heatsink', 'baseplate'].includes(sel.id))) ? '<button class="btn" data-bl>단면으로 자세히</button>' : '';
   if (sel.g) {
-    const G = GROUPS[sel.g]; title.textContent = '부품 정보';
+    const G = GROUPS[sel.g]; title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
     el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
       <div class="actions">${iso}${blBtn}${back}</div><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
       ${sel.g === 'chips' ? `<h3 class="sec">주요 칩 · AEC-Q100</h3><div class="tablewrap"><table class="ptable"><thead><tr><th>부품</th><th>제조사</th><th>P/N</th><th>등급</th></tr></thead><tbody>${['mcu', 'max', 'epson', ...G.kids].map(k => `<tr data-sel="${k}"><td>${P[k].name}</td><td>${P[k].maker}</td><td class="mono">${P[k].pn}</td><td>${P[k].grade.replace('Grade ', 'G')}</td></tr>`).join('')}</tbody></table></div>` : ''}
@@ -1084,7 +1087,7 @@ function renderInfo() {
     return;
   }
   const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
-  title.textContent = '부품 정보';
+  title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
   el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div><div class="detail" style="padding:0"><h2>${p.full}</h2><div class="en">${p.en}</div>${badge(p.conf)}</div>
     <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
