@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout: BOM tree on the left (foldable), the 3D stage fills the rest, a small card bottom-left explains and plays steps. Light, plain engineering look. */
+/* Layout: the 3D stage fills everything under a slim header. Three folding windows float over it:
+   parts (top-left, list ⇄ part detail), playback (top-right), product info (bottom-right). Light, plain engineering look. */
 :root {
   --bg: #f3f4f6;
   --panel: #ffffff;
@@ -17,62 +18,130 @@
   --line-2: #eceff2;
   --fg: #1c2228;
   --muted: #66717c;
-  --accent: #1f62d1;       /* selection, controls */
+  --accent: #1f62d1;
   --accent-soft: #e8f0fd;
-  --amber: #c8780f;        /* backlight / estimates */
+  --amber: #c8780f;
   --ok: #1f8a4c;
   --stage: #e6e9ed;
+  --hdr: 52px;
   --sans: 'IBM Plex Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; -webkit-font-smoothing: antialiased; }
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--stage); color: var(--fg); font-family: var(--sans); font-size: 14px; -webkit-font-smoothing: antialiased; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 a { color: var(--accent); }
 
-.app { height: 100%; display: grid; grid-template-columns: 290px minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-header { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--panel); border-bottom: 1px solid var(--line); }
-header h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
-header .sub { color: var(--muted); font-size: 12.5px; }
-.views { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px; }
-.views button { padding: 6px 11px; border-radius: 6px; font-size: 13px; color: var(--muted); }
+header { position: fixed; z-index: 10; top: 0; left: 0; right: 0; height: calc(var(--hdr) + env(safe-area-inset-top, 0px)); display: flex; align-items: center; gap: 8px 18px; padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); background: var(--panel); border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 15.5px; font-weight: 700; white-space: nowrap; }
+header .sub { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.ttl { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.sp { flex: 1; }
+.views { display: flex; gap: 2px; }
+.views button { padding: 6px 10px; border-radius: 6px; font-size: 13px; color: var(--muted); white-space: nowrap; }
 .views button:hover { background: var(--line-2); color: var(--fg); }
 .views button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.hdr-btn { padding: 6px 11px; border-radius: 6px; font-size: 13px; border: 1px solid var(--line); white-space: nowrap; }
+.hdr-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
 
-/* BOM tree */
-#tree { background: var(--panel); border-right: 1px solid var(--line); overflow: auto; padding: 8px 0 24px; min-height: 0; }
-.tree-head { display: flex; justify-content: space-between; padding: 6px 16px 8px; font: 500 11px/1 var(--mono); color: var(--muted); letter-spacing: .06em; }
-.lv1 { margin-top: 6px; }
-.lv1-title { padding: 7px 16px; background: var(--line-2); font-weight: 700; font-size: 13px; }
-.row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; padding: 5px 10px 5px 0; border-left: 3px solid transparent; }
-.row:hover { background: #f6f8fa; }
-.row.on { background: var(--accent-soft); border-left-color: var(--accent); }
-.row .nm { text-align: left; padding: 2px 0 2px var(--ind, 28px); font-size: 13.5px; line-height: 1.35; min-width: 0; }
-.row.on .nm { color: var(--accent); font-weight: 600; }
-.row.grp .nm { font-weight: 500; }
-.row .mat { font: 400 11.5px/1 var(--mono); color: var(--muted); white-space: nowrap; }
-.row .eye { width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center; color: #9aa4ae; }
-.row .eye:hover { background: var(--line); color: var(--fg); }
-.row.off .nm { opacity: .4; }
+.stage { position: fixed; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); left: 0; right: 0; bottom: 0; background: var(--stage); overflow: hidden; }
+#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
 
-/* stage + toolbar + card */
-main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; }
-.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
-.ctl { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
-.ctl input[type=range] { width: 120px; accent-color: var(--accent); }
-.ctl output { font-family: var(--mono); color: var(--fg); min-width: 3.6em; font-variant-numeric: tabular-nums; }
+.float { position: absolute; z-index: 4; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(20,30,40,.10); display: flex; flex-direction: column; min-height: 0; }
+.phead { display: flex; align-items: center; gap: 8px; padding: 9px 10px 9px 14px; border-bottom: 1px solid var(--line-2); font-weight: 600; font-size: 13.5px; }
+.phead .x { margin-left: auto; width: 26px; height: 26px; border-radius: 6px; color: var(--muted); display: grid; place-items: center; }
+.phead .x:hover { background: var(--line-2); color: var(--fg); }
+.pbody { overflow: auto; min-height: 0; padding: 10px 14px 14px; }
+.fbtn { position: absolute; z-index: 4; padding: 8px 13px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(20,30,40,.08); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.fbtn:hover { border-color: #b9c1c9; }
+.col { position: absolute; z-index: 4; top: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.col > * { pointer-events: auto; }
+.lcol { left: max(12px, env(safe-area-inset-left, 0px)); width: 300px; align-items: flex-start; }
+.rcol { right: max(12px, env(safe-area-inset-right, 0px)); width: 330px; align-items: flex-end; }
+.col .sp { flex: 1; pointer-events: none; }
+.col .float { position: relative; width: 100%; }
+.fbtn { position: relative; }
+#left { flex: 0 1 auto; max-height: 100%; }
+#left .pbody { padding: 0 0 12px; }
+#play { flex: 0 0 auto; max-height: 52%; }
+#info { flex: 0 1 auto; max-height: 100%; }
+#info.big { flex: 1 1 auto; }
+#settings { position: fixed; z-index: 11; top: calc(var(--hdr) + env(safe-area-inset-top, 0px) + 6px); right: max(12px, env(safe-area-inset-right, 0px)); width: 300px; padding: 12px 14px; display: grid; gap: 12px; }
+.ctl { display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); }
+.ctl output { font-family: var(--mono); color: var(--fg); font-variant-numeric: tabular-nums; min-width: 3.4em; text-align: right; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .seg button { padding: 4px 9px; font-size: 12.5px; color: var(--fg); }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
 .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--fg); cursor: pointer; }
 .chk input { accent-color: var(--accent); margin: 0; }
-.stage { position: relative; min-height: 0; background: var(--stage); overflow: hidden; }
-#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
-#tip { position: absolute; pointer-events: none; padding: 4px 8px; border-radius: 5px; background: var(--fg); color: #fff; font-size: 12px; transform: translate(12px, 12px); white-space: nowrap; z-index: 3; }
+.chks { display: flex; gap: 14px; }
+
+/* parts tree */
+.lv1-title { padding: 7px 14px; background: var(--line-2); font-weight: 700; font-size: 12.5px; position: sticky; top: 0; z-index: 1; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; padding: 2px 8px 2px 0; border-left: 3px solid transparent; }
+.row:hover { background: #f6f8fa; }
+.row.on { background: var(--accent-soft); border-left-color: var(--accent); }
+.row .nm { text-align: left; padding: 4px 0 4px var(--ind, 26px); font-size: 13px; line-height: 1.35; min-width: 0; }
+.row.on .nm { color: var(--accent); font-weight: 600; }
+.row .mat { font: 400 11px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+.row .eye { width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center; color: #9aa4ae; }
+.row .eye:hover { background: var(--line); color: var(--fg); }
+.row.off .nm { opacity: .4; }
+
+/* part detail */
+.detail { padding: 10px 14px 0; }
+.back { font-size: 12.5px; color: var(--accent); padding: 2px 0; margin-bottom: 8px; }
+.crumb { font: 500 11px/1.3 var(--mono); color: var(--muted); margin-bottom: 4px; }
+.detail h2 { margin: 0; font-size: 17px; line-height: 1.3; text-wrap: balance; }
+.detail .en { font: 400 12px/1.4 var(--mono); color: var(--muted); margin: 2px 0 6px; }
+.detail p, .pbody p { margin: 6px 0 8px; line-height: 1.65; font-size: 13.5px; }
+.detail ul, .detail ol, .pbody ul { margin: 6px 0; padding-left: 18px; display: grid; gap: 5px; font-size: 13px; }
+.detail li { line-height: 1.6; }
+.badge { display: inline-block; font: 500 10.5px/1 var(--mono); padding: 4px 6px; border-radius: 4px; border: 1px solid; white-space: nowrap; }
+.badge.photo { color: var(--ok); border-color: #b5dcc4; background: #f1faf4; }
+.badge.bom { color: var(--accent); border-color: #c2d4f3; background: var(--accent-soft); }
+.badge.guess { color: var(--amber); border-color: #ecd2ad; background: #fdf6ec; }
+h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06em; margin: 14px 0 8px; text-transform: uppercase; }
+.specs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 12px; margin: 0; font-size: 12.5px; }
+.specs dt { color: var(--muted); }
+.specs dd { margin: 0; font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.specs dd.txt { font-family: var(--sans); font-size: 12.5px; line-height: 1.5; }
+.thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.thumbs button { aspect-ratio: 1; border-radius: 5px; overflow: hidden; border: 1px solid var(--line); background: #ddd; }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.btn { padding: 5px 10px; border-radius: 6px; border: 1px solid var(--line); font-size: 12.5px; background: var(--panel); white-space: nowrap; }
+.btn:hover { border-color: #b9c1c9; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: .4; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 4px; }
+.kids { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; }
+.kids button { padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; }
+.kids button:hover { border-color: var(--accent); color: var(--accent); }
+.readout { font: 400 12px/1.7 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; background: #f6f8fa; border: 1px solid var(--line-2); border-radius: 6px; padding: 7px 9px; margin: 8px 0; }
+.readout b { color: var(--fg); font-weight: 500; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.src { font-size: 12px; line-height: 1.6; padding-left: 16px; }
+.k-amber { color: var(--amber); } .k-blue { color: var(--accent); } .k-gray { color: #7d868f; }
+
+/* playback */
+.pctl { display: flex; align-items: center; gap: 5px; }
+.pctl .btn { padding: 5px 9px; }
+.prog { height: 3px; background: var(--line-2); border-radius: 2px; overflow: hidden; margin: 9px 0 6px; }
+.prog i { display: block; height: 100%; width: 0; background: var(--accent); }
+.slist { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 1px; }
+.slist button { width: 100%; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: center; text-align: left; padding: 5px 6px; border-radius: 6px; font-size: 13px; }
+.slist button:hover { background: #f6f8fa; }
+.slist .n { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font: 500 10.5px/1 var(--mono); color: var(--muted); }
+.slist li.on button { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.slist li.on .n { border-color: var(--accent); background: var(--accent); color: #fff; }
+.slist .sdesc { margin: 2px 6px 8px 34px; font-size: 12.5px; line-height: 1.6; color: var(--fg); }
+
+#tip { position: absolute; pointer-events: none; padding: 4px 8px; border-radius: 5px; background: var(--fg); color: #fff; font-size: 12px; transform: translate(12px, 12px); white-space: nowrap; z-index: 6; }
 #labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .lbl { position: absolute; transform: translate(-50%, calc(-100% - 12px)); font-size: 12px; white-space: nowrap; padding: 3px 8px; border-radius: 5px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
 .lbl::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 12px; background: var(--fg); }
@@ -84,120 +153,62 @@ main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; mi
 .lbl.side-l::after, .lbl.side-r::after { top: 50%; width: 16px; height: 1px; }
 .lbl.side-l::after { left: 100%; }
 .lbl.side-r::after { left: auto; right: 100%; }
-.k-amber { color: var(--amber); } .k-blue { color: var(--accent); } .k-gray { color: #7d868f; }
-.layers { padding-left: 18px !important; }
-.layers b { margin-right: 6px; }
-.specs dd.txt { font-family: var(--sans); font-size: 13px; line-height: 1.55; }
-.hint { position: absolute; right: 12px; top: 10px; transition: opacity .4s; font-size: 12px; color: var(--muted); pointer-events: none; }
-
-#card { position: absolute; left: 16px; bottom: 16px; z-index: 4; width: min(580px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px 14px; box-shadow: 0 6px 24px rgba(20,30,40,.10); }
-.more { border-top: 1px solid var(--line-2); margin-top: 10px; padding-top: 4px; }
-.prog { height: 3px; background: var(--line-2); border-radius: 2px; overflow: hidden; margin: 10px 0 8px; }
-.prog i { display: block; height: 100%; width: 0; background: var(--accent); }
-.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-.actions .sp { flex: 1; }
-.dots { display: flex; gap: 5px; }
-.dots button { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
-.dots button.on { background: var(--accent); }
-.dots button:hover { background: #9fb6dd; }
-.app.notree { grid-template-columns: 0 minmax(0, 1fr); }
-.app.notree #tree { display: none; }
-.hdr-btn { padding: 6px 11px; border-radius: 6px; font-size: 13px; border: 1px solid var(--line); }
-.card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
-.card-top h2 { margin: 0; font-size: 17px; text-wrap: balance; }
-.card-top .en { font: 400 12.5px/1.3 var(--mono); color: var(--muted); }
-.card-top .sp { flex: 1; }
-.crumb { font: 500 11.5px/1 var(--mono); color: var(--muted); margin-bottom: 6px; letter-spacing: .03em; }
-.badge { display: inline-block; font: 500 11px/1 var(--mono); padding: 4px 6px; border-radius: 4px; border: 1px solid; white-space: nowrap; }
-.badge.photo { color: var(--ok); border-color: #b5dcc4; background: #f1faf4; }
-.badge.bom { color: var(--accent); border-color: #c2d4f3; background: var(--accent-soft); }
-.badge.guess { color: var(--amber); border-color: #ecd2ad; background: #fdf6ec; }
-#card p { margin: 4px 0 6px; line-height: 1.65; }
-#card ul, #card ol { margin: 6px 0; padding-left: 20px; display: grid; gap: 5px; }
-#card li { line-height: 1.65; }
-h3.sec { font: 600 11.5px/1 var(--mono); color: var(--muted); letter-spacing: .06em; margin: 14px 0 8px; text-transform: uppercase; }
-h3.sec:first-child { margin-top: 2px; }
-.specs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 13px; }
-.specs dt { color: var(--muted); }
-.specs dd { margin: 0; font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; }
-.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 6px; }
-.thumbs button { aspect-ratio: 1; border-radius: 5px; overflow: hidden; border: 1px solid var(--line); background: #ddd; }
-.thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.btn { padding: 5px 11px; border-radius: 6px; border: 1px solid var(--line); font-size: 12.5px; background: var(--panel); white-space: nowrap; }
-.btn:hover { border-color: #b9c1c9; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.kids { display: flex; flex-wrap: wrap; gap: 6px; }
-.kids button { padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; }
-.kids button:hover { border-color: var(--accent); color: var(--accent); }
-.steps { list-style: none; padding: 0 !important; counter-reset: s; }
-.steps li { counter-increment: s; }
-.steps button { width: 100%; text-align: left; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 10px; padding: 7px 8px; border-radius: 6px; line-height: 1.55; }
-.steps button::before { content: counter(s); grid-row: 1 / span 2; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font: 500 11px/1 var(--mono); color: var(--accent); }
-.steps button:hover { background: #f6f8fa; }
-.steps button.on { background: var(--accent-soft); }
-.steps b { font-weight: 600; }
-.steps span { color: var(--muted); font-size: 13px; }
-.readout { font: 400 12.5px/1.75 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; background: #f6f8fa; border: 1px solid var(--line-2); border-radius: 6px; padding: 8px 10px; }
-.readout b { color: var(--fg); font-weight: 500; }
-.note { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
-.src { font-size: 12.5px; line-height: 1.7; padding-left: 18px; }
+.hint { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); font-size: 12px; color: var(--muted); pointer-events: none; transition: opacity .4s; white-space: nowrap; }
 
 #lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(20,24,28,.92); display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: calc(env(safe-area-inset-top, 0px) + 52px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); }
 #lightbox img { max-width: 100%; max-height: 100%; margin: auto; object-fit: contain; display: block; min-height: 0; }
 #lightbox .bar { display: flex; gap: 10px; align-items: center; justify-content: center; padding-top: 12px; color: #dfe4e8; font-size: 13px; }
 #lightbox .close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); }
 
+@media (max-width: 1100px) { header .sub { display: none; } }
 @media (max-width: 900px) {
-  html, body { height: auto; }
-  .app { height: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
-  header { position: sticky; top: 0; z-index: 5; }
-  .views { margin-left: 0; }
-  main { grid-row: 2; }
-  .stage { height: 72vh; }
-  #tree { grid-row: 3; border-right: 0; border-top: 1px solid var(--line); max-height: none; }
-  #card { left: 8px; bottom: 8px; width: calc(100% - 16px); max-height: 52%; padding: 10px 12px; }
-  .ctl input[type=range] { width: 96px; }
+  :root { --hdr: 92px; }
+  header { flex-wrap: wrap; align-content: center; padding-top: calc(env(safe-area-inset-top, 0px) + 6px); }
+  .ttl { width: calc(100% - 110px); }
+  .views { order: 3; width: 100%; overflow-x: auto; }
+  .lcol, .rcol { width: auto; }
+  .col .float { position: fixed; z-index: 7; left: 8px; right: 8px; width: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); max-height: 55%; }
   .hint { display: none; }
 }
 </style>
 <script type="importmap">{ "imports": { "three": "../vendor/three.module.min.js" } }</script>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div>
-      <h1>Zeekr 7X AR-HUD 해부도</h1>
-      <div class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</div>
-    </div>
-    <button class="hdr-btn" id="treeBtn" aria-pressed="true">부품 목록</button>
-    <nav class="views" aria-label="시점">
-      <button data-view="iso" aria-pressed="true">전체</button>
-      <button data-view="side">측면 단면</button>
-      <button data-view="top">위에서</button>
-      <button data-view="car">차량 장착</button>
-      <button data-view="driver">운전자 시점</button>
-    </nav>
-  </header>
-
-  <aside id="tree" aria-label="부품 목록 (BOM)"></aside>
-
-  <main>
-    <div class="toolbar" role="toolbar" aria-label="보기 설정">
-      <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
-      <div class="ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div></div>
-      <div class="ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div></div>
-      <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
-      <label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label>
-      <label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label>
-    </div>
-    <div class="stage" id="stage">
-      <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
-      <div id="labels"></div>
-      <div id="tip" hidden></div>
-      <div id="card" aria-live="polite"></div>
-      <div class="hint" id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
-    </div>
-  </main>
+<header>
+  <div class="ttl"><h1>Zeekr 7X AR-HUD 해부도</h1><span class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</span></div>
+  <nav class="views" aria-label="시점">
+    <button data-view="iso" aria-pressed="true">전체</button>
+    <button data-view="side">측면 단면</button>
+    <button data-view="top">위에서</button>
+    <button data-view="car">차량 장착</button>
+    <button data-view="driver">운전자 시점</button>
+  </nav>
+  <span class="sp"></span>
+  <button class="hdr-btn" id="setBtn" aria-expanded="false" aria-controls="settings">보기 설정 ▾</button>
+</header>
+<div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
+  <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
+  <div class="ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
+  <div class="ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
+  <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
+  <div class="chks"><label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label><label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label></div>
+</div>
+<div class="stage" id="stage">
+  <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
+  <div id="labels"></div>
+  <div id="tip" hidden></div>
+  <div class="hint" id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
+  <div class="col lcol">
+    <button class="fbtn" id="leftBtn" aria-controls="left">☰ 부품 목록</button>
+    <aside id="left" class="float" hidden aria-label="부품 목록"><div class="phead"><span>부품 목록</span><button class="x" data-closep="left" aria-label="부품 목록 접기">✕</button></div><div class="pbody" id="leftBody"></div></aside>
+  </div>
+  <div class="col rcol">
+    <button class="fbtn" id="playBtn" aria-controls="play" hidden>▶ 작동 원리</button>
+    <section id="play" class="float" aria-label="작동 원리 재생"><div class="phead"><span>HUD 작동 원리</span><button class="x" data-closep="play" aria-label="작동 원리 접기">✕</button></div><div class="pbody" id="playBody" aria-live="polite"></div></section>
+    <span class="sp"></span>
+    <button class="fbtn" id="infoBtn" aria-controls="info" hidden>ⓘ 정보</button>
+    <section id="info" class="float" aria-label="정보"><div class="phead"><span id="infoTitle">제품 정보</span><button class="x" data-closep="info" aria-label="정보 창 접기">✕</button></div><div class="pbody" id="infoBody"></div></section>
+  </div>
 </div>
 
 <div id="lightbox" hidden>
@@ -587,9 +598,9 @@ let ledMesh, lcdWarpMesh, lcdRectMesh;
   rg.rotateX(-Math.PI / 2); rg.translate(PG.cx, Ly + .03, PG.cz);
   lcdRectMesh = new THREE.Mesh(rg, disp); lcdRectMesh.userData.keepMat = true; lcdRectMesh.visible = false; g.add(lcdRectMesh);
   register('tft', g); }
-const zFp = PG.cz - PG.d / 2 - 1.9;
+const zFp = PG.cz - PG.d / 2 - 2.1;
 { const g = new THREE.Group(); const top = new THREE.Mesh(new THREE.BoxGeometry(LCDR.w + 1.5, .08, 3.2), [M.fpcPlain, M.fpcPlain, M.fpc, M.fpcPlain, M.fpcPlain, M.fpcPlain]); top.position.set(PG.cx, Ly + .05, zFp); g.add(top);
-  g.add(ribbon([V(PG.cx, Ly + .05, zFp + 1.4), V(PG.cx, Ly + .5, zFp + 2.3), V(PG.cx, Ly - .1, PG.cz - LCDR.d / 2 - .5)], LCDR.w * .55, M.fpcPlain, X));
+  { const z0 = zFp + 1.6, z1 = PG.cz - LCDR.d / 2 - .3; box(LCDR.w * .55, .05, z1 - z0, M.fpcPlain, PG.cx, Ly + .06, (z0 + z1) / 2, g); }
   for (const s of [-1, 1]) box(.7, .4, .7, M.black, PG.cx + 2.4 + s * .5, Ly + .3, zFp + .3, g);
   box(2.6, .3, .6, M.kapton, PG.cx - 1.2, Ly + .25, zFp + 1.1, g); register('fpcb', g); }
 { const g = new THREE.Group(); box(LCDR.w * .58, .1, .5, M.acf, PG.cx, Ly + .03, PG.cz - LCDR.d / 2 - .3, g); register('acf', g); }
@@ -858,19 +869,20 @@ function updateBL(dt) {
   }
   bGeo.attributes.position.needsUpdate = bGeo.attributes.color.needsUpdate = true;
 }
-function enterBL(quiet) { state.bl = true; state.blT = .55; state.car = false; markViews(''); setExplode(0); state.iso = false; state.more = false; setCam(V(PG.cx, 1.8, PG.cz), 33, .0001, Math.PI / 2 - .14); applyVisual(); if (!quiet) renderCard(); }
+function enterBL(quiet) { state.bl = true; state.blT = .55; state.car = false; markViews(''); setExplode(0); state.iso = false; setCam(V(PG.cx, 1.8, PG.cz), 33, .0001, Math.PI / 2 - .14); applyVisual(); if (!quiet) { setPanel('info', true); renderCard(); } }
 function exitBL(quiet) { state.bl = false; state.blT = 0; applyVisual(); if (!quiet) { setCam(V(0, 9, -3), 100, .85, 1.05); renderCard(); } }
 
 /* ───────────────────────── state + visuals ───────────────────────── */
 const state = { explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
 const selIds = () => !state.sel ? [] : state.sel.g ? GROUPS[state.sel.g].kids : [state.sel.id];
 function setOpacity(o, f) { if (!o.material || o.userData.keepMat) return; (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { const tr = f < .999 || m.userData.tr; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = (m.userData.op ?? 1) * f; m.depthWrite = f < .6 ? false : (m.userData.dw ?? true); }); }
-const HL = new THREE.Color(0x1f62d1).multiplyScalar(.2);
+const HL = new THREE.Color(0x1f62d1).multiplyScalar(.12);
+const outlineMat = new THREE.LineBasicMaterial({ color: 0x1f62d1, transparent: true, opacity: .9, depthTest: false });
 function applyVisual() {
   const ids = state.bl ? [] : selIds(), owners = new Set(ids.map(ownerOf));
   for (const id in objs) {
     const o = objs[id], isH = P[id].housing; let f = isH && state.housing === 'ghost' ? .16 : 1;
-    if (owners.size && !owners.has(id)) f = Math.min(f, isH ? .06 : .18);
+    if (owners.size && !owners.has(id)) f = Math.min(f, isH ? .03 : .07);
     o.obj.visible = !state.hidden.has(id) && !(state.iso && owners.size && !owners.has(id)) && (!state.bl || BL_SET.includes(id)); o.fade = f;
     if (BL_SET.includes(id)) o.obj.traverse(m => { if (m.material) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => { mm.clippingPlanes = state.bl ? [blCut] : []; }); });
     o.obj.traverse(m => { if (m.isMesh) setOpacity(m, f); if (m.material && (isH || id === 'cover')) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => mm.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
@@ -881,7 +893,8 @@ function applyVisual() {
   carG.visible = state.car; grid.visible = !state.car; virtMesh.visible = state.light !== 'off';
   sunLines.visible = hotSpot.visible = state.sun && state.explode < .05;
   M.led.color.setHex(state.light === 'off' ? 0x6a655c : 0xfff1d6); lcdWarpMesh.material.color.setScalar(state.light === 'off' ? .05 : 1);
-  renderTree();
+  for (const [m, id] of [[lcdWarpMesh.material, 'tft'], [M.led, 'led']]) { const f = objs[id].fade ?? 1; m.transparent = f < 1; m.opacity = f; m.depthWrite = f >= .6; m.needsUpdate = true; }
+  pickables.forEach(o => { const on = ids.includes(o.userData.pid) && !o.isInstancedMesh; if (on && !o.userData.outline) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 25), outlineMat); e.renderOrder = 20; e.raycast = () => {}; o.add(e); o.userData.outline = e; } if (o.userData.outline) o.userData.outline.visible = on; });
 }
 
 /* ───────────────────────── camera ───────────────────────── */
@@ -927,22 +940,33 @@ function pick(e) {
   return h ? h.object.userData.pid : null;
 }
 let lastClick = { id: null, t: 0 };
-function click(e) { const id = pick(e), now = performance.now(); if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderCard(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
+function click(e) { const id = pick(e), now = performance.now(); if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderInfo(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
 let hq = false;
 function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq = false; const id = pick(e), tip = $('#tip'), r = stageEl.getBoundingClientRect(); if (id) { tip.textContent = P[id].full; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } }); }
 
 /* ───────────────────────── UI ───────────────────────── */
 const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 7;
+const mobile = () => innerWidth <= 900;
+function setPanel(name, open) {
+  $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open;
+  if (open && mobile()) for (const n of ['left', 'play', 'info']) if (n !== name) { $('#' + n).hidden = true; $('#' + n + 'Btn').hidden = false; }
+  frameOffset();
+}
+document.querySelectorAll('[data-closep]').forEach(b => b.addEventListener('click', () => setPanel(b.dataset.closep, false)));
+for (const n of ['left', 'play', 'info']) $('#' + n + 'Btn').addEventListener('click', () => setPanel(n, true));
+$('#setBtn').addEventListener('click', e => { e.stopPropagation(); const s = $('#settings'); s.hidden = !s.hidden; $('#setBtn').setAttribute('aria-expanded', !s.hidden); });
+addEventListener('pointerdown', e => { const s = $('#settings'); if (!s.hidden && !s.contains(e.target) && e.target !== $('#setBtn')) { s.hidden = true; $('#setBtn').setAttribute('aria-expanded', false); } });
 function markViews(v) { document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); }
 function partView(h) { state.car = false; markViews(''); setHousing(h); }
 function select(sel, doFocus = true) {
   if (play.on) stopPlay(false);
   if (state.bl) { state.bl = false; state.blT = 0; }
   if (sel && state.car) { state.car = false; markViews(''); }
-  state.sel = sel; state.iso = false; state.more = false; applyVisual(); renderCard();
+  state.sel = sel; state.iso = false; applyVisual(); renderCard();
+  if (sel) setPanel('info', true);
   if (sel && doFocus) focus(selIds());
 }
-function startPlay() { play.on = true; play.paused = false; state.more = false; state.iso = false; setExplode(0); goStep(0); }
+function startPlay(i = 0) { play.on = true; play.paused = false; state.iso = false; setExplode(0); goStep(i); }
 function goStep(i) { play.i = i; play.t = 0; state.step = i; state.tiltT = 0; state.bl = false; state.blT = 0; STEPS[i].run(); applyVisual(); renderCard(); }
 function stopPlay(reset = true) {
   play.on = false; state.step = -1; state.tiltT = 0; $('#tilt').value = 0; $('#tiltOut').textContent = '0.0°';
@@ -954,107 +978,117 @@ function playTick(dt) {
   play.t += dt;
   if (STEPS[play.i].wiggle) state.tiltT = 1.6 * Math.sin(play.t * 1.4);
   const pb = document.getElementById('progBar'); if (pb) pb.style.width = Math.min(100, play.t / STEP_T * 100) + '%';
-  if (play.t > STEP_T) { if (play.i < STEPS.length - 1) goStep(play.i + 1); else { play.paused = true; renderCard(); } }
+  if (play.t > STEP_T) { if (play.i < STEPS.length - 1) goStep(play.i + 1); else { play.paused = true; renderPlay(); } }
 }
 const eyeSvg = on => on ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c7 0 11 6 11 6a17 17 0 0 1-3.4 3.9M6.6 6.6C3.4 8.6 1 12 1 12s4 7 11 7a10 10 0 0 0 5.4-1.6"/></svg>';
 function row(id, ind) {
-  const p = P[id], on = !play.on && state.sel && !state.sel.g && state.sel.id === id, off = state.hidden.has(id), canHide = !p.on;
-  return `<div class="row ${on ? 'on' : ''} ${off ? 'off' : ''}"><button class="nm" style="--ind:${ind}px" data-sel="${id}">${p.full}</button><span class="mat">${p.mat || ''}</span>${canHide ? `<button class="eye" data-eye="${id}" aria-label="${p.full} ${off ? '보이기' : '숨기기'}" title="${off ? '보이기' : '숨기기'}">${eyeSvg(!off)}</button>` : '<span></span>'}</div>`;
+  const p = P[id], on = !play.on && state.sel && !state.sel.g && state.sel.id === id, off = state.hidden.has(id);
+  return `<div class="row ${on ? 'on' : ''} ${off ? 'off' : ''}"><button class="nm" style="--ind:${ind}px" data-sel="${id}">${p.full}</button><span class="mat">${p.mat || ''}</span>${!p.on ? `<button class="eye" data-eye="${id}" aria-label="${p.full} ${off ? '보이기' : '숨기기'}" title="${off ? '보이기' : '숨기기'}">${eyeSvg(!off)}</button>` : '<span></span>'}</div>`;
 }
 function renderTree() {
-  $('#tree').innerHTML = `<div class="tree-head"><span>LV1 · LV2 · LV3</span><span>소재</span></div>` + TREE.map(b => `<div class="lv1"><div class="lv1-title">${b.t}</div>` + b.items.map(it => {
-    if (typeof it === 'string') return row(it, 30);
+  $('#leftBody').innerHTML = TREE.map(b => `<div class="lv1-title">${b.t}</div>` + b.items.map(it => {
+    if (typeof it === 'string') return row(it, 26);
     const G = GROUPS[it.g], on = !play.on && state.sel?.g === it.g;
-    return `<div class="row grp ${on ? 'on' : ''}"><button class="nm" style="--ind:30px" data-grp="${it.g}">${G.name}</button><span class="mat"></span><span></span></div>` + G.kids.map(k => row(k, 52)).join('');
-  }).join('') + '</div>').join('');
+    return `<div class="row ${on ? 'on' : ''}"><button class="nm" style="--ind:26px;font-weight:500" data-grp="${it.g}">${G.name}</button><span class="mat"></span><span></span></div>` + G.kids.map(k => row(k, 46)).join('');
+  }).join('')).join('');
 }
-$('#tree').addEventListener('click', e => {
+$('#leftBody').addEventListener('click', e => {
   const h = e.target.closest('[data-eye]'), s = e.target.closest('[data-sel]'), g = e.target.closest('[data-grp]');
   if (h) { const id = h.dataset.eye; state.hidden.has(id) ? state.hidden.delete(id) : state.hidden.add(id); applyVisual(); return; }
-  if (s) { const id = s.dataset.sel; !play.on && state.sel && !state.sel.g && state.sel.id === id ? select(null) : select({ id }); scrollToStageOnPhone(); }
-  if (g) { const id = g.dataset.grp; !play.on && state.sel?.g === id ? select(null) : select({ g: id }); scrollToStageOnPhone(); }
+  if (s) { const id = s.dataset.sel; !play.on && state.sel && !state.sel.g && state.sel.id === id ? select(null) : select({ id }); if (mobile()) setPanel('info', true); }
+  if (g) { const id = g.dataset.grp; !play.on && state.sel?.g === id ? select(null) : select({ g: id }); if (mobile()) setPanel('info', true); }
 });
-$('#treeBtn').addEventListener('click', () => { const app = $('.app'), on = app.classList.toggle('notree'); $('#treeBtn').setAttribute('aria-pressed', !on); });
-function scrollToStageOnPhone() { if (innerWidth <= 900) stageEl.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }
 const fmt = (n, d = 1) => n.toFixed(d);
 const fill = s => s.replace('{R}', fmt(RAD, 0)).replace('{LW}', fmt(LCDR.w)).replace('{LH}', fmt(LCDR.d));
 const badge = c => c === 'photo' ? '<span class="badge photo">사진 확인</span>' : c === 'bom' ? '<span class="badge bom">BOM 기준</span>' : '<span class="badge guess">위치·형상 추정</span>';
 const thumbs = list => `<div class="thumbs">${list.map((k, i) => `<button data-photo="${i}" data-set="${list.join(',')}" aria-label="${PHOTO[k]} 크게 보기" title="${PHOTO[k]}"><img src="photos/${k}.jpg" alt="${PHOTO[k]}" loading="lazy"></button>`).join('')}</div>`;
 function readout() {
   const dEye = OPT.eye.y - OPT0.eye.y, w = 2 * OPT.vid * Math.tan(HFOV / 2), h = 2 * OPT.vid * Math.tan(VFOV / 2);
-  return `<div class="readout">허상 거리 <b>${fmt(OPT.vid / 100)} m</b> · 크기 <b>${fmt(w / 100, 2)} × ${fmt(h / 100, 2)} m</b> (대각 ${fmt(Math.hypot(w, h) / 2.54, 1)}")<br>FOV <b>${fmt(HFOV * 180 / Math.PI)}° × ${fmt(VFOV * 180 / Math.PI)}°</b> · 곡면경 R <b>${fmt(RAD, 0)} cm</b><br>미러 각도 <b>${fmt(state.tilt)}°</b> → 아이박스 높이 <b>${dEye >= 0 ? '+' : ''}${fmt(dEye)} cm</b></div>`;
+  return `<div class="readout">허상 거리 <b>${fmt(OPT.vid / 100)} m</b> · 크기 <b>${fmt(w / 100, 2)} × ${fmt(h / 100, 2)} m</b><br>FOV <b>${fmt(HFOV * 180 / Math.PI)}° × ${fmt(VFOV * 180 / Math.PI)}°</b> · 곡면경 R <b>${fmt(RAD, 0)} cm</b><br>미러 <b>${fmt(state.tilt)}°</b> → 아이박스 높이 <b>${dEye >= 0 ? '+' : ''}${fmt(dEye)} cm</b></div>`;
 }
-function renderCard() {
-  const el = $('#card'), sel = state.sel;
-  if (play.on) {
-    const s = STEPS[play.i];
-    el.innerHTML = `<div class="crumb">작동 원리 · ${play.i + 1} / ${STEPS.length}</div><div class="card-top"><h2>${s.t}</h2></div><p>${s.s}</p>
-      ${s.wiggle ? readout() : ''}<div class="prog"><i id="progBar" style="width:${Math.min(100, play.t / STEP_T * 100)}%"></i></div>
-      <div class="actions"><button class="btn" data-pl="prev" aria-label="이전 단계" ${play.i ? '' : 'disabled'}>‹ 이전</button><button class="btn primary" data-pl="toggle">${play.paused ? (play.i === STEPS.length - 1 && play.t > STEP_T ? '↺ 처음부터' : '▶ 계속') : '❚❚ 멈춤'}</button><button class="btn" data-pl="next" aria-label="다음 단계" ${play.i < STEPS.length - 1 ? '' : 'disabled'}>다음 ›</button>
-      <span class="sp"></span><div class="dots">${STEPS.map((x, i) => `<button data-go-step="${i}" class="${i === play.i ? 'on' : ''}" aria-label="${i + 1}단계 ${x.t}" title="${i + 1}. ${x.t}"></button>`).join('')}</div><button class="btn" data-pl="stop">끝내기</button></div>`;
-    return;
-  }
+function renderCard() { renderTree(); renderPlay(); renderInfo(); }
+function renderPlay() {
+  const s = STEPS[play.i];
+  $('#playBody').innerHTML = `<div class="pctl">${play.on
+      ? `<button class="btn" data-pl="prev" aria-label="이전 단계" ${play.i ? '' : 'disabled'}>‹</button><button class="btn primary" data-pl="toggle">${play.paused ? '▶ 계속' : '❚❚ 멈춤'}</button><button class="btn" data-pl="next" aria-label="다음 단계" ${play.i < STEPS.length - 1 ? '' : 'disabled'}>›</button><span class="sp"></span><button class="btn" data-pl="stop">■ 끝내기</button>`
+      : `<button class="btn primary" data-pl="start">▶ 재생</button><span class="note">단계를 눌러 바로 볼 수도 있어요</span>`}</div>
+    ${play.on ? `<div class="prog"><i id="progBar" style="width:${Math.min(100, play.t / STEP_T * 100)}%"></i></div>` : ''}
+    <ol class="slist">${STEPS.map((x, i) => `<li class="${play.on && i === play.i ? 'on' : ''}"><button data-go-step="${i}"><span class="n">${i + 1}</span><span>${x.t}</span></button>${play.on && i === play.i ? `<p class="sdesc">${x.s}</p>${x.wiggle ? readout() : ''}` : ''}</li>`).join('')}</ol>`;
+}
+function renderInfo() {
+  const el = $('#infoBody'), sel = state.sel, title = $('#infoTitle'), box = $('#info');
+  box.classList.toggle('big', !!(sel || state.bl) && !play.on);
   if (state.bl) {
-    el.innerHTML = `<div class="crumb">광학 › Backlight › 단면</div><div class="card-top"><h2>Backlight 속 들여다보기</h2></div>
-      <p>가운데 LED 한 줄을 자른 단면입니다. <b class="k-amber">주황</b>은 LED 빛, <b class="k-blue">파랑</b>은 TFT를 통과한 빛, <b class="k-gray">회색</b>은 벽에 흡수되는 빛입니다.</p>
-      <div class="actions"><label class="ctl" for="blSpread">층 벌리기 <input id="blSpread" type="range" min="0" max="1" step="0.01" value="${state.blT}"></label><span class="sp"></span><button class="btn" data-more>${state.more ? '층 설명 접기' : '층 설명'}</button><button class="btn" data-blexit>닫기</button></div>
-      ${state.more ? `<div class="more"><ol class="layers">
+    title.textContent = 'Backlight 단면';
+    el.innerHTML = `<div class="crumb">광학 › Backlight</div><p>가운데 LED 한 줄을 자른 단면입니다. <b class="k-amber">주황</b> LED 빛, <b class="k-blue">파랑</b> TFT를 통과한 빛, <b class="k-gray">회색</b> 벽에 흡수되는 빛.</p>
+      <label class="ctl" for="blSpread">층 벌리기 <input id="blSpread" type="range" min="0" max="1" step="0.01" value="${state.blT}"><span></span></label>
+      <div class="actions"><button class="btn" data-blexit>단면 닫기</button></div>
+      <h3 class="sec">위에서 아래로</h3><ol class="layers">
         <li><b>TFT</b> 편광판 두 장 사이의 액정이 픽셀마다 빛을 통과시키거나 막습니다. 지지대 맨 위 턱에 얹히고 방진 폼이 눌러 고정합니다.</li>
         <li><b>광학 필름</b> 빛을 고르게 펴서 LED 점 무늬를 지웁니다. 지지대 가운데 턱에 얹힙니다.</li>
-        <li><b>렌즈 (PC)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다. 렌즈가 받지 못한 넓은 각도의 빛은 검은 벽에 흡수됩니다.</li>
+        <li><b>렌즈 (PC)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다.</li>
         <li><b>LED · LED 기판</b> 빛을 냅니다. 열은 기판 뒤로 빠집니다.</li>
-        <li><b>방열 실리콘 패드 → 방열판</b> 열을 핀으로 보내 공기로 버립니다.</li>
-        <li><b>TFT 지지대</b> 위 층들을 정해진 간격으로 쌓아 잡는 검은 틀입니다. 네 모서리 나사와 옆면 걸쇠로 고정합니다.</li></ol>
-        <p class="note">층 순서와 렌즈·필름·TFT는 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠의 모양, 층 사이 간격은 추정입니다.</p></div>` : ''}`;
+        <li><b>실리콘 패드 → 방열판</b> 열을 핀으로 보내 공기로 버립니다.</li>
+        <li><b>TFT 지지대</b> 위 층들을 정해진 간격으로 쌓아 잡는 검은 틀. 모서리 나사와 옆면 걸쇠로 고정합니다.</li></ol>
+      <p class="note">층 순서와 렌즈·필름·TFT는 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
     return;
   }
-  if (!sel) {
-    el.innerHTML = `<div class="card-top"><h2>HUD 작동 원리</h2></div>
-      <p>차량이 보낸 영상이 빛이 되어 미러 두 장과 윈드실드를 거쳐 도로 위 허상으로 보이기까지를 8단계로 재생합니다. 단계마다 멈추거나 앞뒤로 넘길 수 있습니다.</p>
-      <div class="actions"><button class="btn primary" data-pl="start">▶ 작동 원리 재생</button><button class="btn" data-more>${state.more ? '제품 정보 접기' : '제품 정보'}</button><span class="sp"></span><span class="note">부품은 왼쪽 목록이나 3D에서 선택</span></div>
-      ${state.more ? `<div class="more"><h3 class="sec">제품</h3><dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E (Zeekr 7X)</dd><dt>생산</dt><dd>2025-10-05</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>발표 사양</dt><dd>36.2" AR-HUD · 12,000 nit</dd><dt>방식</dt><dd>TFT-LCD + 평면경 + 곡면경</dd></dl>
-        <h3 class="sec">용어</h3><dl class="specs"><dt>아이박스</dt><dd class="txt">운전자 눈이 있어야 영상 전체가 보이는 공간. 보통 가로 12~13 cm, 세로 4~6 cm. 모터가 곡면경을 기울여 위아래로 옮깁니다.</dd><dt>허상 거리</dt><dd class="txt">눈에서 영상이 떠 보이는 곳까지의 거리.</dd><dt>PGU</dt><dd class="txt">영상을 만드는 부분. 이 제품은 Backlight + TFT.</dd><dt>워프 보정</dt><dd class="txt">미러·윈드실드가 만드는 왜곡을 미리 거꾸로 걸어 두는 것.</dd></dl>
-        <h3 class="sec">모델 광학값</h3>${readout()}<p class="note">허상 거리와 FOV는 공개되지 않았습니다. 사진 속 TFT(약 12 cm)로 36.2" 영상이 나오도록 모델에서 역산한 값입니다. 배치와 치수는 사진 비례로 잡은 추정입니다.</p>
-        <h3 class="sec">사진</h3>${thumbs(['side', 'label', 'opening', 'mirror-housing', 'pcb-housing', 'weight-scale'])}
-        <h3 class="sec">참고 자료</h3><ol class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ol></div>` : ''}`;
+  if (!sel || play.on) {
+    title.textContent = '제품 정보';
+    el.innerHTML = `<dl class="specs"><dt>품번</dt><dd>HA1SZK63E · 752007</dd><dt>차종 코드</dt><dd>CX1E (Zeekr 7X)</dd><dt>생산</dt><dd>2025-10-05</dd><dt>무게</dt><dd>2,053 g (실측)</dd><dt>발표 사양</dt><dd>36.2" AR-HUD · 12,000 nit</dd><dt>방식</dt><dd>TFT-LCD + 평면경 + 곡면경</dd></dl>
+      <h3 class="sec">모델 광학값 (추정)</h3>${readout()}
+      <details><summary class="note">용어 · 참고 자료 · 사진</summary>
+      <dl class="specs" style="margin-top:8px"><dt>아이박스</dt><dd class="txt">운전자 눈이 있어야 영상 전체가 보이는 공간. 보통 가로 12~13 cm, 세로 4~6 cm. 모터가 곡면경을 기울여 위아래로 옮깁니다.</dd><dt>허상 거리</dt><dd class="txt">눈에서 영상이 떠 보이는 곳까지의 거리.</dd><dt>PGU</dt><dd class="txt">영상을 만드는 부분. 이 제품은 Backlight + TFT.</dd><dt>워프 보정</dt><dd class="txt">미러·윈드실드가 만드는 왜곡을 미리 거꾸로 걸어 두는 것.</dd></dl>
+      <p class="note">허상 거리와 FOV는 공개되지 않았습니다. 사진 속 TFT(약 12 cm)로 36.2" 영상이 나오도록 모델에서 역산한 값입니다. 배치와 치수는 사진 비례로 잡은 추정입니다.</p>
+      ${thumbs(['side', 'label', 'opening', 'mirror-housing', 'pcb-housing', 'weight-scale'])}
+      <ol class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ol></details>
+      <p class="note" style="margin-top:8px">부품을 누르면 이 창에 부품 정보가 나옵니다.</p>`;
     return;
   }
-  const close = `<button class="btn" data-close aria-label="선택 해제">닫기</button>`, iso = `<button class="btn primary" data-iso>${state.iso ? '전체 보기' : '이것만 보기'}</button>`;
+  const iso = `<button class="btn primary" data-iso>${state.iso ? '전체 보기' : '이것만 보기'}</button>`, back = `<button class="btn" data-close>선택 해제</button>`;
+  const blBtn = (sel.g === 'backlight' || (BL_SET.includes(sel.id) && !['heatsink', 'baseplate'].includes(sel.id))) ? '<button class="btn" data-bl>단면으로 자세히</button>' : '';
   if (sel.g) {
-    const G = GROUPS[sel.g];
-    el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'} › ${G.name}</div><div class="card-top"><h2>${G.name}</h2></div><p>${G.desc}</p>
-      <div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
-      <div class="actions">${iso}${sel.g === 'backlight' ? '<button class="btn" data-bl>단면으로 자세히</button>' : ''}<button class="btn" data-more>${state.more ? '사진 접기' : '사진'}</button><span class="sp"></span>${close}</div>
-      ${state.more ? `<div class="more">${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 8))}</div>` : ''}`;
+    const G = GROUPS[sel.g]; title.textContent = '부품 정보';
+    el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
+      <div class="actions">${iso}${blBtn}${back}</div><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
+      <h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 9))}`;
     return;
   }
   const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
-  el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div>
-    <div class="card-top"><h2>${p.full}</h2><span class="en">${p.en}</span>${badge(p.conf)}</div><p>${p.desc}</p>
-    <div class="actions">${iso}${BL_SET.includes(sel.id) && !['heatsink', 'baseplate'].includes(sel.id) ? '<button class="btn" data-bl>단면으로 자세히</button>' : ''}<button class="btn" data-more>${state.more ? '접기' : '자세히 · 사진'}</button><span class="sp"></span>${close}</div>
-    ${state.more ? `<div class="more"><ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
-      ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
-      <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}</div>` : ''}`;
+  title.textContent = '부품 정보';
+  el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div><div class="detail" style="padding:0"><h2>${p.full}</h2><div class="en">${p.en}</div>${badge(p.conf)}</div>
+    <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
+    <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
+    ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
+    <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}`;
 }
-$('#card').addEventListener('input', e => { if (e.target.id === 'blSpread') state.blT = +e.target.value; });
-$('#card').addEventListener('click', e => {
-  const t = e.target, pl = t.closest('[data-pl]'), gs = t.closest('[data-go-step]'), k = t.closest('.kids [data-sel]'), phB = t.closest('[data-photo]');
+$('#playBody').addEventListener('click', e => {
+  const pl = e.target.closest('[data-pl]'), gs = e.target.closest('[data-go-step]');
   if (pl) { const a = pl.dataset.pl;
     if (a === 'start') startPlay();
     if (a === 'stop') stopPlay();
     if (a === 'prev' && play.i > 0) goStep(play.i - 1);
     if (a === 'next' && play.i < STEPS.length - 1) goStep(play.i + 1);
-    if (a === 'toggle') { if (play.paused && play.i === STEPS.length - 1 && play.t > STEP_T) goStep(0); play.paused = !play.paused; if (play.t > STEP_T && !play.paused) play.t = 0; renderCard(); }
+    if (a === 'toggle') { if (play.paused && play.i === STEPS.length - 1 && play.t > STEP_T) { goStep(0); play.paused = false; } else { play.paused = !play.paused; if (play.t > STEP_T) play.t = 0; } renderPlay(); }
     return; }
-  if (gs) { goStep(+gs.dataset.goStep); return; }
-  if (t.closest('[data-more]')) { state.more = !state.more; renderCard(); return; }
-  if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderCard(); focus(selIds()); return; }
+  if (gs) { const i = +gs.dataset.goStep; if (!play.on) startPlay(i); else goStep(i); }
+});
+$('#infoBody').addEventListener('input', e => { if (e.target.id === 'blSpread') state.blT = +e.target.value; });
+$('#infoBody').addEventListener('click', e => {
+  const t = e.target, k = t.closest('.kids [data-sel]'), phB = t.closest('[data-photo]');
+  if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderInfo(); focus(selIds()); return; }
   if (t.closest('[data-close]')) { select(null); return; }
   if (t.closest('[data-bl]')) { enterBL(); return; }
   if (t.closest('[data-blexit]')) { exitBL(); return; }
   if (k) { select({ id: k.dataset.sel }); return; }
   if (phB) openLB(phB.dataset.set.split(','), +phB.dataset.photo);
 });
+// keep the subject centred in the space the open windows leave free
+function frameOffset() {
+  const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
+  let x = 0; if (!mobile()) { if (!$('#left').hidden) x -= 156; if (!$('#info').hidden || !$('#play').hidden) x += 170; }
+  if (x) camera.setViewOffset(w, h, x, 0, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix();
+}
 let lb = { list: [], i: 0 };
 function openLB(list, i) { lb = { list, i }; showLB(); $('#lightbox').hidden = false; $('#lbClose').focus(); }
 function showLB() { const k = lb.list[lb.i]; $('#lbImg').src = `photos/${k}.jpg`; $('#lbImg').alt = PHOTO[k]; $('#lbCap').textContent = `${PHOTO[k]} · ${lb.i + 1}/${lb.list.length}`; }
@@ -1064,6 +1098,7 @@ $('#lbNext').onclick = () => { lb.i = (lb.i + 1) % lb.list.length; showLB(); };
 $('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') $('#lightbox').hidden = true; });
 addEventListener('keydown', e => {
   if (!$('#lightbox').hidden) { if (e.key === 'Escape') $('#lightbox').hidden = true; if (e.key === 'ArrowLeft') $('#lbPrev').click(); if (e.key === 'ArrowRight') $('#lbNext').click(); return; }
+  if (e.key === 'Escape' && !$('#settings').hidden) { $('#settings').hidden = true; $('#setBtn').setAttribute('aria-expanded', false); return; }
   if (e.key === 'Escape' && state.bl && !play.on) { exitBL(); return; }
   if (e.key === 'Escape') { if (state.iso) { state.iso = false; applyVisual(); renderCard(); } else select(null); }
 });
@@ -1094,9 +1129,8 @@ function drawLabels() {
 }
 
 /* ───────────────────────── loop ───────────────────────── */
-function frameOffset() { const w = stageEl.clientWidth, h = stageEl.clientHeight, c = $('#card'); if (!w || !h) return; const ch = c ? c.offsetHeight : 0; const dy = Math.min(h * .3, ch * .5); if (dy > 4 && innerWidth > 900) camera.setViewOffset(w, h, 0, dy, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix(); }
 function resize() { const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; frameOffset(); pMat.uniforms.uScale.value = pMatS.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
-new ResizeObserver(resize).observe(stageEl); new ResizeObserver(frameOffset).observe($('#card'));
+new ResizeObserver(resize).observe(stageEl); addEventListener('resize', frameOffset);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let last = performance.now(), screwA = 0;
 const col = new THREE.Color();
@@ -1108,17 +1142,18 @@ function tick(now) {
   for (const id in objs) { const o = objs[id]; o.obj.position.copy(o.base).addScaledVector(o.ex, state.explode); if (BL_OFF[id]) o.obj.position.y += BL_OFF[id] * state.blS; }
   playTick(dt);
   const dT = state.tiltT - state.tilt;
-  if (Math.abs(dT) > 1e-4) { const st = Math.sign(dT) * Math.min(Math.abs(dT), dt * (reduced ? 20 : 1.6)); state.tilt += st; screwA += st * 40; concTilt.rotation.x = state.tilt * Math.PI / 180; OPT = trace(state.tilt * Math.PI / 180); rebuildLight(); const ro = document.querySelector('#card .readout'); if (ro) ro.outerHTML = readout(); }
+  if (Math.abs(dT) > 1e-4) { const st = Math.sign(dT) * Math.min(Math.abs(dT), dt * (reduced ? 20 : 1.6)); state.tilt += st; screwA += st * 40; concTilt.rotation.x = state.tilt * Math.PI / 180; OPT = trace(state.tilt * Math.PI / 180); rebuildLight(); document.querySelectorAll('.readout').forEach(r => { r.outerHTML = readout(); }); }
   concPivot.updateMatrixWorld(true);
   const ear = objs.motor.obj.worldToLocal(concTilt.localToWorld(V(CONC.w / 2 + .3, CONC.h / 2 * .82, -.9)));
   motor.nut.position.z = THREE.MathUtils.clamp(ear.z - 6, motor.z0 + .6, motor.z1 - .6); motor.screw.rotation.z = screwA;
   const nt = V(motor.x, motor.y + .55, motor.nut.position.z); motor.link.position.copy(nt).add(ear).multiplyScalar(.5); motor.link.scale.set(1, nt.distanceTo(ear), 1); motor.link.quaternion.setFromUnitVectors(Y, V().subVectors(ear, nt).normalize());
   motor.link.visible = state.explode < .03 && objs.motor.obj.visible;
   const assembled = state.explode < .05, hs = state.step >= 0 ? STEPS[state.step].seg : -1;
-  const sig = (play.on && STEPS[play.i].seg === -1) || state.bl;
+  const quiet = !play.on && !state.bl && selIds().length > 0, sig = (play.on && STEPS[play.i].seg === -1) || state.bl;
+  lineMat.opacity = quiet ? .12 : .55;
   bPts.visible = state.bl && state.light === 'anim'; if (bPts.visible) updateBL(dt);
-  rayLines.visible = centerLine.visible = beam.visible = assembled && state.light !== 'off' && !sig; virtLines.visible = state.light !== 'off';
-  photons.visible = assembled && state.light === 'anim' && !sig;
+  rayLines.visible = assembled && state.light !== 'off' && !sig; centerLine.visible = beam.visible = rayLines.visible && !quiet; virtLines.visible = state.light !== 'off';
+  photons.visible = assembled && state.light === 'anim' && !sig && !quiet;
   if (photons.visible) {
     const sp = reduced ? 0 : 1;
     for (let i = 0; i < NP; i++) {
@@ -1139,6 +1174,8 @@ function tick(now) {
 for (let i = 0; i < NP; i++) spawn(i, true);
 rebuildLight(); for (let i = 0; i < NP; i++) spawn(i, true);
 resize(); applyVisual(); renderCard();
+const phoneLayout = () => { if (mobile()) { setPanel('play', false); setPanel('info', false); setPanel('left', false); } };
+phoneLayout(); matchMedia('(max-width: 900px)').addEventListener('change', phoneLayout);
 cam.t.copy(cam.gt); cam.r = cam.gr; cam.th = cam.gth; cam.ph = cam.gph;
 requestAnimationFrame(tick);
 document.fonts && document.fonts.ready.then(() => { drawHUD(); rebuildLight(); [pcbTex, fpcTex, labelTex].forEach(t => t.userData.redraw()); });
