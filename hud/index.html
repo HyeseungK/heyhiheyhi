@@ -48,8 +48,14 @@ header .sub { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .views button:hover { background: var(--panel); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
 .views button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(31,98,209,.35); }
 .views button[aria-pressed="true"] svg { opacity: 1; }
-.hdr-btn { padding: 6px 11px; border-radius: 6px; font-size: 13px; border: 1px solid var(--line); white-space: nowrap; }
-.hdr-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.hdr-btn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 11px 6px 7px; border-radius: 9px; font-size: 13.5px; font-weight: 600; border: 1px solid #c2d4f3; border-left: 3px solid var(--accent); background: var(--panel); white-space: nowrap; box-shadow: 0 2px 8px rgba(20,30,40,.06); }
+.hdr-btn .ic { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.hdr-btn .ic svg { width: 14px; height: 14px; }
+.hdr-btn .chev { color: var(--accent); font-size: 12px; font-weight: 500; }
+.hdr-btn:hover { background: var(--accent-soft); }
+.hdr-btn[aria-expanded="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hdr-btn[aria-expanded="true"] .ic { background: rgba(255,255,255,.2); color: #fff; }
+.hdr-btn[aria-expanded="true"] .chev { color: #fff; }
 
 .stage { position: fixed; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); left: 0; right: 0; bottom: 0; background: var(--stage); overflow: hidden; }
 #c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
@@ -76,7 +82,8 @@ header .sub { color: var(--muted); font-size: 12px; white-space: nowrap; }
 #play { flex: 0 0 auto; max-height: 52%; }
 #info { flex: 0 1 auto; max-height: 100%; }
 #info.big { flex: 1 1 auto; }
-#settings { position: fixed; z-index: 11; top: calc(var(--hdr) + env(safe-area-inset-top, 0px) + 6px); right: max(12px, env(safe-area-inset-right, 0px)); width: 300px; padding: 12px 14px; display: grid; gap: 12px; }
+#settings { position: fixed; z-index: 11; top: calc(var(--hdr) + env(safe-area-inset-top, 0px) + 6px); right: max(12px, env(safe-area-inset-right, 0px)); width: 310px; padding: 0 14px 14px; display: grid; gap: 12px; border-top: 3px solid var(--accent); }
+#settings .phead { border-top: 0; margin: 0 -14px; border-radius: 0; }
 .ctl { display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
 .ctl input[type=range] { width: 100%; accent-color: var(--accent); }
 .ctl output { font-family: var(--mono); color: var(--fg); font-variant-numeric: tabular-nums; min-width: 3.4em; text-align: right; }
@@ -202,9 +209,10 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
     <button data-view="driver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>운전자 시점</button>
   </nav></div>
   <span class="sp"></span>
-  <button class="hdr-btn" id="setBtn" aria-expanded="false" aria-controls="settings">보기 설정 ▾</button>
+  <button class="hdr-btn" id="setBtn" aria-expanded="false" aria-controls="settings"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>보기 설정<span class="chev" id="setChev">펼치기 ▾</span></button>
 </header>
 <div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
+  <div class="phead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span>보기 설정</span><button class="x" id="setClose" aria-label="보기 설정 접기">접기 ▴</button></div>
   <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
   <div class="ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
   <div class="ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
@@ -985,8 +993,10 @@ function setPanel(name, open) {
 }
 document.querySelectorAll('[data-closep]').forEach(b => b.addEventListener('click', () => setPanel(b.dataset.closep, false)));
 for (const n of ['left', 'play', 'info']) $('#' + n + 'Btn').addEventListener('click', () => setPanel(n, true));
-$('#setBtn').addEventListener('click', e => { e.stopPropagation(); const s = $('#settings'); s.hidden = !s.hidden; $('#setBtn').setAttribute('aria-expanded', !s.hidden); });
-addEventListener('pointerdown', e => { const s = $('#settings'); if (!s.hidden && !s.contains(e.target) && e.target !== $('#setBtn')) { s.hidden = true; $('#setBtn').setAttribute('aria-expanded', false); } });
+function setSettings(open) { $('#settings').hidden = !open; $('#setBtn').setAttribute('aria-expanded', open); $('#setChev').textContent = open ? '접기 ▴' : '펼치기 ▾'; }
+$('#setBtn').addEventListener('click', e => { e.stopPropagation(); setSettings($('#settings').hidden); });
+$('#setClose').addEventListener('click', () => setSettings(false));
+addEventListener('pointerdown', e => { const s = $('#settings'); if (!s.hidden && !s.contains(e.target) && !$('#setBtn').contains(e.target)) setSettings(false); });
 function markViews(v) { document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); }
 function partView(h) { state.car = false; markViews(''); setHousing(h); }
 function select(sel, doFocus = true) {
@@ -1130,7 +1140,7 @@ $('#lbNext').onclick = () => { lb.i = (lb.i + 1) % lb.list.length; showLB(); };
 $('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') $('#lightbox').hidden = true; });
 addEventListener('keydown', e => {
   if (!$('#lightbox').hidden) { if (e.key === 'Escape') $('#lightbox').hidden = true; if (e.key === 'ArrowLeft') $('#lbPrev').click(); if (e.key === 'ArrowRight') $('#lbNext').click(); return; }
-  if (e.key === 'Escape' && !$('#settings').hidden) { $('#settings').hidden = true; $('#setBtn').setAttribute('aria-expanded', false); return; }
+  if (e.key === 'Escape' && !$('#settings').hidden) { setSettings(false); return; }
   if (e.key === 'Escape' && state.bl && !play.on) { exitBL(); return; }
   if (e.key === 'Escape') { if (state.iso) { state.iso = false; applyVisual(); renderCard(); } else select(null); }
 });
