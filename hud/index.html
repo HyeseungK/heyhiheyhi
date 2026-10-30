@@ -153,24 +153,67 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
 .tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spec"] #setBtn { display: none; }
 #specPage { position: fixed; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); left: 0; right: 0; bottom: 0; overflow: auto; background: var(--bg); }
-.sp-wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.sp-head { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; }
-.sp-head h2 { margin: 0 0 4px; font-size: 20px; }
-.sp-head .note { max-width: 70ch; margin: 0; }
+.sp-wrap { height: 100%; display: flex; flex-direction: column; gap: 10px; padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+#specBody { flex: 1; min-height: 0; overflow: auto; }
+.sp-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.sp-head h2 { margin: 0; font-size: 17px; }
 .vid { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .vid input { width: 64px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; color: var(--fg); }
-.sp-views { margin-bottom: 14px; background: var(--panel); }
-.sp-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; align-items: start; }
-.sp-list { position: sticky; top: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 0; max-height: calc(100vh - 140px); overflow: auto; }
-.sp-cat { font: 600 11px/1 var(--mono); color: var(--muted); padding: 10px 12px 4px; letter-spacing: .04em; }
-.sp-item { display: block; width: 100%; text-align: left; padding: 6px 12px; border-left: 3px solid transparent; font-size: 13.5px; }
+.sp-views { background: var(--panel); }
+.hint2 { font-size: 11.5px; color: var(--muted); }
+.sp-grid { height: 100%; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 12px; }
+.sp-list { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 4px 0 8px; overflow: auto; min-height: 0; }
+.sp-cat { display: flex; align-items: center; gap: 7px; font: 700 11.5px/1 var(--sans); color: var(--fg); padding: 12px 12px 6px; }
+.sp-cat::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--cat); }
+.sp-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 6px 10px 6px 12px; border-left: 3px solid transparent; font-size: 13.5px; }
+.sp-item .t { flex: 1; min-width: 0; }
+.sp-item .u { font: 500 10.5px/1 var(--mono); color: var(--muted); white-space: nowrap; }
 .sp-item small { display: block; font: 400 11px/1.3 var(--mono); color: var(--muted); }
 .sp-item:hover { background: #f6f8fa; }
-.sp-item.on { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); font-weight: 600; }
-.sp-detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px 20px; min-width: 0; }
+.sp-item.on { background: color-mix(in srgb, var(--cat) 10%, white); border-left-color: var(--cat); color: var(--cat); font-weight: 600; }
+.sp-item.on .u { color: var(--cat); }
+.sp-detail { min-width: 0; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 12px; }
+.sp-main { min-height: 0; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.sp-side { min-height: 0; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px 16px; }
+.sp-side ul { padding-left: 18px; display: grid; gap: 5px; margin: 4px 0; }
+.sp-side li { line-height: 1.55; font-size: 13px; }
+.sp-hero { padding: 12px 18px 12px; border-top: 4px solid var(--cat); background: linear-gradient(180deg, color-mix(in srgb, var(--cat) 7%, white), white); border-bottom: 1px solid var(--line-2); }
+.eyebrow { font: 700 11.5px/1 var(--sans); color: var(--cat); letter-spacing: .04em; margin-bottom: 6px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.facts div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.facts span { font-size: 11.5px; color: var(--muted); }
+.facts b { font: 600 13.5px/1.2 var(--mono); color: var(--fg); overflow-wrap: anywhere; }
+.facts b.empty { color: #aab3bc; font-weight: 500; font-family: var(--sans); font-size: 13px; }
+.lead { font-size: 14px; line-height: 1.7; margin: 10px 0 4px; }
+.schem { margin: 4px 0 8px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfd; padding: 6px 6px 8px; }
+.schem svg { width: 100%; height: auto; display: block; }
+.schem figcaption { font-size: 11.5px; color: var(--muted); padding: 2px 6px 0; }
+.schem .node { cursor: pointer; }
+.schem .part, .schem .housing, .schem .glass { fill: none; stroke: #b7c0c9; stroke-width: 2; }
+.schem rect.part, .schem circle.part { fill: #eef1f4; }
+.schem .housing { stroke-dasharray: 4 3; stroke-width: 1.2; }
+.schem .glass { stroke-width: 3; stroke: #c9dbe9; }
+.schem .lv1 .part, .schem .lv1 .glass, .schem .lv1 .housing { stroke: var(--cat); stroke-width: 2.4; }
+.schem .lv1 rect.part, .schem .lv1 circle.part { fill: #fff; }
+.schem .lv2 .part, .schem .lv2 .glass, .schem .lv2 .housing { stroke: var(--cat); stroke-width: 3.4; }
+.schem .lv2 rect.part, .schem .lv2 circle.part { fill: var(--cat); }
+.schem .node:hover .part, .schem .node:hover .glass { stroke-width: 4; }
+.schem .beam { fill: none; stroke: var(--cat); stroke-width: 1.6; opacity: .5; }
+.schem .beam.virt { stroke-dasharray: 5 5; opacity: .35; }
+.schem .eye { fill: var(--fg); }
+.schem .eyebox { fill: none; stroke: var(--fg); stroke-dasharray: 3 2; }
+.schem .vi { stroke: var(--fg); stroke-width: 4; }
+.schem .lab { font: 500 11px var(--sans); fill: #9aa4ae; }
+.schem .lab.lv1 { fill: var(--fg); }
+.schem .lab.lv2 { fill: var(--cat); font-weight: 700; }
+.schem .lab.small { font-size: 9.5px; fill: var(--muted); }
+.sp-detail .pchip.lv2 { border-color: var(--cat); color: var(--cat); }
+.sp-detail .demo-out b { color: var(--cat); }
+.vidbox { max-width: 340px; display: grid; gap: 4px; }
+.vidbox .note { margin: 0; font-size: 11.5px; }
 .sp-detail > p { line-height: 1.7; max-width: 75ch; margin: 6px 0 4px; }
 .sp-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
-.sp-title h2 { margin: 0; font-size: 21px; }
+.sp-title h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
 .sp-title .en { font: 400 12.5px/1.3 var(--mono); color: var(--muted); }
 .sp-title .unit { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 4px; background: var(--line-2); }
 .sp-cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 4px 28px; }
@@ -183,6 +226,8 @@ body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spe
 .pchip.lv2 { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .pchip:hover { background: var(--accent-soft); }
 .demo { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fbfcfd; }
+.sp-main .demo { flex: 1; min-height: 0; display: flex; flex-direction: column; border: 0; border-radius: 0; }
+.sp-main .demo canvas { flex: 1; min-height: 160px; height: auto; }
 .demo canvas { display: block; width: 100%; height: clamp(220px, 32vw, 320px); }
 .demo-ctl { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 10px 14px 0; font-size: 12.5px; color: var(--muted); }
 .demo-ctl label { display: flex; align-items: center; gap: 8px; }
@@ -191,7 +236,8 @@ body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spe
 .demo-ctl output { font-family: var(--mono); color: var(--fg); min-width: 5em; }
 .demo-out { margin: 8px 14px 12px; font-size: 13px; line-height: 1.65; }
 .demo-out b { color: var(--accent); }
-.sp-form { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; }
+.sp-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sp-form .wide { grid-column: 1 / -1; }
 .sp-form label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
 .sp-form input { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; color: var(--fg); min-width: 0; }
 table.mx { border-collapse: collapse; font-size: 12.5px; background: var(--panel); }
@@ -201,7 +247,9 @@ table.mx thead th button { display: block; width: 4.6em; font-size: 11.5px; line
 table.mx tbody th { text-align: left; white-space: nowrap; font-weight: 600; position: sticky; left: 0; background: var(--panel); }
 table.mx button:hover { color: var(--accent); }
 table.mx b { color: var(--accent); }
-.iss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 10px 0 6px; }
+.iss-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 14px; align-items: start; }
+.iss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+@media (max-width: 1000px) { .iss-layout { grid-template-columns: minmax(0, 1fr); } }
 .iss { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
 .iss h3 { margin: 0 0 4px; font-size: 15px; }
 .iss .en { font: 400 11.5px/1 var(--mono); color: var(--muted); }
@@ -209,11 +257,16 @@ table.mx b { color: var(--accent); }
 .iss ul { padding-left: 16px; margin: 6px 0 0; }
 .relspec { display: flex; flex-wrap: wrap; gap: 5px; }
 @media (max-width: 900px) {
-  .sp-grid, .sp-cols { grid-template-columns: minmax(0, 1fr); }
+  .sp-grid, .sp-cols, .sp-detail { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .sp-wrap { height: auto; }
+  #specBody { overflow: visible; }
+  .sp-main .demo canvas { flex: none; height: 260px; }
+  .hint2 { display: none; }
   .sp-list { position: static; max-height: none; display: flex; overflow-x: auto; padding: 6px; gap: 4px; }
   .sp-cat { display: none; }
   .sp-item { flex: none; width: auto; border-left: 0; border-radius: 6px; white-space: nowrap; }
   .sp-form { grid-template-columns: 1fr 1fr; }
+
   .sp-form .wide { grid-column: 1 / -1; }
   .tabs { order: 2; }
 }
@@ -255,6 +308,7 @@ header > * { flex: none; }
 header .sp { flex: 1; }
 .viewbar, .views button { white-space: nowrap; }
 @media (max-width: 1560px) { header .sub { display: none; } }
+@media (max-width: 1180px) and (min-width: 901px) { .sp-detail { grid-template-columns: minmax(0, 1fr) 320px; } .hint2 { display: none; } }
 @media (max-width: 1260px) { .viewbar .lab, .views button svg { display: none; } .views button { padding: 6px 9px; } }
 @media (max-width: 1080px) and (min-width: 901px) {
   header { gap: 8px 10px; }
@@ -320,9 +374,10 @@ header .sp { flex: 1; }
 
 <main id="specPage" hidden>
   <div class="sp-wrap">
-    <div class="sp-head"><div><h2>광학 스펙 해석</h2><p class="note">질문지(Optic Spec)의 18개 항목과 외관 결함(ISS)이 무엇을 뜻하고, 어떤 부품이 좌우하며, 숫자가 바뀌면 운전자에게 어떻게 보이는지 정리했습니다. 각 그림의 조절 막대로 값을 바꿔 보세요.</p></div>
-      <label class="vid">계산에 쓰는 허상 거리 <input id="vidIn" type="number" min="1" max="20" step="0.1"> m <span class="note">기본값은 모델 추정</span></label></div>
-    <div class="seg sp-views"><button data-spview="items" aria-pressed="true">스펙 항목</button><button data-spview="matrix" aria-pressed="false">부품 × 스펙 표</button><button data-spview="iss" aria-pressed="false">외관 결함 (ISS)</button></div>
+    <div class="sp-head"><h2>광학 스펙 해석</h2>
+      <div class="seg sp-views"><button data-spview="items" aria-pressed="true">스펙 항목</button><button data-spview="matrix" aria-pressed="false">부품 × 스펙 표</button><button data-spview="iss" aria-pressed="false">외관 결함 (ISS)</button></div>
+      <span class="sp"></span>
+      <label class="vid" for="vidIn" title="각도·%로 정한 오차를 실제 cm·mm로 바꿀 때 쓰는 거리입니다. 허상이 멀수록 같은 각도 오차가 더 크게 어긋납니다.">허상 거리 <input id="vidIn" type="number" min="1" max="20" step="0.1"> m <span class="hint2">각도 오차 → cm 환산 기준 · 기본값은 모델 추정</span></label></div>
     <div id="specBody"></div>
   </div>
 </main>
@@ -1494,21 +1549,61 @@ const DEMOS = {
       const B = +(store.get('bright').v63e) || 12000; return `${v.t}℃에서 휘도 <b>${Math.round(cur(v.t) * 100)}%</b> ≈ ${Math.round(B * cur(v.t)).toLocaleString()} nit. 저감 곡선 모양(20℃에 걸쳐 30%까지)은 설명용 가정입니다.`; } },
 };
 
+const CAT_COL = { geo: '#1f62d1', lum: '#c8780f', color: '#8a4fd1', heat: '#d1493f' };
+// side-view schematic of the light path; nodes light up by how strongly they drive the spec
+function schematic(s) {
+  const lv = id => (s.parts.find(p => p[0] === id) || [0, 0])[1];
+  const cls = id => `node lv${lv(id)}`, attr = id => id === 'ws' ? 'data-ws' : `data-part="${id}"`;
+  const lab = (id, x, y, t, anchor = 'start') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="lab lv${lv(id)}">${t}</text>`;
+  const E = [24, 60], W = [190, 53], VI = [392, 44];
+  return `<svg viewBox="0 0 400 244" role="img" aria-label="광로 도식: 이 스펙에 영향을 주는 부품 강조">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--cat)"/></marker></defs>
+    <g class="${cls('upper')}" ${attr('upper')}><path d="M236 128 L236 226 L396 226 L396 128 L380 104 L252 104 Z" class="housing"/>${lab('upper', 238, 240, '하우징')}</g>
+    <path class="beam" d="M300 168 L256 139 L376 151 L${W[0]} ${W[1]} L${E[0] + 8} ${E[1]}" marker-end="url(#ah)"/>
+    <path class="beam virt" d="M${E[0]} ${E[1]} L${VI[0]} ${VI[1]}"/>
+    <g class="${cls('ws')}" ${attr('ws')}><line x1="110" y1="10" x2="250" y2="86" class="glass"/>${lab('ws', 104, 22, '윈드실드', 'end')}</g>
+    <g class="${cls('cover')}" ${attr('cover')}><path d="M286 104 Q318 96 350 104" class="part"/>${lab('cover', 318, 93, '방진 커버', 'middle')}</g>
+    <g class="${cls('fold')}" ${attr('fold')}><line x1="246" y1="152" x2="266" y2="126" class="part"/>${lab('fold', 250, 118, '평면경', 'middle')}</g>
+    <g class="${cls('concave')}" ${attr('concave')}><path d="M370 120 Q385 150 370 182" class="part"/>${lab('concave', 390, 198, '곡면경', 'end')}</g>
+    <g class="${cls('motor')}" ${attr('motor')}><circle cx="354" cy="210" r="6" class="part"/>${lab('motor', 364, 214, '모터')}</g>
+    <g class="${cls('tftholder')}" ${attr('tftholder')}><path d="M274 165 L274 195 M326 165 L326 195" class="part"/></g>
+    <g class="${cls('foam')}" ${attr('foam')}><rect x="274" y="162" width="8" height="3" class="part"/><rect x="318" y="162" width="8" height="3" class="part"/></g>
+    <g class="${cls('tft')}" ${attr('tft')}><rect x="278" y="167" width="44" height="5" class="part"/></g>
+    <g class="${cls('film')}" ${attr('film')}><rect x="279" y="175" width="42" height="3" class="part"/></g>
+    <g class="${cls('lens')}" ${attr('lens')}><rect x="279" y="181" width="42" height="3" class="part"/></g>
+    <g class="${cls('led')}" ${attr('led')}><rect x="280" y="187" width="40" height="3" class="part"/></g>
+    <text x="300" y="158" text-anchor="middle" class="lab small">TFT·필름·렌즈·LED</text>
+    <g class="${cls('heatsink')}" ${attr('heatsink')}><path d="M278 198 L322 198 M282 198 L282 214 M292 198 L292 214 M302 198 L302 214 M312 198 L312 214 M321 198 L321 214" class="part"/>${lab('heatsink', 300, 226, '방열판', 'middle')}</g>
+    <g class="${cls('epson')}" ${attr('epson')}><rect x="242" y="206" width="9" height="8" class="part"/></g>
+    <g class="${cls('ledchip')}" ${attr('ledchip')}><rect x="254" y="206" width="7" height="8" class="part"/></g>
+    <g class="${cls('mcu')}" ${attr('mcu')}><rect x="264" y="206" width="8" height="8" class="part"/></g>
+    <text x="242" y="200" class="lab small">PCB 칩</text>
+    <g><circle cx="${E[0]}" cy="${E[1]}" r="5" class="eye"/><rect x="${E[0] - 12}" y="${E[1] - 7}" width="24" height="14" class="eyebox"/><text x="${E[0]}" y="${E[1] + 22}" text-anchor="middle" class="lab small">눈·아이박스</text></g>
+    <g><line x1="${VI[0]}" y1="${VI[1] - 13}" x2="${VI[0]}" y2="${VI[1] + 13}" class="vi"/><text x="${VI[0]}" y="${VI[1] + 28}" text-anchor="end" class="lab small">허상</text></g>
+  </svg>`;
+}
 function specTab() {
   const el = $('#specBody');
   if (SP.view === 'matrix') { el.innerHTML = matrixHTML(); return; }
   if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
-  const s = SPECS.find(x => x.id === SP.cur), saved = store.get(s.id);
-  el.innerHTML = `<div class="sp-grid"><nav class="sp-list" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item ${x.id === s.id ? 'on' : ''}" data-spec="${x.id}"><span>${x.ko}</span><small>${x.en.split(' (')[0]}</small></button>`).join('')).join('')}</nav>
-    <article class="sp-detail"><div class="crumb">${SPEC_CATS.find(c => c[0] === s.cat)[1]}</div>
-      <div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span><span class="unit">${s.unit}</span><span class="badge ${s.dir === 'low' ? 'bom' : 'photo'}">${s.dir === 'low' ? '작을수록 좋음' : '클수록 좋음'}</span></div>
-      <p>${s.def}</p>
-      <div class="sp-cols"><section><h3 class="sec">왜 중요한가</h3><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul><h3 class="sec">측정</h3><p class="note">${s.measure}</p></section>
-      <section><h3 class="sec">영향을 주는 부품</h3><ul class="sp-parts">${s.parts.map(([id, lv, note]) => `<li><button class="pchip lv${lv}" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${lv === 2 ? '●' : '○'} ${SPEC_PART(id).name}</button>${note ? `<span>${note}</span>` : ''}</li>`).join('')}</ul><p class="note">● 주요 · ○ 영향. 부품을 누르면 3D 구조도에서 보여 줍니다. 일반적인 HUD 설계 관점의 정리입니다.</p></section></div>
-      <h3 class="sec">수치가 바뀌면 어떻게 보이나</h3><div class="demo"><canvas id="demoCv"></canvas><div class="demo-ctl" id="demoCtl"></div><p class="demo-out" id="demoOut"></p></div>
+  if (!$('#spList')) el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
+  document.querySelectorAll('.sp-item').forEach(b => { const on = b.dataset.spec === SP.cur; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'true' : 'false'); });
+  const cur = document.querySelector('.sp-item.on'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+  renderSpecDetail();
+}
+function renderSpecDetail() {
+  const s = SPECS.find(x => x.id === SP.cur), saved = store.get(s.id), cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
+  el.style.setProperty('--cat', CAT_COL[s.cat]);
+  el.innerHTML = `<section class="sp-main"><header class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div>
+      <div class="facts"><div><span>단위</span><b>${s.unit}</b></div><div><span>좋은 방향</span><b>${s.dir === 'low' ? '↓ 작을수록' : '↑ 클수록'}</b></div><div><span>63E 값</span><b class="${saved.v63e ? '' : 'empty'}">${saved.v63e || '미입력'}</b></div><div><span>Tolerance</span><b class="${saved.tol ? '' : 'empty'}">${saved.tol || '미입력'}</b></div></div></header>
+      <div class="demo"><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><p class="demo-out" id="demoOut"></p></div></section>
+    <aside class="sp-side"><p class="lead">${s.def}</p>
+      <h3 class="sec">왜 중요한가</h3><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
+      <h3 class="sec">어디가 좌우하나</h3><figure class="schem">${schematic(s)}<figcaption>진하게 칠한 곳이 주요 영향, 테두리만 있는 곳이 영향. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
+      <ul class="sp-parts">${s.parts.map(([id, lv, note]) => `<li><button class="pchip lv${lv}" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${lv === 2 ? '●' : '○'} ${SPEC_PART(id).name}</button>${note ? `<span>${note}</span>` : ''}</li>`).join('')}</ul>
+      <h3 class="sec">측정</h3><p class="note">${s.measure}</p>
       <h3 class="sec">63E 답변 기록 <span class="note">(이 브라우저에만 저장)</span></h3>
-      <div class="sp-form"><label>63E 값 <input data-f="v63e" value="${saved.v63e || ''}" placeholder="예: ${s.id === 'bright' ? '12000' : ''}"></label><label>Tolerance <input data-f="tol" value="${saved.tol || ''}"></label><label class="wide">메모 <input data-f="memo" value="${saved.memo || ''}"></label></div>
-    </article></div>`;
+      <div class="sp-form"><label>63E 값 <input data-f="v63e" value="${saved.v63e || ''}" placeholder="${s.id === 'bright' ? '예: 12000' : ''}"></label><label>Tolerance <input data-f="tol" value="${saved.tol || ''}"></label><label class="wide">메모 <input data-f="memo" value="${saved.memo || ''}"></label></div></aside>`;
   buildDemo(s);
 }
 function buildDemo(s) {
@@ -1528,9 +1623,9 @@ function matrixHTML() {
 }
 function issHTML() {
   return `<p>질문지의 (C) ISS(외관·결함 판정 기준)는 광학 부품 표면과 내부의 결함을 크기·개수로 제한합니다. 같은 크기라도 <b>어느 부품에 있느냐</b>에 따라 운전자에게 보이는 정도가 크게 달라서, 보통 부품별·영역(Zone)별로 기준을 따로 둡니다.</p>
-    <div class="iss-grid">${ISS.map(d => `<div class="iss"><h3>${d.ko} <span class="en">${d.en}</span></h3><p>${d.def}</p><ul>${d.subs.map(t => `<li>${t}</li>`).join('')}</ul></div>`).join('')}</div>
-    <h3 class="sec">같은 결함, 부품별로 어떻게 보이나</h3>
-    <div class="demo"><canvas id="issCv"></canvas><div class="demo-ctl"><label>부품 <select id="issPart">${ISS_PARTS.map(([id, n], i) => `<option value="${i}">${n}</option>`).join('')}</select></label><label>결함 크기 <input type="range" id="issSize" min="0.05" max="1" step="0.05" value="0.2"><output id="issSizeO">0.20 mm</output></label><label>종류 <select id="issKind"><option value="0">검은 점</option><option value="1">흰 점</option><option value="2">긁힘</option></select></label></div><p class="demo-out" id="issOut"></p></div>
+    <div class="iss-layout"><div class="iss-grid">${ISS.map(d => `<div class="iss"><h3>${d.ko} <span class="en">${d.en}</span></h3><p>${d.def}</p><ul>${d.subs.map(t => `<li>${t}</li>`).join('')}</ul></div>`).join('')}</div>
+    <div class="iss-right"><h3 class="sec" style="margin-top:0">같은 결함, 부품별로 어떻게 보이나</h3>
+    <div class="demo"><canvas id="issCv"></canvas><div class="demo-ctl"><label>부품 <select id="issPart">${ISS_PARTS.map(([id, n], i) => `<option value="${i}">${n}</option>`).join('')}</select></label><label>결함 크기 <input type="range" id="issSize" min="0.05" max="1" step="0.05" value="0.2"><output id="issSizeO">0.20 mm</output></label><label>종류 <select id="issKind"><option value="0">검은 점</option><option value="1">흰 점</option><option value="2">긁힘</option></select></label></div><p class="demo-out" id="issOut"></p></div></div></div>
     <p class="note">n/A의 영역(Area)은 보통 광학 유효 영역(Clear aperture)이나 A/B Zone, 단위 면적 기준이며 고객 도면 정의를 따릅니다.</p>`;
 }
 function drawISS() {
@@ -1551,11 +1646,11 @@ function drawISS() {
 $('#specPage').addEventListener('click', e => {
   const sp = e.target.closest('[data-spec]'), pt = e.target.closest('[data-part]'), ws = e.target.closest('[data-ws]'), vw = e.target.closest('[data-spview]');
   if (vw) { SP.view = vw.dataset.spview; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b === vw)); specTab(); return; }
-  if (sp) { SP.view = 'items'; SP.cur = sp.dataset.spec; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); specTab(); $('#specPage').scrollTo({ top: 0 }); return; }
+  if (sp) { SP.view = 'items'; SP.cur = sp.dataset.spec; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); if (SP.view === 'items' && $('#spList')) { document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); } specTab(); const d = $('#spDetail'); if (d && d.getBoundingClientRect().top < 60) $('#specPage').scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); return; }
   if (pt) { setTab('struct'); select({ id: pt.dataset.part }); return; }
   if (ws) { setTab('struct'); goView('car'); }
 });
-$('#specPage').addEventListener('change', e => { const f = e.target.dataset.f; if (!f) return; const k = SP.cur, o = store.get(k); o[f] = e.target.value; store.set(k, o); if (SP.redraw) SP.redraw(); });
+$('#specPage').addEventListener('change', e => { const f = e.target.dataset.f; if (!f) return; const k = SP.cur, o = store.get(k); o[f] = e.target.value; store.set(k, o); const facts = document.querySelectorAll('.facts b'); if (facts.length === 4) { facts[2].textContent = o.v63e || '미입력'; facts[2].className = o.v63e ? '' : 'empty'; facts[3].textContent = o.tol || '미입력'; facts[3].className = o.tol ? '' : 'empty'; } if (SP.redraw) SP.redraw(); });
 $('#vidIn').value = SP.vid.toFixed(1);
 $('#vidIn').addEventListener('input', e => { const v = +e.target.value; if (v > 1) { SP.vid = v; if (SP.redraw) SP.redraw(); } });
 addEventListener('resize', () => { if (curTab === 'spec' && SP.redraw) SP.redraw(); });
