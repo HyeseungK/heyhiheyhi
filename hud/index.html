@@ -219,9 +219,10 @@ body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spe
 .sp-cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 4px 28px; }
 .sp-cols ul { padding-left: 18px; display: grid; gap: 6px; margin: 4px 0; }
 .sp-cols li { line-height: 1.6; font-size: 13.5px; }
-.sp-parts { list-style: none; padding: 0 !important; }
-.sp-parts li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
-.sp-parts span { font-size: 12.5px; color: var(--muted); }
+.sp-key { border-left: 3px solid var(--cat); padding: 2px 0 2px 10px; }
+.sp-key .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sp-key .sys { font-size: 12.5px; color: var(--muted); }
+.sp-key p { margin: 6px 0 0; font-size: 13px; line-height: 1.6; }
 .pchip { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); font-size: 12.5px; white-space: nowrap; }
 .pchip.lv2 { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .pchip:hover { background: var(--accent-soft); }
@@ -240,13 +241,6 @@ body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spe
 .sp-form .wide { grid-column: 1 / -1; }
 .sp-form label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
 .sp-form input { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; color: var(--fg); min-width: 0; }
-table.mx { border-collapse: collapse; font-size: 12.5px; background: var(--panel); }
-table.mx th, table.mx td { border: 1px solid var(--line-2); padding: 5px 7px; text-align: center; }
-table.mx thead th { vertical-align: bottom; font-weight: 600; }
-table.mx thead th button { display: block; width: 4.6em; font-size: 11.5px; line-height: 1.3; word-break: keep-all; padding: 2px 0; }
-table.mx tbody th { text-align: left; white-space: nowrap; font-weight: 600; position: sticky; left: 0; background: var(--panel); }
-table.mx button:hover { color: var(--accent); }
-table.mx b { color: var(--accent); }
 .iss-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 14px; align-items: start; }
 .iss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
 @media (max-width: 1000px) { .iss-layout { grid-template-columns: minmax(0, 1fr); } }
@@ -444,7 +438,7 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 <main id="specPage" hidden>
   <div class="sp-wrap">
     <div class="sp-head"><h2>광학 스펙 해석</h2>
-      <div class="seg sp-views"><button data-spview="items" aria-pressed="true">스펙 항목</button><button data-spview="matrix" aria-pressed="false">부품 × 스펙 표</button><button data-spview="iss" aria-pressed="false">외관 결함 (ISS)</button></div>
+      <div class="seg sp-views"><button data-spview="items" aria-pressed="true">스펙 항목</button><button data-spview="iss" aria-pressed="false">외관 결함 (ISS)</button></div>
       <span class="sp"></span>
       <label class="vid" for="vidIn" title="각도·%로 정한 오차를 실제 cm·mm로 바꿀 때 쓰는 거리입니다. 허상이 멀수록 같은 각도 오차가 더 크게 어긋납니다.">허상 거리 <input id="vidIn" type="number" min="1" max="20" step="0.1"> m <span class="hint2">각도 오차 → cm 환산 기준 · 기본값은 모델 추정</span></label></div>
     <div id="specBody"></div>
@@ -1318,7 +1312,7 @@ function renderInfo() {
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
     ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
     ${bomInfo(sel.id)}
-    ${(() => { const rel = SPECS.filter(x => x.parts.some(q => q[0] === sel.id)); return rel.length ? `<h3 class="sec">관련 광학 스펙</h3><div class="relspec">${rel.map(x => `<button class="pchip ${x.parts.find(q => q[0] === sel.id)[1] === 2 ? 'lv2' : ''}" data-gospec="${x.id}">${x.ko}</button>`).join('')}</div>` : ''; })()}
+    ${(() => { const rel = SPECS.filter(x => x.key.ids.includes(sel.id)); return rel.length ? `<h3 class="sec">이 부품이 주로 좌우하는 광학 스펙</h3><div class="relspec">${rel.map(x => `<button class="pchip lv2" data-gospec="${x.id}">${x.ko}</button>`).join('')}</div>` : ''; })()}
     <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}`;
 }
 $('#playBody').addEventListener('click', e => {
@@ -1397,82 +1391,82 @@ const SPECS = [
     def: '왼쪽 눈과 오른쪽 눈이 보는 허상 위치의 차이를 각도로 나타낸 값입니다. 두 눈은 아이박스 안에서 약 6.5 cm 떨어져 있어서, 광학계가 완벽하지 않으면 두 눈에 보이는 허상이 조금씩 다른 곳에 생깁니다.',
     why: ['뇌가 두 상을 하나로 합치지 못하면 이중상으로 보이고, 합치더라도 눈이 피로하거나 어지러울 수 있습니다.', '위아래(수직) 어긋남은 눈이 거의 보정하지 못해서 좌우(수평)보다 훨씬 엄격하게 봅니다.', '좌우 어긋남은 거리감도 바꿉니다. AR 그래픽이 도로보다 앞이나 뒤에 떠 보이게 됩니다.'],
     measure: '아이박스 안 좌·우 눈 위치에 카메라 두 대를 두고, 같은 점이 보이는 방향의 차이를 잽니다.',
-    parts: [['concave', 2, '자유곡면 형상 오차가 눈 위치마다 다른 상을 만듭니다'], ['ws', 2, '윈드실드 곡률·쐐기 오차'], ['fold', 1, '평면도'], ['upper', 1, '미러 장착 위치·각도 공차'], ['epson', 1, '워프로 일부 보정 (한 눈 기준이라 한계)']], demo: 'disparity' },
+    key: { ids: ['concave', 'ws'], sys: true, why: '두 눈은 약 6.5 cm 떨어져 있어서 곡면경과 윈드실드의 서로 다른 곳을 거쳐 옵니다. 그 두 곳의 형상 차이가 곧 시차입니다.' }, demo: 'disparity' },
   { id: 'visize', cat: 'geo', en: 'VI size', ko: '허상 크기 편차', unit: '%', dir: 'low',
     def: '측정한 허상 크기가 설계값과 얼마나 다른지를 %로 나타낸 값입니다.',
     why: ['AR-HUD는 그래픽을 실제 도로 위 물체에 겹쳐야 합니다. 허상이 크거나 작으면 화살표·차선 표시가 실제 위치에서 벗어납니다.', '크기 오차는 화면 가장자리로 갈수록 커집니다.'],
     measure: '아이박스 중심의 카메라로 허상의 격자 패턴을 찍어 가로·세로 길이를 잽니다.',
-    parts: [['concave', 2, '곡률이 배율을 정합니다'], ['epson', 2, '스케일 보정'], ['tft', 1, '표시 영역'], ['upper', 1, 'TFT–미러 거리 공차'], ['ws', 1, '곡률']], demo: 'visize' },
+    key: { ids: ['concave', 'epson'], why: '배율은 곡면경 곡률이 정하고, 조립 후 남은 크기 오차는 워프 IC가 스케일로 맞춥니다.' }, demo: 'visize' },
   { id: 'aspect', cat: 'geo', en: 'Aspect ratio', ko: '가로세로 비 편차', unit: '%', dir: 'low',
     def: '허상의 가로/세로 비율이 설계값에서 얼마나 틀어졌는지를 %로 나타낸 값입니다.',
     why: ['원이 타원으로, 정사각 아이콘이 납작하게 보입니다.', '곡면경과 윈드실드가 가로·세로를 다른 배율로 확대하면 생기고, 워프 보정으로 맞춥니다.'],
     measure: '격자 패턴의 가로·세로 간격 비를 설계값과 비교합니다.',
-    parts: [['concave', 2, '가로·세로 곡률 차이'], ['ws', 2, '곡률'], ['epson', 2, '보정'], ['fold', 1, '']], demo: 'aspect' },
+    key: { ids: ['concave', 'ws'], why: '곡면경과 윈드실드는 가로·세로 곡률이 달라서 방향마다 배율이 다릅니다. 남는 차이는 워프 보정으로 맞춥니다.' }, demo: 'aspect' },
   { id: 'edge', cat: 'geo', en: 'Edge slope of VI (all side of VI)', ko: '허상 테두리 기울기', unit: 'deg', dir: 'low',
     def: '허상 네 변이 수평·수직선에 대해 기울어진 각도입니다. 전체가 돌아간 회전과, 위아래 폭이 다른 사다리꼴 왜곡이 여기서 드러납니다.',
     why: ['허상이 수평선(도로, 대시보드)과 어긋나 기울어 보이면 바로 눈에 띄고 불편합니다.', 'AR 그래픽의 차선 정합도 틀어집니다.'],
     measure: '격자 패턴 네 변의 각도를 잽니다.',
-    parts: [['epson', 2, '사다리꼴·회전 보정'], ['upper', 2, '조립 회전 공차'], ['concave', 1, ''], ['ws', 1, ''], ['fold', 1, '']], demo: 'edge' },
+    key: { ids: ['upper', 'epson'], why: '회전은 하우징·미러 조립 공차에서 생깁니다. 비스듬한 반사에서 생기는 사다리꼴과 함께 결국 워프 IC가 보정합니다.' }, demo: 'edge' },
   { id: 'lda', cat: 'geo', en: 'LookDown / LookOver angle tolerance', ko: '하방각·측방각 공차', unit: 'deg', dir: 'low',
     def: 'LDA(Look-Down Angle)는 운전자 눈의 수평 시선에서 허상 중심까지 내려다보는 각도, LOA(Look-Over Angle)는 정면에서 좌우로 벗어난 각도입니다. 이 항목은 그 각도가 설계값에서 얼마나 벗어나도 되는지입니다.',
     why: ['각도가 1° 틀어지면 수 m 앞에서는 허상이 수 cm~십수 cm 움직입니다.', '너무 내려가면 보닛에 묻히고, 올라가면 앞차를 가립니다. AR 그래픽이 도로에 붙어 보이려면 각도가 정확해야 합니다.', 'LDA는 모터로 곡면경을 기울여 운전자마다 맞추지만, 기준 위치의 공차는 장착 정밀도에 달려 있습니다.'],
     measure: '아이박스 중심에서 허상 중심 방향을 측정해 설계 각도와 비교합니다.',
-    parts: [['concave', 2, '각도'], ['motor', 2, '원점·스텝 정밀도'], ['upper', 1, '장착'], ['ws', 1, '경사·장착 공차']], demo: 'lda' },
+    key: { ids: ['motor', 'concave'], why: '곡면경 각도가 곧 내려다보는 각도이고, 그 각도를 모터가 움직입니다. 기준 각도는 차량 장착 공차도 받습니다.' }, demo: 'lda' },
   { id: 'res', cat: 'geo', en: 'VI Resolution', ko: '허상 해상도', unit: 'lp/deg', dir: 'high',
     def: '시야각 1°에 구분해서 보이는 흑백 선 쌍(line pair)의 수입니다. 선 쌍 1개 = 검은 선 + 흰 선 = 화소 2개입니다.',
     why: ['글자와 아이콘이 또렷한지를 정합니다.', '시력 1.0인 눈은 대략 1분각(1/60°)까지 구분하므로 30 lp/deg 근처면 눈의 한계에 가깝습니다.', 'TFT 화소 수와 곡면경 수차(흐림)가 둘 다 영향을 줍니다.'],
     measure: '선 쌍 패턴을 띄우고 카메라로 대비(MTF)를 재서 구분되는 한계를 찾습니다.',
-    parts: [['tft', 2, '화소 수'], ['concave', 2, '수차로 인한 흐림'], ['epson', 1, '워프 보간'], ['fold', 1, ''], ['ws', 1, '']], demo: 'res' },
+    key: { ids: ['tft', 'concave'], why: 'TFT 화소 수가 상한을 정하고, 곡면경 수차(흐림)가 그 상한을 얼마나 깎는지를 정합니다.' }, demo: 'res' },
   { id: 'bright', cat: 'lum', en: 'Brightness', ko: '휘도', unit: 'nit', dir: 'high',
     def: '허상의 최대 휘도(cd/m² = nit)입니다. 운전자 눈 위치에서 보이는 밝기입니다.',
     why: ['맑은 낮 도로와 하늘을 배경으로도 보여야 합니다. Zeekr가 발표한 이 HUD의 최대 휘도는 12,000 nit입니다.', '밤에는 수십~수백 nit로 낮춥니다.', '빛이 지나는 모든 부품의 효율이 곱해집니다: LED → 렌즈 → 필름 → TFT(약 5%) → 미러 → 커버 → 윈드실드 반사.'],
     measure: '아이박스 중심에 휘도계를 두고 흰 화면을 잽니다.',
-    parts: [['led', 2, ''], ['lens', 2, '빛 모으기'], ['film', 2, '휘도 향상 필름'], ['tft', 2, '투과율'], ['ws', 2, '반사율'], ['concave', 1, '반사율'], ['fold', 1, '반사율'], ['cover', 1, '투과율'], ['ledchip', 1, '구동 전류']], demo: 'bright' },
+    key: { ids: ['led', 'tft'], sys: true, why: '모든 부품의 효율이 곱해지지만, 출발점은 LED 출력이고 가장 큰 손실은 TFT(투과 약 5%)입니다.' }, demo: 'bright' },
   { id: 'grad', cat: 'lum', en: 'Brightness gradient over EB (Luminance distribution)', ko: '아이박스 내 휘도 변화', unit: '%/cm', dir: 'low',
     def: '아이박스 안에서 눈 위치를 1 cm 움직일 때 허상 휘도가 변하는 비율입니다.',
     why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.', '백라이트가 빛을 아이박스 쪽으로 좁게 모으면 밝지만 변화가 커지고, 넓게 퍼뜨리면 고르지만 어두워집니다. 휘도와 맞바꾸는 관계입니다.'],
     measure: '아이박스 여러 지점으로 휘도계를 옮기며 잽니다.',
-    parts: [['lens', 2, '빛의 방향'], ['film', 2, '퍼짐 각도'], ['led', 1, '배치'], ['concave', 1, '']], demo: 'grad' },
+    key: { ids: ['lens', 'film'], why: '빛을 아이박스 쪽으로 얼마나 좁게 모으느냐가 곧 휘도 변화율입니다. 렌즈와 필름이 그 퍼짐 각을 정합니다.' }, demo: 'grad' },
   { id: 'sun', cat: 'lum', en: 'Sunglasses', ko: '편광 선글라스 휘도', unit: 'nit', dir: 'high',
     def: '편광 선글라스를 쓰고 볼 때 허상의 휘도입니다.',
     why: ['TFT에서 나오는 빛은 이미 한 방향으로 편광되어 있습니다.', '편광 선글라스는 도로·유리 반사 눈부심(수평 편광)을 막도록 수직 편광만 통과시킵니다.', 'HUD 빛이 수평 편광에 가까우면 선글라스를 쓰는 순간 HUD가 거의 사라집니다. 그래서 TFT 편광 방향이나 위상차 필름으로 편광을 맞춥니다(이 제품의 방식은 미확인).'],
     measure: '휘도계 앞에 편광 필터(선글라스 축)를 두고 잽니다.',
-    parts: [['tft', 2, '편광 방향'], ['ws', 2, '편광에 따라 반사율이 다름'], ['film', 1, '위상차 필름 (있다면)'], ['concave', 1, '코팅']], demo: 'sun' },
+    key: { ids: ['tft'], why: 'HUD 빛의 편광 방향은 TFT 앞쪽 편광판이 정합니다. 선글라스 축과 직각이면 거의 보이지 않습니다.' }, demo: 'sun' },
   { id: 'white', cat: 'lum', en: 'White homogeneity', ko: '흰 화면 균일도', unit: '%', dir: 'high',
     def: '흰 화면 전체를 띄웠을 때 여러 지점(보통 9점 등) 휘도의 균일도입니다. 최소/최대 또는 최소/평균으로 정의하며, 고객 스펙을 따릅니다.',
     why: ['고르지 않으면 화면 일부가 얼룩지거나 가장자리가 어둡게 보입니다.', '큰 흰 면적 그래픽(경고 창, 내비 배경)에서 특히 드러납니다.'],
     measure: '흰 화면을 9점 이상 나눠 휘도를 잽니다.',
-    parts: [['led', 2, '배치·편차'], ['lens', 2, ''], ['film', 2, '확산'], ['tft', 1, ''], ['concave', 1, '가장자리 반사각']], demo: 'white' },
+    key: { ids: ['led', 'film'], why: 'LED 사이 간격과 LED별 밝기 편차를 필름이 얼마나 고르게 펴 주느냐로 정해집니다.' }, demo: 'white' },
   { id: 'black', cat: 'lum', en: 'Black homogeneity', ko: '검은 화면 균일도', unit: '%', dir: 'high',
     def: '검은 화면을 띄웠을 때 영역 간 휘도 균일도입니다. 빛샘이 고르지 않은지를 봅니다.',
     why: ['LCD는 검은색도 완전히 막지 못해 빛이 조금 샙니다. 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 떠 보입니다(모서리 빛샘).', 'TFT 압착, 지지대, 방진 폼의 조립 응력이 원인이 되기도 합니다.'],
     measure: '어두운 방에서 검은 화면을 띄우고 여러 지점의 휘도를 잽니다.',
-    parts: [['tft', 2, '빛샘'], ['tftholder', 1, '조립 응력'], ['foam', 1, '누르는 힘'], ['upper', 1, '미광']], demo: 'black' },
+    key: { ids: ['tft'], why: '검은 화면 휘도는 LCD 빛샘입니다. 빛샘이 고르지 않은 주원인은 지지대·방진 폼이 TFT에 거는 조립 응력입니다.' }, demo: 'black' },
   { id: 'contrast', cat: 'lum', en: 'Contrast', ko: '명암비', unit: '-', dir: 'high',
     def: '흰 화면 휘도 ÷ 검은 화면 휘도입니다.',
     why: ['명암비가 낮으면 그래픽이 없는 검은 영역도 희미하게 빛나서, 밤에 허상 크기만 한 회색 사각형("포스트카드")이 보입니다.', '햇빛이 HUD 안으로 들어와 반사되는 미광도 검은 휘도를 올려 명암비를 떨어뜨립니다.'],
     measure: '흰 화면과 검은 화면 휘도를 각각 재서 나눕니다.',
-    parts: [['tft', 2, ''], ['upper', 1, '광 트랩 리브'], ['cover', 1, '반사·산란'], ['concave', 1, '먼지·코팅'], ['led', 1, '로컬 디밍 (적용 여부 미확인)']], demo: 'contrast' },
+    key: { ids: ['tft'], why: 'LCD 자체 명암비가 상한이고, HUD 안으로 들어온 햇빛의 반사(미광)가 그 아래로 끌어내립니다.' }, demo: 'contrast' },
   { id: 'ctol', cat: 'color', en: 'Color tolerance', ko: '색좌표 공차', unit: 'Cx, Cy', dir: 'low',
     def: '흰색(또는 지정한 색)의 CIE 1931 색좌표(x, y)가 목표값에서 벗어나도 되는 범위입니다.',
     why: ['제품마다 흰색이 노랗거나 푸르게 보이면 클러스터·센터 화면과 색이 안 맞고 품질이 낮아 보입니다.', 'LED는 생산 로트마다 색좌표가 달라서(빈, bin) 어떤 빈을 쓰는지가 핵심입니다.'],
     measure: '분광 휘도계로 색좌표를 잽니다.',
-    parts: [['led', 2, '빈 관리'], ['tft', 2, '컬러필터'], ['concave', 1, '코팅 반사 스펙트럼'], ['film', 1, ''], ['ws', 1, '']], demo: 'ctol' },
+    key: { ids: ['led', 'tft'], why: '흰색 색좌표는 대부분 LED 빈(생산 로트별 색)에서 정해지고, TFT 컬러필터가 그다음입니다.' }, demo: 'ctol' },
   { id: 'sat', cat: 'color', en: 'Color Saturation', ko: '채도', unit: '%', dir: 'high',
     def: '색이 얼마나 순수한지입니다. 흰빛이 섞일수록 떨어집니다.',
     why: ['빨간 경고와 초록 상태 표시가 바랜 분홍·연두로 보이면 의미 전달이 약해집니다.', '배경 빛(햇빛이 섞인 미광, 낮은 명암비)도 채도를 떨어뜨립니다.'],
     measure: '원색 화면의 색좌표를 재서 기준 대비 순도를 계산합니다.',
-    parts: [['tft', 2, '컬러필터'], ['led', 1, '스펙트럼'], ['upper', 1, '미광']], demo: 'sat' },
+    key: { ids: ['tft'], why: '원색 순도는 TFT 컬러필터가 정합니다. 낮에는 미광이 흰빛을 섞어 채도를 낮춥니다.' }, demo: 'sat' },
   { id: 'gamut', cat: 'color', en: 'Gamut', ko: '색 영역', unit: '%', dir: 'high',
     def: '표현할 수 있는 색의 범위를 기준 색 영역(NTSC, sRGB 등) 대비 면적 비율로 나타낸 값입니다. 어떤 기준인지 꼭 확인해야 합니다.',
     why: ['색 영역이 좁으면 빨강·초록·파랑이 덜 선명하게 구분됩니다.', 'HUD는 경고색(빨강·주황)과 안내색(청록·초록)이 확실히 구분되는 게 중요합니다.'],
     measure: 'R·G·B 원색의 색좌표로 삼각형 면적을 계산해 기준과 비교합니다.',
-    parts: [['tft', 2, '컬러필터'], ['led', 2, '스펙트럼']], demo: 'gamut' },
+    key: { ids: ['tft', 'led'], why: '컬러필터 투과 대역과 LED 스펙트럼이 어떻게 겹치느냐가 색 삼각형의 크기를 정합니다.' }, demo: 'gamut' },
   { id: 'derating', cat: 'heat', en: 'Derating', ko: '휘도 저감 시작 온도', unit: '℃', dir: 'high',
     def: '부품을 열로부터 보호하려고 휘도를 낮추기 시작하는 온도입니다. 보통 TFT·LED 근처 온도 센서 기준입니다.',
     why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁고, 햇빛이 HUD 안으로 거꾸로 들어와 TFT를 달굽니다.', '저감 시작 온도가 낮으면 가장 밝아야 할 맑은 낮에 HUD가 어두워집니다.', '방열이 좋을수록 이 온도를 높게 잡을 수 있습니다.'],
     measure: '온도 챔버에서 온도를 올리며 휘도가 줄기 시작하는 지점을 찾습니다.',
-    parts: [['heatsink', 2, ''], ['led', 2, '열원'], ['pad', 1, ''], ['ledchip', 1, '전류 제한'], ['mcu', 1, '온도 감시'], ['concave', 1, '콜드미러로 햇빛 열 차단'], ['cover', 1, '']], demo: 'derating' },
+    key: { ids: ['heatsink', 'led'], why: 'LED 열을 방열판이 얼마나 빨리 빼느냐가 저감 시작 온도를 얼마나 높게 잡을 수 있는지를 정합니다.' }, demo: 'derating' },
 ];
 const ISS = [
   { id: 'scratch', en: 'Scratch', ko: '긁힘', def: '선 모양의 표면 결함입니다.', subs: ['Length (mm): 긁힌 자국 길이 한도', 'Width (mm): 폭 한도', 'n/A: 지정 영역 안 허용 개수'] },
@@ -1635,7 +1629,7 @@ const DEMOS = {
 const CAT_COL = { geo: '#1f62d1', lum: '#c8780f', color: '#8a4fd1', heat: '#d1493f' };
 // side-view schematic of the light path; nodes light up by how strongly they drive the spec
 function schematic(s) {
-  const lv = id => (s.parts.find(p => p[0] === id) || [0, 0])[1];
+  const lv = id => s.key.ids.includes(id) ? 2 : 0;
   const cls = id => `node lv${lv(id)}`, attr = id => id === 'ws' ? 'data-ws' : `data-part="${id}"`;
   const lab = (id, x, y, t, anchor = 'start') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="lab lv${lv(id)}">${t}</text>`;
   const E = [24, 60], W = [190, 53], VI = [392, 44];
@@ -1667,7 +1661,6 @@ function schematic(s) {
 }
 function specTab() {
   const el = $('#specBody');
-  if (SP.view === 'matrix') { el.innerHTML = matrixHTML(); return; }
   if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
   if (!$('#spList')) el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
   document.querySelectorAll('.sp-item').forEach(b => { const on = b.dataset.spec === SP.cur; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'true' : 'false'); });
@@ -1682,8 +1675,8 @@ function renderSpecDetail() {
       <div class="demo"><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><p class="demo-out" id="demoOut"></p></div></section>
     <aside class="sp-side"><p class="lead">${s.def}</p>
       <h3 class="sec">왜 중요한가</h3><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
-      <h3 class="sec">어디가 좌우하나</h3><figure class="schem">${schematic(s)}<figcaption>진하게 칠한 곳이 주요 영향, 테두리만 있는 곳이 영향. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
-      <ul class="sp-parts">${s.parts.map(([id, lv, note]) => `<li><button class="pchip lv${lv}" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${lv === 2 ? '●' : '○'} ${SPEC_PART(id).name}</button>${note ? `<span>${note}</span>` : ''}</li>`).join('')}</ul>
+      <h3 class="sec">어디가 좌우하나</h3><figure class="schem">${schematic(s)}<figcaption>칠한 곳이 이 값을 주로 좌우하는 부품입니다. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
+      <div class="sp-key"><div class="chips">${s.key.ids.map(id => `<button class="pchip lv2" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button>`).join('')}${s.key.sys ? '<span class="sys">+ 광로 전체</span>' : ''}</div><p>${s.key.why}</p></div>
       <h3 class="sec">측정</h3><p class="note">${s.measure}</p>
       <h3 class="sec">63E 답변 기록 <span class="note">(이 브라우저에만 저장)</span></h3>
       <div class="sp-form"><label>63E 값 <input data-f="v63e" value="${saved.v63e || ''}" placeholder="${s.id === 'bright' ? '예: 12000' : ''}"></label><label>Tolerance <input data-f="tol" value="${saved.tol || ''}"></label><label class="wide">메모 <input data-f="memo" value="${saved.memo || ''}"></label></div></aside>`;
@@ -1697,12 +1690,6 @@ function buildDemo(s) {
   const draw = () => { const [g, w, h] = fitCanvas($('#demoCv')); $('#demoOut').innerHTML = D.draw(g, w, h, v); };
   ctl.oninput = e => { const k = e.target.dataset.k; if (!k) return; v[k] = +e.target.value; const o = e.target.nextElementSibling; const c = D.ctl.find(c => c[0] === k); if (o && o.tagName === 'OUTPUT') o.textContent = (+v[k]).toFixed(c[4] < .01 ? 3 : c[4] < 1 ? 1 : 0) + (c[6] ? ' ' + c[6] : ''); draw(); };
   draw(); SP.redraw = draw;
-}
-function matrixHTML() {
-  const parts = ['tft', 'led', 'lens', 'film', 'concave', 'fold', 'cover', 'ws', 'epson', 'upper', 'motor', 'heatsink', 'tftholder', 'foam', 'ledchip'];
-  return `<p class="note">● 주요 영향 · ○ 영향. 행(부품)이나 열(스펙)을 누르면 해당 내용으로 이동합니다. 일반적인 HUD 설계 관점의 정리이며, 이 제품의 설계 자료로 확인한 것은 아닙니다.</p>
-    <div class="tablewrap"><table class="mx"><thead><tr><th></th>${SPECS.map(s => `<th><button data-spec="${s.id}" title="${s.en}">${s.ko}</button></th>`).join('')}</tr></thead><tbody>
-    ${parts.map(id => `<tr><th><button ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button></th>${SPECS.map(s => { const r = s.parts.find(p => p[0] === id); return `<td>${r ? (r[1] === 2 ? '<b title="주요">●</b>' : '<span title="영향">○</span>') : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 function issHTML() {
   return `<p>질문지의 (C) ISS(외관·결함 판정 기준)는 광학 부품 표면과 내부의 결함을 크기·개수로 제한합니다. 같은 크기라도 <b>어느 부품에 있느냐</b>에 따라 운전자에게 보이는 정도가 크게 달라서, 보통 부품별·영역(Zone)별로 기준을 따로 둡니다.</p>
