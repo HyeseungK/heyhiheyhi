@@ -338,7 +338,7 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .bm-head .note { white-space: nowrap; }
 .bm-q { flex: 1 1 160px; min-width: 140px; max-width: 260px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; font: inherit; font-size: 13px; background: var(--panel); color: var(--fg); }
 .bm-q:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-.bm-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.bm-kpi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .bm-kpi div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
 .bm-kpi b { display: block; font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bm-kpi span { font-size: 11.5px; color: var(--muted); }
@@ -371,7 +371,8 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .bm-det dl { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 12px; }
 .bm-det dt { color: var(--muted); }
 .bm-det dd { margin: 0; overflow-wrap: anywhere; }
-.bm-det .acts { display: flex; flex-direction: column; gap: 6px; }
+.bm-det .acts { width: 236px; }
+.bm-det .acts .thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .bm-det p { grid-column: 1 / -1; margin: 2px 0 0; }
 .bm-none { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
 @media (max-width: 1240px) { .bm-hide { display: none; } body[data-tab="bom"] { --bomw: 62%; } }
@@ -433,7 +434,7 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 
 <main id="bomPage" hidden>
   <div class="bm-head"><h2>BOM</h2><span class="note">Zeekr_EX-1423940 · BoM KR 시트</span>
-    <div class="seg" id="bmFilt"><button data-bf="all" aria-pressed="true">전체</button><button data-bf="mech" aria-pressed="false">기구·광학</button><button data-bf="pcb" aria-pressed="false">전자부품</button><button data-bf="3d" aria-pressed="false">3D 연결</button></div>
+    <div class="seg" id="bmFilt"><button data-bf="all" aria-pressed="true">전체</button><button data-bf="mech" aria-pressed="false">기구</button><button data-bf="opt" aria-pressed="false">광학</button><button data-bf="elec" aria-pressed="false">전자</button></div>
     <input id="bomQ" class="bm-q" type="search" placeholder="부품명 · 제조사 · P/N 검색" aria-label="BOM 검색"></div>
   <div class="bm-kpi" id="bmKpi"></div>
   <div class="bm-wt" id="bmWt"></div>
@@ -1812,7 +1813,12 @@ const BOM_NOTE = {
   58: '모터 원점을 감지하는 작은 스위치 PCB입니다. 3D에서는 모터 쪽을 선택합니다.',
   59: '3D 모델에 없는 부품입니다. 위치 감지 PCB와 같은 묶음에 있지만 정확한 위치는 미확인입니다.',
 };
-const BOM_SEC = { asm: ['LV1 · 공급 어셈블리', ''], mech: ['LV2 · 기구 · 광학', '하우징 · 미러 · 백라이트 · TFT'], pcb: ['LV3 · Main PCB 실장 부품', ''], sw: ['LV3 · 위치 감지 PCB', '모터 원점 감지'] };
+const BOM_SEC = { asm: ['완제품', 'LV1'], mech: ['기구', '하우징 · 방열판 · 조정 기구 · 방진 필름'], opt: ['광학', 'TFT · 백라이트 · 미러'], elec: ['전자', 'Main PCB와 실장 부품 · 위치 감지 PCB'] };
+const BOM_ORD = Object.keys(BOM_SEC);
+/* same grouping as the 3D 구조도 parts list; parts the 3D model lacks fall back to their BOM level */
+BOM.forEach(b => { const k = b.id?.replace('g:', ''), t = k && TREE.find(x => x.items.some(it => it === k || it.g === k));
+  b.cat = b.lv === 1 ? 'asm' : b.sec !== 'mech' ? 'elec' : t?.t === '광학' ? 'opt' : 'mech'; });
+BOM.sort((a, b) => BOM_ORD.indexOf(a.cat) - BOM_ORD.indexOf(b.cat) || a.r - b.r);
 const BOM_KIND = { upper: 'pl', lower: 'pl', motorcover: 'pl', tftholder: 'pl', heatsink: 'mt', 'g:backlight': 'bl', motor: 'mo', tft: 'op', concave: 'op', fold: 'op', cover: 'op' };
 const BOM_COL = { pl: ['#7f93a8', '수지 하우징'], mt: ['#a77d4a', '금속'], op: ['#4f7fd6', '광학'], bl: ['#d39a2c', '백라이트'], mo: ['#5e9e80', '조정 기구'] };
 const bomOf = r => BOM.find(b => b.r === r);
@@ -1820,33 +1826,31 @@ const bomFor = key => BOM.filter(b => b.id === key);
 const num = s => s ? (+s).toLocaleString('ko-KR') : '';
 const dimTxt = b => { const d = (b.dim || []).filter(Boolean); return d.length > 1 ? d.join(' × ') : d.length ? `길이 ${d[0]}` : ''; };
 const bomSelOf = b => b.id ? (b.id.startsWith('g:') ? { g: b.id.slice(2) } : { id: b.id }) : b.on ? { id: b.on } : null;
-const bomSpecs = b => { const id = b.id && !b.id.startsWith('g:') ? b.id : null; return id ? SPECS.filter(s => s.parts.some(q => q[0] === id)) : []; };
 const BM = { f: 'all', r: null };
 function bomKey(sel) { return !sel ? null : sel.g ? 'g:' + sel.g : sel.id; }
 function bomDetail(b) {
   const f = [['중국어 명칭', b.cn], ['부품 번호', b.pn], ['수량', b.qty && `${b.qty} ${b.unit || ''}`], ['조달', b.src], ['중량', b.w && `${num(b.w)} g`], ['크기', dimTxt(b) && dimTxt(b) + ' mm'], ['두께', b.t && `${b.t} mm`],
     ['재료 유형', b.mtype], ['재료', b.mat], [b.sec === 'mech' ? '소재 등급' : '규격 · 모델', b.spec], ['제조사', b.maker], ['표면처리', b.surf], ['제조 공정', b.proc], ['조립 공정', b.asm], ['탄소 배출', b.co2 && b.co2.replace(/\s*kgCO2eq\/kg/, ' kgCO₂eq/kg')], ['외관 부품', b.look === 'Y' ? '예' : b.look === 'N' ? '아니오' : '']].filter(x => x[1]);
-  const sel = bomSelOf(b), rel = bomSpecs(b);
-  const acts = [sel ? `<button class="btn primary" data-bm3d="${b.r}">3D 구조도에서 열기</button>` : '', rel.length ? `<button class="btn" data-gospec="${rel[0].id}">관련 광학 스펙 ${rel.length}개</button>` : ''].join('');
-  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${acts}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? '<p class="note">Main PCB 위의 부품입니다. 3D에서는 PCB를 선택합니다.</p>' : ''}</div>`;
+  const sel = bomSelOf(b), ph = !sel ? [] : sel.g ? [...new Set(GROUPS[sel.g].kids.flatMap(k => P[k].photos))] : P[sel.id].photos;
+  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? thumbs(ph.slice(0, 4)) : ''}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? '<p class="note">Main PCB 위의 부품입니다. 3D에서는 PCB를 선택합니다.</p>' : ''}</div>`;
 }
 function renderBOM() {
   const q = ($('#bomQ').value || '').trim().toLowerCase();
-  const rows = BOM.filter(b => (BM.f === 'all' || (BM.f === 'mech' ? b.sec === 'mech' : BM.f === 'pcb' ? b.sec === 'pcb' || b.sec === 'sw' : b.id)) && (!q || [b.ko, b.cn, b.maker, b.spec, b.pn, b.mat, b.proc].join(' ').toLowerCase().includes(q)));
+  const rows = BOM.filter(b => (BM.f === 'all' || b.cat === BM.f) && (!q || [b.ko, b.cn, b.maker, b.spec, b.pn, b.mat, b.proc].join(' ').toLowerCase().includes(q)));
   let sec = '';
   $('#bomBody').innerHTML = rows.length ? rows.map(b => {
     let h = '';
-    if (b.sec !== sec) { sec = b.sec; const n = BOM.filter(x => x.sec === sec), sum = n.reduce((a, x) => a + (+x.qty || 0), 0); h = `<tr class="sec"><td colspan="8">${BOM_SEC[sec][0]}<span>${n.length}종${sum !== n.length ? ` · ${sum.toLocaleString('ko-KR')}개` : ''}${BOM_SEC[sec][1] ? ' · ' + BOM_SEC[sec][1] : ''}</span></td></tr>`; }
+    if (b.cat !== sec) { sec = b.cat; const n = BOM.filter(x => x.cat === sec), sum = n.reduce((a, x) => a + (+x.qty || 0), 0); h = `<tr class="sec"><td colspan="8">${BOM_SEC[sec][0]}<span>${n.length}종${sum !== n.length ? ` · ${sum.toLocaleString('ko-KR')}개` : ''}${BOM_SEC[sec][1] ? ' · ' + BOM_SEC[sec][1] : ''}</span></td></tr>`; }
     const on = BM.r === b.r, s3 = bomSelOf(b);
-    h += `<tr data-r="${b.r}" class="${on ? 'on' : ''}" aria-expanded="${on}"><td class="nm"><b>${b.ko}</b><small>${b.cn}</small></td><td class="n">${b.qty || ''}</td><td class="n">${num(b.w)}</td><td class="mono bm-hide2">${(b.dim || []).filter(Boolean).join('×')}</td><td class="mono">${b.spec || b.mat || b.mtype || ''}</td><td class="bm-hide">${(b.maker || '').replace(/\s*\/\s*Others$/, '')}</td><td class="bm-hide">${b.proc || ''}</td><td><span class="lk ${b.id ? 'y' : ''}">${b.id ? '연결' : s3 ? 'PCB' : '—'}</span></td></tr>`;
+    h += `<tr data-r="${b.r}" class="${on ? 'on' : ''}" aria-expanded="${on}"><td class="nm"><b>${b.ko}</b><small>${b.cn} · LV${b.lv}${b.sec === 'sw' ? ' · 위치 감지 PCB' : ''}</small></td><td class="n">${b.qty || ''}</td><td class="n">${num(b.w)}</td><td class="mono bm-hide2">${(b.dim || []).filter(Boolean).join('×')}</td><td class="mono">${b.spec || b.mat || b.mtype || ''}</td><td class="bm-hide">${(b.maker || '').replace(/\s*\/\s*Others$/, '')}</td><td class="bm-hide" style="white-space:nowrap">${b.proc || ''}</td><td><span class="lk ${b.id ? 'y' : ''}">${b.id ? '연결' : s3 ? 'PCB' : '—'}</span></td></tr>`;
     if (on) h += `<tr class="det"><td colspan="8">${bomDetail(b)}</td></tr>`;
     return h;
   }).join('') : '<tr><td colspan="8" class="bm-none">검색 결과가 없습니다.</td></tr>';
   $('#bmWt').querySelectorAll('[data-r]').forEach(e => e.classList.toggle('on', +e.dataset.r === BM.r));
 }
 function bomStatic() {
-  const top = BOM[0], parts = BOM.filter(b => b.lv > 1), qty = parts.reduce((a, b) => a + (+b.qty || 0), 0), linked = new Set(BOM.filter(b => b.id).map(b => b.id)).size;
-  $('#bmKpi').innerHTML = `<div><b>${num(top.w)} g</b><span>총 중량 (BOM)</span></div><div><b>${top.dim.join(' × ')}</b><span>외형 mm (L × W × H)</span></div><div><b>${parts.length}종 · ${qty.toLocaleString('ko-KR')}개</b><span>하위 부품 행 · 수량 합</span></div><div><b>${linked}개</b><span>3D 모델과 연결된 부품</span></div>`;
+  const top = BOM[0], parts = BOM.filter(b => b.lv > 1), qty = parts.reduce((a, b) => a + (+b.qty || 0), 0);
+  $('#bmKpi').innerHTML = `<div><b>${num(top.w)} g</b><span>총 중량 (BOM)</span></div><div><b>${top.dim.join(' × ')}</b><span>외형 mm (L × W × H)</span></div><div><b>${parts.length}종 · ${qty.toLocaleString('ko-KR')}개</b><span>하위 부품 행 · 수량 합</span></div>`;
   const lv2 = BOM.filter(b => b.sec === 'mech' && +b.w >= 1), sum = lv2.reduce((a, b) => a + +b.w, 0), rest = +top.w - sum;
   $('#bmWt').innerHTML = `<div class="lab"><span>LV2 부품 중량 비율 · 막대를 누르면 선택</span><span>합 ${num(sum)} g + 기타 ${num(rest)} g</span></div>
     <div class="bm-bar">${lv2.sort((a, b) => b.w - a.w).map(b => `<button data-r="${b.r}" style="flex:${b.w};background:${BOM_COL[BOM_KIND[b.id]]?.[0] || '#8b97a3'}" title="${b.ko} ${b.w} g (${(b.w / top.w * 100).toFixed(1)}%)">${b.w / top.w > .06 ? `${b.ko} ${Math.round(b.w / top.w * 100)}%` : ''}</button>`).join('')}<button class="rest" style="flex:${rest}" title="기타: PCB · TFT · 나사 · 패드 등 BOM에 중량이 없는 부품 ${rest} g">${rest / top.w > .06 ? '기타' : ''}</button></div>
@@ -1863,7 +1867,7 @@ globalThis.bomSync = sel => {
   const key = bomKey(sel), cur = bomOf(BM.r);
   if (cur && (bomSelOf(cur) ? bomKey(bomSelOf(cur)) === key : !key)) return;
   const b = key && BOM.find(x => x.id === key);
-  if (b && BM.f !== 'all' && !(BM.f === '3d' || (BM.f === 'mech' ? b.sec === 'mech' : b.sec !== 'mech'))) { BM.f = 'all'; markBF(); }
+  if (b && BM.f !== 'all' && b.cat !== BM.f) { BM.f = 'all'; markBF(); }
   bomPick(b ? b.r : null, true);
 };
 function markBF() { document.querySelectorAll('[data-bf]').forEach(x => x.setAttribute('aria-pressed', x.dataset.bf === BM.f)); }
@@ -1871,8 +1875,7 @@ $('#bomQ').addEventListener('input', renderBOM);
 $('#bmFilt').addEventListener('click', e => { const t = e.target.closest('[data-bf]'); if (!t) return; BM.f = t.dataset.bf; markBF(); renderBOM(); });
 $('#bmWt').addEventListener('click', e => { const t = e.target.closest('[data-r]'); if (t) bomPick(+t.dataset.r); });
 $('#bomPage').addEventListener('click', e => {
-  const go = e.target.closest('[data-gospec]'); if (go) { SP.view = 'items'; SP.cur = go.dataset.gospec; setTab('spec'); return; }
-  const o3 = e.target.closest('[data-bm3d]'); if (o3) { const s = bomSelOf(bomOf(+o3.dataset.bm3d)); setTab('struct'); select(s); return; }
+  const ph = e.target.closest('[data-photo]'); if (ph) { openLB(ph.dataset.set.split(','), +ph.dataset.photo); return; }
   if (e.target.closest('tr.det')) return;
   const tr = e.target.closest('tr[data-r]'); if (tr) bomPick(+tr.dataset.r);
 });
