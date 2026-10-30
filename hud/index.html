@@ -147,6 +147,76 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
 .ptable td.mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
 .ptable tbody tr { cursor: pointer; }
 .ptable tbody tr:hover { background: #f6f8fa; }
+.tabs { display: flex; gap: 2px; border-bottom: 0; }
+.tabs button { padding: 7px 12px; font-size: 13.5px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; }
+.tabs button:hover { color: var(--fg); }
+.tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spec"] #setBtn { display: none; }
+#specPage { position: fixed; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); left: 0; right: 0; bottom: 0; overflow: auto; background: var(--bg); }
+.sp-wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.sp-head { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; }
+.sp-head h2 { margin: 0 0 4px; font-size: 20px; }
+.sp-head .note { max-width: 70ch; margin: 0; }
+.vid { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.vid input { width: 64px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; color: var(--fg); }
+.sp-views { margin-bottom: 14px; background: var(--panel); }
+.sp-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; align-items: start; }
+.sp-list { position: sticky; top: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 0; max-height: calc(100vh - 140px); overflow: auto; }
+.sp-cat { font: 600 11px/1 var(--mono); color: var(--muted); padding: 10px 12px 4px; letter-spacing: .04em; }
+.sp-item { display: block; width: 100%; text-align: left; padding: 6px 12px; border-left: 3px solid transparent; font-size: 13.5px; }
+.sp-item small { display: block; font: 400 11px/1.3 var(--mono); color: var(--muted); }
+.sp-item:hover { background: #f6f8fa; }
+.sp-item.on { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); font-weight: 600; }
+.sp-detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px 20px; min-width: 0; }
+.sp-detail > p { line-height: 1.7; max-width: 75ch; margin: 6px 0 4px; }
+.sp-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.sp-title h2 { margin: 0; font-size: 21px; }
+.sp-title .en { font: 400 12.5px/1.3 var(--mono); color: var(--muted); }
+.sp-title .unit { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 4px; background: var(--line-2); }
+.sp-cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 4px 28px; }
+.sp-cols ul { padding-left: 18px; display: grid; gap: 6px; margin: 4px 0; }
+.sp-cols li { line-height: 1.6; font-size: 13.5px; }
+.sp-parts { list-style: none; padding: 0 !important; }
+.sp-parts li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.sp-parts span { font-size: 12.5px; color: var(--muted); }
+.pchip { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); font-size: 12.5px; white-space: nowrap; }
+.pchip.lv2 { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.pchip:hover { background: var(--accent-soft); }
+.demo { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fbfcfd; }
+.demo canvas { display: block; width: 100%; height: clamp(220px, 32vw, 320px); }
+.demo-ctl { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 10px 14px 0; font-size: 12.5px; color: var(--muted); }
+.demo-ctl label { display: flex; align-items: center; gap: 8px; }
+.demo-ctl input[type=range] { width: 170px; accent-color: var(--accent); }
+.demo-ctl select { font: inherit; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--fg); }
+.demo-ctl output { font-family: var(--mono); color: var(--fg); min-width: 5em; }
+.demo-out { margin: 8px 14px 12px; font-size: 13px; line-height: 1.65; }
+.demo-out b { color: var(--accent); }
+.sp-form { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; }
+.sp-form label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.sp-form input { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; color: var(--fg); min-width: 0; }
+table.mx { border-collapse: collapse; font-size: 12.5px; background: var(--panel); }
+table.mx th, table.mx td { border: 1px solid var(--line-2); padding: 5px 7px; text-align: center; }
+table.mx thead th { vertical-align: bottom; font-weight: 600; }
+table.mx thead th button { display: block; width: 4.6em; font-size: 11.5px; line-height: 1.3; word-break: keep-all; padding: 2px 0; }
+table.mx tbody th { text-align: left; white-space: nowrap; font-weight: 600; position: sticky; left: 0; background: var(--panel); }
+table.mx button:hover { color: var(--accent); }
+table.mx b { color: var(--accent); }
+.iss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 10px 0 6px; }
+.iss { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.iss h3 { margin: 0 0 4px; font-size: 15px; }
+.iss .en { font: 400 11.5px/1 var(--mono); color: var(--muted); }
+.iss p, .iss li { font-size: 13px; line-height: 1.55; }
+.iss ul { padding-left: 16px; margin: 6px 0 0; }
+.relspec { display: flex; flex-wrap: wrap; gap: 5px; }
+@media (max-width: 900px) {
+  .sp-grid, .sp-cols { grid-template-columns: minmax(0, 1fr); }
+  .sp-list { position: static; max-height: none; display: flex; overflow-x: auto; padding: 6px; gap: 4px; }
+  .sp-cat { display: none; }
+  .sp-item { flex: none; width: auto; border-left: 0; border-radius: 6px; white-space: nowrap; }
+  .sp-form { grid-template-columns: 1fr 1fr; }
+  .sp-form .wide { grid-column: 1 / -1; }
+  .tabs { order: 2; }
+}
 .k-amber { color: var(--amber); } .k-blue { color: var(--accent); } .k-gray { color: #7d868f; }
 
 /* playback */
@@ -195,11 +265,12 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
   .hint { display: none; }
 }
 </style>
-<script type="importmap">{ "imports": { "three": "../vendor/three.module.min.js" } }</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body>
 <header>
   <div class="ttl"><h1>Zeekr 7X AR-HUD 해부도</h1><span class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</span></div>
+  <div class="tabs" role="tablist" aria-label="보기"><button role="tab" data-tab="struct" aria-selected="true">3D 구조도</button><button role="tab" data-tab="spec" aria-selected="false">광학 스펙</button></div>
   <div class="viewbar"><span class="lab">시점</span>
   <nav class="views" aria-label="시점">
     <button data-view="iso" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>전체</button>
@@ -236,6 +307,15 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
     <section id="info" class="float" aria-label="상세 정보"><div class="phead"><span class="ic">i</span><span id="infoTitle">제품 정보</span><button class="x" data-closep="info" aria-label="상세 정보 접기">접기 ›</button></div><div class="pbody" id="infoBody"></div></section>
   </div>
 </div>
+
+<main id="specPage" hidden>
+  <div class="sp-wrap">
+    <div class="sp-head"><div><h2>광학 스펙 해석</h2><p class="note">질문지(Optic Spec)의 18개 항목과 외관 결함(ISS)이 무엇을 뜻하고, 어떤 부품이 좌우하며, 숫자가 바뀌면 운전자에게 어떻게 보이는지 정리했습니다. 각 그림의 조절 막대로 값을 바꿔 보세요.</p></div>
+      <label class="vid">계산에 쓰는 허상 거리 <input id="vidIn" type="number" min="1" max="20" step="0.1"> m <span class="note">기본값은 모델 추정</span></label></div>
+    <div class="seg sp-views"><button data-spview="items" aria-pressed="true">스펙 항목</button><button data-spview="matrix" aria-pressed="false">부품 × 스펙 표</button><button data-spview="iss" aria-pressed="false">외관 결함 (ISS)</button></div>
+    <div id="specBody"></div>
+  </div>
+</main>
 
 <div id="lightbox" hidden>
   <button class="btn close" id="lbClose">닫기 (Esc)</button>
@@ -1102,6 +1182,7 @@ function renderInfo() {
     <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
     ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
+    ${(() => { const rel = SPECS.filter(x => x.parts.some(q => q[0] === sel.id)); return rel.length ? `<h3 class="sec">관련 광학 스펙</h3><div class="relspec">${rel.map(x => `<button class="pchip ${x.parts.find(q => q[0] === sel.id)[1] === 2 ? 'lv2' : ''}" data-gospec="${x.id}">${x.ko}</button>`).join('')}</div>` : ''; })()}
     <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}`;
 }
 $('#playBody').addEventListener('click', e => {
@@ -1119,6 +1200,7 @@ $('#infoBody').addEventListener('input', e => { if (e.target.id === 'blSpread') 
 $('#infoBody').addEventListener('click', e => {
   const t = e.target, k = t.closest('.kids [data-sel], .ptable [data-sel]'), phB = t.closest('[data-photo]');
   if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderInfo(); focus(selIds()); return; }
+  if (t.closest('[data-gospec]')) { SP.view = 'items'; SP.cur = t.closest('[data-gospec]').dataset.gospec; setTab('spec'); return; }
   if (t.closest('[data-close]')) { select(null); return; }
   if (t.closest('[data-bl]')) { enterBL(); return; }
   if (t.closest('[data-blexit]')) { exitBL(); return; }
@@ -1170,6 +1252,315 @@ function drawLabels() {
   $('#labels').innerHTML = html;
 }
 
+/* ───────────────────────── 광학 스펙 tab: what each questionnaire item means and how its number shows up ───────────────────────── */
+const SPEC_CATS = [['geo', '허상 위치·형상'], ['lum', '밝기·균일도'], ['color', '색'], ['heat', '열']];
+const WSPART = { name: '윈드실드 (차량)' };
+const SPECS = [
+  { id: 'disparity', cat: 'geo', en: 'Disparity', ko: '양안 시차', unit: 'mrad', dir: 'low',
+    def: '왼쪽 눈과 오른쪽 눈이 보는 허상 위치의 차이를 각도로 나타낸 값입니다. 두 눈은 아이박스 안에서 약 6.5 cm 떨어져 있어서, 광학계가 완벽하지 않으면 두 눈에 보이는 허상이 조금씩 다른 곳에 생깁니다.',
+    why: ['뇌가 두 상을 하나로 합치지 못하면 이중상으로 보이고, 합치더라도 눈이 피로하거나 어지러울 수 있습니다.', '위아래(수직) 어긋남은 눈이 거의 보정하지 못해서 좌우(수평)보다 훨씬 엄격하게 봅니다.', '좌우 어긋남은 거리감도 바꿉니다. AR 그래픽이 도로보다 앞이나 뒤에 떠 보이게 됩니다.'],
+    measure: '아이박스 안 좌·우 눈 위치에 카메라 두 대를 두고, 같은 점이 보이는 방향의 차이를 잽니다.',
+    parts: [['concave', 2, '자유곡면 형상 오차가 눈 위치마다 다른 상을 만듭니다'], ['ws', 2, '윈드실드 곡률·쐐기 오차'], ['fold', 1, '평면도'], ['upper', 1, '미러 장착 위치·각도 공차'], ['epson', 1, '워프로 일부 보정 (한 눈 기준이라 한계)']], demo: 'disparity' },
+  { id: 'visize', cat: 'geo', en: 'VI size', ko: '허상 크기 편차', unit: '%', dir: 'low',
+    def: '측정한 허상 크기가 설계값과 얼마나 다른지를 %로 나타낸 값입니다.',
+    why: ['AR-HUD는 그래픽을 실제 도로 위 물체에 겹쳐야 합니다. 허상이 크거나 작으면 화살표·차선 표시가 실제 위치에서 벗어납니다.', '크기 오차는 화면 가장자리로 갈수록 커집니다.'],
+    measure: '아이박스 중심의 카메라로 허상의 격자 패턴을 찍어 가로·세로 길이를 잽니다.',
+    parts: [['concave', 2, '곡률이 배율을 정합니다'], ['epson', 2, '스케일 보정'], ['tft', 1, '표시 영역'], ['upper', 1, 'TFT–미러 거리 공차'], ['ws', 1, '곡률']], demo: 'visize' },
+  { id: 'aspect', cat: 'geo', en: 'Aspect ratio', ko: '가로세로 비 편차', unit: '%', dir: 'low',
+    def: '허상의 가로/세로 비율이 설계값에서 얼마나 틀어졌는지를 %로 나타낸 값입니다.',
+    why: ['원이 타원으로, 정사각 아이콘이 납작하게 보입니다.', '곡면경과 윈드실드가 가로·세로를 다른 배율로 확대하면 생기고, 워프 보정으로 맞춥니다.'],
+    measure: '격자 패턴의 가로·세로 간격 비를 설계값과 비교합니다.',
+    parts: [['concave', 2, '가로·세로 곡률 차이'], ['ws', 2, '곡률'], ['epson', 2, '보정'], ['fold', 1, '']], demo: 'aspect' },
+  { id: 'edge', cat: 'geo', en: 'Edge slope of VI (all side of VI)', ko: '허상 테두리 기울기', unit: 'deg', dir: 'low',
+    def: '허상 네 변이 수평·수직선에 대해 기울어진 각도입니다. 전체가 돌아간 회전과, 위아래 폭이 다른 사다리꼴 왜곡이 여기서 드러납니다.',
+    why: ['허상이 수평선(도로, 대시보드)과 어긋나 기울어 보이면 바로 눈에 띄고 불편합니다.', 'AR 그래픽의 차선 정합도 틀어집니다.'],
+    measure: '격자 패턴 네 변의 각도를 잽니다.',
+    parts: [['epson', 2, '사다리꼴·회전 보정'], ['upper', 2, '조립 회전 공차'], ['concave', 1, ''], ['ws', 1, ''], ['fold', 1, '']], demo: 'edge' },
+  { id: 'lda', cat: 'geo', en: 'LookDown / LookOver angle tolerance', ko: '하방각·측방각 공차', unit: 'deg', dir: 'low',
+    def: 'LDA(Look-Down Angle)는 운전자 눈의 수평 시선에서 허상 중심까지 내려다보는 각도, LOA(Look-Over Angle)는 정면에서 좌우로 벗어난 각도입니다. 이 항목은 그 각도가 설계값에서 얼마나 벗어나도 되는지입니다.',
+    why: ['각도가 1° 틀어지면 수 m 앞에서는 허상이 수 cm~십수 cm 움직입니다.', '너무 내려가면 보닛에 묻히고, 올라가면 앞차를 가립니다. AR 그래픽이 도로에 붙어 보이려면 각도가 정확해야 합니다.', 'LDA는 모터로 곡면경을 기울여 운전자마다 맞추지만, 기준 위치의 공차는 장착 정밀도에 달려 있습니다.'],
+    measure: '아이박스 중심에서 허상 중심 방향을 측정해 설계 각도와 비교합니다.',
+    parts: [['concave', 2, '각도'], ['motor', 2, '원점·스텝 정밀도'], ['upper', 1, '장착'], ['ws', 1, '경사·장착 공차']], demo: 'lda' },
+  { id: 'res', cat: 'geo', en: 'VI Resolution', ko: '허상 해상도', unit: 'lp/deg', dir: 'high',
+    def: '시야각 1°에 구분해서 보이는 흑백 선 쌍(line pair)의 수입니다. 선 쌍 1개 = 검은 선 + 흰 선 = 화소 2개입니다.',
+    why: ['글자와 아이콘이 또렷한지를 정합니다.', '시력 1.0인 눈은 대략 1분각(1/60°)까지 구분하므로 30 lp/deg 근처면 눈의 한계에 가깝습니다.', 'TFT 화소 수와 곡면경 수차(흐림)가 둘 다 영향을 줍니다.'],
+    measure: '선 쌍 패턴을 띄우고 카메라로 대비(MTF)를 재서 구분되는 한계를 찾습니다.',
+    parts: [['tft', 2, '화소 수'], ['concave', 2, '수차로 인한 흐림'], ['epson', 1, '워프 보간'], ['fold', 1, ''], ['ws', 1, '']], demo: 'res' },
+  { id: 'bright', cat: 'lum', en: 'Brightness', ko: '휘도', unit: 'nit', dir: 'high',
+    def: '허상의 최대 휘도(cd/m² = nit)입니다. 운전자 눈 위치에서 보이는 밝기입니다.',
+    why: ['맑은 낮 도로와 하늘을 배경으로도 보여야 합니다. Zeekr가 발표한 이 HUD의 최대 휘도는 12,000 nit입니다.', '밤에는 수십~수백 nit로 낮춥니다.', '빛이 지나는 모든 부품의 효율이 곱해집니다: LED → 렌즈 → 필름 → TFT(약 5%) → 미러 → 커버 → 윈드실드 반사.'],
+    measure: '아이박스 중심에 휘도계를 두고 흰 화면을 잽니다.',
+    parts: [['led', 2, ''], ['lens', 2, '빛 모으기'], ['film', 2, '휘도 향상 필름'], ['tft', 2, '투과율'], ['ws', 2, '반사율'], ['concave', 1, '반사율'], ['fold', 1, '반사율'], ['cover', 1, '투과율'], ['ledchip', 1, '구동 전류']], demo: 'bright' },
+  { id: 'grad', cat: 'lum', en: 'Brightness gradient over EB (Luminance distribution)', ko: '아이박스 내 휘도 변화', unit: '%/cm', dir: 'low',
+    def: '아이박스 안에서 눈 위치를 1 cm 움직일 때 허상 휘도가 변하는 비율입니다.',
+    why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.', '백라이트가 빛을 아이박스 쪽으로 좁게 모으면 밝지만 변화가 커지고, 넓게 퍼뜨리면 고르지만 어두워집니다. 휘도와 맞바꾸는 관계입니다.'],
+    measure: '아이박스 여러 지점으로 휘도계를 옮기며 잽니다.',
+    parts: [['lens', 2, '빛의 방향'], ['film', 2, '퍼짐 각도'], ['led', 1, '배치'], ['concave', 1, '']], demo: 'grad' },
+  { id: 'sun', cat: 'lum', en: 'Sunglasses', ko: '편광 선글라스 휘도', unit: 'nit', dir: 'high',
+    def: '편광 선글라스를 쓰고 볼 때 허상의 휘도입니다.',
+    why: ['TFT에서 나오는 빛은 이미 한 방향으로 편광되어 있습니다.', '편광 선글라스는 도로·유리 반사 눈부심(수평 편광)을 막도록 수직 편광만 통과시킵니다.', 'HUD 빛이 수평 편광에 가까우면 선글라스를 쓰는 순간 HUD가 거의 사라집니다. 그래서 TFT 편광 방향이나 위상차 필름으로 편광을 맞춥니다(이 제품의 방식은 미확인).'],
+    measure: '휘도계 앞에 편광 필터(선글라스 축)를 두고 잽니다.',
+    parts: [['tft', 2, '편광 방향'], ['ws', 2, '편광에 따라 반사율이 다름'], ['film', 1, '위상차 필름 (있다면)'], ['concave', 1, '코팅']], demo: 'sun' },
+  { id: 'white', cat: 'lum', en: 'White homogeneity', ko: '흰 화면 균일도', unit: '%', dir: 'high',
+    def: '흰 화면 전체를 띄웠을 때 여러 지점(보통 9점 등) 휘도의 균일도입니다. 최소/최대 또는 최소/평균으로 정의하며, 고객 스펙을 따릅니다.',
+    why: ['고르지 않으면 화면 일부가 얼룩지거나 가장자리가 어둡게 보입니다.', '큰 흰 면적 그래픽(경고 창, 내비 배경)에서 특히 드러납니다.'],
+    measure: '흰 화면을 9점 이상 나눠 휘도를 잽니다.',
+    parts: [['led', 2, '배치·편차'], ['lens', 2, ''], ['film', 2, '확산'], ['tft', 1, ''], ['concave', 1, '가장자리 반사각']], demo: 'white' },
+  { id: 'black', cat: 'lum', en: 'Black homogeneity', ko: '검은 화면 균일도', unit: '%', dir: 'high',
+    def: '검은 화면을 띄웠을 때 영역 간 휘도 균일도입니다. 빛샘이 고르지 않은지를 봅니다.',
+    why: ['LCD는 검은색도 완전히 막지 못해 빛이 조금 샙니다. 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 떠 보입니다(모서리 빛샘).', 'TFT 압착, 지지대, 방진 폼의 조립 응력이 원인이 되기도 합니다.'],
+    measure: '어두운 방에서 검은 화면을 띄우고 여러 지점의 휘도를 잽니다.',
+    parts: [['tft', 2, '빛샘'], ['tftholder', 1, '조립 응력'], ['foam', 1, '누르는 힘'], ['upper', 1, '미광']], demo: 'black' },
+  { id: 'contrast', cat: 'lum', en: 'Contrast', ko: '명암비', unit: '-', dir: 'high',
+    def: '흰 화면 휘도 ÷ 검은 화면 휘도입니다.',
+    why: ['명암비가 낮으면 그래픽이 없는 검은 영역도 희미하게 빛나서, 밤에 허상 크기만 한 회색 사각형("포스트카드")이 보입니다.', '햇빛이 HUD 안으로 들어와 반사되는 미광도 검은 휘도를 올려 명암비를 떨어뜨립니다.'],
+    measure: '흰 화면과 검은 화면 휘도를 각각 재서 나눕니다.',
+    parts: [['tft', 2, ''], ['upper', 1, '광 트랩 리브'], ['cover', 1, '반사·산란'], ['concave', 1, '먼지·코팅'], ['led', 1, '로컬 디밍 (적용 여부 미확인)']], demo: 'contrast' },
+  { id: 'ctol', cat: 'color', en: 'Color tolerance', ko: '색좌표 공차', unit: 'Cx, Cy', dir: 'low',
+    def: '흰색(또는 지정한 색)의 CIE 1931 색좌표(x, y)가 목표값에서 벗어나도 되는 범위입니다.',
+    why: ['제품마다 흰색이 노랗거나 푸르게 보이면 클러스터·센터 화면과 색이 안 맞고 품질이 낮아 보입니다.', 'LED는 생산 로트마다 색좌표가 달라서(빈, bin) 어떤 빈을 쓰는지가 핵심입니다.'],
+    measure: '분광 휘도계로 색좌표를 잽니다.',
+    parts: [['led', 2, '빈 관리'], ['tft', 2, '컬러필터'], ['concave', 1, '코팅 반사 스펙트럼'], ['film', 1, ''], ['ws', 1, '']], demo: 'ctol' },
+  { id: 'sat', cat: 'color', en: 'Color Saturation', ko: '채도', unit: '%', dir: 'high',
+    def: '색이 얼마나 순수한지입니다. 흰빛이 섞일수록 떨어집니다.',
+    why: ['빨간 경고와 초록 상태 표시가 바랜 분홍·연두로 보이면 의미 전달이 약해집니다.', '배경 빛(햇빛이 섞인 미광, 낮은 명암비)도 채도를 떨어뜨립니다.'],
+    measure: '원색 화면의 색좌표를 재서 기준 대비 순도를 계산합니다.',
+    parts: [['tft', 2, '컬러필터'], ['led', 1, '스펙트럼'], ['upper', 1, '미광']], demo: 'sat' },
+  { id: 'gamut', cat: 'color', en: 'Gamut', ko: '색 영역', unit: '%', dir: 'high',
+    def: '표현할 수 있는 색의 범위를 기준 색 영역(NTSC, sRGB 등) 대비 면적 비율로 나타낸 값입니다. 어떤 기준인지 꼭 확인해야 합니다.',
+    why: ['색 영역이 좁으면 빨강·초록·파랑이 덜 선명하게 구분됩니다.', 'HUD는 경고색(빨강·주황)과 안내색(청록·초록)이 확실히 구분되는 게 중요합니다.'],
+    measure: 'R·G·B 원색의 색좌표로 삼각형 면적을 계산해 기준과 비교합니다.',
+    parts: [['tft', 2, '컬러필터'], ['led', 2, '스펙트럼']], demo: 'gamut' },
+  { id: 'derating', cat: 'heat', en: 'Derating', ko: '휘도 저감 시작 온도', unit: '℃', dir: 'high',
+    def: '부품을 열로부터 보호하려고 휘도를 낮추기 시작하는 온도입니다. 보통 TFT·LED 근처 온도 센서 기준입니다.',
+    why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁고, 햇빛이 HUD 안으로 거꾸로 들어와 TFT를 달굽니다.', '저감 시작 온도가 낮으면 가장 밝아야 할 맑은 낮에 HUD가 어두워집니다.', '방열이 좋을수록 이 온도를 높게 잡을 수 있습니다.'],
+    measure: '온도 챔버에서 온도를 올리며 휘도가 줄기 시작하는 지점을 찾습니다.',
+    parts: [['heatsink', 2, ''], ['led', 2, '열원'], ['pad', 1, ''], ['ledchip', 1, '전류 제한'], ['mcu', 1, '온도 감시'], ['concave', 1, '콜드미러로 햇빛 열 차단'], ['cover', 1, '']], demo: 'derating' },
+];
+const ISS = [
+  { id: 'scratch', en: 'Scratch', ko: '긁힘', def: '선 모양의 표면 결함입니다.', subs: ['Length (mm): 긁힌 자국 길이 한도', 'Width (mm): 폭 한도', 'n/A: 지정 영역 안 허용 개수'] },
+  { id: 'pore', en: 'Pore', ko: '미세 구멍 (핀홀)', def: '표면의 작은 구멍입니다. 코팅이 빠진 자리도 여기에 해당합니다.', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
+  { id: 'dot', en: 'Black & White dot', ko: '검은 점 · 흰 점', def: '이물이나 점 모양 결함입니다. 검은 점은 빛을 막고, 흰 점은 빛이 새거나 반사합니다.', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
+  { id: 'vac', en: 'Vacuoles', ko: '내부 기포', def: '유리·수지 안의 기포입니다. 빛을 굴절·산란시킵니다.', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
+  { id: 'stain', en: 'Stain & Discoloration', ko: '얼룩 · 변색', def: '얼룩이나 색 변화입니다. 크기·개수와 관계없이 발생 자체를 불허합니다.', subs: ['Not allowed'] },
+];
+// how sharply a defect on each part shows up in the driver's view: on the TFT it is imaged sharp and magnified,
+// the further from the TFT along the light path the more it blurs; the dust cover is not imaged at all
+const ISS_PARTS = [
+  ['tft', 'TFT', 0, '허상 그 자체에 맺힙니다. 확대되어 또렷하게 보여서 가장 엄격합니다.'],
+  ['film', '광학 필름', .25, 'TFT 바로 뒤라 거의 또렷하게, 약간 번져 보입니다.'],
+  ['lens', '렌즈', .5, 'TFT 뒤 수 mm. 번진 얼룩(밝기 불균일)으로 보입니다.'],
+  ['fold', '평면경', .75, 'TFT에서 멀어 크게 번집니다. 작은 결함은 희미한 그늘 정도입니다.'],
+  ['concave', '곡면경', .92, '많이 번져 거의 안 보이지만, 큰 결함은 영역 밝기를 떨어뜨립니다.'],
+  ['cover', '방진 커버', -1, '허상에는 맺히지 않습니다. 운전자가 대시보드를 볼 때 직접 보이고, 햇빛을 산란시켜 미광과 눈부심을 만듭니다.'],
+];
+const SPEC_PART = id => id === 'ws' ? WSPART : P[id];
+const store = { get(k) { try { return JSON.parse(localStorage.getItem('hudspec:' + k) || '{}'); } catch { return {}; } }, set(k, v) { try { localStorage.setItem('hudspec:' + k, JSON.stringify(v)); } catch {} } };
+const SP = { view: 'items', cur: 'disparity', vals: {}, vid: Math.round(OPT0.vid) / 100 };
+const hfovDeg = () => HFOV * 180 / Math.PI, vfovDeg = () => VFOV * 180 / Math.PI;
+const imgW = () => 2 * SP.vid * 100 * Math.tan(HFOV / 2), imgH = () => 2 * SP.vid * 100 * Math.tan(VFOV / 2); // cm
+
+/* drawing helpers: a road scene and the HUD graphic */
+function road(g, w, h, lvl = 1, night = false) {
+  const sky = g.createLinearGradient(0, 0, 0, h * .55);
+  if (night) { sky.addColorStop(0, '#05070b'); sky.addColorStop(1, '#10151c'); } else { const a = Math.round(120 + 120 * lvl); sky.addColorStop(0, `rgb(${a - 20},${a},${Math.min(255, a + 25)})`); sky.addColorStop(1, `rgb(${a + 10},${a + 12},${a + 14})`); }
+  g.fillStyle = sky; g.fillRect(0, 0, w, h * .55);
+  g.fillStyle = night ? '#0b0d10' : `rgb(${Math.round(60 + 70 * lvl)},${Math.round(64 + 70 * lvl)},${Math.round(70 + 70 * lvl)})`; g.fillRect(0, h * .55, w, h * .45);
+  g.strokeStyle = night ? '#3a3f45' : `rgba(240,240,235,${.6 + .3 * lvl})`; g.lineWidth = 3;
+  g.beginPath(); g.moveTo(w * .5 - 6, h * .55); g.lineTo(w * .12, h); g.moveTo(w * .5 + 6, h * .55); g.lineTo(w * .88, h); g.stroke();
+}
+function hud(g, x, y, w, h, alpha = 1, filter) { g.save(); g.globalAlpha = alpha; if (filter) g.filter = filter; g.drawImage(hudClear, x, y, w, h); g.restore(); }
+function fitCanvas(c) { const r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio, 2); c.width = Math.round(r.width * d); c.height = Math.round(r.height * d); const g = c.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); return [g, r.width, r.height]; }
+const CIE = [[.1741, .005], [.144, .0297], [.1241, .0578], [.1096, .0868], [.0913, .1327], [.0687, .2007], [.0454, .295], [.0235, .4127], [.0082, .5384], [.0039, .6548], [.0139, .7502], [.0389, .812], [.0743, .8338], [.1142, .8262], [.1547, .8059], [.2296, .7543], [.3016, .6923], [.3731, .6245], [.4441, .5547], [.5125, .4866], [.5752, .4242], [.627, .3725], [.6915, .3083], [.719, .2809], [.7347, .2653]];
+function cie(g, w, h) { const pad = 26, s = Math.min(w - 2 * pad, (h - 2 * pad) / .9 * .8), X = x => pad + x / .8 * s, Yp = y => h - pad - y / .9 * (h - 2 * pad);
+  g.strokeStyle = '#dde1e6'; g.lineWidth = 1; g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace';
+  for (let v = 0; v <= .8; v += .1) { g.beginPath(); g.moveTo(X(v), Yp(0)); g.lineTo(X(v), Yp(.9)); g.stroke(); g.fillText(v.toFixed(1), X(v) - 8, h - 8); }
+  for (let v = 0; v <= .9; v += .1) { g.beginPath(); g.moveTo(X(0), Yp(v)); g.lineTo(X(.8), Yp(v)); g.stroke(); g.fillText(v.toFixed(1), 2, Yp(v) + 4); }
+  g.beginPath(); CIE.forEach(([x, y], i) => i ? g.lineTo(X(x), Yp(y)) : g.moveTo(X(x), Yp(y))); g.closePath(); g.fillStyle = 'rgba(31,98,209,.05)'; g.fill(); g.strokeStyle = '#1c2228'; g.lineWidth = 1.4; g.stroke();
+  return { X, Yp };
+}
+function tri(g, m, pts, stroke, fill, dash) { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } g.setLineDash(dash || []); g.strokeStyle = stroke; g.lineWidth = 1.6; g.stroke(); g.setLineDash([]); }
+const triArea = p => Math.abs((p[1][0] - p[0][0]) * (p[2][1] - p[0][1]) - (p[2][0] - p[0][0]) * (p[1][1] - p[0][1])) / 2;
+const NTSC = [[.67, .33], [.21, .71], [.14, .08]], SRGB = [[.64, .33], [.30, .60], [.15, .06]], D65 = [.3127, .329];
+const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
+
+/* each demo: controls + draw(g, w, h, v) → readout html */
+const DEMOS = {
+  disparity: { ctl: [['d', '시차', 0, 5, .1, 1, 'mrad'], ['ax', '방향', 0, 1, 1, 0, 'sel:수평|수직']],
+    draw(g, w, h, v) { road(g, w, h, .8); const pxPerMrad = w / (24 * 17.453), hw = w * .5, hh = hw / ASPECT, x = (w - hw) / 2, y = h * .42 - hh / 2, o = v.d * pxPerMrad * 6;
+      hud(g, x, y, hw, hh, .9); hud(g, x + (v.ax ? 0 : o), y + (v.ax ? o : 0), hw, hh, .45);
+      const mm = v.d * SP.vid; return `허상 위치(${f1(SP.vid)} m)에서 두 눈의 상이 <b>${f1(mm)} mm</b> 어긋납니다. 그림은 6배 과장했습니다.<br>${v.ax ? '수직 어긋남은 눈이 거의 맞추지 못해 작은 값에서도 피로가 큽니다.' : '수평 어긋남은 거리감을 바꿉니다. 그래픽이 도로보다 앞이나 뒤에 떠 보입니다.'}`; } },
+  visize: { ctl: [['s', '크기 편차', -10, 10, .5, 3, '%']],
+    draw(g, w, h, v) { road(g, w, h, .8); const k = 1 + v.s / 100, hw = w * .5, hh = hw / ASPECT, cx = w / 2, cy = h * .42;
+      g.setLineDash([6, 5]); g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.strokeRect(cx - hw / 2, cy - hh / 2, hw, hh); g.setLineDash([]);
+      hud(g, cx - hw * k / 2, cy - hh * k / 2, hw * k, hh * k, .95);
+      const dcm = imgW() * Math.abs(v.s) / 100 / 2; return `파란 점선이 설계 크기입니다. 허상 너비 ${f1(imgW())} cm 기준으로 가장자리 그래픽이 <b>${f1(dcm)} cm</b> 밀립니다. AR 화살표가 가리키는 도로 위치도 그만큼 어긋납니다.`; } },
+  aspect: { ctl: [['a', '가로세로 비 편차', -10, 10, .5, 4, '%']],
+    draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .5, hh = hw / ASPECT * (1 + v.a / 100), cx = w / 2, cy = h * .42;
+      g.setLineDash([6, 5]); g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.strokeRect(cx - hw / 2, cy - hw / ASPECT / 2, hw, hw / ASPECT); g.setLineDash([]);
+      hud(g, cx - hw / 2, cy - hh / 2, hw, hh, .95); g.strokeStyle = '#ff5a4a'; g.lineWidth = 3; g.beginPath(); g.ellipse(w * .85, h * .8, 22, 22 * (1 + v.a / 100), 0, 0, 7); g.stroke();
+      return `세로가 ${v.a > 0 ? '늘어' : '줄어'} 오른쪽 아래 원 아이콘이 타원이 됩니다. 허상 높이 ${f1(imgH())} cm 기준 <b>${f1(imgH() * Math.abs(v.a) / 100)} cm</b> 차이입니다.`; } },
+  edge: { ctl: [['r', '회전', -3, 3, .1, 1, '°'], ['k', '사다리꼴', -3, 3, .1, 0, '°']],
+    draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .5, hh = hw / ASPECT, cx = w / 2, cy = h * .42;
+      g.save(); g.translate(cx, cy); g.rotate(v.r * Math.PI / 180); const t = Math.tan(v.k * Math.PI / 180) * 6; g.transform(1, 0, t * .02, 1, 0, 0); hud(g, -hw / 2, -hh / 2, hw, hh, .95);
+      g.strokeStyle = 'rgba(31,98,209,.8)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 + t * .03), hh / 2); g.lineTo(-hw / 2 * (1 + t * .03), hh / 2); g.closePath(); g.stroke(); g.restore();
+      g.strokeStyle = 'rgba(255,255,255,.7)'; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, cy - hh / 2); g.lineTo(w, cy - hh / 2); g.stroke(); g.setLineDash([]);
+      return `점선이 수평 기준입니다. 허상 너비 ${f1(imgW())} cm에서 ${f1(Math.abs(v.r))}° 회전하면 양 끝 높이 차가 <b>${f1(imgW() * Math.tan(Math.abs(v.r) * Math.PI / 180))} cm</b>입니다.`; } },
+  lda: { ctl: [['dv', 'LDA 오차', -1.5, 1.5, .1, .5, '°'], ['dh', 'LOA 오차', -1.5, 1.5, .1, .5, '°']],
+    draw(g, w, h, v) { const half = w / 2, EX = 6, lda = Math.asin(-OPT0.v0.y) * 180 / Math.PI, rad = d => d * Math.PI / 180;
+      g.fillStyle = '#f6f8fa'; g.fillRect(0, 0, w, h); g.strokeStyle = '#dde1e6'; g.beginPath(); g.moveTo(half, 10); g.lineTo(half, h - 10); g.stroke();
+      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('옆에서 본 LDA (각도 6배 과장)', 12, 20); g.fillText('위에서 본 LOA (각도 6배 과장)', half + 12, 20);
+      // side view: eye → virtual image
+      const ex = 34, ey = h * .38, L = half - 80, ray = (deg, col, wdt) => { const a = rad(deg * EX), x = ex + L * Math.cos(a), y = ey + L * Math.sin(a); g.strokeStyle = col; g.lineWidth = wdt; g.beginPath(); g.moveTo(ex, ey); g.lineTo(x, y); g.stroke(); g.fillStyle = col; g.fillRect(x - 3, y - 16, 6, 32); return [x, y]; };
+      g.setLineDash([4, 4]); g.strokeStyle = '#9aa4ae'; g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex + L + 20, ey); g.stroke(); g.setLineDash([]);
+      g.fillStyle = '#3a3f45'; g.fillRect(0, h * .82, half, h * .18); g.fillStyle = '#9aa4ae'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('도로', 10, h * .82 + 16); g.fillText('눈높이 수평선', ex + 10, ey - 6);
+      ray(lda, '#b7c2cf', 2); const [x2, y2] = ray(lda + v.dv, '#1f62d1', 2.5); g.lineWidth = 1;
+      g.fillStyle = '#1c2228'; g.beginPath(); g.arc(ex, ey, 6, 0, 7); g.fill(); g.fillStyle = '#1f62d1'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('실제', x2 - 10, y2 + 30); g.fillStyle = '#9aa4ae'; g.fillText('설계', ex + L * Math.cos(rad(lda * EX)) + 8, ey + L * Math.sin(rad(lda * EX)) - 18);
+      // top view: eye looking forward (up the canvas)
+      const cx = half + (half / 2), cy = h - 34, R = h - 90, dot = (deg, col) => { const a = rad(deg * EX), x = cx + R * Math.sin(a), y = cy - R * Math.cos(a); g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(x, y); g.stroke(); g.fillStyle = col; g.fillRect(x - 22, y - 4, 44, 8); g.lineWidth = 1; };
+      g.setLineDash([4, 4]); g.strokeStyle = '#9aa4ae'; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx, cy - R - 16); g.stroke(); g.setLineDash([]);
+      dot(0, '#b7c2cf'); dot(v.dh, '#1f62d1'); g.fillStyle = '#1c2228'; g.beginPath(); g.arc(cx, cy, 6, 0, 7); g.fill();
+      const dvcm = SP.vid * 100 * Math.tan(rad(Math.abs(v.dv))), dhcm = SP.vid * 100 * Math.tan(rad(Math.abs(v.dh)));
+      return `모델의 하방각(LDA)은 약 <b>${f1(lda)}°</b>입니다(추정). 회색이 설계, 파랑이 실제입니다.<br>${f1(SP.vid)} m 앞에서 LDA ${f1(Math.abs(v.dv))}° 오차 → 허상이 위아래로 <b>${f1(dvcm)} cm</b>, LOA ${f1(Math.abs(v.dh))}° 오차 → 좌우로 <b>${f1(dhcm)} cm</b> 움직입니다.`; } },
+  res: { ctl: [['lp', '해상도', 5, 40, 1, 15, 'lp/deg']],
+    draw(g, w, h, v) { g.fillStyle = '#000'; g.fillRect(0, 0, w, h); const viewDeg = hfovDeg(), pxDeg = 2 * v.lp, cw = Math.max(4, Math.round(pxDeg * viewDeg)), ch = Math.round(cw * h / w);
+      const off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'); o.fillStyle = '#000'; o.fillRect(0, 0, cw, ch); o.drawImage(hudClear, 0, 0, HUD_W, HUD_H, 0, (ch - cw / ASPECT) / 2, cw, cw / ASPECT);
+      for (let i = 0; i < 8; i++) { o.fillStyle = i % 2 ? '#000' : '#fff'; o.fillRect(Math.round(cw * .04) + i, Math.round(ch * .82), 1, Math.max(2, Math.round(ch * .14))); }
+      g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, w, h); g.fillStyle = '#9aa4ae'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('왼쪽 아래 막대: 선 쌍 4개 · 화면 전체 = 허상 FOV', 12, h - 6);
+      const tftPx = Math.round(2 * v.lp * hfovDeg()); return `시야각 1°에 화소 <b>${2 * v.lp}개</b>. FOV ${f1(hfovDeg())}°(모델)라면 TFT 가로 화소가 약 <b>${tftPx}개</b> 필요합니다(곡면경 흐림 없다고 가정).<br>사람 눈의 한계는 약 30 lp/deg(1분각)입니다.`; } },
+  bright: { ctl: [['n', '휘도', 500, 20000, 100, 12000, 'nit'], ['amb', '배경', 0, 3, 1, 2, 'sel:밤 (2 nit)|흐린 낮 (2,000)|맑은 낮 도로 (6,000)|눈길·역광 (15,000)']],
+    draw(g, w, h, v) { const bg = [2, 2000, 6000, 15000][v.amb], lvl = [0, .45, .75, 1][v.amb]; road(g, w, h, lvl, v.amb === 0);
+      const seen = bg * .7, cr = (v.n + seen) / seen, vis = Math.max(0, Math.min(1, (cr - 1) / 1.5)); const hw = w * .55, hh = hw / ASPECT;
+      hud(g, (w - hw) / 2, h * .42 - hh / 2, hw, hh, v.amb === 0 ? Math.min(1, v.n / 300) : .15 + .85 * vis);
+      return `배경은 윈드실드 투과(약 70% 가정) 후 ${Math.round(seen).toLocaleString()} nit. 배경 대비 HUD의 비율 <b>${f2(cr)}</b>.<br>1에 가까울수록 배경에 묻힙니다. 그림의 선명도는 이 비율로 계산한 예시입니다. ${v.amb === 0 ? '밤에는 수백 nit면 충분하고, 너무 밝으면 눈이 부십니다.' : ''}`; } },
+  grad: { ctl: [['gr', '휘도 변화율', 0, 10, .5, 3, '%/cm'], ['x', '머리 위치', -6.5, 6.5, .5, 3, 'cm']],
+    draw(g, w, h, v) { g.fillStyle = '#f6f8fa'; g.fillRect(0, 0, w, h); const bw = w - 80, bh = h * .45, bx = 40, by = 30;
+      for (let i = 0; i < 52; i++) { const xc = -6.5 + 13 * (i + .5) / 52, L = Math.max(0, 1 - v.gr / 100 * Math.abs(xc)); g.fillStyle = `rgb(${Math.round(255 * L)},${Math.round(225 * L + 20)},${Math.round(130 * L + 20)})`; g.fillRect(bx + bw * i / 52, by, bw / 52 + 1, bh); }
+      g.strokeStyle = '#1c2228'; g.strokeRect(bx, by, bw, bh); g.fillStyle = '#1c2228'; g.font = '12px "IBM Plex Sans KR", sans-serif'; g.fillText('아이박스 13 cm (가로)', bx, by - 8);
+      const hx = bx + bw * (v.x + 6.5) / 13; g.beginPath(); g.arc(hx, by + bh / 2, 9, 0, 7); g.fillStyle = '#1f62d1'; g.fill();
+      const L = Math.max(0, 1 - v.gr / 100 * Math.abs(v.x)); hud(g, w / 2 - 120, by + bh + 14, 240, 240 / ASPECT, .2 + .8 * L);
+      return `중심에서 ${f1(Math.abs(v.x))} cm 움직이면 휘도가 <b>${f1((1 - L) * 100)}%</b> 줄어듭니다. 아이박스 끝(6.5 cm)에서는 ${f1(Math.min(100, v.gr * 6.5))}%.`; } },
+  sun: { ctl: [['pol', 'HUD 빛의 편광', 0, 2, 1, 0, 'sel:수평 (s편광)|수직 (p편광)|원편광'], ['ax', '선글라스 축', 0, 90, 5, 90, '°']],
+    draw(g, w, h, v) { road(g, w, h, .9); const pa = [0, 90, null][v.pol], T = pa === null ? .5 : Math.cos((v.ax - pa) * Math.PI / 180) ** 2, sg = .3;
+      g.fillStyle = 'rgba(30,25,15,.55)'; g.fillRect(0, 0, w, h); const hw = w * .55, hh = hw / ASPECT; hud(g, (w - hw) / 2, h * .42 - hh / 2, hw, hh, Math.max(.03, T));
+      const B = +(store.get('bright').v63e) || 12000; return `편광 선글라스는 보통 축이 수직(90°)입니다. 통과율 cos²(각도차) = <b>${Math.round(T * 100)}%</b>.<br>휘도 ${B.toLocaleString()} nit × 선글라스 기본 투과 약 ${sg * 100}%(가정) × ${Math.round(T * 100)}% ≈ <b>${Math.round(B * sg * T).toLocaleString()} nit</b>`; } },
+  white: { ctl: [['u', '균일도 (최소/최대)', 50, 100, 1, 80, '%']],
+    draw(g, w, h, v) { const k = 1 - v.u / 100, pts = []; for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) pts.push([i, j]);
+      const L = (x, y) => 1 - k * Math.min(1, Math.hypot(x - .5, (y - .5) * .8) / .62);
+      for (let y = 0; y < h; y += 4) for (let x = 0; x < w; x += 4) { const l = L(x / w, y / h); const c = Math.round(255 * l); g.fillStyle = `rgb(${c},${c},${Math.round(c * .97)})`; g.fillRect(x, y, 4, 4); }
+      g.font = '600 12px "IBM Plex Mono", monospace'; let mn = 1, mx = 0;
+      pts.forEach(([i, j]) => { const x = (i * .4 + .1) * w, y = (j * .4 + .1) * h, l = L(i * .4 + .1, j * .4 + .1); mn = Math.min(mn, l); mx = Math.max(mx, l); g.fillStyle = '#1f62d1'; g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); g.fillText(Math.round(l * 100) + '%', x + 7, y + 4); });
+      return `흰 화면 9점 측정 예시. 최소/최대 = <b>${Math.round(mn / mx * 100)}%</b>. 가장자리가 어두워지는 형태로 그렸습니다(백라이트 가장자리 부족이 흔한 원인).`; } },
+  black: { ctl: [['u', '균일도', 30, 100, 1, 60, '%']],
+    draw(g, w, h, v) { g.fillStyle = '#05070b'; g.fillRect(0, 0, w, h); const hw = w * .62, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .45 - hh / 2;
+      g.fillStyle = 'rgba(120,130,140,.12)'; g.fillRect(x0, y0, hw, hh); const leak = (100 - v.u) / 70;
+      for (const [cx, cy] of [[x0, y0], [x0 + hw, y0 + hh]]) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, hh * 1.1); gr.addColorStop(0, `rgba(170,180,195,${.55 * leak})`); gr.addColorStop(1, 'rgba(170,180,195,0)'); g.fillStyle = gr; g.fillRect(x0, y0, hw, hh); }
+      hud(g, x0, y0, hw, hh, .9); return `밤, 검은 바탕 위 HUD. 균일도가 낮을수록 모서리 빛샘(뿌연 얼룩)이 커집니다. 조립 때 TFT를 누르는 힘이 모서리에 몰리면 생기기 쉽습니다.`; } },
+  contrast: { ctl: [['cr', '명암비', 100, 5000, 50, 1000, ':1'], ['n', '밤 휘도 설정', 50, 1000, 10, 300, 'nit']],
+    draw(g, w, h, v) { road(g, w, h, 0, true); const blk = v.n / v.cr, bgL = 1.5, vis = Math.min(.6, blk / bgL * .35); const hw = w * .6, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .42 - hh / 2;
+      g.fillStyle = `rgba(150,160,175,${vis})`; g.fillRect(x0, y0, hw, hh); hud(g, x0, y0, hw, hh, .95);
+      return `밤에 ${v.n} nit로 띄우면 검은 영역 휘도 = ${v.n} ÷ ${v.cr} = <b>${f2(blk)} nit</b>. 밤 도로 배경(약 1~2 nit)에 비해 크면 회색 사각형("포스트카드")이 보입니다.`; } },
+  ctol: { ctl: [['d', '허용 편차 (Δx, Δy)', 0, .03, .001, .01, '']],
+    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const cw = Math.min(w * .55, h * 1.1), m = cie(g, cw, h);
+      const [x, y] = D65; g.fillStyle = 'rgba(31,98,209,.18)'; g.fillRect(m.X(x - v.d), m.Yp(y + v.d), m.X(x + v.d) - m.X(x - v.d), m.Yp(y - v.d) - m.Yp(y + v.d)); g.fillStyle = '#1f62d1'; g.beginPath(); g.arc(m.X(x), m.Yp(y), 3, 0, 7); g.fill();
+      const sw = (dx, dy) => { const X = (x + dx) / (y + dy), Z = (1 - x - dx - y - dy) / (y + dy); let r = 3.2406 * X - 1.5372 - .4986 * Z, gg = -.9689 * X + 1.8758 + .0415 * Z, b = .0557 * X - .204 + 1.057 * Z; const mx = Math.max(r, gg, b); return [r, gg, b].map(c => Math.round(255 * Math.pow(Math.max(0, c / mx), 1 / 2.2))); };
+      [[0, 0, '목표'], [v.d, v.d, '+Δ'], [-v.d, -v.d, '−Δ'], [v.d, -v.d, 'x+ y−']].forEach(([dx, dy, t], i) => { const c = sw(dx, dy); g.fillStyle = `rgb(${c})`; g.fillRect(cw + 20 + (i % 2) * 90, 30 + (i >> 1) * 90, 76, 60); g.strokeStyle = '#dde1e6'; g.strokeRect(cw + 20 + (i % 2) * 90, 30 + (i >> 1) * 90, 76, 60); g.fillStyle = '#1c2228'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText(t, cw + 22 + (i % 2) * 90, 104 + (i >> 1) * 90); });
+      return `흰색 목표(x ${D65[0]}, y ${D65[1]}) 둘레 ±${v.d.toFixed(3)} 상자(그림은 크게 확대). 오른쪽은 상자 모서리 색입니다. 0.01만 벗어나도 나란히 두면 차이가 보입니다.`; } },
+  sat: { ctl: [['s', '채도', 40, 100, 1, 80, '%']],
+    draw(g, w, h, v) { road(g, w, h, .7); const cols = [[255, 60, 50, '경고'], [255, 160, 30, '주의'], [60, 230, 120, '정상'], [60, 220, 255, '안내']], k = v.s / 100;
+      cols.forEach(([r, gg, b, t], i) => { const mix = c => Math.round(c * k + 235 * (1 - k)); const x = 40 + i * (w - 80) / 4; g.fillStyle = `rgb(${mix(r)},${mix(gg)},${mix(b)})`; g.beginPath(); g.arc(x + 40, h * .4, 30, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x + 26, h * .4 + 54); });
+      return `채도가 낮아지면 흰빛이 섞인 것처럼 바랩니다. 빨강 경고가 분홍처럼 보이면 의미가 약해집니다. 햇빛이 섞인 미광도 같은 효과를 냅니다.`; } },
+  gamut: { ctl: [['p', '색 영역 (NTSC 대비)', 40, 110, 1, 72, '%']],
+    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const m = cie(g, Math.min(w * .6, h * 1.1), h), c = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), s = Math.sqrt(v.p / 100);
+      const disp = NTSC.map(([x, y]) => [c[0] + (x - c[0]) * s, c[1] + (y - c[1]) * s]);
+      tri(g, m, NTSC, '#66717c', null, [5, 4]); tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.12)');
+      const lx = Math.min(w * .6, h * 1.1) + 16; g.font = '12px "IBM Plex Sans KR", sans-serif'; [['#66717c', 'NTSC (100%)'], ['#c8780f', `sRGB (NTSC 대비 ${Math.round(triArea(SRGB) / triArea(NTSC) * 100)}%)`], ['#1f62d1', `이 디스플레이 (${v.p}%)`]].forEach(([c2, t], i) => { g.fillStyle = c2; g.fillRect(lx, 30 + i * 22, 12, 3); g.fillStyle = '#1c2228'; g.fillText(t, lx + 18, 35 + i * 22); });
+      return `같은 숫자라도 기준이 NTSC냐 sRGB냐에 따라 뜻이 다릅니다. sRGB 100% ≈ NTSC 72%입니다. 파란 삼각형 밖의 색은 표현할 수 없습니다.`; } },
+  derating: { ctl: [['td', '저감 시작 온도', 60, 105, 1, 85, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
+    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const X = t => 40 + (t - 20) / 90 * (w - 60), Yv = p => h - 30 - p * (h - 60), cur = t => t <= v.td ? 1 : Math.max(.3, 1 - (t - v.td) / 20 * .7);
+      g.strokeStyle = '#dde1e6'; for (let t = 20; t <= 110; t += 10) { g.beginPath(); g.moveTo(X(t), Yv(0)); g.lineTo(X(t), Yv(1)); g.stroke(); } g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; for (let t = 20; t <= 110; t += 20) g.fillText(t + '℃', X(t) - 12, h - 12);
+      g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.beginPath(); for (let t = 20; t <= 110; t++) t === 20 ? g.moveTo(X(t), Yv(cur(t))) : g.lineTo(X(t), Yv(cur(t))); g.stroke(); g.lineWidth = 1;
+      g.fillStyle = '#e0541c'; g.beginPath(); g.arc(X(v.t), Yv(cur(v.t)), 6, 0, 7); g.fill(); g.fillStyle = '#1c2228'; g.fillText('휘도', 6, 20);
+      const B = +(store.get('bright').v63e) || 12000; return `${v.t}℃에서 휘도 <b>${Math.round(cur(v.t) * 100)}%</b> ≈ ${Math.round(B * cur(v.t)).toLocaleString()} nit. 저감 곡선 모양(20℃에 걸쳐 30%까지)은 설명용 가정입니다.`; } },
+};
+
+function specTab() {
+  const el = $('#specBody');
+  if (SP.view === 'matrix') { el.innerHTML = matrixHTML(); return; }
+  if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
+  const s = SPECS.find(x => x.id === SP.cur), saved = store.get(s.id);
+  el.innerHTML = `<div class="sp-grid"><nav class="sp-list" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item ${x.id === s.id ? 'on' : ''}" data-spec="${x.id}"><span>${x.ko}</span><small>${x.en.split(' (')[0]}</small></button>`).join('')).join('')}</nav>
+    <article class="sp-detail"><div class="crumb">${SPEC_CATS.find(c => c[0] === s.cat)[1]}</div>
+      <div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span><span class="unit">${s.unit}</span><span class="badge ${s.dir === 'low' ? 'bom' : 'photo'}">${s.dir === 'low' ? '작을수록 좋음' : '클수록 좋음'}</span></div>
+      <p>${s.def}</p>
+      <div class="sp-cols"><section><h3 class="sec">왜 중요한가</h3><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul><h3 class="sec">측정</h3><p class="note">${s.measure}</p></section>
+      <section><h3 class="sec">영향을 주는 부품</h3><ul class="sp-parts">${s.parts.map(([id, lv, note]) => `<li><button class="pchip lv${lv}" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${lv === 2 ? '●' : '○'} ${SPEC_PART(id).name}</button>${note ? `<span>${note}</span>` : ''}</li>`).join('')}</ul><p class="note">● 주요 · ○ 영향. 부품을 누르면 3D 구조도에서 보여 줍니다. 일반적인 HUD 설계 관점의 정리입니다.</p></section></div>
+      <h3 class="sec">수치가 바뀌면 어떻게 보이나</h3><div class="demo"><canvas id="demoCv"></canvas><div class="demo-ctl" id="demoCtl"></div><p class="demo-out" id="demoOut"></p></div>
+      <h3 class="sec">63E 답변 기록 <span class="note">(이 브라우저에만 저장)</span></h3>
+      <div class="sp-form"><label>63E 값 <input data-f="v63e" value="${saved.v63e || ''}" placeholder="예: ${s.id === 'bright' ? '12000' : ''}"></label><label>Tolerance <input data-f="tol" value="${saved.tol || ''}"></label><label class="wide">메모 <input data-f="memo" value="${saved.memo || ''}"></label></div>
+    </article></div>`;
+  buildDemo(s);
+}
+function buildDemo(s) {
+  const D = DEMOS[s.demo], ctl = $('#demoCtl'); SP.vals[s.id] ||= Object.fromEntries(D.ctl.map(c => [c[0], c[5]]));
+  const v = SP.vals[s.id];
+  ctl.innerHTML = D.ctl.map(([k, label, mn, mx, st, def, u]) => u.startsWith('sel:') ? `<label>${label} <select data-k="${k}">${u.slice(4).split('|').map((o, i) => `<option value="${i}" ${+v[k] === i ? 'selected' : ''}>${o}</option>`).join('')}</select></label>`
+    : `<label>${label} <input type="range" data-k="${k}" min="${mn}" max="${mx}" step="${st}" value="${v[k]}"><output>${(+v[k]).toFixed(st < .01 ? 3 : st < 1 ? 1 : 0)}${u ? ' ' + u : ''}</output></label>`).join('');
+  const draw = () => { const [g, w, h] = fitCanvas($('#demoCv')); $('#demoOut').innerHTML = D.draw(g, w, h, v); };
+  ctl.oninput = e => { const k = e.target.dataset.k; if (!k) return; v[k] = +e.target.value; const o = e.target.nextElementSibling; const c = D.ctl.find(c => c[0] === k); if (o && o.tagName === 'OUTPUT') o.textContent = (+v[k]).toFixed(c[4] < .01 ? 3 : c[4] < 1 ? 1 : 0) + (c[6] ? ' ' + c[6] : ''); draw(); };
+  draw(); SP.redraw = draw;
+}
+function matrixHTML() {
+  const parts = ['tft', 'led', 'lens', 'film', 'concave', 'fold', 'cover', 'ws', 'epson', 'upper', 'motor', 'heatsink', 'tftholder', 'foam', 'ledchip'];
+  return `<p class="note">● 주요 영향 · ○ 영향. 행(부품)이나 열(스펙)을 누르면 해당 내용으로 이동합니다. 일반적인 HUD 설계 관점의 정리이며, 이 제품의 설계 자료로 확인한 것은 아닙니다.</p>
+    <div class="tablewrap"><table class="mx"><thead><tr><th></th>${SPECS.map(s => `<th><button data-spec="${s.id}" title="${s.en}">${s.ko}</button></th>`).join('')}</tr></thead><tbody>
+    ${parts.map(id => `<tr><th><button ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button></th>${SPECS.map(s => { const r = s.parts.find(p => p[0] === id); return `<td>${r ? (r[1] === 2 ? '<b title="주요">●</b>' : '<span title="영향">○</span>') : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function issHTML() {
+  return `<p>질문지의 (C) ISS(외관·결함 판정 기준)는 광학 부품 표면과 내부의 결함을 크기·개수로 제한합니다. 같은 크기라도 <b>어느 부품에 있느냐</b>에 따라 운전자에게 보이는 정도가 크게 달라서, 보통 부품별·영역(Zone)별로 기준을 따로 둡니다.</p>
+    <div class="iss-grid">${ISS.map(d => `<div class="iss"><h3>${d.ko} <span class="en">${d.en}</span></h3><p>${d.def}</p><ul>${d.subs.map(t => `<li>${t}</li>`).join('')}</ul></div>`).join('')}</div>
+    <h3 class="sec">같은 결함, 부품별로 어떻게 보이나</h3>
+    <div class="demo"><canvas id="issCv"></canvas><div class="demo-ctl"><label>부품 <select id="issPart">${ISS_PARTS.map(([id, n], i) => `<option value="${i}">${n}</option>`).join('')}</select></label><label>결함 크기 <input type="range" id="issSize" min="0.05" max="1" step="0.05" value="0.2"><output id="issSizeO">0.20 mm</output></label><label>종류 <select id="issKind"><option value="0">검은 점</option><option value="1">흰 점</option><option value="2">긁힘</option></select></label></div><p class="demo-out" id="issOut"></p></div>
+    <p class="note">n/A의 영역(Area)은 보통 광학 유효 영역(Clear aperture)이나 A/B Zone, 단위 면적 기준이며 고객 도면 정의를 따릅니다.</p>`;
+}
+function drawISS() {
+  const cv = $('#issCv'); if (!cv) return;
+  const go = () => { const [g, w, h] = fitCanvas(cv), pi = +$('#issPart').value, d = +$('#issSize').value, kind = +$('#issKind').value, [, name, blur, note] = ISS_PARTS[pi];
+    $('#issSizeO').textContent = d.toFixed(2) + ' mm';
+    road(g, w, h, .55); const hw = w * .62, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .42 - hh / 2; g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(x0, y0, hw, hh); hud(g, x0, y0, hw, hh, .95);
+    const M = imgW() / LCDR.w, arcmin = d / 10 * M / (SP.vid * 100) * 180 / Math.PI * 60, pxPerDeg = w / 24, size = Math.max(1.5, arcmin / 60 * pxPerDeg * 4);
+    let out;
+    if (blur < 0) { g.fillStyle = 'rgba(40,40,40,.9)'; g.beginPath(); g.arc(w * .5, h * .93, Math.max(2, d * 6), 0, 7); g.fill(); out = `${name}: ${note}`; }
+    else { const r = size + blur * 40, a = Math.max(.06, 1 - blur) * (kind === 1 ? .9 : .8); const cx = x0 + hw * .3, cy = y0 + hh * .55;
+      g.save(); g.filter = `blur(${blur * 14}px)`; g.fillStyle = kind === 1 ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+      if (kind === 2) { g.lineWidth = Math.max(1, size * .4) + blur * 10; g.strokeStyle = g.fillStyle; g.beginPath(); g.moveTo(cx - r * 4, cy - r); g.lineTo(cx + r * 4, cy + r); g.stroke(); } else { g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill(); }
+      g.restore(); out = `${name}: ${note}${pi === 0 ? `<br>TFT 위 ${d.toFixed(2)} mm 결함 → 허상에서 약 <b>${f1(d * M)} mm</b> 크기, 눈에는 <b>${f1(arcmin)}분각</b>(눈의 한계 약 1분각, 모델 배율 ${f1(M)}배 기준). 결함 크기는 그림에서 4배 과장.` : ''}`; }
+    $('#issOut').innerHTML = out; };
+  ['issPart', 'issSize', 'issKind'].forEach(id => $('#' + id).addEventListener('input', go)); go(); SP.redraw = go;
+}
+$('#specPage').addEventListener('click', e => {
+  const sp = e.target.closest('[data-spec]'), pt = e.target.closest('[data-part]'), ws = e.target.closest('[data-ws]'), vw = e.target.closest('[data-spview]');
+  if (vw) { SP.view = vw.dataset.spview; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b === vw)); specTab(); return; }
+  if (sp) { SP.view = 'items'; SP.cur = sp.dataset.spec; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); specTab(); $('#specPage').scrollTo({ top: 0 }); return; }
+  if (pt) { setTab('struct'); select({ id: pt.dataset.part }); return; }
+  if (ws) { setTab('struct'); goView('car'); }
+});
+$('#specPage').addEventListener('change', e => { const f = e.target.dataset.f; if (!f) return; const k = SP.cur, o = store.get(k); o[f] = e.target.value; store.set(k, o); if (SP.redraw) SP.redraw(); });
+$('#vidIn').value = SP.vid.toFixed(1);
+$('#vidIn').addEventListener('input', e => { const v = +e.target.value; if (v > 1) { SP.vid = v; if (SP.redraw) SP.redraw(); } });
+addEventListener('resize', () => { if (curTab === 'spec' && SP.redraw) SP.redraw(); });
+
+/* tabs */
+let curTab = 'struct';
+function setTab(t) {
+  curTab = t; document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  document.body.dataset.tab = t; $('#specPage').hidden = t !== 'spec';
+  if (t === 'spec') { document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === SP.view)); specTab(); }
+  if (!$('#settings').hidden) setSettings(false);
+  requestAnimationFrame(() => { resize(); frameOffset(); });
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
 /* ───────────────────────── loop ───────────────────────── */
 function resize() { const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; frameOffset(); pMat.uniforms.uScale.value = pMatS.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
 new ResizeObserver(resize).observe(stageEl); addEventListener('resize', frameOffset);
@@ -1177,6 +1568,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let last = performance.now(), screwA = 0;
 const col = new THREE.Color();
 function tick(now) {
+  if (curTab === 'spec') { last = now; requestAnimationFrame(tick); return; }
   const dt = Math.min(.05, (now - last) / 1000); last = now; const k = 1 - Math.exp(-dt * (reduced ? 30 : 7));
   cam.t.lerp(cam.gt, k); cam.r += (cam.gr - cam.r) * k; cam.th += (cam.gth - cam.th) * k; cam.ph += (cam.gph - cam.ph) * k;
   camera.position.set(cam.t.x + cam.r * Math.sin(cam.ph) * Math.sin(cam.th), cam.t.y + cam.r * Math.cos(cam.ph), cam.t.z + cam.r * Math.sin(cam.ph) * Math.cos(cam.th)); camera.lookAt(cam.t);
