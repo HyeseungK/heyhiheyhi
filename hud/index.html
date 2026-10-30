@@ -147,8 +147,8 @@ h3.sec { font: 600 11px/1 var(--mono); color: var(--muted); letter-spacing: .06e
 .ptable td.mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
 .ptable tbody tr { cursor: pointer; }
 .ptable tbody tr:hover { background: #f6f8fa; }
-.tabs { display: flex; gap: 2px; border-bottom: 0; }
-.tabs button { padding: 7px 12px; font-size: 13.5px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; }
+.tabs { display: flex; gap: 2px; flex: none; }
+.tabs button { flex: none; white-space: nowrap; padding: 7px 12px; font-size: 13.5px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; }
 .tabs button:hover { color: var(--fg); }
 .tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spec"] #setBtn { display: none; }
@@ -251,7 +251,17 @@ table.mx b { color: var(--accent); }
 #lightbox .bar { display: flex; gap: 10px; align-items: center; justify-content: center; padding-top: 12px; color: #dfe4e8; font-size: 13px; }
 #lightbox .close { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(16px, env(safe-area-inset-right, 0px)); }
 
-@media (max-width: 1100px) { header .sub { display: none; } }
+header > * { flex: none; }
+header .sp { flex: 1; }
+.viewbar, .views button { white-space: nowrap; }
+@media (max-width: 1560px) { header .sub { display: none; } }
+@media (max-width: 1260px) { .viewbar .lab, .views button svg { display: none; } .views button { padding: 6px 9px; } }
+@media (max-width: 1080px) and (min-width: 901px) {
+  header { gap: 8px 10px; }
+  .hdr-btn .chev { display: none; }
+  .tabs button { padding: 7px 9px; }
+  .views button { padding: 6px 7px; font-size: 12.5px; }
+}
 @media (max-width: 900px) {
   :root { --hdr: 100px; }
   header { flex-wrap: wrap; align-content: center; padding-top: calc(env(safe-area-inset-top, 0px) + 6px); }
