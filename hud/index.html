@@ -1525,12 +1525,23 @@ const DEMOS = {
     draw(g, w, h, v) { road(g, w, h, 0, true); const blk = v.n / v.cr, bgL = 1.5, vis = Math.min(.6, blk / bgL * .35); const hw = w * .6, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .42 - hh / 2;
       g.fillStyle = `rgba(150,160,175,${vis})`; g.fillRect(x0, y0, hw, hh); hud(g, x0, y0, hw, hh, .95);
       return `밤에 ${v.n} nit로 띄우면 검은 영역 휘도 = ${v.n} ÷ ${v.cr} = <b>${f2(blk)} nit</b>. 밤 도로 배경(약 1~2 nit)에 비해 크면 회색 사각형("포스트카드")이 보입니다.`; } },
-  ctol: { ctl: [['d', '허용 편차 (Δx, Δy)', 0, .03, .001, .01, '']],
-    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const cw = Math.min(w * .55, h * 1.1), m = cie(g, cw, h);
-      const [x, y] = D65; g.fillStyle = 'rgba(31,98,209,.18)'; g.fillRect(m.X(x - v.d), m.Yp(y + v.d), m.X(x + v.d) - m.X(x - v.d), m.Yp(y - v.d) - m.Yp(y + v.d)); g.fillStyle = '#1f62d1'; g.beginPath(); g.arc(m.X(x), m.Yp(y), 3, 0, 7); g.fill();
-      const sw = (dx, dy) => { const X = (x + dx) / (y + dy), Z = (1 - x - dx - y - dy) / (y + dy); let r = 3.2406 * X - 1.5372 - .4986 * Z, gg = -.9689 * X + 1.8758 + .0415 * Z, b = .0557 * X - .204 + 1.057 * Z; const mx = Math.max(r, gg, b); return [r, gg, b].map(c => Math.round(255 * Math.pow(Math.max(0, c / mx), 1 / 2.2))); };
-      [[0, 0, '목표'], [v.d, v.d, '+Δ'], [-v.d, -v.d, '−Δ'], [v.d, -v.d, 'x+ y−']].forEach(([dx, dy, t], i) => { const c = sw(dx, dy); g.fillStyle = `rgb(${c})`; g.fillRect(cw + 20 + (i % 2) * 90, 30 + (i >> 1) * 90, 76, 60); g.strokeStyle = '#dde1e6'; g.strokeRect(cw + 20 + (i % 2) * 90, 30 + (i >> 1) * 90, 76, 60); g.fillStyle = '#1c2228'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText(t, cw + 22 + (i % 2) * 90, 104 + (i >> 1) * 90); });
-      return `흰색 목표(x ${D65[0]}, y ${D65[1]}) 둘레 ±${v.d.toFixed(3)} 상자(그림은 크게 확대). 오른쪽은 상자 모서리 색입니다. 0.01만 벗어나도 나란히 두면 차이가 보입니다.`; } },
+  ctol: { ctl: [['d', '공차 (Δx, Δy)', 0, .03, .001, .01, ''], ['dir', '벗어나는 쪽', 0, 3, 1, 0, 'sel:노랑·주황 쪽 (x+, y+)|파랑 쪽 (x−, y−)|초록 쪽 (x−, y+)|분홍·보라 쪽 (x+, y−)'], ['ex', '보기', 0, 1, 1, 0, 'sel:실제 차이|차이 3배 과장']],
+    draw(g, w, h, v) { const [sx, sy] = [[1, 1], [-1, -1], [-1, 1], [1, -1]][v.dir], k = v.ex ? 3 : 1, dx = sx * v.d * k, dy = sy * v.d * k;
+      // xy → linear sRGB, normalised so the brightest channel is 1
+      const lin = (x, y) => { const X = x / y, Z = (1 - x - y) / y, r = 3.2406 * X - 1.5372 - .4986 * Z, gg = -.9689 * X + 1.8758 + .0415 * Z, b = .0557 * X - .204 + 1.057 * Z, m = Math.max(r, gg, b); return [r, gg, b].map(c => Math.max(0, c / m)); };
+      const t0 = lin(D65[0], D65[1]), t1 = lin(D65[0] + dx, D65[1] + dy), gam = c => Math.round(255 * Math.pow(c, 1 / 2.2));
+      const tinted = f => { const off = document.createElement('canvas'); off.width = HUD_W; off.height = HUD_H; const o = off.getContext('2d'); o.drawImage(hudClear, 0, 0); o.globalCompositeOperation = 'multiply'; o.fillStyle = `rgb(${f.map(c => Math.round(255 * c)).join(',')})`; o.fillRect(0, 0, HUD_W, HUD_H); o.globalCompositeOperation = 'destination-in'; o.drawImage(hudClear, 0, 0); return off; };
+      const ratio = t1.map((c, i) => c / (t0[i] || 1)), m = Math.max(...ratio), f = ratio.map(c => c / m);
+      const half = w / 2, ph = h - 46;
+      [[0, null, '차 A · 목표 색'], [half, tinted(f), `차 B · 공차 끝 (${v.d.toFixed(3)}${k > 1 ? ' × 3' : ''})`]].forEach(([x0, img, label]) => {
+        g.save(); g.beginPath(); g.rect(x0, 0, half, ph); g.clip(); g.translate(x0, 0); road(g, half, ph, .35); g.restore();
+        const hw = half * .82, hh = hw / ASPECT; g.drawImage(img || hudClear, x0 + (half - hw) / 2, ph * .42 - hh / 2, hw, hh);
+        g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(x0 + 8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(label, x0 + 18, 23);
+      });
+      g.fillStyle = '#fff'; g.fillRect(half - 1, 0, 2, ph);
+      g.fillStyle = `rgb(${t0.map(gam)})`; g.fillRect(0, ph, half, 46); g.fillStyle = `rgb(${t1.map(gam)})`; g.fillRect(half, ph, half, 46);
+      g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('흰색만 비교', 10, ph + 28);
+      return `같은 차종인데 HUD마다 흰색이 이만큼 다를 수 있다는 뜻입니다. 흰 숫자·글자가 ${['누렇게', '푸르게', '초록빛으로', '분홍빛으로'][v.dir]} 보입니다.<br>흰색 근처에서 눈이 겨우 구분하는 차이는 대략 0.003~0.005(대략적 기준)라, 0.01이면 클러스터나 센터 화면과 나란히 볼 때 눈에 띕니다. LED 빈(bin)을 좁게 관리할수록 공차를 줄일 수 있습니다.`; } },
   sat: { ctl: [['s', '채도', 40, 100, 1, 80, '%']],
     draw(g, w, h, v) { road(g, w, h, .7); const cols = [[255, 60, 50, '경고'], [255, 160, 30, '주의'], [60, 230, 120, '정상'], [60, 220, 255, '안내']], k = v.s / 100;
       cols.forEach(([r, gg, b, t], i) => { const mix = c => Math.round(c * k + 235 * (1 - k)); const x = 40 + i * (w - 80) / 4; g.fillStyle = `rgb(${mix(r)},${mix(gg)},${mix(b)})`; g.beginPath(); g.arc(x + 40, h * .4, 30, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x + 26, h * .4 + 54); });
