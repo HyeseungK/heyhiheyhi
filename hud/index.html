@@ -328,13 +328,72 @@ header .sp { flex: 1; }
   .col .float { position: fixed; z-index: 7; left: 8px; right: 8px; width: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); max-height: 55%; }
   .hint { display: none; }
 }
+/* BOM tab: table on the left, the live 3D model on the right */
+body[data-tab="bom"] { --bomw: 58%; }
+body[data-tab="bom"] .stage { left: var(--bomw); border-left: 1px solid var(--line); }
+body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
+#bomPage { position: fixed; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); left: 0; width: var(--bomw); bottom: 0; background: var(--bg); display: flex; flex-direction: column; gap: 10px; padding: 12px 16px 0 max(16px, env(safe-area-inset-left, 0px)); }
+.bm-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.bm-head h2 { margin: 0; font-size: 17px; }
+.bm-head .note { white-space: nowrap; }
+.bm-q { flex: 1 1 160px; min-width: 140px; max-width: 260px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; font: inherit; font-size: 13px; background: var(--panel); color: var(--fg); }
+.bm-q:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.bm-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.bm-kpi div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.bm-kpi b { display: block; font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bm-kpi span { font-size: 11.5px; color: var(--muted); }
+.bm-wt { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px 6px; }
+.bm-wt .lab { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.bm-bar { display: flex; height: 22px; border-radius: 5px; overflow: hidden; gap: 1px; background: var(--line); }
+.bm-bar button { min-width: 0; height: 100%; font-size: 10.5px; color: #fff; overflow: hidden; white-space: nowrap; text-overflow: clip; padding: 0 3px; opacity: .88; }
+.bm-bar button:hover, .bm-bar button.on { opacity: 1; box-shadow: inset 0 0 0 2px var(--fg); }
+.bm-bar .rest { background: repeating-linear-gradient(45deg, #c9cfd6 0 4px, #d8dde2 4px 8px); color: var(--muted); }
+.bm-leg { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+.bm-leg i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.bm-tbl { flex: 1; min-height: 0; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-bottom: 0; border-radius: 8px 8px 0 0; }
+.bm-tbl table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.bm-tbl thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); text-align: left; font-weight: 600; font-size: 11.5px; color: var(--muted); padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.bm-tbl td { padding: 6px 8px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.bm-tbl td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bm-tbl td.mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+.bm-tbl tbody tr[data-r] { cursor: pointer; }
+.bm-tbl tbody tr[data-r]:hover { background: #f6f8fa; }
+.bm-tbl tr.on { background: var(--accent-soft) !important; box-shadow: inset 3px 0 0 var(--accent); }
+.bm-tbl tr.on .nm b { color: var(--accent); }
+.bm-tbl .nm b { font-weight: 600; }
+.bm-tbl .nm small { display: block; font-size: 11px; color: var(--muted); }
+.bm-tbl tr.sec td { position: sticky; top: 30px; background: #f3f5f7; font-weight: 700; font-size: 12px; padding: 6px 8px; color: var(--fg); }
+.bm-tbl tr.sec td span { font-weight: 400; color: var(--muted); margin-left: 8px; }
+.bm-tbl .lk { font-size: 11px; white-space: nowrap; color: var(--muted); }
+.bm-tbl .lk.y { color: var(--accent); font-weight: 600; }
+.bm-tbl tr.det td { background: #fbfcfd; padding: 4px 8px 12px 22px; cursor: default; }
+.bm-det { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: start; }
+.bm-det dl { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 12px; }
+.bm-det dt { color: var(--muted); }
+.bm-det dd { margin: 0; overflow-wrap: anywhere; }
+.bm-det .acts { display: flex; flex-direction: column; gap: 6px; }
+.bm-det p { grid-column: 1 / -1; margin: 2px 0 0; }
+.bm-none { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+@media (max-width: 1240px) { .bm-hide { display: none; } body[data-tab="bom"] { --bomw: 62%; } }
+@media (max-width: 900px) {
+  body[data-tab="bom"] .stage { left: 0; top: auto; height: 40%; border-left: 0; border-top: 1px solid var(--line); }
+  #bomPage { width: auto; right: 0; bottom: 40%; padding-right: 16px; }
+  .bm-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bm-wt { display: none; }
+  .bm-kpi, .bm-head .note { display: none; }
+  .hdr-btn .chev { display: none; }
+  .tabs button { padding: 7px 8px; font-size: 13px; }
+  .bm-det { grid-template-columns: 1fr; }
+  .bm-det dl { grid-template-columns: max-content minmax(0, 1fr); }
+  .bm-hide2 { display: none; }
+}
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body>
 <header>
   <div class="ttl"><h1>Zeekr 7X AR-HUD 해부도</h1><span class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</span></div>
-  <div class="tabs" role="tablist" aria-label="보기"><button role="tab" data-tab="struct" aria-selected="true">3D 구조도</button><button role="tab" data-tab="spec" aria-selected="false">광학 스펙</button></div>
+  <div class="tabs" role="tablist" aria-label="보기"><button role="tab" data-tab="struct" aria-selected="true">3D 구조도</button><button role="tab" data-tab="spec" aria-selected="false">광학 스펙</button><button role="tab" data-tab="bom" aria-selected="false">BOM</button></div>
   <div class="viewbar"><span class="lab">시점</span>
   <nav class="views" aria-label="시점">
     <button data-view="iso" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>전체</button>
@@ -371,6 +430,15 @@ header .sp { flex: 1; }
     <section id="info" class="float" aria-label="상세 정보"><div class="phead"><span class="ic">i</span><span id="infoTitle">제품 정보</span><button class="x" data-closep="info" aria-label="상세 정보 접기">접기 ›</button></div><div class="pbody" id="infoBody"></div></section>
   </div>
 </div>
+
+<main id="bomPage" hidden>
+  <div class="bm-head"><h2>BOM</h2><span class="note">Zeekr_EX-1423940 · BoM KR 시트</span>
+    <div class="seg" id="bmFilt"><button data-bf="all" aria-pressed="true">전체</button><button data-bf="mech" aria-pressed="false">기구·광학</button><button data-bf="pcb" aria-pressed="false">전자부품</button><button data-bf="3d" aria-pressed="false">3D 연결</button></div>
+    <input id="bomQ" class="bm-q" type="search" placeholder="부품명 · 제조사 · P/N 검색" aria-label="BOM 검색"></div>
+  <div class="bm-kpi" id="bmKpi"></div>
+  <div class="bm-wt" id="bmWt"></div>
+  <div class="bm-tbl"><table><thead><tr><th>부품</th><th class="n">수량</th><th class="n">중량 g</th><th class="bm-hide2">크기 mm</th><th>소재 · 규격</th><th class="bm-hide">제조사</th><th class="bm-hide">공정</th><th>3D</th></tr></thead><tbody id="bomBody"></tbody></table></div>
+</main>
 
 <main id="specPage" hidden>
   <div class="sp-wrap">
@@ -1151,6 +1219,7 @@ function select(sel, doFocus = true) {
   state.sel = sel; state.iso = false; applyVisual(); renderCard(); $('#infoBody').scrollTop = 0;
   if (sel) setPanel('info', true);
   if (sel && doFocus) focus(selIds());
+  globalThis.bomSync?.(sel);
 }
 function startPlay(i = 0) { play.on = true; play.paused = false; state.iso = false; setExplode(0); goStep(i); }
 function goStep(i) { play.i = i; play.t = 0; state.step = i; state.tiltT = 0; state.bl = false; state.blT = 0; STEPS[i].run(); applyVisual(); renderCard(); }
@@ -1238,7 +1307,7 @@ function renderInfo() {
     el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
       <div class="actions">${iso}${blBtn}${back}</div><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
       ${sel.g === 'chips' ? `<h3 class="sec">주요 칩 · AEC-Q100</h3><div class="tablewrap"><table class="ptable"><thead><tr><th>부품</th><th>제조사</th><th>P/N</th><th>등급</th></tr></thead><tbody>${['mcu', 'max', 'epson', ...G.kids].map(k => `<tr data-sel="${k}"><td>${P[k].name}</td><td>${P[k].maker}</td><td class="mono">${P[k].pn}</td><td>${P[k].grade.replace('Grade ', 'G')}</td></tr>`).join('')}</tbody></table></div>` : ''}
-      <h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 9))}`;
+      ${bomInfo('g:' + sel.g)}<h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 9))}`;
     return;
   }
   const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
@@ -1247,6 +1316,7 @@ function renderInfo() {
     <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
     ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
+    ${bomInfo(sel.id)}
     ${(() => { const rel = SPECS.filter(x => x.parts.some(q => q[0] === sel.id)); return rel.length ? `<h3 class="sec">관련 광학 스펙</h3><div class="relspec">${rel.map(x => `<button class="pchip ${x.parts.find(q => q[0] === sel.id)[1] === 2 ? 'lv2' : ''}" data-gospec="${x.id}">${x.ko}</button>`).join('')}</div>` : ''; })()}
     <h3 class="sec">실물 사진</h3>${thumbs(p.photos)}`;
 }
@@ -1265,6 +1335,7 @@ $('#infoBody').addEventListener('input', e => { if (e.target.id === 'blSpread') 
 $('#infoBody').addEventListener('click', e => {
   const t = e.target, k = t.closest('.kids [data-sel], .ptable [data-sel]'), phB = t.closest('[data-photo]');
   if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderInfo(); focus(selIds()); return; }
+  if (t.closest('[data-gobom]')) { setTab('bom'); return; }
   if (t.closest('[data-gospec]')) { SP.view = 'items'; SP.cur = t.closest('[data-gospec]').dataset.gospec; setTab('spec'); return; }
   if (t.closest('[data-close]')) { select(null); return; }
   if (t.closest('[data-bl]')) { enterBL(); return; }
@@ -1275,7 +1346,7 @@ $('#infoBody').addEventListener('click', e => {
 // keep the subject centred in the space the open windows leave free
 function frameOffset() {
   const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
-  let x = 0; if (!mobile()) { if (!$('#left').hidden) x -= 156; if (!$('#info').hidden || !$('#play').hidden) x += 170; }
+  let x = 0; if (!mobile() && document.body.dataset.tab !== 'bom') { if (!$('#left').hidden) x -= 156; if (!$('#info').hidden || !$('#play').hidden) x += 170; }
   if (x) camera.setViewOffset(w, h, x, 0, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix();
 }
 let lb = { list: [], i: 0 };
@@ -1666,11 +1737,159 @@ $('#vidIn').value = SP.vid.toFixed(1);
 $('#vidIn').addEventListener('input', e => { const v = +e.target.value; if (v > 1) { SP.vid = v; if (SP.redraw) SP.redraw(); } });
 addEventListener('resize', () => { if (curTab === 'spec' && SP.redraw) SP.redraw(); });
 
+/* ───────────────────────── BOM (Zeekr_EX-1423940_BoM_Full, BoM KR sheet) ───────────────────────── */
+const BOM = [
+  {"r": 4, "lv": 1, "sec": "asm", "ko": "헤드업 디스플레이", "cn": "抬头显示器", "pn": "6608351499", "qty": "1", "unit": "대", "src": "자체 제작", "w": "2048", "dim": ["418", "268", "203"], "proc": "조립", "asm": "기타", "look": "Y"},
+  {"r": 5, "lv": 2, "sec": "mech", "ko": "상부 커버", "cn": "上盖", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "336", "dim": ["354.8", "253.4", "113.2"], "maker": "Juwei (聚威)", "spec": "100G4U/BK135", "surf": "무늬 가공", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "upper"},
+  {"r": 6, "lv": 2, "sec": "mech", "ko": "베이스", "cn": "底座", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "630", "dim": ["418", "253.4", "132.4"], "maker": "Juwei (聚威)", "spec": "80GL8/BK177", "surf": "도장", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "lower"},
+  {"r": 7, "lv": 2, "sec": "mech", "ko": "모터 커버", "cn": "马达盖", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "185", "dim": ["298", "173", "78"], "maker": "Juwei (聚威)", "spec": "100G4U/BK135", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "motorcover"},
+  {"r": 8, "lv": 2, "sec": "mech", "ko": "TFT브래킷", "cn": "TFT支架", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "29", "dim": ["153", "68", "27"], "maker": "Juwei (聚威)", "spec": "70CM/BK446", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8 kgCO2eq/kg", "look": "N", "id": "tftholder"},
+  {"r": 9, "lv": 2, "sec": "mech", "ko": "방열판A", "cn": "散热器A", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "214", "dim": ["174", "101", "48"], "maker": "Guangdong Aluminum Alloy (广东铝合金) / Others", "spec": "ADC12", "surf": "탈지", "proc": "다이캐스팅", "asm": "압착", "co2": "2.1 kgCO2eq/kg", "look": "Y", "id": "heatsink"},
+  {"r": 10, "lv": 2, "sec": "mech", "ko": "스프링 접점", "cn": "弹片", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "0.3", "w": "0.5", "dim": ["35", "7.5", "1.1"], "maker": "Guangzhou Douyuan (广州斗原) / Others", "spec": "SUS304", "proc": "프레스 가공", "asm": "압착", "co2": "2.1 kgCO2eq/kg", "look": "Y"},
+  {"r": 11, "lv": 2, "sec": "mech", "ko": "조정 기구 어셈블리", "cn": "调整机构组件", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "w": "50", "dim": ["49", "", ""], "maker": "Leili (雷利)", "proc": "조립", "asm": "열접합 성형", "co2": "6.3 kgCO2eq/kg", "look": "N", "id": "motor"},
+  {"r": 12, "lv": 2, "sec": "mech", "ko": "5.1인치 쇼트 백라이트", "cn": "5.1吋短背光", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "w": "75", "dim": ["155", "", ""], "mtype": "복합 재료", "maker": "Liangyu (亮宇) & Jufei (聚飞)", "surf": "조립", "proc": "조립", "asm": "스폿 용접", "co2": "2.7 kgCO2eq/kg", "look": "N", "id": "g:backlight"},
+  {"r": 13, "lv": 2, "sec": "mech", "ko": "TFT디스플레이", "cn": "TFT屏", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["128.6", "", ""], "maker": "Tianma (天马)", "spec": "TL051XFKP01-00", "proc": "SMT", "asm": "접착", "look": "N", "id": "tft"},
+  {"r": 14, "lv": 2, "sec": "mech", "ko": "2차 곡면 미러", "cn": "二级曲面镜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "8.5", "w": "283", "dim": ["314", "", ""], "maker": "Mitsubishi", "spec": "S3000UR", "surf": "도금", "proc": "도금", "asm": "스프레이 코팅", "co2": "2.7 kgCO2eq/kg", "look": "N", "id": "concave"},
+  {"r": 15, "lv": 2, "sec": "mech", "ko": "1차 곡면 미러", "cn": "一级曲面镜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "45", "dim": ["174.5", "", ""], "maker": "CSG Holding (南玻集团) / Others", "spec": "유리", "surf": "도금", "proc": "진공 코팅", "asm": "스프레이 코팅", "co2": "2.38 kgCO2eq/kg", "look": "N", "id": "fold"},
+  {"r": 16, "lv": 2, "sec": "mech", "ko": "방진 필름", "cn": "防尘膜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "1", "w": "30", "dim": ["324", "", ""], "maker": "Sunnypol (三利谱)", "spec": "SLP/HCPC/X3", "surf": "재단", "proc": "다이 커팅", "asm": "접착", "co2": "2.9kgCO2eq/kg", "look": "Y", "id": "cover"},
+  {"r": 17, "lv": 3, "sec": "pcb", "ko": "PCB", "cn": "PCB", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "dim": ["134", "", ""], "mtype": "복합 재료", "mat": "FR4", "maker": "Kingboard (建滔)", "grade": "FR4", "spec": "메인 제어 PCB", "surf": "OSP", "proc": "SMT", "asm": "납땜", "co2": "4.55 kgCO2eq/kg", "look": "N", "id": "pcb"},
+  {"r": 18, "lv": 3, "sec": "pcb", "ko": "0402커패시터", "cn": "0402电容", "qty": "144", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Samsung / Murata", "spec": "10pF-1uF", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 19, "lv": 3, "sec": "pcb", "ko": "0603커패시터", "cn": "0603电容", "qty": "21", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Samsung / Murata", "spec": "220nF-10uF", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 20, "lv": 3, "sec": "pcb", "ko": "0805커패시터", "cn": "0805电容", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.25", "1.25"], "mtype": "복합 재료", "maker": "Samsung / Taiyo Yuden", "spec": "10uF/22uF", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 21, "lv": 3, "sec": "pcb", "ko": "1206커패시터", "cn": "1206电容", "qty": "15", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "1.6", "1.6"], "mtype": "복합 재료", "maker": "Murata / Taiyo Yuden", "spec": "1uF-22uF", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 22, "lv": 3, "sec": "pcb", "ko": "전해 커패시터", "cn": "电解电容", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["7.7", "6.3", "6.3"], "mtype": "복합 재료", "maker": "Huaguan (华冠)", "spec": "100uF 35V", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 23, "lv": 3, "sec": "pcb", "ko": "0402저항", "cn": "0402电阻", "qty": "172", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.32"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 24, "lv": 3, "sec": "pcb", "ko": "0603저항", "cn": "0603电阻", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.45"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 25, "lv": 3, "sec": "pcb", "ko": "2512저항", "cn": "2512电阻", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.35", "3.1", "0.55"], "mtype": "복합 재료", "maker": "Yageo", "spec": "50mΩ", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 26, "lv": 3, "sec": "pcb", "ko": "0630인덕터", "cn": "0630电感", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6.8", "3"], "mtype": "복합 재료", "maker": "Masuo (玛索) / Sanli (三礼)", "spec": "10uH 22uH", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 27, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.2", "1.2"], "mtype": "복합 재료", "maker": "Murata", "spec": "DLW21SZ,2012,90Ω,280mA", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 28, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6", "3.8"], "mtype": "복합 재료", "maker": "Nianying (年盈)", "spec": "WBHWP,1KΩ,3A", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 29, "lv": 3, "sec": "pcb", "ko": "0603페라이트 비드", "cn": "0603磁珠", "qty": "3", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM18PG121SH1,120Ω,2A", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 30, "lv": 3, "sec": "pcb", "ko": "0402페라이트 비드", "cn": "0402磁珠", "qty": "19", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM15AG121SH1,120Ω,500mA", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 31, "lv": 3, "sec": "pcb", "ko": "다이오드", "cn": "二极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2.7", "1.3", "0.8"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "BAS316,250mA", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 32, "lv": 3, "sec": "pcb", "ko": "TVS 소자", "cn": "TVS管", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.9", "4.7", "2.6"], "mtype": "복합 재료", "maker": "Zhengxin (正芯)", "spec": "SMBJ30CA", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 33, "lv": 3, "sec": "pcb", "ko": "쇼트키 다이오드", "cn": "肖特基管", "qty": "3", "unit": "pcs", "src": "외주 구매", "dim": ["3.5", "1.6", "0.8"], "mtype": "복합 재료", "maker": "ROHM", "spec": "RBR3MM60ATFTR", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 34, "lv": 3, "sec": "pcb", "ko": "제너 다이오드", "cn": "稳压管", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.7", "1.35", "1.1"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "BZX384-C15", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 35, "lv": 3, "sec": "pcb", "ko": "ESD 소자", "cn": "ESD管", "qty": "9", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.62", "0.5"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "PESD5V0V1BL", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 36, "lv": 3, "sec": "pcb", "ko": "PMOS 소자", "cn": "PMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["10.7", "6.8", "2.5"], "mtype": "복합 재료", "maker": "Jiangzhi (江智)", "spec": "JST15P60T2-Q", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 37, "lv": 3, "sec": "pcb", "ko": "트랜지스터", "cn": "三极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "PDTC114ET", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 38, "lv": 3, "sec": "pcb", "ko": "NMOS 소자", "cn": "NMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Yangjie (扬杰)", "spec": "YJL03N06AQ", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 39, "lv": 3, "sec": "pcb", "ko": "커넥터9P", "cn": "插座9P", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0901-5001", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 40, "lv": 3, "sec": "pcb", "ko": "커넥터8P", "cn": "插座8P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["16.5", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0801-5001", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 41, "lv": 3, "sec": "pcb", "ko": "커넥터4P", "cn": "插座4P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["9.8", "3.4", "5.3"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "1.25T-4AB-P", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 42, "lv": 3, "sec": "pcb", "ko": "HSD커넥터", "cn": "HSD插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18.85", "9.1", "11.05"], "mtype": "복합 재료", "maker": "Rosenberger", "spec": "D4S20L-40MA5-A", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 43, "lv": 3, "sec": "pcb", "ko": "전원 커넥터", "cn": "电源插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["24.5", "14.2", "17.2"], "mtype": "복합 재료", "maker": "TE", "spec": "1376350-9", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 44, "lv": 3, "sec": "pcb", "ko": "FPC커넥터", "cn": "FPC插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["20.3", "6.75", "2.55"], "mtype": "복합 재료", "maker": "Aurora (奥罗拉)", "spec": "F31L-1A7H1", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 45, "lv": 3, "sec": "pcb", "ko": "실드 클립", "cn": "屏蔽夹", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["9.6", "2.4", "3"], "mtype": "복합 재료", "maker": "Longyou (龙友)", "spec": "L0169-T1SMP-0WV-L", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 46, "lv": 3, "sec": "pcb", "ko": "액티브 오실레이터", "cn": "有源晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.5", "2", "0.95"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "16M SMAF", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 47, "lv": 3, "sec": "pcb", "ko": "크리스털 오실레이터", "cn": "晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "2.5", "0.75"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "CXF,16M", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 48, "lv": 3, "sec": "pcb", "ko": "MCU칩", "cn": "MCU芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["16.8", "16.8", "1.3"], "mtype": "복합 재료", "maker": "Renesas", "spec": "R7F7016843AFP-C", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "mcu"},
+  {"r": 49, "lv": 3, "sec": "pcb", "ko": "연산증폭기 칩", "cn": "运放芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.1", "2.4", "1.1"], "mtype": "복합 재료", "maker": "TI", "spec": "INA199B1QDCKRQ1", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "opamp"},
+  {"r": 50, "lv": 3, "sec": "pcb", "ko": "EEPROM칩", "cn": "EEPROM芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.1", "5", "1.3"], "mtype": "복합 재료", "maker": "Puya (普冉)", "spec": "P24C08C-SSH-MAR", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "eeprom"},
+  {"r": 51, "lv": 3, "sec": "pcb", "ko": "디시리얼라이저 칩", "cn": "解串器芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["8.2", "8.2", "0.65"], "mtype": "복합 재료", "maker": "ADI", "spec": "MAX9278AGTM/V+T", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "max"},
+  {"r": 52, "lv": 3, "sec": "pcb", "ko": "LDO칩", "cn": "LDO芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.2", "5", "1.75"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ2019GN-AEC1-Z", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ldohv"},
+  {"r": 53, "lv": 3, "sec": "pcb", "ko": "LED칩", "cn": "LED芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["4", "4", "1"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ3367GR-AEC1-C04J", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ledchip"},
+  {"r": 54, "lv": 3, "sec": "pcb", "ko": "DC/DC칩", "cn": "DC/DC芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3", "4", "1"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ9840GL-AEC1-C835-Z", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "dcdc"},
+  {"r": 55, "lv": 3, "sec": "pcb", "ko": "LDO칩", "cn": "LDO芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.9", "2.8", "1.1"], "mtype": "복합 재료", "maker": "RICOH", "spec": "RP111N001D-TR-AE", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ldolv"},
+  {"r": 56, "lv": 3, "sec": "pcb", "ko": "Warp칩", "cn": "Warp芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["14", "14", "1.7"], "mtype": "복합 재료", "maker": "EPSON", "spec": "S2D13V42F00A100", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "epson"},
+  {"r": 57, "lv": 3, "sec": "pcb", "ko": "LIN칩", "cn": "LIN芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.2", "5", "1.75"], "mtype": "복합 재료", "maker": "NXP", "spec": "TJA1021T/20/CM", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "lin"},
+  {"r": 58, "lv": 3, "sec": "sw", "ko": "PCB", "cn": "PCB", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "dim": ["30", "9", "4.25"], "mtype": "복합 재료", "mat": "FR4", "maker": "Kingboard (建滔)", "grade": "FR4", "spec": "스위치 PCB", "surf": "OSP", "proc": "SMT", "asm": "납땜", "co2": "4.55 kgCO2eq/kg", "look": "N", "id": "motor"},
+  {"r": 59, "lv": 3, "sec": "sw", "ko": "서미스터", "cn": "热敏电阻", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Murata", "spec": "NCP15XH103F03RC", "proc": "SMT", "asm": "납땜", "look": "N"},
+  {"r": 60, "lv": 3, "sec": "sw", "ko": "위치 감지 스위치", "cn": "到位开关", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["8.5", "5.6", "2.4"], "mtype": "복합 재료", "maker": "ALPS", "spec": "SPVT210101", "proc": "SMT", "asm": "납땜", "look": "N", "id": "motor"}
+];
+const BOM_NOTE = {
+  5: '외관 부품. 대시보드 개구부로 보이는 면이라 표면에 무늬(텍스처) 가공을 합니다.',
+  6: 'HUD 전체 폭(418 mm)을 차지하는 가장 무거운 부품입니다. 3D에서는 하부 하우징에 연결했습니다.',
+  8: 'BOM에는 백라이트와 별도 부품으로 올라 있습니다. TFT를 받치는 사출 브래킷입니다.',
+  10: '3D 모델에 없는 부품입니다. 0.5 g짜리 SUS304 프레스 스프링으로, 접지나 접촉용으로 보입니다.',
+  11: '모터·웜기어·감속 기구를 묶어 외주로 받는 어셈블리입니다.',
+  12: '백라이트는 LED·렌즈·필름을 묶은 모듈 하나(75 g)로 들어옵니다. 3D에서는 Backlight 그룹 전체가 선택됩니다.',
+  13: 'Tianma 5.1" TFT 패널입니다. 길이 128.6 mm는 사진에서 잰 약 12 cm와 맞습니다.',
+  14: 'S3000UR은 Mitsubishi의 PC(폴리카보네이트) 수지 등급으로 보입니다. 유리가 아니라 사출한 수지 위에 반사막을 도금한 미러라는 뜻입니다.',
+  15: 'BOM 명칭은 "1차 곡면 미러"입니다. 3D에서는 평면경으로 그렸지만, 실제로는 약한 곡률이 있을 수 있습니다. 소재는 유리, 진공 코팅입니다.',
+  16: '편광 필름 제조사(Sunnypol)의 소재입니다. 단순 투명 커버가 아니라 햇빛 반사를 줄이는 기능성 필름일 수 있습니다.',
+  17: '메인 제어 PCB입니다. 아래 LV3 부품이 모두 이 기판에 실장됩니다.',
+  58: '모터 원점을 감지하는 작은 스위치 PCB입니다. 3D에서는 모터 쪽을 선택합니다.',
+  59: '3D 모델에 없는 부품입니다. 위치 감지 PCB와 같은 묶음에 있지만 정확한 위치는 미확인입니다.',
+};
+const BOM_SEC = { asm: ['LV1 · 공급 어셈블리', ''], mech: ['LV2 · 기구 · 광학', '하우징 · 미러 · 백라이트 · TFT'], pcb: ['LV3 · Main PCB 실장 부품', ''], sw: ['LV3 · 위치 감지 PCB', '모터 원점 감지'] };
+const BOM_KIND = { upper: 'pl', lower: 'pl', motorcover: 'pl', tftholder: 'pl', heatsink: 'mt', 'g:backlight': 'bl', motor: 'mo', tft: 'op', concave: 'op', fold: 'op', cover: 'op' };
+const BOM_COL = { pl: ['#7f93a8', '수지 하우징'], mt: ['#a77d4a', '금속'], op: ['#4f7fd6', '광학'], bl: ['#d39a2c', '백라이트'], mo: ['#5e9e80', '조정 기구'] };
+const bomOf = r => BOM.find(b => b.r === r);
+const bomFor = key => BOM.filter(b => b.id === key);
+const num = s => s ? (+s).toLocaleString('ko-KR') : '';
+const dimTxt = b => { const d = (b.dim || []).filter(Boolean); return d.length > 1 ? d.join(' × ') : d.length ? `길이 ${d[0]}` : ''; };
+const bomSelOf = b => b.id ? (b.id.startsWith('g:') ? { g: b.id.slice(2) } : { id: b.id }) : b.on ? { id: b.on } : null;
+const bomSpecs = b => { const id = b.id && !b.id.startsWith('g:') ? b.id : null; return id ? SPECS.filter(s => s.parts.some(q => q[0] === id)) : []; };
+const BM = { f: 'all', r: null };
+function bomKey(sel) { return !sel ? null : sel.g ? 'g:' + sel.g : sel.id; }
+function bomDetail(b) {
+  const f = [['중국어 명칭', b.cn], ['부품 번호', b.pn], ['수량', b.qty && `${b.qty} ${b.unit || ''}`], ['조달', b.src], ['중량', b.w && `${num(b.w)} g`], ['크기', dimTxt(b) && dimTxt(b) + ' mm'], ['두께', b.t && `${b.t} mm`],
+    ['재료 유형', b.mtype], ['재료', b.mat], [b.sec === 'mech' ? '소재 등급' : '규격 · 모델', b.spec], ['제조사', b.maker], ['표면처리', b.surf], ['제조 공정', b.proc], ['조립 공정', b.asm], ['탄소 배출', b.co2 && b.co2.replace(/\s*kgCO2eq\/kg/, ' kgCO₂eq/kg')], ['외관 부품', b.look === 'Y' ? '예' : b.look === 'N' ? '아니오' : '']].filter(x => x[1]);
+  const sel = bomSelOf(b), rel = bomSpecs(b);
+  const acts = [sel ? `<button class="btn primary" data-bm3d="${b.r}">3D 구조도에서 열기</button>` : '', rel.length ? `<button class="btn" data-gospec="${rel[0].id}">관련 광학 스펙 ${rel.length}개</button>` : ''].join('');
+  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${acts}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? '<p class="note">Main PCB 위의 부품입니다. 3D에서는 PCB를 선택합니다.</p>' : ''}</div>`;
+}
+function renderBOM() {
+  const q = ($('#bomQ').value || '').trim().toLowerCase();
+  const rows = BOM.filter(b => (BM.f === 'all' || (BM.f === 'mech' ? b.sec === 'mech' : BM.f === 'pcb' ? b.sec === 'pcb' || b.sec === 'sw' : b.id)) && (!q || [b.ko, b.cn, b.maker, b.spec, b.pn, b.mat, b.proc].join(' ').toLowerCase().includes(q)));
+  let sec = '';
+  $('#bomBody').innerHTML = rows.length ? rows.map(b => {
+    let h = '';
+    if (b.sec !== sec) { sec = b.sec; const n = BOM.filter(x => x.sec === sec), sum = n.reduce((a, x) => a + (+x.qty || 0), 0); h = `<tr class="sec"><td colspan="8">${BOM_SEC[sec][0]}<span>${n.length}종${sum !== n.length ? ` · ${sum.toLocaleString('ko-KR')}개` : ''}${BOM_SEC[sec][1] ? ' · ' + BOM_SEC[sec][1] : ''}</span></td></tr>`; }
+    const on = BM.r === b.r, s3 = bomSelOf(b);
+    h += `<tr data-r="${b.r}" class="${on ? 'on' : ''}" aria-expanded="${on}"><td class="nm"><b>${b.ko}</b><small>${b.cn}</small></td><td class="n">${b.qty || ''}</td><td class="n">${num(b.w)}</td><td class="mono bm-hide2">${(b.dim || []).filter(Boolean).join('×')}</td><td class="mono">${b.spec || b.mat || b.mtype || ''}</td><td class="bm-hide">${(b.maker || '').replace(/\s*\/\s*Others$/, '')}</td><td class="bm-hide">${b.proc || ''}</td><td><span class="lk ${b.id ? 'y' : ''}">${b.id ? '연결' : s3 ? 'PCB' : '—'}</span></td></tr>`;
+    if (on) h += `<tr class="det"><td colspan="8">${bomDetail(b)}</td></tr>`;
+    return h;
+  }).join('') : '<tr><td colspan="8" class="bm-none">검색 결과가 없습니다.</td></tr>';
+  $('#bmWt').querySelectorAll('[data-r]').forEach(e => e.classList.toggle('on', +e.dataset.r === BM.r));
+}
+function bomStatic() {
+  const top = BOM[0], parts = BOM.filter(b => b.lv > 1), qty = parts.reduce((a, b) => a + (+b.qty || 0), 0), linked = new Set(BOM.filter(b => b.id).map(b => b.id)).size;
+  $('#bmKpi').innerHTML = `<div><b>${num(top.w)} g</b><span>총 중량 (BOM)</span></div><div><b>${top.dim.join(' × ')}</b><span>외형 mm (L × W × H)</span></div><div><b>${parts.length}종 · ${qty.toLocaleString('ko-KR')}개</b><span>하위 부품 행 · 수량 합</span></div><div><b>${linked}개</b><span>3D 모델과 연결된 부품</span></div>`;
+  const lv2 = BOM.filter(b => b.sec === 'mech' && +b.w >= 1), sum = lv2.reduce((a, b) => a + +b.w, 0), rest = +top.w - sum;
+  $('#bmWt').innerHTML = `<div class="lab"><span>LV2 부품 중량 비율 · 막대를 누르면 선택</span><span>합 ${num(sum)} g + 기타 ${num(rest)} g</span></div>
+    <div class="bm-bar">${lv2.sort((a, b) => b.w - a.w).map(b => `<button data-r="${b.r}" style="flex:${b.w};background:${BOM_COL[BOM_KIND[b.id]]?.[0] || '#8b97a3'}" title="${b.ko} ${b.w} g (${(b.w / top.w * 100).toFixed(1)}%)">${b.w / top.w > .06 ? `${b.ko} ${Math.round(b.w / top.w * 100)}%` : ''}</button>`).join('')}<button class="rest" style="flex:${rest}" title="기타: PCB · TFT · 나사 · 패드 등 BOM에 중량이 없는 부품 ${rest} g">${rest / top.w > .06 ? '기타' : ''}</button></div>
+    <div class="bm-leg">${Object.values(BOM_COL).map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}<span><i style="background:#c9cfd6"></i>기타 (중량 미기재)</span></div>`;
+}
+function bomPick(r, from3d) {
+  BM.r = BM.r === r && !from3d ? null : r; renderBOM();
+  const b = bomOf(BM.r);
+  if (!from3d) { const s = b ? bomSelOf(b) : null; if (s || !b) select(s); }
+  const tr = BM.r && $(`#bomBody tr[data-r="${BM.r}"]`); if (tr) tr.scrollIntoView({ block: 'nearest' });
+}
+globalThis.bomSync = sel => {
+  if (document.body.dataset.tab !== 'bom') return;
+  const key = bomKey(sel), cur = bomOf(BM.r);
+  if (cur && (bomSelOf(cur) ? bomKey(bomSelOf(cur)) === key : !key)) return;
+  const b = key && BOM.find(x => x.id === key);
+  if (b && BM.f !== 'all' && !(BM.f === '3d' || (BM.f === 'mech' ? b.sec === 'mech' : b.sec !== 'mech'))) { BM.f = 'all'; markBF(); }
+  bomPick(b ? b.r : null, true);
+};
+function markBF() { document.querySelectorAll('[data-bf]').forEach(x => x.setAttribute('aria-pressed', x.dataset.bf === BM.f)); }
+$('#bomQ').addEventListener('input', renderBOM);
+$('#bmFilt').addEventListener('click', e => { const t = e.target.closest('[data-bf]'); if (!t) return; BM.f = t.dataset.bf; markBF(); renderBOM(); });
+$('#bmWt').addEventListener('click', e => { const t = e.target.closest('[data-r]'); if (t) bomPick(+t.dataset.r); });
+$('#bomPage').addEventListener('click', e => {
+  const go = e.target.closest('[data-gospec]'); if (go) { SP.view = 'items'; SP.cur = go.dataset.gospec; setTab('spec'); return; }
+  const o3 = e.target.closest('[data-bm3d]'); if (o3) { const s = bomSelOf(bomOf(+o3.dataset.bm3d)); setTab('struct'); select(s); return; }
+  if (e.target.closest('tr.det')) return;
+  const tr = e.target.closest('tr[data-r]'); if (tr) bomPick(+tr.dataset.r);
+});
+bomStatic();
+/* BOM facts for the 3D-structure info window */
+function bomInfo(key) {
+  const rows = bomFor(key); if (key === 'pcb') { const on = BOM.filter(b => b.on === 'pcb' || (b.sec === 'pcb' && b.id && b.id !== 'pcb')); rows.push({ r: 0, extra: `실장 부품 ${on.length}종 · ${on.reduce((a, b) => a + (+b.qty || 0), 0)}개 (저항 177 · 커패시터 190 · 칩 10 등)` }); }
+  if (!rows.length) return '';
+  return `<h3 class="sec">BOM 정보</h3>${rows.map(b => b.extra ? `<p class="note">${b.extra}</p>` : `<dl class="specs"><dt>BOM 명칭</dt><dd>${b.ko} <span class="note">${b.cn}</span></dd>${b.w ? `<dt>중량</dt><dd>${num(b.w)} g</dd>` : ''}${dimTxt(b) ? `<dt>크기</dt><dd>${dimTxt(b)} mm${b.t ? ` · 두께 ${b.t}` : ''}</dd>` : ''}${b.spec || b.mat ? `<dt>${b.sec === 'mech' ? '소재 등급' : '규격'}</dt><dd>${b.spec || b.mat}</dd>` : ''}${b.maker ? `<dt>제조사</dt><dd>${b.maker.replace(/\s*\/\s*Others$/, '')}</dd>` : ''}${b.surf && b.surf !== b.proc ? `<dt>표면처리</dt><dd>${b.surf}</dd>` : ''}${b.proc ? `<dt>공정</dt><dd>${b.proc}${b.asm ? ` → ${b.asm}` : ''}</dd>` : ''}</dl>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : ''}`).join('')}<div class="actions"><button class="btn" data-gobom="${rows[0].r || ''}">BOM 표에서 보기</button></div>`;
+}
+
 /* tabs */
 let curTab = 'struct';
 function setTab(t) {
   curTab = t; document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-  document.body.dataset.tab = t; $('#specPage').hidden = t !== 'spec';
+  document.body.dataset.tab = t; $('#specPage').hidden = t !== 'spec'; $('#bomPage').hidden = t !== 'bom';
+  if (t === 'bom') { BM.r = null; renderBOM(); globalThis.bomSync(state.sel); }
   if (t === 'spec') { document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === SP.view)); specTab(); }
   if (!$('#settings').hidden) setSettings(false);
   requestAnimationFrame(() => { resize(); frameOffset(); });
