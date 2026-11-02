@@ -1458,8 +1458,8 @@ const SPECS = [
     measure: '원색 화면의 색좌표를 재서 기준 대비 순도를 계산합니다.',
     key: { ids: ['tft'], why: '원색 순도는 TFT 컬러필터가 정합니다. 낮에는 미광이 흰빛을 섞어 채도를 낮춥니다.' }, demo: 'sat' },
   { id: 'gamut', cat: 'color', en: 'Gamut', ko: '색 영역', unit: '%', dir: 'high',
-    def: '표현할 수 있는 색의 범위를 기준 색 영역(NTSC, sRGB 등) 대비 면적 비율로 나타낸 값입니다. 어떤 기준인지 꼭 확인해야 합니다.',
-    why: ['색 영역이 좁으면 빨강·초록·파랑이 덜 선명하게 구분됩니다.', 'HUD는 경고색(빨강·주황)과 안내색(청록·초록)이 확실히 구분되는 게 중요합니다.'],
+    def: '디스플레이가 낼 수 있는 색의 범위입니다. 색좌표 위에서 R·G·B 세 원색이 만드는 삼각형으로 나타내고, 기준 삼각형(NTSC, sRGB 등) 대비 % 로 적습니다.',
+    why: ['RGB는 색을 만드는 방식(세 원색을 섞음)이고, NTSC·sRGB는 그 세 원색의 위치를 정해 둔 기준입니다. NTSC가 넓고 sRGB가 좁아서 sRGB ≈ NTSC 면적의 72%입니다.', '그래서 숫자만 보면 안 되고 기준을 같이 봐야 합니다. sRGB 90% ≈ NTSC 65%, NTSC 70% ≈ sRGB 97%로, 같은 디스플레이라도 숫자가 크게 달라집니다.', '영역이 좁으면 원색이 흰빛 쪽으로 끌려가 물빠져 보이고, 비슷한 색(경고 빨강↔주의 주황, 정상 초록↔안내 청록)끼리 가까워져 구분이 어려워집니다.'],
     measure: 'R·G·B 원색의 색좌표로 삼각형 면적을 계산해 기준과 비교합니다.',
     key: { ids: ['tft', 'led'], why: '컬러필터 투과 대역과 LED 스펙트럼이 어떻게 겹치느냐가 색 삼각형의 크기를 정합니다.' }, demo: 'gamut' },
   { id: 'derating', cat: 'heat', en: 'Derating', ko: '휘도 저감 시작 온도', unit: '℃', dir: 'high',
@@ -1516,6 +1516,22 @@ const NTSC = [[.67, .33], [.21, .71], [.14, .08]], SRGB = [[.64, .33], [.30, .60
 const f1 = n => n.toFixed(1), f2 = n => n.toFixed(2);
 
 /* each demo: controls + draw(g, w, h, v) → readout html */
+const P3 = [[.68, .32], [.265, .69], [.15, .06]], BT2020 = [[.708, .292], [.17, .797], [.131, .046]];
+// gamut demo, second view: the reference triangles side by side and what one number means in each
+function gamutStd(g, w, h, pN, pS, RS) {
+  const STD = [['NTSC', NTSC, '#66717c', [5, 4], '1953 · 아날로그 TV'], ['sRGB', SRGB, '#c8780f', [2, 3], '1996 · PC·웹·대부분의 모니터'], ['DCI-P3', P3, '#2a9d6a', [6, 3], '2007 · 영화관·최신 휴대폰'], ['BT.2020', BT2020, '#8a4fd1', [1, 3], '2012 · UHD 방송 목표']];
+  const tw = Math.min(w * .5, h * .95), m = cie(g, tw, h), c0 = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(pN / 100);
+  tri(g, m, NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]), '#1f62d1', 'rgba(31,98,209,.14)');
+  STD.forEach(([, p, c, d]) => tri(g, m, p, c, null, d));
+  const x0 = tw + 24, bw = w - x0 - 110, A = p => triArea(p) / triArea(NTSC) * 100, rows = [...STD.map(([n, p, c, , t]) => [n, A(p), c, t]), ['이 HUD', pN, '#1f62d1', `= sRGB의 ${pS}%`]].sort((a, b) => b[1] - a[1]), mx = Math.max(...rows.map(r => r[1]));
+  g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1c2228'; g.fillText('삼각형 면적 (NTSC = 100)', x0, 22);
+  const rh = Math.min(52, (h - 40) / rows.length);
+  rows.forEach(([n, a, c, t], i) => { const y = 36 + i * rh, bwid = a / mx * bw; g.fillStyle = c; g.globalAlpha = n === '이 HUD' ? 1 : .75; g.fillRect(x0, y, bwid, 16); g.globalAlpha = 1;
+    g.fillStyle = '#1c2228'; g.font = `${n === '이 HUD' ? 700 : 600} 12px "IBM Plex Sans KR", sans-serif`; g.fillText(`${n}  ${Math.round(a)}`, x0 + bwid + 6, y + 13); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x0, y + 30); });
+  return `<b>RGB</b>는 기준이 아니라 방식입니다. 모든 디스플레이가 빨강·초록·파랑 세 원색을 섞어 색을 만들고, 세 원색의 위치가 삼각형 꼭짓점입니다. <b>NTSC·sRGB·DCI-P3·BT.2020</b>은 "이 세 점을 기준으로 삼자"고 정한 기준 삼각형입니다.<br>
+    그래서 같은 디스플레이도 기준에 따라 숫자가 바뀝니다. sRGB는 NTSC 면적의 ${Math.round(RS * 100)}%라서 <b>NTSC 72% ≈ sRGB 100%</b>, <b>sRGB 90% ≈ NTSC ${Math.round(90 * RS)}%</b>, <b>NTSC 70% ≈ sRGB ${Math.round(70 / RS)}%</b>입니다.<br>
+    또 "면적비"는 넓이만 비교하고, "커버리지"는 기준 삼각형을 실제로 얼마나 덮는지입니다. 면적이 100%여도 삼각형이 비뚤면 커버리지는 낮을 수 있어서, 스펙에는 기준·면적/커버리지·CIE 1931/1976 중 무엇인지 함께 적어야 합니다.`;
+}
 const DEMOS = {
   disparity: { ctl: [['d', '시차', 0, 5, .1, 1, 'mrad'], ['ax', '방향', 0, 1, 1, 0, 'sel:수평|수직']],
     draw(g, w, h, v) { road(g, w, h, .8); const pxPerMrad = w / (24 * 17.453), hw = w * .5, hh = hw / ASPECT, x = (w - hw) / 2, y = h * .42 - hh / 2, o = v.d * pxPerMrad * 6;
@@ -1612,12 +1628,43 @@ const DEMOS = {
     draw(g, w, h, v) { road(g, w, h, .7); const cols = [[255, 60, 50, '경고'], [255, 160, 30, '주의'], [60, 230, 120, '정상'], [60, 220, 255, '안내']], k = v.s / 100;
       cols.forEach(([r, gg, b, t], i) => { const mix = c => Math.round(c * k + 235 * (1 - k)); const x = 40 + i * (w - 80) / 4; g.fillStyle = `rgb(${mix(r)},${mix(gg)},${mix(b)})`; g.beginPath(); g.arc(x + 40, h * .4, 30, 0, 7); g.fill(); g.fillStyle = '#fff'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x + 26, h * .4 + 54); });
       return `채도가 낮아지면 흰빛이 섞인 것처럼 바랩니다. 빨강 경고가 분홍처럼 보이면 의미가 약해집니다. 햇빛이 섞인 미광도 같은 효과를 냅니다.`; } },
-  gamut: { ctl: [['p', '색 영역 (NTSC 대비)', 40, 110, 1, 72, '%']],
-    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const m = cie(g, Math.min(w * .6, h * 1.1), h), c = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), s = Math.sqrt(v.p / 100);
-      const disp = NTSC.map(([x, y]) => [c[0] + (x - c[0]) * s, c[1] + (y - c[1]) * s]);
-      tri(g, m, NTSC, '#66717c', null, [5, 4]); tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.12)');
-      const lx = Math.min(w * .6, h * 1.1) + 16; g.font = '12px "IBM Plex Sans KR", sans-serif'; [['#66717c', 'NTSC (100%)'], ['#c8780f', `sRGB (NTSC 대비 ${Math.round(triArea(SRGB) / triArea(NTSC) * 100)}%)`], ['#1f62d1', `이 디스플레이 (${v.p}%)`]].forEach(([c2, t], i) => { g.fillStyle = c2; g.fillRect(lx, 30 + i * 22, 12, 3); g.fillStyle = '#1c2228'; g.fillText(t, lx + 18, 35 + i * 22); });
-      return `같은 숫자라도 기준이 NTSC냐 sRGB냐에 따라 뜻이 다릅니다. sRGB 100% ≈ NTSC 72%입니다. 파란 삼각형 밖의 색은 표현할 수 없습니다.`; } },
+  gamut: { ctl: [['p', '색 영역', 30, 140, 1, 65, '%'], ['b', '기준', 0, 1, 1, 0, 'sel:NTSC 대비|sRGB 대비'], ['mode', '보기', 0, 1, 1, 0, 'sel:HUD 그래픽으로|기준 삼각형끼리']],
+    draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
+      const RS = triArea(SRGB) / triArea(NTSC), pN = Math.round(v.b ? v.p * RS : v.p), pS = Math.round(pN / RS), lab = `NTSC ${pN}% = sRGB ${pS}%`;
+      if (v.mode) return gamutStd(g, w, h, pN, pS, RS);
+      // HUD colours as designed (sRGB); a narrower display pulls each one toward white until it fits inside its triangle
+      const COLS = [['경고', [255, 45, 35]], ['주의', [255, 150, 0]], ['정상', [40, 220, 70]], ['안내', [30, 200, 255]], ['내비', [70, 100, 255]]];
+      const toLin = c => c / 255 <= .04045 ? c / 255 / 12.92 : Math.pow((c / 255 + .055) / 1.055, 2.4), toSrgb = c => Math.round(255 * (c <= .0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055));
+      const xyY = rgb => { const [r, gg, b] = rgb.map(toLin), X = .4124 * r + .3576 * gg + .1805 * b, Y = .2126 * r + .7152 * gg + .0722 * b, Z = .0193 * r + .1192 * gg + .9505 * b, t = X + Y + Z; return [X / t, Y / t, Y]; };
+      const rgbOf = ([x, y, Y]) => { const X = x / y * Y, Z = (1 - x - y) / y * Y, l = [3.2406 * X - 1.5372 * Y - .4986 * Z, -.9689 * X + 1.8758 * Y + .0415 * Z, .0557 * X - .204 * Y + 1.057 * Z], m = Math.max(1, ...l); return l.map(c => toSrgb(Math.max(0, c / m))); };
+      const c0 = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(pN / 100), disp = NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]);
+      const fit = ([x, y, Y]) => { let t = 1; const [wx, wy] = D65, dx = x - wx, dy = y - wy;
+        for (let k = 0; k < 3; k++) { const [ax, ay] = disp[k], [bx, by] = disp[(k + 1) % 3], ex = bx - ax, ey = by - ay, den = dx * ey - dy * ex; if (Math.abs(den) < 1e-9) continue;
+          const u = ((ax - wx) * ey - (ay - wy) * ex) / den, q = ((ax - wx) * dy - (ay - wy) * dx) / den; if (u > 0 && q >= 0 && q <= 1) t = Math.min(t, u); }
+        return [wx + dx * t, wy + dy * t, Y]; };
+      const want = COLS.map(c => xyY(c[1])), got = want.map(fit), dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+      // left: chromaticity diagram with designed (ring) and shown (dot) colours
+      const tw = Math.min(w * .36, h * .95), m = cie(g, tw, h);
+      tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.10)');
+      want.forEach((p, i) => { const q = got[i], col = `rgb(${COLS[i][1]})`; g.strokeStyle = '#66717c'; g.lineWidth = 1; g.beginPath(); g.moveTo(m.X(p[0]), m.Yp(p[1])); g.lineTo(m.X(q[0]), m.Yp(q[1])); g.stroke();
+        g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.arc(m.X(p[0]), m.Yp(p[1]), 5, 0, 7); g.stroke(); g.fillStyle = `rgb(${rgbOf(q)})`; g.beginPath(); g.arc(m.X(q[0]), m.Yp(q[1]), 4, 0, 7); g.fill(); g.strokeStyle = '#1c2228'; g.lineWidth = .8; g.stroke(); });
+      g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1f62d1'; g.fillText(`파랑: 이 HUD (${lab})`, 30, 16); g.fillStyle = '#c8780f'; g.fillText('주황 점선: sRGB', 30, 30); g.fillStyle = '#66717c'; g.fillText('○ 설계 색 → ● 실제 보이는 색', 30, 44);
+      // right: the same HUD graphics, as designed vs on this display
+      const x0 = tw + 14, pw = w - x0, ph = (h - 8) / 2;
+      const icon = (cx, cy, r, i, col) => { g.fillStyle = g.strokeStyle = col; g.lineWidth = r * .22; g.lineJoin = 'round'; g.lineCap = 'round';
+        if (i === 0) { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r * 1.05, cy + r * .8); g.lineTo(cx - r * 1.05, cy + r * .8); g.closePath(); g.stroke(); g.fillRect(cx - r * .09, cy - r * .35, r * .18, r * .65); g.fillRect(cx - r * .09, cy + r * .42, r * .18, r * .18); }
+        if (i === 1) { g.beginPath(); g.arc(cx, cy, r * .9, 0, 7); g.stroke(); g.fillRect(cx - r * .09, cy - r * .5, r * .18, r * .6); g.fillRect(cx - r * .09, cy + r * .28, r * .18, r * .18); }
+        if (i === 2) { g.beginPath(); g.roundRect(cx - r * .9, cy - r * .2, r * 1.8, r * .7, r * .2); g.moveTo(cx - r * .55, cy - r * .2); g.lineTo(cx - r * .35, cy - r * .7); g.lineTo(cx + r * .35, cy - r * .7); g.lineTo(cx + r * .55, cy - r * .2); g.stroke(); }
+        if (i === 3) { g.beginPath(); g.moveTo(cx - r * .5, cy + r); g.lineTo(cx - r * .2, cy - r); g.moveTo(cx + r * .5, cy + r); g.lineTo(cx + r * .2, cy - r); g.stroke(); }
+        if (i === 4) { g.beginPath(); g.moveTo(cx - r * .4, cy + r); g.lineTo(cx - r * .4, cy); g.quadraticCurveTo(cx - r * .4, cy - r * .5, cx + r * .2, cy - r * .5); g.stroke(); g.beginPath(); g.moveTo(cx + r * .9, cy - r * .5); g.lineTo(cx + r * .2, cy - r); g.lineTo(cx + r * .2, cy); g.closePath(); g.fill(); } };
+      [[0, '설계한 색 (sRGB 기준)', COLS.map(c => `rgb(${c[1]})`)], [ph + 8, `이 HUD에서 보이는 색 (${lab})`, got.map(q => `rgb(${rgbOf(q)})`)]].forEach(([y0, label, cols]) => {
+        g.save(); g.beginPath(); g.rect(x0, y0, pw, ph); g.clip(); g.translate(x0, y0); road(g, pw, ph, 0, true);
+        const step = pw / COLS.length, r = Math.min(step * .22, ph * .16);
+        COLS.forEach(([name], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(name, cx, cy + r * 1.9); g.textAlign = 'start'; });
+        g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
+      const pr = (a, b) => Math.round(Math.min(1, dist(got[a], got[b]) / dist(want[a], want[b])) * 100);
+      const rw = pr(0, 1), gc = pr(2, 3), cb = pr(3, 4), worst = Math.min(rw, gc, cb);
+      return `${lab} (면적 기준). 설계 색 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b> · 정상↔안내 <b>${gc}%</b> · 안내↔내비 <b>${cb}%</b>.<br>${worst >= 90 ? '설계한 색이 거의 그대로 나옵니다. 영역을 더 넓혀도 이 정도 그래픽에서는 차이가 작습니다.' : worst >= 65 ? '색은 구분되지만 전체가 물빠진 느낌이 납니다. 원색 아이콘이 덜 강렬해집니다.' : '비슷한 색끼리 붙기 시작합니다. 경고(빨강)와 주의(주황), 정상(초록)과 안내(청록)를 색만으로 구분하기 어려워집니다.'} 이 화면은 sRGB라 NTSC 72%를 넘는 색은 똑같이 보입니다.`; } },
   derating: { ctl: [['td', '저감 시작 온도', 60, 105, 1, 85, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); const X = t => 40 + (t - 20) / 90 * (w - 60), Yv = p => h - 30 - p * (h - 60), cur = t => t <= v.td ? 1 : Math.max(.3, 1 - (t - v.td) / 20 * .7);
       g.strokeStyle = '#dde1e6'; for (let t = 20; t <= 110; t += 10) { g.beginPath(); g.moveTo(X(t), Yv(0)); g.lineTo(X(t), Yv(1)); g.stroke(); } g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; for (let t = 20; t <= 110; t += 20) g.fillText(t + '℃', X(t) - 12, h - 12);
