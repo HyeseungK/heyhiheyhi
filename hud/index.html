@@ -722,6 +722,21 @@ header h1 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
 .lesson .ls-steps button { border: 0; background: var(--line-2); }
 .lesson .ls-steps button[aria-current="true"] { background: var(--panel); box-shadow: var(--sh-1); }
 @media (max-width: 1600px) { .legend { display: none; } }
+/* tutorial: a dark button by the title, then a spotlight that walks through each area */
+.tour-btn { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--fg); color: #fff; font-size: 13px; font-weight: 650; white-space: nowrap; box-shadow: 0 2px 8px rgba(16,24,40,.18); transition: transform .15s, box-shadow .15s; }
+.tour-btn .q { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.18); font-size: 12px; font-weight: 800; }
+.tour-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(16,24,40,.25); }
+.tour-btn.pulse { animation: tourPulse 1.8s ease-out 3; }
+@keyframes tourPulse { 0% { box-shadow: 0 0 0 0 rgba(44,86,201,.55); } 100% { box-shadow: 0 0 0 14px rgba(44,86,201,0); } }
+#tour { position: fixed; inset: 0; z-index: 40; }
+.tour-hole { position: fixed; border-radius: 12px; box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 200vmax rgba(10,14,20,.58); transition: left .3s ease, top .3s ease, width .3s ease, height .3s ease; pointer-events: none; }
+.tour-card { position: fixed; width: min(340px, calc(100vw - 32px)); background: var(--panel); border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 16px 48px rgba(10,14,20,.35); display: grid; gap: 6px; transition: left .3s ease, top .3s ease; }
+.tour-step { font-size: 11.5px; font-weight: 650; color: var(--accent); letter-spacing: .03em; }
+.tour-card h3 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
+.tour-card p { margin: 0; font-size: 13.5px; line-height: 1.65; color: #2b3138; }
+.tour-nav { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+@media (max-width: 900px) { .tour-btn { padding: 5px 10px 5px 5px; } .tour-card { left: 16px !important; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); top: auto !important; width: auto; } }
+@media (prefers-reduced-motion: reduce) { .tour-hole, .tour-card { transition: none; } .tour-btn.pulse { animation: none; } }
 /* optics sub-views read as tabs: underline marks the open one */
 .sp-views { background: transparent; padding: 0; gap: 4px; border-radius: 0; box-shadow: inset 0 -1px 0 var(--line); }
 .sp-views button { border-radius: 0; padding: 8px 12px 9px; font-size: 13.5px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent !important; background: transparent; }
@@ -768,6 +783,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 <body>
 <header>
   <div class="ttl"><h1>Zeekr 7X AR-HUD 해부도</h1><span class="sub">HA1SZK63E · 분해 사진과 BOM으로 만든 추정 모델</span></div>
+  <button class="tour-btn" id="tourBtn" title="화면 사용법을 하나씩 비춰서 보여 줍니다"><span class="q">?</span>사용법</button>
   <div class="tabs" role="tablist" aria-label="보기"><button role="tab" data-tab="struct" aria-selected="true">3D 구조도</button><button role="tab" data-tab="spec" aria-selected="false">광학 스펙</button><button role="tab" data-tab="bom" aria-selected="false">BOM</button></div>
   <div class="viewbar"><span class="lab">시점</span>
   <nav class="views" aria-label="시점">
@@ -780,6 +796,9 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   <span class="sp"></span>
   <button class="hdr-btn" id="setBtn" aria-expanded="false" aria-controls="settings"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>보기 설정<span class="chev" id="setChev">펼치기 ▾</span></button>
 </header>
+<div id="tour" hidden><div class="tour-hole" id="tourHole"></div>
+  <div class="tour-card" id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tourTitle"><div class="tour-step" id="tourStep"></div><h3 id="tourTitle"></h3><p id="tourText"></p>
+    <div class="tour-nav"><button class="btn" id="tourSkip">닫기</button><span class="sp"></span><button class="btn" id="tourPrev">이전</button><button class="btn primary" id="tourNext">다음</button></div></div></div>
 <div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
   <div class="phead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span>보기 설정</span><button class="x" id="setClose" aria-label="보기 설정 접기">접기 ▴</button></div>
   <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
@@ -1098,6 +1117,9 @@ const M = {
   wire: std(0x151618, .5), ledBoard: std(0xe6e6e0, .5), acf: std(0x4a3a20, .5, .2), foam: std(0x2b2c2f, 1), lcdGlass: std(0x0a0b0d, .1, .3), grease: std(0x8fa8f8, .25, 0, { transparent: true, opacity: .6 }),
   led: new THREE.MeshBasicMaterial({ color: 0xfff1d6, toneMapped: false }),
   clear: new THREE.MeshPhysicalMaterial({ color: 0xdfeaf3, roughness: .1, transparent: true, opacity: .4, side: THREE.DoubleSide, depthWrite: false }),
+  // PC lens array: tinted blue so the domes read against the white LED board
+  lensPlate: new THREE.MeshPhysicalMaterial({ color: 0xbfd7f7, roughness: .12, clearcoat: 1, transparent: true, opacity: .45, side: THREE.DoubleSide, depthWrite: false }),
+  lensDome: new THREE.MeshPhysicalMaterial({ color: 0x2a6ee6, emissive: 0x0d2e73, emissiveIntensity: .35, roughness: .06, clearcoat: 1, clearcoatRoughness: .04, transparent: true, opacity: .92 }),
   film: std(0xffffff, .3, 0, { map: hexTex, transparent: true, opacity: .7, side: THREE.DoubleSide, depthWrite: false }),
   glass: new THREE.MeshPhysicalMaterial({ color: 0x3a4a5a, roughness: .03, metalness: .1, transparent: true, opacity: .32, side: THREE.DoubleSide, depthWrite: false }),
   mirrorBig: std(0xcfc4e2, .06, 1), mirrorFold: std(0xe6f2f0, .06, 1), glassEdge: std(0x6fcfbf, .2, .1),
@@ -1243,8 +1265,8 @@ const zFp = PG.cz - PG.d / 2 - 2.1;
 const LEDS = [];
 { const nx = 14, nz = 7, sx = (LCDR.w + .4) / (nx - 1), sz = (LCDR.d + .2) / (nz - 1);
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { if (j % 2 && i === nx - 1) continue; LEDS.push(V(PG.cx - (LCDR.w + .4) / 2 + i * sx + (j % 2 ? sx / 2 : 0), .8, PG.cz - (LCDR.d + .2) / 2 + j * sz)); }
-  const g = new THREE.Group(); box(LCDR.w + 1.4, .22, LCDR.d + 1.2, M.clear, PG.cx, 1.3, PG.cz, g);
-  const inst = new THREE.InstancedMesh(new THREE.SphereGeometry(.36, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), M.clear, LEDS.length), mm = new THREE.Matrix4();
+  const g = new THREE.Group(); box(LCDR.w + 1.4, .22, LCDR.d + 1.2, M.lensPlate, PG.cx, 1.3, PG.cz, g);
+  const inst = new THREE.InstancedMesh(new THREE.SphereGeometry(.36, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), M.lensDome, LEDS.length), mm = new THREE.Matrix4();
   LEDS.forEach((p, k) => { mm.makeTranslation(p.x, 1.41, p.z); inst.setMatrixAt(k, mm); }); g.add(inst); register('lens', g); }
 { const g = new THREE.Group(); ledMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(.34, .12, .34), M.led, LEDS.length); const mm = new THREE.Matrix4();
   LEDS.forEach((p, k) => { mm.makeTranslation(p.x, p.y, p.z); ledMesh.setMatrixAt(k, mm); }); ledMesh.userData.keepMat = true; g.add(ledMesh); register('led', g); }
@@ -3037,6 +3059,53 @@ function setTab(t) {
   requestAnimationFrame(() => { resize(); frameOffset(); });
 }
 document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
+/* tutorial: each stop opens what it needs, dims the rest and explains one area */
+const openPanel = (panel, btn) => { if ($(panel).hidden) $(btn).click(); };
+const TOUR = [
+  { tab: 'struct', el: '.tabs', t: '세 가지 화면', p: '3D 구조도에서 부품과 빛의 경로를, 광학 스펙에서 각 스펙의 뜻과 전문가 값을, BOM에서 부품 목록을 봅니다.' },
+  { tab: 'struct', el: '#left', before: () => openPanel('#left', '#leftBtn'), t: '부품 목록', p: '부품 이름을 누르면 3D에서 그 부품이 강조되고 카메라가 다가갑니다. 눈 아이콘으로 부품을 숨길 수 있습니다.' },
+  { tab: 'struct', rect: () => { const r = $('#stage').getBoundingClientRect(); return { left: r.left + r.width * .28, top: r.top + 30, width: r.width * .44, height: r.height - 150 }; }, t: '3D 모델', p: '드래그로 돌리고, 휠로 커서 쪽을 확대합니다. 부품을 직접 눌러도 선택되고, 더블클릭하면 그 부품만 남습니다.' },
+  { tab: 'struct', el: '.dragmode', t: '회전 / 이동', p: '드래그로 돌릴지, 옆으로 옮길지 고릅니다. 키보드 R(회전)과 M(이동)으로도 바꿀 수 있습니다.' },
+  { tab: 'struct', el: '.viewbar', t: '시점', p: '정해 둔 각도로 바로 이동합니다. "차량 장착"과 "운전자 시점"에서는 앞유리와 허상까지 함께 보입니다.' },
+  { tab: 'struct', el: '#play', before: () => openPanel('#play', '#playBtn'), t: 'HUD 작동 원리', p: '재생을 누르면 영상 수신부터 허상까지 빛이 지나가는 순서를 단계별로 보여 줍니다. 단계 이름을 눌러 바로 갈 수도 있습니다.' },
+  { tab: 'struct', el: '#info', before: () => openPanel('#info', '#infoBtn'), t: '상세 정보', p: '선택한 부품의 역할, 사진, BOM 정보가 여기에 나옵니다. 아무것도 고르지 않으면 제품 정보가 보입니다.' },
+  { tab: 'struct', el: '#setBtn', t: '보기 설정', p: '분해 정도, 하우징 투명도, 빛 표시 방식, 미러 각도를 바꿉니다.' },
+  { tab: 'spec', el: '#spList', before: () => { if (SP.view !== 'items') document.querySelector('[data-spview="items"]').click(); }, t: '광학 스펙 항목', p: '항목을 고르면 가운데에 그 스펙의 뜻과 그림이, 오른쪽에 전문가 값이 나옵니다. 점 색은 확인 상태입니다.' },
+  { tab: 'spec', el: '.sp-main', t: '그림으로 이해', p: '예시 숫자로 개념을 보여 줍니다. 슬라이더를 움직이면 그림과 설명이 함께 바뀝니다.' },
+  { tab: 'spec', el: '#spSide', t: '전문가 값 입력', p: '전문가가 적은 원문을 붙여 넣으면 목표·공차·최종 합격 조건으로 읽어 줍니다. 측정값을 넣으면 판정합니다. 가운데와의 경계를 끌어 너비를 바꿀 수 있습니다.' },
+  { tab: 'spec', el: '.expbar', t: '전문가 세트', p: '전문가별로 값을 따로 저장하고, 서로 비교하고, Excel용 표나 백업 파일로 내보냅니다. 값은 이 브라우저에 저장됩니다.' },
+  { tab: 'spec', el: '.sp-views', t: '다른 보기', p: '"전문가 스펙 표"는 모든 항목을 한 표로, "외관 결함 (ISS)"은 긁힘·점 같은 외관 기준을 보여 줍니다.' },
+  { tab: 'bom', el: '#bomPage', t: 'BOM', p: '부품표를 기구·광학·전자로 나눠 봅니다. 행을 누르면 오른쪽 3D에서 그 부품이 강조됩니다.' },
+];
+const TR = { i: 0 };
+function tourShow(i) {
+  TR.i = Math.max(0, Math.min(TOUR.length - 1, i)); const st = TOUR[TR.i];
+  if (curTab !== st.tab) setTab(st.tab); st.before?.();
+  $('#tourStep').textContent = `${TR.i + 1} / ${TOUR.length}`; $('#tourTitle').textContent = st.t; $('#tourText').textContent = st.p;
+  $('#tourPrev').disabled = TR.i === 0; $('#tourNext').textContent = TR.i === TOUR.length - 1 ? '끝내기' : '다음';
+  requestAnimationFrame(() => requestAnimationFrame(tourPlace));
+}
+function tourPlace() {
+  if ($('#tour').hidden) return; const st = TOUR[TR.i], el = st.el && document.querySelector(st.el);
+  const r = st.rect ? st.rect() : el ? el.getBoundingClientRect() : { left: innerWidth / 2 - 100, top: innerHeight / 2 - 50, width: 200, height: 100 }, pad = 6;
+  const hole = $('#tourHole'), card = $('#tourCard'); Object.assign(hole.style, { left: r.left - pad + 'px', top: r.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+  const cw = card.offsetWidth, ch = card.offsetHeight, g = 14; let x, y;
+  if (r.top + r.height + g + ch < innerHeight - 8) { x = r.left; y = r.top + r.height + g; }            // below
+  else if (r.left + r.width + g + cw < innerWidth - 8) { x = r.left + r.width + g; y = r.top; }      // right
+  else if (r.left - g - cw > 8) { x = r.left - g - cw; y = r.top; }                                     // left
+  else { x = r.left; y = r.top - g - ch; }                                                              // above
+  card.style.left = Math.max(12, Math.min(innerWidth - cw - 12, x)) + 'px'; card.style.top = Math.max(12, Math.min(innerHeight - ch - 12, y)) + 'px';
+}
+function tourOpen() { $('#tour').hidden = false; $('#tourBtn').classList.remove('pulse'); try { localStorage.setItem('hudTourSeen', '1'); } catch {} tourShow(0); $('#tourNext').focus(); }
+function tourClose() { $('#tour').hidden = true; $('#tourBtn').focus(); }
+$('#tourBtn').addEventListener('click', tourOpen);
+$('#tourNext').addEventListener('click', () => TR.i === TOUR.length - 1 ? tourClose() : tourShow(TR.i + 1));
+$('#tourPrev').addEventListener('click', () => tourShow(TR.i - 1));
+$('#tourSkip').addEventListener('click', tourClose);
+addEventListener('keydown', e => { if ($('#tour').hidden) return; if (e.key === 'Escape') { e.stopImmediatePropagation(); tourClose(); } if (e.key === 'ArrowRight') $('#tourNext').click(); if (e.key === 'ArrowLeft' && TR.i > 0) tourShow(TR.i - 1); }, true);
+addEventListener('resize', tourPlace);
+try { if (!localStorage.getItem('hudTourSeen')) $('#tourBtn').classList.add('pulse'); } catch {}
 
 /* ───────────────────────── loop ───────────────────────── */
 function resize() { const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; frameOffset(); pMat.uniforms.uScale.value = pMatS.uniforms.uScale.value = h * renderer.getPixelRatio() / (2 * Math.tan(camera.fov * Math.PI / 360)); }
