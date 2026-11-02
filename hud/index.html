@@ -728,7 +728,8 @@ header h1 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
 .tour-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(16,24,40,.25); }
 .tour-btn.pulse { animation: tourPulse 1.8s ease-out 3; }
 @keyframes tourPulse { 0% { box-shadow: 0 0 0 0 rgba(44,86,201,.55); } 100% { box-shadow: 0 0 0 14px rgba(44,86,201,0); } }
-#tour { position: fixed; inset: 0; z-index: 40; }
+#tour { position: fixed; inset: 0; z-index: 40; cursor: pointer; }
+#tourCard { cursor: default; }
 .tour-hole { position: fixed; border-radius: 12px; box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 200vmax rgba(10,14,20,.58); transition: left .3s ease, top .3s ease, width .3s ease, height .3s ease; pointer-events: none; }
 .tour-card { position: fixed; width: min(340px, calc(100vw - 32px)); background: var(--panel); border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 16px 48px rgba(10,14,20,.35); display: grid; gap: 6px; transition: left .3s ease, top .3s ease; }
 .tour-step { font-size: 11.5px; font-weight: 650; color: var(--accent); letter-spacing: .03em; }
@@ -3103,6 +3104,8 @@ $('#tourBtn').addEventListener('click', tourOpen);
 $('#tourNext').addEventListener('click', () => TR.i === TOUR.length - 1 ? tourClose() : tourShow(TR.i + 1));
 $('#tourPrev').addEventListener('click', () => tourShow(TR.i - 1));
 $('#tourSkip').addEventListener('click', tourClose);
+// clicking the dimmed area (anywhere outside the card) also moves on
+$('#tour').addEventListener('click', e => { if (!e.target.closest('#tourCard')) $('#tourNext').click(); });
 addEventListener('keydown', e => { if ($('#tour').hidden) return; if (e.key === 'Escape') { e.stopImmediatePropagation(); tourClose(); } if (e.key === 'ArrowRight') $('#tourNext').click(); if (e.key === 'ArrowLeft' && TR.i > 0) tourShow(TR.i - 1); }, true);
 addEventListener('resize', tourPlace);
 try { if (!localStorage.getItem('hudTourSeen')) $('#tourBtn').classList.add('pulse'); } catch {}
