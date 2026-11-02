@@ -988,6 +988,26 @@ const P = {
     desc:'HUD 제어장치와 차량 LIN 네트워크 사이에서 데이터를 주고받습니다.',
     points:['HUD 켜기/끄기, 밝기, 높이 조절 같은 명령을 받고 상태와 고장 정보를 보냅니다. 영상은 동축 케이블로 따로 옵니다.','차량용 인증은 받았지만 등급은 확인하지 못했습니다.','흰 4핀 커넥터 옆에 두었습니다(위치 추정).'],
     specs:[['제조사','NXP'],['P/N','TJA1021T/20/CM'],['패키지','SOIC-8'],['차량용 인증','AEC-Q100 (등급 미확인)'],['위치','추정']] },
+  ecap: { name:'전해 커패시터', full:'전해 커패시터 ×6', en:'Huaguan 100 µF 35 V aluminium electrolytic', conf:'photo', on:'pcb', maker:'Huaguan (华冠)', pn:'100uF 35V', grade:'—', photos:['pcb-noshield','pcb-out'],
+    desc:'전원 입력부의 큰 원통형 커패시터 6개입니다. 차량 전원의 출렁임을 받아 내고, 순간적으로 큰 전류가 필요할 때 에너지를 내줍니다.',
+    points:['윗면 표기 "100 35V": 100 µF, 35 V 정격.','차량 12 V 전원은 시동·부하 변화로 크게 흔들려서, 입력단에 큰 용량을 둡니다.'], specs:[['수량','6개 (BOM)'],['크기','6.3 × 7.7 mm (BOM)']] },
+  ind: { name:'인덕터', full:'인덕터 ×5', en:'Power inductors · common-mode choke', conf:'photo', on:'pcb', maker:'Masuo · Sanli · Nianying', pn:'100 · 220 · 102', grade:'—', photos:['pcb-noshield','pcb-out','pcb-power'],
+    desc:'전원 회로의 회색 사각 부품 5개입니다. 4개는 DC-DC 변환에 쓰는 전력 인덕터, 1개는 잡음을 거르는 공통 모드 인덕터로 보입니다.',
+    points:['표기 "100" = 10 µH, "220" = 22 µH (BOM: 0630 인덕터 4개, 10 µH·22 µH).','표기 "102"는 BOM의 공통 모드 인덕터(1 kΩ, 3 A)로 보입니다(추정).'], specs:[['구성','전력 인덕터 4 + 공통 모드 1 (BOM)'],['크기','7.3 × 6.8 mm 급 (BOM)']] },
+  hsd: { name:'HSD 커넥터', full:'HSD 커넥터 (영상 입력)', en:'Rosenberger HSD D4S20L-40MA5-A', conf:'photo', on:'pcb', maker:'Rosenberger', pn:'D4S20L-40MA5-A', grade:'—', photos:['pcb-noshield','pcb-housing'],
+    desc:'차량 콕핏 컴퓨터에서 오는 영상 케이블이 꽂히는 고속 커넥터입니다. 여기로 들어온 신호를 영상처리 IC(MAX9278)가 풉니다.',
+    points:['HSD는 차량용 고속 데이터 커넥터 규격입니다. 차폐가 단단해 잡음에 강합니다.'], specs:[['역할','영상 입력 (GMSL)'],['크기','18.9 × 9.1 mm (BOM)']] },
+  pwrcon: { name:'전원 커넥터', full:'전원 커넥터', en:'TE 1376350-9', conf:'photo', on:'pcb', maker:'TE', pn:'1376350-9', grade:'—', photos:['pcb-noshield','pcb-out'],
+    desc:'차량 배선에서 전원과 LIN 통신선이 들어오는 흰색 커넥터입니다.', points:['LIN 칩(TJA1021)과 전원 회로가 이 커넥터 가까이에 있습니다.'], specs:[['크기','24.5 × 14.2 mm (BOM)']] },
+  wcon: { name:'와이어 커넥터', full:'와이어 커넥터 (9P · 8P · 4P)', en:'Xinfuer wire-to-board connectors', conf:'photo', on:'pcb', maker:'Xinfuer (新富尔)', pn:'61098-0901 · 61098-0801 · 1.25T-4AB', grade:'—', photos:['pcb-noshield','pcb-out'],
+    desc:'모터, 위치 감지 스위치, LED 전원 등 내부 배선이 꽂히는 흰색 커넥터들입니다.',
+    points:['BOM: 9핀 1개, 8핀 2개, 4핀 2개. 사진에서 보이는 흰 커넥터 위치에 표시했고, 각각이 몇 핀인지는 구분하지 않았습니다.'], specs:[['수량','5개 (BOM)']] },
+  fpccon: { name:'FPC 커넥터', full:'FPC 커넥터 (Custom FPCB 연결)', en:'Aurora F31L-1A7H1', conf:'photo', on:'pcb', maker:'Aurora (奥罗拉)', pn:'F31L-1A7H1', grade:'—', photos:['pcb-noshield','ffc'],
+    desc:'회색 Custom FPCB 케이블이 메인 PCB에 꽂히는 납작한 커넥터입니다. 노란 캡톤 테이프로 덮여 있습니다.', points:['영상 신호가 여기서 케이블을 타고 Bare PCB와 TFT로 갑니다.'], specs:[['크기','20.3 × 6.8 mm (BOM)']] },
+  xtal: { name:'크리스털', full:'크리스털 · 오실레이터 (16 MHz)', en:'16 MHz crystal and active oscillator', conf:'guess', on:'pcb', maker:'Anji (安基)', pn:'16M', grade:'—', photos:['pcb-mcu'],
+    desc:'MCU 옆의 작은 은색 부품입니다. MCU가 시간을 재는 기준 박자(16 MHz)를 만듭니다.', points:['BOM에는 크리스털 1개와 액티브 오실레이터 1개가 있습니다. 모델에는 MCU 옆 은색 부품 하나로 표시했습니다(위치 추정).'], specs:[['주파수','16 MHz (BOM)']] },
+  sclip: { name:'실드 클립', full:'실드 클립 ×4', en:'Shield-can clips', conf:'photo', on:'pcb', maker:'Longyou (龙友)', pn:'L0169-T1SMP-0WV-L', grade:'—', photos:['pcb-noshield','pcb-shield'],
+    desc:'영상 칩들을 덮는 차폐 캔을 붙잡는 작은 금속 클립입니다. 기판의 주황색 테두리 위에 있습니다.', points:['차폐 캔은 고속 영상 신호에서 나오는 전자파를 가둬 다른 회로와 차량에 잡음이 새지 않게 합니다.','클립 위치는 사진 기준 대략입니다.'], specs:[['수량','4개 (BOM)']] },
   foam: { name:'방진 폼', full:'방진 폼', en:'Damping / sealing foam', mat:'', conf:'photo', ex:[0,18,0], photos:['tft-panel'],
     desc:'TFT 가장자리와 부품 사이에 붙은 검은 폼입니다. 진동을 흡수하고 먼지와 빛샘을 막습니다.',
     points:['사진의 TFT 모서리에서 검은 폼 테이프와 실리콘 고정이 보입니다.'], specs:[] },
@@ -997,12 +1017,13 @@ const P = {
 };
 const GROUPS = {
   backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','film','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
+  board: { name:'기판 실장 부품', kids:['hsd','pwrcon','wcon','fpccon','ecap','ind','xtal','sclip'], desc:'메인 PCB 사진에서 위치를 확인한 커넥터, 커패시터, 인덕터 등입니다. 저항·커패시터 같은 아주 작은 칩 부품(수백 개)은 위치를 하나씩 표시하지 않았습니다.' },
   chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
 const TREE = [
   { t:'기구', items:['upper','lower','baseplate','heatsink','pad','cover','motor','motorcover'] },
   { t:'광학', items:['tft', { g:'backlight' }, 'concave', 'fold'] },
-  { t:'HW (전자부품)', items:['epson','max','pcb','mcu', { g:'chips' }] },
+  { t:'HW (전자부품)', items:['epson','max','pcb','mcu', { g:'chips' }, { g:'board' }] },
   { t:'기타 부자재', items:['foam','misc'] },
 ];
 const STEPS = [
@@ -1332,14 +1353,17 @@ const PCB_POS = V(-7.5, 1.4, -18), shieldMeshes = [];
   chip('dcdc', .3, .3, .09, null, false, -5.2, -1.2);
   chip('ledchip', .4, .4, .09, null, false, 10.6, .4);
   chip('lin', .5, .4, .15, ['TJA1021'], false, -11, -1.9, 'so');
-  { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(5.1, 0, -2.1); g.add(tag(xt, 'mcu')); }
+  { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(5.1, 0, -2.1); g.add(tag(xt, 'xtal')); chipCenters.xtal = V(5.1, T + .2, -2.1); }
   { const s = new THREE.Group(), cw = 5.4, cd = 3.9; box(cw, .05, cd, M.silver, 0, T + .62, 0, s); for (const k of [-1, 1]) { box(cw, .6, .05, M.silver, 0, T + .3, k * cd / 2, s); box(.05, .6, cd, M.silver, k * cw / 2, T + .3, 0, s); } s.position.set(.5, 0, -.2); g.add(s); s.traverse(c => c.isMesh && shieldMeshes.push(c)); }
-  [[-9.8, 2.2], [-8.9, 2.2], [-8, 2.2], [-9.2, 1.2], [-7.6, 1.2], [-5.6, 1.3]].forEach(([x, z]) => { cyl(.33, .62, M.silver, x, T + .31, z, g); cyl(.3, .02, M.black, x, T + .63, z, g); });
-  [[-11.2, .8], [-9.6, -.4], [-6.3, -1.9], [-4.3, -.4], [-3.6, 1.5]].forEach(([x, z]) => box(.95, .45, .95, std(0x5d6166, .7), x, T + .22, z, g));
-  cyl(.75, 2.4, M.black, -14.3, .7, -1.4, g, 'x'); box(1.4, 1.4, 1.4, M.silver, -12.6, .78, -1.4, g);
-  box(2.4, 1.4, 2, M.white, -13.6, .78, 1.3, g);
-  [[9.6, -2.3, 1.6], [11, -1, 1.1], [11.4, 1.6, 1.8], [5.2, 2.4, 1.7]].forEach(([x, z, w]) => box(w, .55, .6, M.white, x, T + .28, z, g));
-  box(2.5, .32, .65, M.kapton, 8.6, T + .16, 2.55, g);
+  // parts identified on the board photo (pcb-noshield / pcb-out); each is its own pickable group
+  const onBoard = (id, at, build) => { const q = new THREE.Group(); build(q); g.add(tag(q, id)); chipCenters[id] = at; };
+  onBoard('ecap', V(-8.6, T + .7, 1.7), q => [[-9.8, 2.2], [-8.9, 2.2], [-8, 2.2], [-9.2, 1.2], [-7.6, 1.2], [-5.6, 1.3]].forEach(([x, z]) => { cyl(.33, .62, M.silver, x, T + .31, z, q); cyl(.3, .02, M.black, x, T + .63, z, q); }));
+  onBoard('ind', V(-7, T + .5, -.2), q => [[-11.2, .8], [-9.6, -.4], [-6.3, -1.9], [-4.3, -.4], [-3.6, 1.5]].forEach(([x, z]) => box(.95, .45, .95, std(0x5d6166, .7), x, T + .22, z, q)));
+  onBoard('hsd', V(-13.6, 1.5, -1.4), q => { cyl(.75, 2.4, M.black, -14.3, .7, -1.4, q, 'x'); box(1.4, 1.4, 1.4, M.silver, -12.6, .78, -1.4, q); });
+  onBoard('pwrcon', V(-13.6, 1.5, 1.3), q => box(2.4, 1.4, 2, M.white, -13.6, .78, 1.3, q));
+  onBoard('wcon', V(9.8, T + .6, -.3), q => [[9.6, -2.3, 1.6], [11, -1, 1.1], [11.4, 1.6, 1.8], [5.2, 2.4, 1.7]].forEach(([x, z, w]) => box(w, .55, .6, M.white, x, T + .28, z, q)));
+  onBoard('fpccon', V(8.6, T + .35, 2.55), q => box(2.5, .32, .65, M.kapton, 8.6, T + .16, 2.55, q));
+  onBoard('sclip', V(.5, T + .5, -2.3), q => [[-2.35, -.2], [3.35, -.2], [-.6, -2.3], [1.7, 1.9]].forEach(([x, z]) => box(.32, .22, .24, M.silver, x, T + .11, z, q)));
   { const r = rng(5), n = 140, inst = new THREE.InstancedMesh(new THREE.BoxGeometry(.18, .08, .1), M.black, n), mm = new THREE.Matrix4(); for (let i = 0; i < n; i++) { mm.makeTranslation(-11 + r() * 24, T + .04, -3 + r() * 6); inst.setMatrixAt(i, mm); } g.add(inst); }
   register('pcb', g); }
 
@@ -2941,13 +2965,13 @@ const BOM = [
   {"r": 19, "lv": 3, "sec": "pcb", "ko": "0603커패시터", "cn": "0603电容", "qty": "21", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Samsung / Murata", "spec": "220nF-10uF", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 20, "lv": 3, "sec": "pcb", "ko": "0805커패시터", "cn": "0805电容", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.25", "1.25"], "mtype": "복합 재료", "maker": "Samsung / Taiyo Yuden", "spec": "10uF/22uF", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 21, "lv": 3, "sec": "pcb", "ko": "1206커패시터", "cn": "1206电容", "qty": "15", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "1.6", "1.6"], "mtype": "복합 재료", "maker": "Murata / Taiyo Yuden", "spec": "1uF-22uF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 22, "lv": 3, "sec": "pcb", "ko": "전해 커패시터", "cn": "电解电容", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["7.7", "6.3", "6.3"], "mtype": "복합 재료", "maker": "Huaguan (华冠)", "spec": "100uF 35V", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 22, "lv": 3, "sec": "pcb", "ko": "전해 커패시터", "cn": "电解电容", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["7.7", "6.3", "6.3"], "mtype": "복합 재료", "maker": "Huaguan (华冠)", "spec": "100uF 35V", "asm": "납땜", "look": "N", "id": "ecap"},
   {"r": 23, "lv": 3, "sec": "pcb", "ko": "0402저항", "cn": "0402电阻", "qty": "172", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.32"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 24, "lv": 3, "sec": "pcb", "ko": "0603저항", "cn": "0603电阻", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.45"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 25, "lv": 3, "sec": "pcb", "ko": "2512저항", "cn": "2512电阻", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.35", "3.1", "0.55"], "mtype": "복합 재료", "maker": "Yageo", "spec": "50mΩ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 26, "lv": 3, "sec": "pcb", "ko": "0630인덕터", "cn": "0630电感", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6.8", "3"], "mtype": "복합 재료", "maker": "Masuo (玛索) / Sanli (三礼)", "spec": "10uH 22uH", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 26, "lv": 3, "sec": "pcb", "ko": "0630인덕터", "cn": "0630电感", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6.8", "3"], "mtype": "복합 재료", "maker": "Masuo (玛索) / Sanli (三礼)", "spec": "10uH 22uH", "asm": "납땜", "look": "N", "id": "ind"},
   {"r": 27, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.2", "1.2"], "mtype": "복합 재료", "maker": "Murata", "spec": "DLW21SZ,2012,90Ω,280mA", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 28, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6", "3.8"], "mtype": "복합 재료", "maker": "Nianying (年盈)", "spec": "WBHWP,1KΩ,3A", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 28, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6", "3.8"], "mtype": "복합 재료", "maker": "Nianying (年盈)", "spec": "WBHWP,1KΩ,3A", "asm": "납땜", "look": "N", "id": "ind"},
   {"r": 29, "lv": 3, "sec": "pcb", "ko": "0603페라이트 비드", "cn": "0603磁珠", "qty": "3", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM18PG121SH1,120Ω,2A", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 30, "lv": 3, "sec": "pcb", "ko": "0402페라이트 비드", "cn": "0402磁珠", "qty": "19", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM15AG121SH1,120Ω,500mA", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 31, "lv": 3, "sec": "pcb", "ko": "다이오드", "cn": "二极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2.7", "1.3", "0.8"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "BAS316,250mA", "asm": "납땜", "look": "N", "on": "pcb"},
@@ -2958,15 +2982,15 @@ const BOM = [
   {"r": 36, "lv": 3, "sec": "pcb", "ko": "PMOS 소자", "cn": "PMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["10.7", "6.8", "2.5"], "mtype": "복합 재료", "maker": "Jiangzhi (江智)", "spec": "JST15P60T2-Q", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 37, "lv": 3, "sec": "pcb", "ko": "트랜지스터", "cn": "三极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "PDTC114ET", "asm": "납땜", "look": "N", "on": "pcb"},
   {"r": 38, "lv": 3, "sec": "pcb", "ko": "NMOS 소자", "cn": "NMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Yangjie (扬杰)", "spec": "YJL03N06AQ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 39, "lv": 3, "sec": "pcb", "ko": "커넥터9P", "cn": "插座9P", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0901-5001", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 40, "lv": 3, "sec": "pcb", "ko": "커넥터8P", "cn": "插座8P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["16.5", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0801-5001", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 41, "lv": 3, "sec": "pcb", "ko": "커넥터4P", "cn": "插座4P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["9.8", "3.4", "5.3"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "1.25T-4AB-P", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 42, "lv": 3, "sec": "pcb", "ko": "HSD커넥터", "cn": "HSD插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18.85", "9.1", "11.05"], "mtype": "복합 재료", "maker": "Rosenberger", "spec": "D4S20L-40MA5-A", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 43, "lv": 3, "sec": "pcb", "ko": "전원 커넥터", "cn": "电源插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["24.5", "14.2", "17.2"], "mtype": "복합 재료", "maker": "TE", "spec": "1376350-9", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 44, "lv": 3, "sec": "pcb", "ko": "FPC커넥터", "cn": "FPC插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["20.3", "6.75", "2.55"], "mtype": "복합 재료", "maker": "Aurora (奥罗拉)", "spec": "F31L-1A7H1", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 45, "lv": 3, "sec": "pcb", "ko": "실드 클립", "cn": "屏蔽夹", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["9.6", "2.4", "3"], "mtype": "복합 재료", "maker": "Longyou (龙友)", "spec": "L0169-T1SMP-0WV-L", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 46, "lv": 3, "sec": "pcb", "ko": "액티브 오실레이터", "cn": "有源晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.5", "2", "0.95"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "16M SMAF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 47, "lv": 3, "sec": "pcb", "ko": "크리스털 오실레이터", "cn": "晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "2.5", "0.75"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "CXF,16M", "asm": "납땜", "look": "N", "on": "pcb"},
+  {"r": 39, "lv": 3, "sec": "pcb", "ko": "커넥터9P", "cn": "插座9P", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0901-5001", "asm": "납땜", "look": "N", "id": "wcon"},
+  {"r": 40, "lv": 3, "sec": "pcb", "ko": "커넥터8P", "cn": "插座8P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["16.5", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0801-5001", "asm": "납땜", "look": "N", "id": "wcon"},
+  {"r": 41, "lv": 3, "sec": "pcb", "ko": "커넥터4P", "cn": "插座4P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["9.8", "3.4", "5.3"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "1.25T-4AB-P", "asm": "납땜", "look": "N", "id": "wcon"},
+  {"r": 42, "lv": 3, "sec": "pcb", "ko": "HSD커넥터", "cn": "HSD插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18.85", "9.1", "11.05"], "mtype": "복합 재료", "maker": "Rosenberger", "spec": "D4S20L-40MA5-A", "asm": "납땜", "look": "N", "id": "hsd"},
+  {"r": 43, "lv": 3, "sec": "pcb", "ko": "전원 커넥터", "cn": "电源插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["24.5", "14.2", "17.2"], "mtype": "복합 재료", "maker": "TE", "spec": "1376350-9", "asm": "납땜", "look": "N", "id": "pwrcon"},
+  {"r": 44, "lv": 3, "sec": "pcb", "ko": "FPC커넥터", "cn": "FPC插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["20.3", "6.75", "2.55"], "mtype": "복합 재료", "maker": "Aurora (奥罗拉)", "spec": "F31L-1A7H1", "asm": "납땜", "look": "N", "id": "fpccon"},
+  {"r": 45, "lv": 3, "sec": "pcb", "ko": "실드 클립", "cn": "屏蔽夹", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["9.6", "2.4", "3"], "mtype": "복합 재료", "maker": "Longyou (龙友)", "spec": "L0169-T1SMP-0WV-L", "asm": "납땜", "look": "N", "id": "sclip"},
+  {"r": 46, "lv": 3, "sec": "pcb", "ko": "액티브 오실레이터", "cn": "有源晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.5", "2", "0.95"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "16M SMAF", "asm": "납땜", "look": "N", "id": "xtal"},
+  {"r": 47, "lv": 3, "sec": "pcb", "ko": "크리스털 오실레이터", "cn": "晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "2.5", "0.75"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "CXF,16M", "asm": "납땜", "look": "N", "id": "xtal"},
   {"r": 48, "lv": 3, "sec": "pcb", "ko": "MCU칩", "cn": "MCU芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["16.8", "16.8", "1.3"], "mtype": "복합 재료", "maker": "Renesas", "spec": "R7F7016843AFP-C", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "mcu"},
   {"r": 49, "lv": 3, "sec": "pcb", "ko": "연산증폭기 칩", "cn": "运放芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.1", "2.4", "1.1"], "mtype": "복합 재료", "maker": "TI", "spec": "INA199B1QDCKRQ1", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "opamp"},
   {"r": 50, "lv": 3, "sec": "pcb", "ko": "EEPROM칩", "cn": "EEPROM芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.1", "5", "1.3"], "mtype": "복합 재료", "maker": "Puya (普冉)", "spec": "P24C08C-SSH-MAR", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "eeprom"},
@@ -3015,7 +3039,7 @@ function bomDetail(b) {
   const f = [['중국어 명칭', b.cn], ['부품 번호', b.pn], ['수량', b.qty && `${b.qty} ${b.unit || ''}`], ['조달', b.src], ['중량', b.w && `${num(b.w)} g`], ['크기', dimTxt(b) && dimTxt(b) + ' mm'], ['두께', b.t && `${b.t} mm`],
     ['재료 유형', b.mtype], ['재료', b.mat], [b.sec === 'mech' ? '소재 등급' : '규격 · 모델', b.spec], ['제조사', b.maker], ['표면처리', b.surf], ['제조 공정', b.proc], ['조립 공정', b.asm], ['탄소 배출', b.co2 && b.co2.replace(/\s*kgCO2eq\/kg/, ' kgCO₂eq/kg')], ['외관 부품', b.look === 'Y' ? '예' : b.look === 'N' ? '아니오' : '']].filter(x => x[1]);
   const sel = bomSelOf(b), ph = !sel ? [] : sel.g ? [...new Set(GROUPS[sel.g].kids.flatMap(k => P[k].photos))] : P[sel.id].photos;
-  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? thumbs(ph.slice(0, 4)) : ''}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? '<p class="note">Main PCB 위의 부품입니다. 3D에서는 PCB를 선택합니다.</p>' : ''}</div>`;
+  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? thumbs(ph.slice(0, 4)) : ''}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? `<p class="note">아주 작은 칩 부품이라 위치를 하나씩 표시하지 않고 Main PCB 전체를 강조합니다. 이 기판에 ${b.qty}개 들어 있습니다.</p>` : ''}</div>`;
 }
 function renderBOM() {
   const q = ($('#bomQ').value || '').trim().toLowerCase();
