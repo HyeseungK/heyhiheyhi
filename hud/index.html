@@ -2039,7 +2039,7 @@ const SPEC_TXT = {
     why: ['기울어진 허상은 도로와 대시보드의 수평선과 어긋나 바로 눈에 띕니다.'],
     qs: ['최종 합격선은 0.3°인가요, 공차를 더한 0.6°인가요?'] },
   lda: { one: '운전자 눈에서 허상 중심을 바라보는 방향의 각도입니다. 위아래가 LookDown, 좌우가 LookOver입니다.',
-    def: '이 항목의 "편차"는 같은 차에서 눈 위치를 아이박스 안에서 옮길 때 이 각도가 얼마나 달라지는지입니다. 그림의 여덟 단계에서 각도, 아이박스, 편차를 차례로 봅니다.',
+    def: '이 항목의 "편차"는 같은 차에서 눈 위치를 아이박스 안에서 옮길 때 이 각도가 얼마나 달라지는지입니다. 그림의 네 단계에서 각도, 눈 이동, 편차를 세는 방법을 차례로 봅니다.',
     why: ['편차가 크면 머리를 움직일 때 AR 그래픽이 도로에서 어긋나 보입니다.'],
     qs: ['편차는 중심점 대비 최대 차이인가요, 측정점 간 최대–최소인가요?', '±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
   res: { one: '시야각 1° 안에 구분해서 보이는 선 쌍(밝은 선 + 어두운 선)의 수입니다.',
@@ -2093,6 +2093,8 @@ SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 const LDALESSON = (() => {
 
 const STEPS = ['원본 스펙', 'LookDown', 'LookOver', '아이박스와 눈 이동', '각도와 편차', '두 가지 계산', '오차 vs 편차', '정리'];
+// the item page shows only what the open question needs: the two angles, the eye moving, and how the change is counted
+const ORDER = [1, 2, 3, 5], LABELS = ['LookDown', 'LookOver', '눈이 움직이면', '편차는 어떻게 세나'];
 // every number below is an example for understanding, not a Zeekr 7X value
 const S = { step: 0, ld: LDA0, lo: 0.0, ez: 0, ex: 0, ebw: 130, ebh: 50, c: 3.0, a: 3.8, b: 2.8, crit: 0.9, err: 0.4, mv: 25 };
 const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, f1 = n => (Math.round(n * 10) / 10).toFixed(1), f2 = n => (Math.round(n * 100) / 100).toFixed(2);
@@ -2190,9 +2192,9 @@ function errVsDev() {
 const slider = (k, label, mn, mx, st, unit) => `<label for="ls-${k}"><span>${label}</span><input id="ls-${k}" type="range" min="${mn}" max="${mx}" step="${st}" value="${S[k]}" data-lk="${k}"><output id="lso-${k}">${(+S[k]).toFixed(st < 1 ? 1 : 0)} ${unit}</output></label>`;
 function render() {
   const it = curSet().items.lda;
-  const st = S.step, fig = $('#lsFig'), text = $('#lsText'), A = anglesAt(S.ez, S.ex), mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b), mCenter = Math.max(Math.abs(S.a - S.c), Math.abs(S.b - S.c)), mRange = mx - mn;
-  $('#lsSteps').innerHTML = STEPS.map((t, i) => `<button data-lstep="${i}" aria-current="${i === st}"><span class="n">${i + 1}</span>${t}</button>`).join('');
-  $('#lsPrev').disabled = st === 0; $('#lsNext').disabled = st === STEPS.length - 1;
+  const pos = S.step, st = ORDER[pos], fig = $('#lsFig'), text = $('#lsText'), A = anglesAt(S.ez, S.ex), mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b), mCenter = Math.max(Math.abs(S.a - S.c), Math.abs(S.b - S.c)), mRange = mx - mn;
+  $('#lsSteps').innerHTML = LABELS.map((t, i) => `<button data-lstep="${i}" aria-current="${i === pos}"><span class="n">${i + 1}</span>${t}</button>`).join('');
+  $('#lsPrev').disabled = pos === 0; $('#lsNext').disabled = pos === ORDER.length - 1;
   if (st === 0) {
     fig.innerHTML = `<div class="tw"><table class="src"><thead><tr><th>Item</th><th>광학 사양</th><th>Tolerance</th></tr></thead><tbody><tr><td>LookDown / LookOver angle tolerance</td><td class="m">${esc(it.raw.t) || '—'}</td><td class="m">${esc(it.raw.tol) || '—'}</td></tr></tbody></table></div>
       <p class="note" style="margin:10px 4px 2px">${esc(curSet().name)}의 원문입니다. 오른쪽 창에서 바꾸면 여기도 바뀝니다. 아래 설명은 DLPQ 원본(≤ 1.0 · Eye-box 내 시야각 편차 · ± 0.5)을 기준으로 씁니다.</p>`;
@@ -2223,7 +2225,8 @@ function render() {
       <p>아이박스는 <b>운전자 눈이 이 안에 있으면 이미지 전체가 보이는 영역</b>입니다. 이 단계에서 차와 HUD, 이미지는 그대로 있고 <b>눈의 위치만</b> 옮깁니다.</p>
       <div class="ctl">${slider('ez', '눈 위 / 아래', -40, 40, 1, 'mm')}${slider('ex', '눈 왼쪽 / 오른쪽', -90, 90, 1, 'mm')}</div>
       <div class="readout"><div class="kv"><span>중심에서의 LookDown</span><b>${f2(S.ld)}°</b></div><div class="kv"><span>지금 눈의 LookDown</span><b>${f2(A.ld)}°</b></div><div class="kv"><span>지금 눈의 LookOver</span><b>${f2(A.lo)}°</b></div>${inside ? '' : '<div class="kv"><span>상태</span><b style="color:var(--bad)">아이박스 밖 · 이미지가 잘려 보일 수 있음</b></div>'}</div>
-      <p class="note">단순 기하 모델입니다: 이미지 중심이 ${ASM(`${S.D} m 앞의 한 점`)}에 고정돼 있고 눈만 움직인다고 봤습니다. 아이박스 크기 ${ASM(`${S.ebw} × ${S.ebh} mm`)}, 중심 LookDown ${ASM(`${f1(S.ld)}°`)}도 예시입니다. 실제 HUD는 시차, 미러·앞유리의 광학 특성, 영상 보정 때문에 이 모델과 다를 수 있습니다.</p>`;
+      <p class="note">단순 기하 모델입니다: 이미지 중심이 ${ASM(`${S.D} m 앞의 한 점`)}에 고정돼 있고 눈만 움직인다고 봤습니다. 아이박스 크기 ${ASM(`${S.ebw} × ${S.ebh} mm`)}, 중심 LookDown ${ASM(`${f1(S.ld)}°`)}도 예시입니다. 실제 HUD는 시차, 미러·앞유리의 광학 특성, 영상 보정 때문에 이 모델과 다를 수 있습니다.</p>
+      <p>스펙의 "아이박스 내 시야각 편차"는 이렇게 눈 위치마다 달라지는 각도가 <b>얼마나 퍼져 있는지</b>입니다. 다음 단계에서 그 퍼짐을 세는 방법을 봅니다.</p>`;
   }
   if (st === 4) {
     fig.innerHTML = svg(640, 260, numberLine('center'), '측정 각도와 차이');
@@ -2235,11 +2238,12 @@ function render() {
   if (st === 5) {
     const pA = mCenter <= S.crit, pB = mRange <= S.crit;
     fig.innerHTML = `${svg(640, 260, numberLine('center'), '중심점 대비 차이')}<p class="note" style="margin:0 6px 10px">방법 ① 중심점 대비: 중심과 다른 점들의 차이를 각각 구하고 가장 큰 값을 고릅니다.</p>${svg(640, 260, numberLine('range'), '최대에서 최소를 뺀 차이')}<p class="note" style="margin:0 6px 4px">방법 ② 최대 − 최소: 모든 측정값 중 가장 큰 값에서 가장 작은 값을 뺍니다.</p>`;
-    text.innerHTML = `<h2>같은 측정값, 계산 방식에 따라 다른 편차</h2>
+    text.innerHTML = `<h2>편차는 어떻게 세나</h2>
+      <p>아이박스 안 세 위치에서 LookDown을 쟀다고 해 봅시다: 중심 ${f1(S.c)}°, 위치 A ${f1(S.a)}°, 위치 B ${f1(S.b)}° ${ASM('')}. "편차"를 <b>어느 점을 기준으로</b> 세느냐에 따라 같은 측정값이 다른 숫자가 됩니다.</p>
       <div class="cards"><div class="card"><h3>① 중심점 대비 최대 차이</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 큰 값 <b>${f1(mCenter)}°</b></p><p><span class="verdict ${pA ? 'v-ok' : 'v-bad'}">${pA ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div>
       <div class="card"><h3>② 측정점 간 최대 − 최소</h3><p>${f1(mx)} − ${f1(mn)} = <b>${f1(mRange)}°</b></p><p><span class="verdict ${pB ? 'v-ok' : 'v-bad'}">${pB ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div></div>
       <div class="ctl">${slider('crit', '합격 기준', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}는 계산 차이를 보여 주기 위한 가상 기준이며 전문가 스펙이 아닙니다.</p></div>
-      <p class="note">두 방법은 가능한 해석의 예시입니다. 전문가가 둘 중 무엇을 쓰는지, 혹은 다른 방법(예: 측정점 수나 위치가 다른 방식)을 쓰는지는 ${CHK('확인되지 않았습니다')}.</p>`;
+      <div class="card"><h3>그래서 묻는 것</h3><p>원본의 "≤ 1.0° (Eye-box 내 시야각 편차)"가 ①인지 ②인지에 따라 같은 제품이 합격도, 불합격도 될 수 있습니다. 그래서 "중심점 대비 차이인가요, 측정점 간 최대–최소인가요?"를 확인하는 것입니다.</p></div>`;
   }
   if (st === 6) {
     fig.innerHTML = errVsDev();
@@ -2268,7 +2272,7 @@ function render() {
     root.innerHTML = `<div class="lesson"><nav class="ls-steps" id="lsSteps" aria-label="단계"></nav><div class="ls-fig" id="lsFig"></div><div class="ls-text" id="lsText"></div><div class="ls-nav"><button class="btn" id="lsPrev">← 이전 단계</button><button class="btn primary" id="lsNext">다음 단계 →</button></div></div>`;
     root.oninput = e => { const k = e.target.dataset.lk; if (!k) return; const v = parseFloat(e.target.value); if (Number.isNaN(v)) return; S[k] = v; const id = e.target.id; render(); const el = document.getElementById(id); if (el) el.focus(); };
     root.onclick = e => { const b = e.target.closest('[data-lstep]'); if (b) { S.step = +b.dataset.lstep; render(); return; }
-      if (e.target.closest('#lsPrev') && S.step > 0) { S.step--; render(); } if (e.target.closest('#lsNext') && S.step < STEPS.length - 1) { S.step++; render(); } };
+      if (e.target.closest('#lsPrev') && S.step > 0) { S.step--; render(); } if (e.target.closest('#lsNext') && S.step < ORDER.length - 1) { S.step++; render(); } };
     render();
   }
   return { mount, render };
