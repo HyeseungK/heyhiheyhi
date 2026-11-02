@@ -291,6 +291,11 @@ body[data-tab="spec"] .stage, body[data-tab="spec"] .viewbar, body[data-tab="spe
 .lbl.side-l::after, .lbl.side-r::after { top: 50%; width: 16px; height: 1px; }
 .lbl.side-l::after { left: 100%; }
 .lbl.side-r::after { left: auto; right: 100%; }
+.dragmode { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 40px); display: flex; align-items: center; gap: 2px; padding: 3px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 4px 14px rgba(20,30,40,.10); font-size: 12.5px; }
+.dragmode span { color: var(--muted); padding: 0 6px 0 8px; }
+.dragmode button { padding: 5px 12px; border-radius: 6px; font-weight: 600; color: var(--muted); }
+.dragmode button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+body[data-tab="bom"] .dragmode { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
 .hint { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); font-size: 12px; color: var(--muted); pointer-events: none; transition: opacity .4s; white-space: nowrap; }
 
 #lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(20,24,28,.92); display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: calc(env(safe-area-inset-top, 0px) + 52px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); }
@@ -321,6 +326,7 @@ header .sp { flex: 1; }
   .lcol, .rcol { width: auto; }
   .col .float { position: fixed; z-index: 7; left: 8px; right: 8px; width: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); max-height: 55%; }
   .hint { display: none; }
+  .dragmode { top: 10px; bottom: auto; }
 }
 /* BOM tab: table on the left, the live 3D model on the right */
 body[data-tab="bom"] { --bomw: 58%; }
@@ -383,11 +389,12 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
   .bm-hide2 { display: none; }
 }
 /* expert sets, provenance tags, editor */
-.tg { display: inline-flex; align-items: baseline; gap: 4px; padding: 0 5px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
-.tg i { font-style: normal; font: 600 9.5px/1.6 var(--sans); padding: 0 4px; border-radius: 3px; color: #fff; }
-.tg.exp { background: #e9f0fc; color: #1f4fa8; } .tg.exp i { background: #1f62d1; }
-.tg.asm { background: #fdf3e3; color: #8a5208; border: 1px dashed #e0b56d; } .tg.asm i { background: #c8780f; }
-.tg.chk { background: #fbeceb; color: #a8322a; } .tg.chk i { background: #d1493f; }
+.tg { font-weight: 500; }
+.tg i { font-style: normal; font: 600 10px/1 var(--sans); margin-left: 3px; vertical-align: 1px; letter-spacing: .02em; }
+.tg.exp { color: #1f4fa8; } .tg.exp i { color: #1f62d1; }
+.tg.asm { color: inherit; text-decoration: underline dotted #c8780f; text-underline-offset: 3px; } .tg.asm i { color: #b06a0c; }
+.tg.chk { color: #a8322a; } .tg.chk i { color: #d1493f; }
+.legend .tg { display: inline-flex; align-items: baseline; gap: 2px; }
 .legend { display: flex; gap: 6px; align-items: center; font-size: 12px; }
 .expbar { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
 .expbar select { font: inherit; font-weight: 600; color: var(--fg); padding: 4px 8px; border: 1px solid var(--accent); border-radius: 6px; background: var(--panel); max-width: 220px; }
@@ -554,7 +561,8 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
   <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
   <div id="labels"></div>
   <div id="tip" hidden></div>
-  <div class="hint" id="hint">드래그 회전 · 휠 확대 · 우클릭/Shift 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
+  <div class="dragmode" role="group" aria-label="드래그 동작"><span>드래그</span><button data-drag="rot" aria-pressed="true" title="드래그로 돌려 보기 (R)">회전</button><button data-drag="pan" aria-pressed="false" title="드래그로 옆으로 옮기기 (M)">이동</button></div>
+  <div class="hint" id="hint">휠: 커서 쪽으로 확대 · Shift/우클릭 드래그: 반대 동작 · R 회전 / M 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
   <div class="col lcol">
     <button class="fbtn" id="leftBtn" aria-controls="left" aria-expanded="false"><span class="ic">☰</span>부품 목록<span class="chev">펼치기 ›</span></button>
     <aside id="left" class="float" hidden aria-label="부품 목록"><div class="phead"><span class="ic">☰</span><span>부품 목록</span><button class="x" data-closep="left" aria-label="부품 목록 접기">‹ 접기</button></div><div class="pbody" id="leftBody"></div></aside>
@@ -1309,9 +1317,10 @@ function focus(ids) {
   ids.forEach(id => { const own = objs[ownerOf(id)]; if (!own) return; if (P[id].on) own.obj.traverse(o => { if (o.isMesh && o.userData.pid === id) b.expandByObject(o); }); else b.expandByObject(own.obj); });
   if (b.isEmpty()) return; const s = b.getSize(V()).length(); cam.gt.copy(b.getCenter(V())); cam.gr = Math.min(200, Math.max(14, s * 2.6));
 }
-const ptr = new Map(); let mode = null, down = null;
+const ptr = new Map(); let mode = null, down = null, dragMode = 'rot';
+const setDragMode = m => { dragMode = m; document.querySelectorAll('[data-drag]').forEach(b => b.setAttribute('aria-pressed', b.dataset.drag === m)); canvas.style.cursor = m === 'pan' ? 'move' : 'grab'; };
 canvas.addEventListener('contextmenu', e => e.preventDefault());
-canvas.addEventListener('pointerdown', e => { $('#hint').style.opacity = 0; canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; mode = e.button === 2 || e.shiftKey ? 'pan' : 'rot'; canvas.style.cursor = 'grabbing'; });
+canvas.addEventListener('pointerdown', e => { $('#hint').style.opacity = 0; canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; const alt = e.button === 2 || e.shiftKey; mode = alt ? (dragMode === 'pan' ? 'rot' : 'pan') : dragMode; canvas.style.cursor = 'grabbing'; });
 canvas.addEventListener('pointermove', e => {
   const p = ptr.get(e.pointerId); if (!p) { hover(e); return; }
   const dx = e.clientX - p.x, dy = e.clientY - p.y;
@@ -1320,10 +1329,13 @@ canvas.addEventListener('pointermove', e => {
   if (mode === 'rot') { cam.gth -= dx * .006; cam.gph = Math.min(3.1, Math.max(.03, cam.gph - dy * .006)); } else pan(dx, dy);
   $('#tip').hidden = true;
 });
-function pan(dx, dy) { const r = V().setFromMatrixColumn(camera.matrixWorld, 0), u = V().setFromMatrixColumn(camera.matrixWorld, 1), k = cam.r * .0016; cam.gt.addScaledVector(r, -dx * k).addScaledVector(u, dy * k); }
-canvas.addEventListener('pointerup', e => { ptr.delete(e.pointerId); canvas.style.cursor = 'grab'; if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.t < 500) click(e); down = null; });
+const pxWorld = () => 2 * cam.gr * Math.tan(camera.fov * Math.PI / 360) / (canvas.clientHeight || 1); // world units per screen pixel at the target
+function pan(dx, dy) { const r = V().setFromMatrixColumn(camera.matrixWorld, 0), u = V().setFromMatrixColumn(camera.matrixWorld, 1), k = pxWorld(); cam.gt.addScaledVector(r, -dx * k).addScaledVector(u, dy * k); }
+canvas.addEventListener('pointerup', e => { ptr.delete(e.pointerId); canvas.style.cursor = dragMode === 'pan' ? 'move' : 'grab'; if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.t < 500) click(e); down = null; });
 canvas.addEventListener('pointercancel', e => ptr.delete(e.pointerId));
-canvas.addEventListener('wheel', e => { e.preventDefault(); cam.gr = Math.min(5000, Math.max(6, cam.gr * Math.exp(e.deltaY * .0012))); }, { passive: false });
+canvas.addEventListener('wheel', e => { e.preventDefault(); const r0 = cam.gr, r1 = Math.min(5000, Math.max(6, r0 * Math.exp(e.deltaY * .0012))), rc = canvas.getBoundingClientRect();
+  const ox = e.clientX - rc.left - rc.width / 2, oy = e.clientY - rc.top - rc.height / 2, k = pxWorld() * (1 - r1 / r0), rv = V().setFromMatrixColumn(camera.matrixWorld, 0), uv = V().setFromMatrixColumn(camera.matrixWorld, 1);
+  cam.gt.addScaledVector(rv, ox * k).addScaledVector(uv, -oy * k); cam.gr = r1; }, { passive: false });
 const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
 const visibleChain = o => { while (o) { if (!o.visible) return false; o = o.parent; } return true; };
 function pick(e) {
@@ -1350,6 +1362,8 @@ for (const n of ['left', 'play', 'info']) $('#' + n + 'Btn').addEventListener('c
 function setSettings(open) { $('#settings').hidden = !open; $('#setBtn').setAttribute('aria-expanded', open); $('#setChev').textContent = open ? '접기 ▴' : '펼치기 ▾'; }
 $('#setBtn').addEventListener('click', e => { e.stopPropagation(); setSettings($('#settings').hidden); });
 $('#setClose').addEventListener('click', () => setSettings(false));
+document.querySelectorAll('[data-drag]').forEach(b => b.addEventListener('click', () => setDragMode(b.dataset.drag)));
+addEventListener('keydown', e => { if (curTab === 'spec' || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName)) return; if (e.key === 'r' || e.key === 'R') setDragMode('rot'); if (e.key === 'm' || e.key === 'M') setDragMode('pan'); });
 addEventListener('pointerdown', e => { const s = $('#settings'); if (!s.hidden && !s.contains(e.target) && !$('#setBtn').contains(e.target)) setSettings(false); });
 function markViews(v) { document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); }
 function partView(h) { state.car = false; markViews(''); setHousing(h); }
@@ -2227,7 +2241,8 @@ const DEMOS = {
       const r = val(d0, v.t); if (r && r.p != null) { g.fillStyle = '#d1493f'; g.beginPath(); g.arc(X(v.t), Y(r.p), 6, 0, 7); g.fill(); }
       const base = nv(d0.base), here = !r ? '곡선 값이 아직 입력되지 않았습니다' : r.out === 'after' ? `${v.t}℃는 두 번째 온도 이후라 원본에 없음` : `${v.t}℃ → <b>${fmtN(+r.p.toFixed(2))}%</b>${r.out === 'before' ? ' (시작 전: 유지는 가정)' : ''}${base != null ? ` ≈ ${fmtN(Math.round(base * r.p / 100))} nit (기준 ${fmtN(base)} nit)` : ' · 기준 휘도 미입력 → nit로 바꾸지 않음'}`;
       const chk = [75, 80, 85].map(t => { const q = val(d0, t); return q && q.p != null ? `${t}℃ ${fmtN(+q.p.toFixed(2))}%` : `${t}℃ —`; }).join(' · ');
-      return `<b>디레이팅</b>은 온도에 따라 정해진 출력 한계를 낮추는 것입니다. ${esc(curSet().name)}: ${here}.<br>선형 계산 확인: ${chk}. 출력의 의미 ${d0.mean === 'unk' ? TC('미확정') : TE(DER_MEAN[d0.mean])}, 센서 위치 ${d0.sensor ? TE(esc(d0.sensor)) : TC('미기재')}, ±${fmtN(tol ?? 0)}℃ 적용 대상 ${d0.tolTarget ? TE(esc(d0.tolTarget)) : TC('미기재')}. ${d0.p1asm ? `시작점 ${fmtN(nv(d0.p1))}%는 ${TA('설명용 가정')}입니다.` : ''} 곡선 값은 오른쪽 창의 "디레이팅 곡선" 칸에서 바꿀 수 있습니다.`; } }
+      const open = [d0.mean === 'unk' && '50%가 무엇의 50%인지', !d0.sensor && '온도 센서 위치', !d0.tolTarget && `±${fmtN(tol ?? 0)}℃가 어디에 적용되는지`, base == null && '기준 휘도(nit)'].filter(Boolean);
+      return `온도가 오르면 출력 한계를 낮춥니다. 이 그래프는 <b>${esc(curSet().name)}</b> 값으로 그렸습니다.<br><b>${here}</b><br>계산 확인: ${chk}${d0.p1asm ? ` · 시작점 ${fmtN(nv(d0.p1))}%는 설명용 가정` : ''}${open.length ? `<br><span class="note">아직 모르는 것: ${open.join(', ')}</span>` : ''}`; } },
 };
 
 const CAT_COL = { geo: '#1f62d1', lum: '#c8780f', color: '#8a4fd1', heat: '#d1493f' };
