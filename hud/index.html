@@ -531,6 +531,61 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .sp-item .dot { margin-right: 2px; }
 @media (max-width: 1180px) { .sp-detail { grid-template-columns: minmax(0, 1fr) 360px; } }
 @media (max-width: 900px) { .sp-main { overflow: visible; } .sp-main .demo canvas { height: 260px; } }
+/* LookDown / LookOver lesson */
+.lesson { --ink: var(--fg); --soft: #eef1f4; --eye: #1f5fd1; --ref: var(--muted); --img: #b86400; --glass: #2a8585; --diff: #b8326a; --ok: #24784a; --bad: #b8322a; display: grid; gap: 12px; font-size: 14.5px; line-height: 1.65; color: var(--ink); }
+.lesson .ls-fig { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; min-width: 0; }
+.lesson .ls-text { display: grid; gap: 12px; min-width: 0; }
+.lesson .ls-nav { display: flex; justify-content: space-between; gap: 8px; }
+.lesson .ls-steps { display: flex; flex-wrap: wrap; gap: 6px; }
+.lesson .ls-steps button { flex: none; display: flex; align-items: center; gap: 8px; padding: 7px 12px 7px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--muted); font: 500 13.5px/1 var(--sans); cursor: pointer; }
+.lesson .ls-steps button .n { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); color: var(--ink); font: 600 12px/1 var(--mono); }
+.lesson .ls-steps button[aria-current="true"] { border-color: var(--eye); color: var(--ink); font-weight: 600; }
+.lesson .ls-steps button[aria-current="true"] .n { background: var(--eye); color: var(--panel); }
+.lesson .ls-steps button:focus-visible, .lesson button:focus-visible, .lesson input:focus-visible { outline: 2px solid var(--eye); outline-offset: 2px; }
+.lesson .ls-stage { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.lesson .ls-fig { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; min-width: 0; }
+.lesson .ls-fig svg { display: block; width: 100%; height: auto; }
+.lesson .ls-text { min-width: 0; display: grid; gap: 12px; }
+.lesson .ls-text h2 { margin: 0; font-size: 19px; text-wrap: balance; }
+.lesson .ls-text p { margin: 0; max-width: 62ch; }
+.lesson .ctl { display: grid; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.lesson .ctl label { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 5.2em; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
+.lesson .ctl input[type=range] { width: 100%; accent-color: var(--eye); }
+.lesson .ctl output { font: 600 13.5px/1 var(--mono); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.lesson .nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lesson .nums label { display: grid; gap: 4px; grid-template-columns: none; font-size: 12.5px; }
+.lesson .nums input { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: 600 15px/1 var(--mono); }
+.lesson .readout { display: grid; gap: 6px; background: var(--soft); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.lesson .readout b { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.lesson .kv { display: flex; justify-content: space-between; gap: 12px; }
+.lesson .kv span { color: var(--muted); }
+.lesson .tag { display: inline-block; font: 600 11px/1.5 var(--sans); padding: 0 6px; border-radius: 4px; margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+.lesson .t-src { color: var(--eye); border: 1px solid var(--eye); }
+.lesson .t-asm { color: var(--img); border: 1px dashed var(--img); }
+.lesson .t-hyp { color: var(--diff); border: 1px dashed var(--diff); }
+.lesson .t-chk { color: var(--bad); border: 1px solid var(--bad); }
+.lesson .note { font-size: 13px; color: var(--muted); }
+.lesson .cards { display: grid; gap: 8px; }
+.lesson .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; }
+.lesson .card h3 { margin: 0; font-size: 14.5px; }
+.lesson .card p { font-size: 14px; }
+.lesson .verdict { display: inline-block; font: 700 13px/1 var(--sans); padding: 5px 9px; border-radius: 6px; }
+.lesson .v-ok { color: var(--ok); border: 1.5px solid var(--ok); }
+.lesson .v-bad { color: var(--bad); border: 1.5px dashed var(--bad); }
+.lesson table.src { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--panel); }
+.lesson table.src th, .lesson table.src td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.lesson table.src th { background: var(--soft); font-weight: 600; font-size: 12.5px; color: var(--muted); }
+.lesson table.src td.m { font-family: var(--mono); font-weight: 600; }
+.lesson .tw { overflow-x: auto; }
+.lesson .q { display: grid; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.lesson .q blockquote { margin: 0; font-size: 14.5px; }
+.lesson .btn { justify-self: start; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 500 13.5px/1 var(--sans); cursor: pointer; }
+.lesson .btn.primary { background: var(--eye); border-color: var(--eye); color: var(--panel); }
+.lesson .ls-nav { display: flex; justify-content: space-between; gap: 8px; }
+.lesson svg text { font-family: var(--sans); fill: var(--ink); }
+.lesson svg .mono { font-family: var(--mono); }
+@media (max-width: 860px) { .lesson .ls-stage { grid-template-columns: minmax(0, 1fr); } .lesson .ctl label { grid-template-columns: 7.5em minmax(0, 1fr) 4.6em; } }
+@media (prefers-reduced-motion: no-preference) { .ls-fig svg * { transition: none; } }
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
@@ -1970,7 +2025,7 @@ const SPEC_TXT = {
     why: ['기울어진 허상은 도로·대시보드의 수평선과 어긋나 바로 눈에 띕니다.', 'AR 그래픽의 차선 정합도 함께 틀어집니다.'],
     qs: ['최종 합격선은 0.3°인가요, 0.6°인가요? "0 ~ +0.3"은 무슨 뜻인가요?', '기준선(수평·수직)은 무엇으로 잡나요? 측정 위치는 아이박스 중심인가요?', '회전과 사다리꼴을 따로 관리하나요?'] },
   lda: { one: '운전자 눈에서 허상 중심을 바라보는 방향의 각도입니다. 위아래가 LookDown, 좌우가 LookOver입니다.',
-    def: '그림은 네 단계로 나눠 봅니다. ① LookDown: 눈높이 수평선에서 허상 중심까지 내려다보는 각도. ② LookOver: 정면에서 좌우로 비켜 있는 각도. ③ 설계 대비 오차: 한 관찰 위치에서 설계 각도와 실제 각도의 차이. ④ 아이박스 내 편차: 같은 차에서 눈 위치가 아이박스 안에서 달라질 때 각도가 변하는 정도. 원본은 "≤1.0° (Eye-box 내 시야각 편차)"라서 ④를 주된 검토 대상으로 보되, 실제 시험 정의는 확인되지 않았습니다.',
+    def: '그림은 여덟 단계로 나눠 봅니다. 핵심은 네 가지입니다. ① LookDown: 눈높이 수평선에서 허상 중심까지 내려다보는 각도. ② LookOver: 정면에서 좌우로 비켜 있는 각도. ③ 설계 대비 오차: 한 관찰 위치에서 설계 각도와 실제 각도의 차이. ④ 아이박스 내 편차: 같은 차에서 눈 위치가 아이박스 안에서 달라질 때 각도가 변하는 정도. 원본은 "≤1.0° (Eye-box 내 시야각 편차)"라서 ④를 주된 검토 대상으로 보되, 실제 시험 정의는 확인되지 않았습니다.',
     why: ['아이박스는 "눈이 이 안에 있으면 허상 전체가 보이는 공간"입니다. 밖으로 나가면 나간 쪽 가장자리부터 잘려 보입니다.', '허상은 공간에 떠 있는 위치가 거의 고정이라 눈이 움직이면 바라보는 각도가 조금 변합니다. 이 변화가 크면 머리 위치에 따라 AR 그래픽이 도로에서 어긋나 보입니다.', '±0.5°를 상한에 더한 ≤1.5°는 가능한 해석 중 하나일 뿐 확정 기준이 아닙니다.'],
     qs: ['"Eye-box 내 시야각 편차"는 중심 각도 대비 최대 차이인가요, 측정 각도의 최대–최소 차이인가요?', '아이박스 측정점은 몇 개이고 어디인가요? LookDown과 LookOver를 각각 판정하나요?', '±0.5°는 최종 상한을 1.5°로 늘린다는 뜻인가요, 측정 불확도인가요?', '설계 LookDown·LookOver 각도와 그 장착 공차는 별도로 관리하나요?'] },
   res: { one: '시야각 1° 안에 구분해서 보이는 선 쌍(밝은 선 + 어두운 선 한 쌍)의 수입니다. 단위 lp/deg = line pair per degree.',
@@ -2020,6 +2075,191 @@ const SPEC_TXT = {
 };
 SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 
+/* LookDown / LookOver lesson: eight small steps in the item's centre column (ported from the standalone study page) */
+const LDALESSON = (() => {
+
+const STEPS = ['원본 스펙', 'LookDown', 'LookOver', '아이박스와 눈 이동', '각도와 편차', '두 가지 계산', '오차 vs 편차', '정리'];
+// every number below is an example for understanding, not a Zeekr 7X value
+const S = { step: 0, ld: LDA0, lo: 0.0, ez: 0, ex: 0, ebw: 130, ebh: 50, c: 3.0, a: 3.8, b: 2.8, crit: 0.9, err: 0.4, mv: 25 };
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, f1 = n => (Math.round(n * 10) / 10).toFixed(1), f2 = n => (Math.round(n * 100) / 100).toFixed(2);
+const ASM = t => `${t}<span class="tag t-asm">설명용 가정</span>`, SRC = t => `${t}<span class="tag t-src">원본</span>`, HYP = t => `${t}<span class="tag t-hyp">가상 기준</span>`, CHK = t => `${t}<span class="tag t-chk">확인 필요</span>`;
+const EX = 4; // drawings exaggerate small angles 4× so they can be seen; numbers stay true
+
+/* small SVG helpers */
+const ln = (x1, y1, x2, y2, c, w = 2, dash = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round"/>`;
+const tx = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 13}" ${o.a ? `text-anchor="${o.a}"` : ''} ${o.w ? `font-weight="${o.w}"` : ''} ${o.c ? `style="fill:${o.c}"` : ''} ${o.m ? 'class="mono"' : ''}>${t}</text>`;
+const dot = (x, y, r, c) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const eye = (x, y, label = '눈') => `<circle cx="${x}" cy="${y}" r="9" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/><circle cx="${x}" cy="${y}" r="3.5" fill="var(--ink)"/>${label ? tx(x, y + 27, label, { a: 'middle', w: 600 }) : ''}`;
+function arc(cx, cy, r, a0, a1, c) { // angles in screen radians
+  const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1), sweep = a1 > a0 ? 1 : 0;
+  return `<path d="M${x0} ${y0} A${r} ${r} 0 0 ${sweep} ${x1} ${y1}" fill="none" stroke="${c}" stroke-width="2.5"/>`;
+}
+const svg = (w, h, body, label) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${body}</svg>`;
+
+/* step drawings */
+function sideView(ld, opts = {}) {
+  const ex = 90, ey = 150, L = 470, a = rad(ld * EX), ix = ex + L, iy = ey + Math.tan(a) * L;
+  // windshield sits between the eye and the image: it is where light reflects, not where the image is seen
+  const gx0 = 250, gy0 = 290, gx1 = 330, gy1 = 70, t = ((gx0 - ex) * (gy1 - gy0) - (gy0 - ey) * (gx1 - gx0)) / ((L) * (gy1 - gy0) - (iy - ey) * (gx1 - gx0)), hx = ex + t * L, hy = ey + t * (iy - ey);
+  return svg(640, 330, `
+    <rect x="0" y="250" width="640" height="80" fill="var(--soft)"/>${tx(14, 318, '도로', { s: 12, c: 'var(--muted)' })}
+    <path d="M30 330 L30 230 L200 230 L250 290" fill="none" stroke="var(--line)" stroke-width="2"/>${tx(40, 250, '대시보드 · HUD', { s: 12, c: 'var(--muted)' })}
+    ${ln(gx0, gy0, gx1, gy1, 'var(--glass)', 4)}${tx(gx1 + 8, gy1 + 6, '앞유리 (빛이 반사되는 곳)', { s: 12.5, c: 'var(--glass)', w: 600 })}
+    ${ln(ex, ey, 625, ey, 'var(--ref)', 2, '7 6')}${tx(560, ey - 10, '정면 기준선', { s: 12.5, a: 'middle', c: 'var(--ref)' })}
+    ${ln(ex, ey, ix, iy, 'var(--eye)', 3)}${dot(hx, hy, 4, 'var(--glass)')}
+    <rect x="${ix - 5}" y="${iy - 32}" width="10" height="64" fill="var(--img)"/>${tx(ix - 8, iy + 52, '가상 이미지', { s: 13, a: 'end', w: 600, c: 'var(--img)' })}${tx(ix - 8, iy + 69, '눈에는 여기 떠 보임', { s: 12, a: 'end', c: 'var(--img)' })}
+    ${dot(ix, iy, 4.5, 'var(--ink)')}${tx(ix + 10, iy + 4, '중심', { s: 12 })}
+    ${arc(ex, ey, 92, 0, a, 'var(--diff)')}${tx(ex + 100, ey + Math.tan(a / 2) * 100 + 6, `LookDown ${f1(ld)}°`, { s: 14, w: 700, c: 'var(--diff)' })}
+    ${eye(ex, ey)}${tx(14, 22, `옆에서 본 그림 · 각도 ${EX}배 과장 · 거리는 축척 아님`, { s: 12, c: 'var(--muted)' })}`, '옆에서 본 LookDown 각도');
+}
+function topView(lo) {
+  const ex = 320, ey = 300, L = 240, a = rad(lo * EX), ix = ex + Math.sin(a) * L, iy = ey - Math.cos(a) * L;
+  return svg(640, 340, `
+    ${ln(150, 175, 490, 175, 'var(--glass)', 4)}${tx(495, 180, '앞유리', { s: 12.5, c: 'var(--glass)', w: 600 })}
+    ${ln(ex, ey, ex, 26, 'var(--ref)', 2, '7 6')}${tx(ex - 8, 40, '차량 정면 방향', { s: 12.5, a: 'end', c: 'var(--ref)' })}
+    ${ln(ex, ey, ix, iy, 'var(--eye)', 3)}
+    <rect x="${ix - 60}" y="${iy - 5}" width="120" height="10" fill="var(--img)"/>${tx(ix, iy - 14, '가상 이미지 (떠 보이는 위치)', { s: 12.5, a: 'middle', w: 600, c: 'var(--img)' })}${dot(ix, iy, 4.5, 'var(--ink)')}
+    ${arc(ex, ey, 90, -Math.PI / 2, -Math.PI / 2 + a, 'var(--diff)')}${tx(ex + (lo >= 0 ? 16 : -16), ey - 100, `LookOver ${lo > 0 ? '+' : ''}${f1(lo)}°`, { s: 14, w: 700, a: lo >= 0 ? 'start' : 'end', c: 'var(--diff)' })}
+    ${eye(ex, ey)}${tx(14, 22, `위에서 본 그림 · 각도 ${EX}배 과장 · +는 오른쪽`, { s: 12, c: 'var(--muted)' })}`, '위에서 본 LookOver 각도');
+}
+// simple model: the image centre is one fixed point D metres ahead; only the eye moves
+const anglesAt = (ez, ex) => ({ ld: S.ld + deg(Math.atan(ez / (S.D * 1000))), lo: S.lo - deg(Math.atan(ex / (S.D * 1000))) });
+function eyeboxView() {
+  const sc = 2.1, bx = 170, by = 150, w = S.ebw * sc, h = S.ebh * sc, inside = Math.abs(S.ex) <= S.ebw / 2 && Math.abs(S.ez) <= S.ebh / 2;
+  const px = bx + S.ex * sc, py = by - S.ez * sc, A = anglesAt(S.ez, S.ex);
+  // right: side view of two sight lines meeting at the same image point
+  const sx = 420, sy = 150, L = 200, k = 2.6, cy0 = sy + Math.tan(rad(S.ld * EX)) * L, ey2 = sy - S.ez * k;
+  return svg(640, 330, `
+    ${tx(14, 22, '운전자 뒤에서 본 아이박스 (같은 차, 눈만 이동)', { s: 12.5, w: 600 })}
+    <rect x="${bx - w / 2}" y="${by - h / 2}" width="${w}" height="${h}" fill="none" stroke="var(--eye)" stroke-width="2" stroke-dasharray="6 4"/>
+    ${tx(bx, by + h / 2 + 20, `아이박스 ${S.ebw} × ${S.ebh} mm`, { s: 12.5, a: 'middle', c: 'var(--eye)' })}${tx(bx, by + h / 2 + 37, '(설명용 가정)', { s: 11.5, a: 'middle', c: 'var(--muted)' })}
+    ${ln(bx - w / 2 - 20, by, bx + w / 2 + 20, by, 'var(--line)', 1)}${ln(bx, by - h / 2 - 20, bx, by + h / 2 + 20, 'var(--line)', 1)}${dot(bx, by, 4, 'var(--ref)')}${tx(bx + 7, by - 7, '중심', { s: 11.5, c: 'var(--muted)' })}
+    ${eye(px, py, '')}${tx(px, py + 26, inside ? '지금 눈' : '아이박스 밖', { s: 12.5, a: 'middle', w: 600, c: inside ? 'var(--ink)' : 'var(--bad)' })}
+    ${tx(sx - 10, 22, '옆에서 본 두 시선 (각도 과장)', { s: 12.5, w: 600 })}
+    ${ln(sx, sy, sx + L + 20, sy, 'var(--ref)', 1.5, '6 5')}
+    ${ln(sx, sy, sx + L, cy0, 'var(--ref)', 2, '3 4')}${ln(sx, ey2, sx + L, cy0, 'var(--eye)', 3)}
+    ${dot(sx, sy, 5, 'var(--ref)')}${eye(sx, ey2, '')}<rect x="${sx + L - 4}" y="${cy0 - 26}" width="8" height="52" fill="var(--img)"/>${dot(sx + L, cy0, 4, 'var(--ink)')}
+    ${tx(sx + L, cy0 + 44, '같은 이미지 중심', { s: 12, a: 'middle', c: 'var(--img)', w: 600 })}
+    ${tx(sx, 262, `점선: 중심 눈 → LookDown ${f2(S.ld)}°`, { s: 12.5, c: 'var(--muted)' })}${tx(sx, 282, `실선: 지금 눈 → LookDown ${f2(A.ld)}°`, { s: 12.5, c: 'var(--eye)', w: 600 })}
+    ${tx(sx, 302, `LookOver ${f2(A.lo)}°`, { s: 12.5, c: 'var(--eye)' })}`, '아이박스 안에서 눈을 옮길 때의 시선');
+}
+// a number line of measured angles; brackets show differences
+function numberLine(mode) {
+  const pts = [['중심', S.c], ['위치 A', S.a], ['위치 B', S.b]], lo = Math.min(...pts.map(p => p[1])) - .5, hi = Math.max(...pts.map(p => p[1])) + .5, X = v => 50 + (v - lo) / (hi - lo) * 540, y = 170;
+  let ticks = ''; for (let v = Math.ceil(lo * 2) / 2; v <= hi; v += .5) ticks += ln(X(v), y - 5, X(v), y + 5, 'var(--muted)', 1) + tx(X(v), y + 22, v.toFixed(1) + '°', { s: 11.5, a: 'middle', c: 'var(--muted)', m: 1 });
+  const marks = pts.map(([n, v], i) => `${dot(X(v), y, 7, i ? 'var(--panel)' : 'var(--ink)')}<circle cx="${X(v)}" cy="${y}" r="7" fill="none" stroke="var(--ink)" stroke-width="2"/>${tx(X(v), y + 46 + (i === 2 ? 22 : 0), `${n} <tspan font-weight="700" class="mono">${f1(v)}°</tspan>`, { s: 13, a: 'middle' })}`).join('');
+  const br = (v1, v2, yy, label) => `<path d="M${X(v1)} ${yy + 8} V${yy} H${X(v2)} V${yy + 8}" fill="none" stroke="var(--diff)" stroke-width="2"/>${tx((X(v1) + X(v2)) / 2, yy - 7, label, { s: 13, a: 'middle', w: 700, c: 'var(--diff)' })}`;
+  let brk = '';
+  if (mode === 'center') brk = br(S.c, S.a, 110, `차이 ${f1(Math.abs(S.a - S.c))}°`) + br(S.c, S.b, 70, `차이 ${f1(Math.abs(S.b - S.c))}°`);
+  if (mode === 'range') { const mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b); brk = br(mn, mx, 90, `최대 − 최소 = ${f1(mx - mn)}°`); }
+  return `${ln(40, y, 600, y, 'var(--ink)', 1.5)}${ticks}${brk}${marks}${tx(14, 22, '숫자 = 각도 자체 (측정값)   ·   분홍 괄호 = 각도끼리의 차이 (편차)', { s: 12.5, c: 'var(--muted)' })}`;
+}
+function errVsDev() {
+  // left: one eye, design vs actual image; right: one image, two eye positions
+  const L = 200, k = EX, a0 = rad(S.ld * k), a1 = rad((S.ld + S.err) * k), ex = 40, ey = 120, y0 = ey + Math.tan(a0) * L, y1 = ey + Math.tan(a1) * L;
+  const rx = 360, ry = 120, ez = S.mv * 2.4, yc = ry + Math.tan(a0) * L, dDev = deg(Math.atan(S.mv / (S.D * 1000)));
+  return svg(640, 330, `
+    ${tx(14, 24, '① 설계 위치 대비 오차', { s: 14, w: 700 })}${tx(14, 42, '같은 눈 위치 · 설계 이미지 vs 실제 이미지', { s: 12, c: 'var(--muted)' })}
+    ${ln(ex, ey, ex + L + 30, ey, 'var(--ref)', 1.5, '6 5')}
+    ${ln(ex, ey, ex + L, y0, 'var(--ref)', 2, '3 4')}<rect x="${ex + L - 4}" y="${y0 - 22}" width="8" height="44" fill="none" stroke="var(--img)" stroke-width="2" stroke-dasharray="4 3"/>${tx(ex + L + 12, y0 - 10, '설계 이미지', { s: 12, c: 'var(--img)' })}
+    ${ln(ex, ey, ex + L, y1, 'var(--eye)', 3)}<rect x="${ex + L - 4}" y="${y1 - 22}" width="8" height="44" fill="var(--img)"/>${tx(ex + L + 12, y1 + 18, '실제 이미지', { s: 12, c: 'var(--img)', w: 600 })}
+    ${arc(ex, ey, 150, a0, a1, 'var(--diff)')}${eye(ex, ey, '')}${tx(ex, 250, `비교: 설계 ${f1(S.ld)}° ↔ 실제 ${f1(S.ld + S.err)}°`, { s: 13 })}${tx(ex, 272, `오차 ${f1(Math.abs(S.err))}°`, { s: 15, w: 700, c: 'var(--diff)' })}
+    ${ln(320, 20, 320, 310, 'var(--line)', 1)}
+    ${tx(340, 24, '② 아이박스 내 편차', { s: 14, w: 700 })}${tx(340, 42, '같은 차 · 같은 이미지 · 눈 위치만 다름', { s: 12, c: 'var(--muted)' })}
+    ${ln(rx, ry, rx + L + 30, ry, 'var(--ref)', 1.5, '6 5')}
+    ${ln(rx, ry, rx + L, yc, 'var(--ref)', 2, '3 4')}${ln(rx, ry - ez, rx + L, yc, 'var(--eye)', 3)}<rect x="${rx + L - 4}" y="${yc - 22}" width="8" height="44" fill="var(--img)"/>${tx(rx + L - 8, yc + 40, '같은 이미지', { s: 12, a: 'end', c: 'var(--img)', w: 600 })}
+    ${dot(rx, ry, 5, 'var(--ref)')}${tx(rx + 8, ry + 18, '중심 눈', { s: 11.5, c: 'var(--muted)' })}${eye(rx, ry - ez, '')}${tx(rx + 12, ry - ez - 10, `${S.mv} mm 위의 눈`, { s: 11.5 })}
+    ${tx(rx, 250, `비교: 중심 눈 ${f2(S.ld)}° ↔ 옮긴 눈 ${f2(S.ld + dDev)}°`, { s: 13 })}${tx(rx, 272, `편차 ${f2(dDev)}°`, { s: 15, w: 700, c: 'var(--diff)' })}`, '설계 위치 대비 오차와 아이박스 내 편차 비교');
+}
+
+/* step texts + controls */
+const slider = (k, label, mn, mx, st, unit) => `<label for="ls-${k}"><span>${label}</span><input id="ls-${k}" type="range" min="${mn}" max="${mx}" step="${st}" value="${S[k]}" data-lk="${k}"><output id="lso-${k}">${(+S[k]).toFixed(st < 1 ? 1 : 0)} ${unit}</output></label>`;
+function render() {
+  const it = curSet().items.lda;
+  const st = S.step, fig = $('#lsFig'), text = $('#lsText'), A = anglesAt(S.ez, S.ex), mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b), mCenter = Math.max(Math.abs(S.a - S.c), Math.abs(S.b - S.c)), mRange = mx - mn;
+  $('#lsSteps').innerHTML = STEPS.map((t, i) => `<button data-lstep="${i}" aria-current="${i === st}"><span class="n">${i + 1}</span>${t}</button>`).join('');
+  $('#lsPrev').disabled = st === 0; $('#lsNext').disabled = st === STEPS.length - 1;
+  if (st === 0) {
+    fig.innerHTML = `<div class="tw"><table class="src"><thead><tr><th>Item</th><th>광학 사양</th><th>Tolerance</th></tr></thead><tbody><tr><td>LookDown / LookOver angle tolerance</td><td class="m">${esc(it.raw.t) || '—'}</td><td class="m">${esc(it.raw.tol) || '—'}</td></tr></tbody></table></div>
+      <p class="note" style="margin:10px 4px 2px">${esc(curSet().name)}의 원문입니다. 오른쪽 창에서 바꾸면 여기도 바뀝니다. 아래 설명은 DLPQ 원본(≤ 1.0 · Eye-box 내 시야각 편차 · ± 0.5)을 기준으로 씁니다.</p>`;
+    text.innerHTML = `<h2>먼저 원본에 적힌 것만 봅니다</h2>
+      <div class="cards"><div class="card"><h3>원본에서 읽을 수 있는 것 <span class="tag t-src">원본</span></h3><p>항목 이름은 LookDown / LookOver 각도의 공차이고, 숫자 ≤ 1.0° 옆 괄호에 "Eye-box 내 시야각 편차"라고 적혀 있습니다. 그래서 1.0°는 각도 하나라기보다 <b>여러 각도 사이의 차이</b>에 대한 한계로 읽는 것이 자연스럽습니다.</p></div>
+      <div class="card"><h3>아직 모르는 것 <span class="tag t-chk">확인 필요</span></h3><p>그 차이를 어떤 측정점에서, 어떤 계산으로 구하는지. 그리고 ± 0.5°가 이 1.0°에 어떻게 붙는지.</p></div></div>
+      <p class="note">이 페이지는 이 두 가지를 그림으로 이해하는 데 집중합니다. 결론을 대신 정하지는 않습니다.</p>`;
+  }
+  if (st === 1) {
+    fig.innerHTML = sideView(S.ld);
+    text.innerHTML = `<h2>LookDown: 위아래로 얼마나 내려다보나</h2>
+      <p>눈에서 <b>정면 기준선</b>(점선)과 <b>가상 이미지 중심을 보는 선</b>(실선) 사이의 위아래 각도입니다. 두 선 사이의 분홍 호가 LookDown입니다.</p>
+      <p>앞유리는 HUD 빛이 반사되는 곳일 뿐, 이미지는 그 너머 ${ASM(`약 ${S.D} m 앞`)}에 떠 보입니다. 그래서 각도는 앞유리가 아니라 <b>떠 보이는 이미지</b>를 향한 선으로 잽니다.</p>
+      <div class="ctl">${slider('ld', '예시 LookDown', 0, 8, .1, '°')}</div>
+      <p class="note">정면을 기준으로 삼은 것은 이해를 위한 단순화입니다. 실제 측정 기준축(수평선, 차량 좌표계 등)은 제품 정의를 확인해야 합니다 ${CHK('')}.</p>`;
+  }
+  if (st === 2) {
+    fig.innerHTML = topView(S.lo);
+    text.innerHTML = `<h2>LookOver: 좌우로 얼마나 비켜 있나</h2>
+      <p>위에서 내려다본 그림입니다. 눈에서 <b>차량 정면 방향</b>(점선)과 <b>이미지 중심을 보는 선</b>(실선) 사이의 좌우 각도가 LookOver입니다. 이미지가 운전석 바로 앞에 있으면 0°에 가깝습니다.</p>
+      <div class="ctl">${slider('lo', '예시 LookOver', -4, 4, .1, '°')}</div>
+      <p class="note">+ 를 오른쪽으로 정한 것도 설명용입니다. 부호와 기준축은 제품 정의를 따릅니다.</p>`;
+  }
+  if (st === 3) {
+    fig.innerHTML = eyeboxView();
+    const inside = Math.abs(S.ex) <= S.ebw / 2 && Math.abs(S.ez) <= S.ebh / 2;
+    text.innerHTML = `<h2>아이박스: 눈이 있어야 하는 영역</h2>
+      <p>아이박스는 <b>운전자 눈이 이 안에 있으면 이미지 전체가 보이는 영역</b>입니다. 이 단계에서 차와 HUD, 이미지는 그대로 있고 <b>눈의 위치만</b> 옮깁니다.</p>
+      <div class="ctl">${slider('ez', '눈 위 / 아래', -40, 40, 1, 'mm')}${slider('ex', '눈 왼쪽 / 오른쪽', -90, 90, 1, 'mm')}</div>
+      <div class="readout"><div class="kv"><span>중심에서의 LookDown</span><b>${f2(S.ld)}°</b></div><div class="kv"><span>지금 눈의 LookDown</span><b>${f2(A.ld)}°</b></div><div class="kv"><span>지금 눈의 LookOver</span><b>${f2(A.lo)}°</b></div>${inside ? '' : '<div class="kv"><span>상태</span><b style="color:var(--bad)">아이박스 밖 · 이미지가 잘려 보일 수 있음</b></div>'}</div>
+      <p class="note">단순 기하 모델입니다: 이미지 중심이 ${ASM(`${S.D} m 앞의 한 점`)}에 고정돼 있고 눈만 움직인다고 봤습니다. 아이박스 크기 ${ASM(`${S.ebw} × ${S.ebh} mm`)}, 중심 LookDown ${ASM(`${f1(S.ld)}°`)}도 예시입니다. 실제 HUD는 시차, 미러·앞유리의 광학 특성, 영상 보정 때문에 이 모델과 다를 수 있습니다.</p>`;
+  }
+  if (st === 4) {
+    fig.innerHTML = svg(640, 260, numberLine('center'), '측정 각도와 차이');
+    text.innerHTML = `<h2>"각도"와 "편차"는 다른 숫자입니다</h2>
+      <div class="cards"><div class="card"><h3>"LookDown 각도가 3.0°다"</h3><p>한 눈 위치에서 잰 <b>각도 자체</b>입니다. 그림의 동그라미 하나하나가 이런 숫자입니다.</p></div>
+      <div class="card"><h3>"아이박스 내 LookDown 각도 편차가 1.0° 이내다"</h3><p>여러 위치에서 잰 각도들이 <b>서로 얼마나 다른지</b>입니다. 그림의 분홍 괄호가 이런 숫자입니다.</p></div></div>
+      <div class="ctl"><div class="nums"><label for="lsn-c">중심<input id="lsn-c" type="number" step="0.1" value="${S.c}" data-lk="c"></label><label for="lsn-a">위치 A<input id="lsn-a" type="number" step="0.1" value="${S.a}" data-lk="a"></label><label for="lsn-b">위치 B<input id="lsn-b" type="number" step="0.1" value="${S.b}" data-lk="b"></label></div><p class="note">측정 예시 숫자입니다 ${ASM('')}. 바꾸면 그림과 차이가 함께 바뀝니다.</p></div>`;
+  }
+  if (st === 5) {
+    const pA = mCenter <= S.crit, pB = mRange <= S.crit;
+    fig.innerHTML = `${svg(640, 260, numberLine('center'), '중심점 대비 차이')}<p class="note" style="margin:0 6px 10px">방법 ① 중심점 대비: 중심과 다른 점들의 차이를 각각 구하고 가장 큰 값을 고릅니다.</p>${svg(640, 260, numberLine('range'), '최대에서 최소를 뺀 차이')}<p class="note" style="margin:0 6px 4px">방법 ② 최대 − 최소: 모든 측정값 중 가장 큰 값에서 가장 작은 값을 뺍니다.</p>`;
+    text.innerHTML = `<h2>같은 측정값, 계산 방식에 따라 다른 편차</h2>
+      <div class="cards"><div class="card"><h3>① 중심점 대비 최대 차이</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 큰 값 <b>${f1(mCenter)}°</b></p><p><span class="verdict ${pA ? 'v-ok' : 'v-bad'}">${pA ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div>
+      <div class="card"><h3>② 측정점 간 최대 − 최소</h3><p>${f1(mx)} − ${f1(mn)} = <b>${f1(mRange)}°</b></p><p><span class="verdict ${pB ? 'v-ok' : 'v-bad'}">${pB ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div></div>
+      <div class="ctl">${slider('crit', '합격 기준', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}는 계산 차이를 보여 주기 위한 가상 기준이며 전문가 스펙이 아닙니다.</p></div>
+      <p class="note">두 방법은 가능한 해석의 예시입니다. 전문가가 둘 중 무엇을 쓰는지, 혹은 다른 방법(예: 측정점 수나 위치가 다른 방식)을 쓰는지는 ${CHK('확인되지 않았습니다')}.</p>`;
+  }
+  if (st === 6) {
+    fig.innerHTML = errVsDev();
+    text.innerHTML = `<h2>설계 위치 대비 오차와 아이박스 내 편차</h2>
+      <div class="cards"><div class="card"><h3>① 설계 위치 대비 오차</h3><p><b>눈 위치는 하나</b>로 고정합니다. 설계상 목표했던 이미지 각도와 실제로 만든 제품의 이미지 각도를 비교합니다. 조립·장착이 조금씩 틀어지면 생깁니다.</p></div>
+      <div class="card"><h3>② 아이박스 내 편차</h3><p><b>이미지는 그대로</b> 두고 같은 차 안에서 눈 위치만 바꿉니다. 위치마다 잰 각도들이 서로 얼마나 다른지를 봅니다.</p></div></div>
+      <div class="ctl">${slider('err', '① 실제 − 설계', -1, 1, .1, '°')}${slider('mv', '② 눈 이동', 0, 40, 1, 'mm')}</div>
+      <p class="note">둘은 비교하는 대상이 다른 별개의 개념입니다. 원본 행의 괄호는 ②에 가깝게 읽히지만, ①이 같은 표의 다른 곳이나 별도 항목에서 관리되는지는 ${CHK('확인 필요')}입니다. 그림 ②의 편차는 ${ASM(`${S.D} m`)} 단순 기하 모델 값입니다.</p>`;
+  }
+  if (st === 7) {
+    fig.innerHTML = `<div class="tw"><table class="src"><thead><tr><th>DLPQ 원본</th><th>지금 읽을 수 있는 뜻</th><th>상태</th></tr></thead><tbody>
+      <tr><td class="m">≤ 1.0°</td><td>괄호 설명에 따라 <b>아이박스 내 시야각 편차의 목표 한계</b>로 읽는 것이 자연스러움</td><td>${SRC('')} 읽기</td></tr>
+      <tr><td class="m">± 0.5°</td><td>이 편차 한계에 적용되는지, 측정 불확도인지 모름</td><td>${CHK('')}</td></tr>
+      <tr><td class="m">1.5°</td><td>상한에 +0.5°를 더하면 나오는 <b>가능한 해석</b>. 원본에 직접 적힌 값이 아님</td><td>${CHK('')} 확정 아님</td></tr>
+      <tr><td class="m">편차 계산</td><td>중심점 대비 / 최대 − 최소 / 다른 방식 중 무엇인지 모름</td><td>${CHK('')}</td></tr></tbody></table></div>`;
+    const q = '아이박스 내 시야각 편차는 중심점 대비 차이인가요, 아니면 측정점 간 최대–최소 차이인가요? ±0.5°를 적용한 최종 합격 상한은 1.5°인가요?';
+    text.innerHTML = `<h2>정리</h2>
+      <div class="cards"><div class="card"><h3>이제 내가 이해한 것</h3><p>LookDown은 위아래, LookOver는 좌우로, 눈에서 이미지 중심을 보는 선이 기준선과 이루는 각도다. 아이박스는 눈이 있어야 하는 영역이고, 같은 차에서도 눈 위치가 바뀌면 각도가 조금 바뀐다. 각도는 측정값 자체, 편차는 각도들 사이의 차이다. 같은 측정값도 편차 계산 방식에 따라 결과와 합격 여부가 달라질 수 있다. 설계 대비 오차와 아이박스 내 편차는 서로 다른 비교다.</p></div>
+      <div class="card"><h3>전문가에게 아직 확인할 것</h3><p>편차 계산 방식과 측정점(개수·위치), ±0.5°의 적용 방법과 최종 상한, LookDown·LookOver를 각각 판정하는지, 각도의 기준축.</p></div></div>
+      <div class="q"><blockquote id="lsQ">${q}</blockquote><button class="btn" id="lsCopyq">질문 복사</button></div>`;
+    $('#lsCopyq').addEventListener('click', async e => { const b = e.currentTarget; try { await navigator.clipboard.writeText(q); b.textContent = '복사됨'; } catch { const r = document.createRange(); r.selectNodeContents($('#lsQ')); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = '선택됨 · Ctrl+C로 복사'; } setTimeout(() => { b.textContent = '질문 복사'; }, 1600); });
+  }
+}
+  Object.defineProperty(S, 'D', { get: () => SP.vid }); // image distance follows the page's 허상 거리 (an assumption)
+  function mount(root) {
+    root.innerHTML = `<div class="lesson"><nav class="ls-steps" id="lsSteps" aria-label="단계"></nav><div class="ls-fig" id="lsFig"></div><div class="ls-text" id="lsText"></div><div class="ls-nav"><button class="btn" id="lsPrev">← 이전 단계</button><button class="btn primary" id="lsNext">다음 단계 →</button></div></div>`;
+    root.oninput = e => { const k = e.target.dataset.lk; if (!k) return; const v = parseFloat(e.target.value); if (Number.isNaN(v)) return; S[k] = v; const id = e.target.id; render(); const el = document.getElementById(id); if (el) el.focus(); };
+    root.onclick = e => { const b = e.target.closest('[data-lstep]'); if (b) { S.step = +b.dataset.lstep; render(); return; }
+      if (e.target.closest('#lsPrev') && S.step > 0) { S.step--; render(); } if (e.target.closest('#lsNext') && S.step < STEPS.length - 1) { S.step++; render(); } };
+    render();
+  }
+  return { mount, render };
+})();
+
 /* each demo: controls + draw(g, w, h, v) → readout html */
 const P3 = [[.68, .32], [.265, .69], [.15, .06]], BT2020 = [[.708, .292], [.17, .797], [.131, .046]];
 // gamut demo, second view: the reference triangles side by side and what one number means in each
@@ -2066,55 +2306,7 @@ const DEMOS = {
       g.strokeStyle = 'rgba(31,98,209,.8)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 + t * .03), hh / 2); g.lineTo(-hw / 2 * (1 + t * .03), hh / 2); g.closePath(); g.stroke(); g.restore();
       g.strokeStyle = 'rgba(255,255,255,.7)'; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, cy - hh / 2); g.lineTo(w, cy - hh / 2); g.stroke(); g.setLineDash([]);
       return `점선이 수평 기준입니다. ${TA('허상 너비 ' + f1(imgW()) + ' cm')}에서 ${f1(Math.abs(v.r))}° 회전하면 양 끝 높이 차가 <b>${f1(imgW() * Math.tan(Math.abs(v.r) * Math.PI / 180))} cm</b>입니다.<br>원본 목표 ${TE('≤ 0.3°')}, 공차 ${TE('0 ~ +0.3°')}. 공차를 상한에 더한 ≤ 0.6°는 ${TC('추정')}입니다. 기준선과 측정 위치도 ${TC('미기재')}.`; } },
-  lda: { ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① LookDown (위아래)|② LookOver (좌우)|③ 설계 대비 오차|④ 아이박스 내 편차'], ['ld', '설계 LookDown', 0, 10, .1, LDA0, '°'], ['lo', '설계 LookOver', -5, 5, .1, 0, '°'], ['dv', '실제 − 설계 (위아래)', -1.5, 1.5, .1, .5, '°'], ['dh', '실제 − 설계 (좌우)', -1.5, 1.5, .1, .3, '°'], ['ez', '눈 높이', -60, 60, 1, 0, 'mm'], ['exx', '눈 좌우', -110, 110, 1, 0, 'mm'], ['ebw', '아이박스 가로', 60, 200, 5, 130, 'mm'], ['ebh', '아이박스 세로', 20, 100, 5, 50, 'mm'], ['meth', '편차 계산 (해석 예시)', 0, 1, 1, 0, 'sel:중심 각도 대비 최대 차이|최댓값 − 최솟값']],
-    show: v => [['step', 'ld'], ['step', 'lo'], ['step', 'ld', 'lo', 'dv', 'dh'], ['step', 'ld', 'lo', 'ez', 'exx', 'ebw', 'ebh', 'meth']][v.step],
-    draw(g, w, h, v) { const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, vid = SP.vid * 1000, VIDT = TA('허상 거리 ' + f1(SP.vid) + ' m');
-      g.fillStyle = '#fbfcfd'; g.fillRect(0, 0, w, h); g.font = '12px "IBM Plex Sans KR", sans-serif';
-      const label = (t, x, y, c = '#1c2228', b = false) => { g.fillStyle = c; g.font = `${b ? 600 : 400} 12px "IBM Plex Sans KR", sans-serif`; g.fillText(t, x, y); };
-      const arc = (cx, cy, r, a0, a1, c) => { g.strokeStyle = c; g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, r, Math.min(a0, a1), Math.max(a0, a1)); g.stroke(); };
-      const eye = (x, y) => { g.fillStyle = '#1c2228'; g.beginPath(); g.arc(x, y, 7, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x, y, 2.5, 0, 7); g.fill(); };
-      if (v.step === 0 || v.step === 1) { const EX = 4, side = v.step === 0, ang = side ? v.ld : v.lo;
-        const ex = side ? 70 : w / 2, ey = side ? h * .3 : h - 50, L = side ? w - 200 : h - 110, a = rad(ang * EX);
-        const tx = side ? ex + L * Math.cos(a) : ex + L * Math.sin(a), ty = side ? ey + L * Math.sin(a) : ey - L * Math.cos(a);
-        g.setLineDash([6, 5]); g.strokeStyle = '#66717c'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(ex, ey); side ? g.lineTo(w - 40, ey) : g.lineTo(ex, 30); g.stroke(); g.setLineDash([]);
-        g.strokeStyle = '#c8780f'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(ex, ey); g.lineTo(tx, ty); g.stroke();
-        g.fillStyle = '#1f62d1'; side ? g.fillRect(tx - 4, ty - 34, 8, 68) : g.fillRect(tx - 70, ty - 4, 140, 8);
-        side ? arc(ex, ey, 120, 0, a, '#c8780f') : arc(ex, ey, 120, -Math.PI / 2, -Math.PI / 2 + a, '#c8780f'); eye(ex, ey);
-        label(side ? '눈높이 수평선 (0°)' : '정면 (0°)', side ? w - 170 : ex + 8, side ? ey - 8 : 44, '#66717c');
-        label(`${side ? 'LookDown' : 'LookOver'} ${f1(ang)}°`, side ? ex + 128 : ex + (ang >= 0 ? 10 : -120), side ? ey + 30 : ey - 128, '#c8780f', true);
-        label('허상 중심', side ? tx - 70 : tx + 76, side ? ty + 50 : ty + 4, '#1f62d1', true); label(side ? '눈 (아이박스 중심)' : '눈 (아이박스 중심)', side ? ex - 50 : ex + 12, side ? ey + 26 : ey + 26);
-        g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, 8, 330, 22); label(`${side ? '옆에서 본 그림' : '위에서 본 그림'} · 각도 4배 과장 · 거리는 축척 아님`, 16, 23, '#fff', true);
-        return side ? `<b>① LookDown</b>: 눈높이 수평선과, 눈에서 허상 중심을 잇는 선 사이의 <b>위아래 각도</b>입니다. 클수록 더 내려다봅니다. 그림의 ${TA('설계 ' + f1(v.ld) + '°')}는 3D 모델에서 역산한 값으로 실제 Zeekr 값이 아닙니다.`
-          : `<b>② LookOver</b>: 정면 방향과, 눈에서 허상 중심을 잇는 선 사이의 <b>좌우 각도</b>입니다. 허상이 운전석 정면에 있으면 0°에 가깝습니다. ${TA('설계 ' + f1(v.lo) + '°')}는 설명용 값입니다.`; }
-      if (v.step === 2) { const sw = w, k = sw / 30, hy = h * .26, cx = sw / 2, X = a => cx + a * k, Yd = d => hy + d * k, fh = hfovDeg(), fv = vfovDeg();
-        const sky = g.createLinearGradient(0, 0, 0, hy); sky.addColorStop(0, '#9fb6cf'); sky.addColorStop(1, '#d6dee6'); g.fillStyle = sky; g.fillRect(0, 0, sw, hy); g.fillStyle = '#6b737c'; g.fillRect(0, hy, sw, h - hy);
-        g.strokeStyle = '#e9ecef'; g.lineWidth = 2; g.beginPath(); g.moveTo(cx - 4, hy); g.lineTo(cx - sw * .42, h); g.moveTo(cx + 4, hy); g.lineTo(cx + sw * .42, h); g.stroke();
-        g.setLineDash([5, 4]); g.strokeStyle = '#1c2228'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, hy); g.lineTo(sw, hy); g.moveTo(cx, 0); g.lineTo(cx, h); g.stroke(); g.setLineDash([]);
-        label('눈높이 수평선 (0°)', 8, hy - 6); label('정면 (0°)', cx + 6, 14);
-        const box = (ld, lo, col, dash, img) => { const x = X(lo) - fh / 2 * k, y = Yd(ld) - fv / 2 * k; if (img) g.drawImage(hudClear, x, y, fh * k, fv * k); g.setLineDash(dash); g.strokeStyle = col; g.lineWidth = 1.8; g.strokeRect(x, y, fh * k, fv * k); g.setLineDash([]); };
-        box(v.ld, v.lo, '#ffffff', [5, 4]); box(v.ld + v.dv, v.lo + v.dh, '#1f62d1', [], true);
-        g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, h - 30, 360, 22); label('운전자 시야 · 실제 각도 그대로 · 흰 점선 = 설계 위치, 파랑 = 실제', 16, h - 15, '#fff');
-        const cm = d => f1(SP.vid * 100 * Math.tan(rad(Math.abs(d))));
-        return `<b>③ 설계 대비 오차</b>: 한 관찰 위치(보통 아이박스 중심)에서 잰 실제 각도와 설계 각도의 차이입니다. 부품·조립·차량 장착 오차가 쌓여 생깁니다.<br>이 예시: 위아래 ${f1(v.dv)}°, 좌우 ${f1(v.dh)}° → ${VIDT}에서 약 <b>${cm(v.dv)} cm</b>, <b>${cm(v.dh)} cm</b> 어긋남(단순 기하 예시 환산). 원본 행은 이 개념이 아니라 "아이박스 내 편차"로 적혀 있습니다 → ④.`; }
-      // ④ the same car, eye at different points of the eyebox: a virtual image fixed in space is seen at slightly different angles
-      const pts = []; for (const z of [1, 0, -1]) for (const x of [-1, 0, 1]) pts.push([x * v.ebw / 2, z * v.ebh / 2]);
-      const ang = (x, z) => [v.ld + deg(Math.atan(z / vid)), v.lo - deg(Math.atan(x / vid))], c0 = ang(0, 0), A = pts.map(([x, z]) => ang(x, z));
-      const dev = i => v.meth ? Math.max(...A.map(a => a[i])) - Math.min(...A.map(a => a[i])) : Math.max(...A.map(a => Math.abs(a[i] - c0[i])));
-      const dLD = dev(0), dLO = dev(1), pw = w * .58, sc = Math.min((pw - 60) / 260, (h - 90) / 140), bx = pw / 2, by = h / 2 + 6;
-      g.fillStyle = '#1c2228'; label('아이박스 (운전자 뒤에서 본 모습)', 14, 20, '#1c2228', true);
-      g.fillStyle = 'rgba(31,98,209,.08)'; g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.fillRect(bx - v.ebw / 2 * sc, by - v.ebh / 2 * sc, v.ebw * sc, v.ebh * sc); g.strokeRect(bx - v.ebw / 2 * sc, by - v.ebh / 2 * sc, v.ebw * sc, v.ebh * sc);
-      label(`아이박스 ${v.ebw} × ${v.ebh} mm (설명용 가정)`, bx - v.ebw / 2 * sc, by + v.ebh / 2 * sc + 40, '#c8780f', true);
-      g.font = '10.5px "IBM Plex Mono", monospace'; pts.forEach(([x, z], i) => { const px = bx + x * sc, py = by - z * sc; g.fillStyle = '#1f62d1'; g.beginPath(); g.arc(px, py, 3.5, 0, 7); g.fill(); g.fillStyle = '#3a4550'; if (pw > 380) g.fillText(`↓${f2(A[i][0] - c0[0])} ↔${f2(A[i][1] - c0[1])}`, px - 44, py + (z > 0 ? -9 : 16)); });
-      const inside = Math.abs(v.exx) <= v.ebw / 2 && Math.abs(v.ez) <= v.ebh / 2, ea = ang(v.exx, v.ez); eye(bx + v.exx * sc, by - v.ez * sc);
-      label(inside ? `지금 눈: LookDown ${f2(ea[0])}° · LookOver ${f2(ea[1])}°` : '눈이 상자 밖: 그쪽 가장자리부터 허상이 잘려 보임', 14, h - 14, inside ? '#1c2228' : '#d1493f', true);
-      // bars: deviation vs the expert target and the "possible" reading
-      const it = curSet().items.lda, tv = nv(it.tv), fc = finalOf(it).use?.hi, x0 = pw + 30, bw = w - x0 - 30, M = 2.5, Xb = d => x0 + Math.min(d, M) / M * bw;
-      label('아이박스 내 편차 (단순 기하 모델)', x0, 20, '#1c2228', true);
-      [['LookDown', dLD, 60], ['LookOver', dLO, 130]].forEach(([n, d, y]) => { g.fillStyle = '#e6ebf0'; g.fillRect(x0, y, bw, 18); g.fillStyle = '#1f62d1'; g.fillRect(x0, y, Xb(d) - x0, 18); label(`${n} ${f2(d)}°`, x0, y - 6, '#1c2228', true); });
-      const mark = (d, c, dash, t, ty) => { if (d == null) return; g.setLineDash(dash); g.strokeStyle = c; g.lineWidth = 1.5; g.beginPath(); g.moveTo(Xb(d), 44); g.lineTo(Xb(d), 160); g.stroke(); g.setLineDash([]); label(t, Math.min(Xb(d) - 10, w - 120), ty, c); };
-      mark(tv, '#1f62d1', [], `원본 목표 ≤ ${fmtN(tv)}°`, 194); mark(fc, '#c8780f', [4, 3], `가능한 해석 ≤ ${fmtN(fc)}°`, 210);
-      g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; [0, 1, 2].forEach(d => g.fillText(d + '°', Xb(d) - 6, 172));
-      return `<b>④ 아이박스 내 편차</b>: 같은 차에서 눈이 아이박스 안 여러 위치(그림의 9점 예시)에 있을 때 잰 각도가 얼마나 달라지는지입니다. 점마다 중심 대비 변화(↓ 위아래, ↔ 좌우)를 적었습니다.<br>계산 방식: <b>${v.meth ? '최댓값 − 최솟값' : '중심 각도 대비 최대 차이'}</b>(가능한 해석 예시, ${TC('실제 측정 방식 미확정')}). 허상이 공간의 한 점에 고정된 단순 기하 모델, ${VIDT}, ${TA('아이박스 ' + v.ebw + ' × ' + v.ebh + ' mm')} 기준으로 LookDown <b>${f2(dLD)}°</b>, LookOver <b>${f2(dLO)}°</b>입니다.<br>원본은 ${TE('≤ 1.0° (Eye-box 내 시야각 편차)')}, 공차 ${TE('± 0.5°')}. ≤ 1.5°는 ${TC('가능한 해석')}이라 이 화면은 합격·불합격을 정하지 않습니다. 실제 HUD는 광학 설계·워프 보정에 따라 이 값이 달라질 수 있어, 이 모델 숫자로 원본 값의 적정성을 판단하지 마세요.`; } },
+  lda: { ctl: [], lesson: true },
   res: { ctl: [['lp', '해상도', 5, 40, 1, 15, 'lp/deg']],
     draw(g, w, h, v) { g.fillStyle = '#000'; g.fillRect(0, 0, w, h); const viewDeg = hfovDeg(), pxDeg = 2 * v.lp, cw = Math.max(4, Math.round(pxDeg * viewDeg)), ch = Math.round(cw * h / w);
       const off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'); o.fillStyle = '#000'; o.fillRect(0, 0, cw, ch); o.drawImage(hudClear, 0, 0, HUD_W, HUD_H, 0, (ch - cw / ASPECT) / 2, cw, cw / ASPECT);
@@ -2319,7 +2511,8 @@ function renderSpecDetail() {
   buildDemo(s);
 }
 function buildDemo(s) {
-  const D = DEMOS[s.demo], ctl = $('#demoCtl'); SP.vals[s.id] ||= Object.fromEntries(D.ctl.map(c => [c[0], c[5]]));
+  const D = DEMOS[s.demo], ctl = $('#demoCtl');
+  $('#demoCv').hidden = !!D.lesson; if (D.lesson) { ctl.innerHTML = ''; LDALESSON.mount($('#demoOut')); SP.redraw = LDALESSON.render; return; } SP.vals[s.id] ||= Object.fromEntries(D.ctl.map(c => [c[0], c[5]]));
   const v = SP.vals[s.id], keys = D.show ? D.show(v) : null;
   ctl.innerHTML = D.ctl.filter(c => !keys || keys.includes(c[0])).map(([k, label, mn, mx, st, def, u]) => u.startsWith('sel:') ? `<label>${label} <select data-k="${k}">${u.slice(4).split('|').map((o, i) => `<option value="${i}" ${+v[k] === i ? 'selected' : ''}>${o}</option>`).join('')}</select></label>`
     : `<label>${label} <input type="range" data-k="${k}" min="${mn}" max="${mx}" step="${st}" value="${v[k]}"><output>${(+v[k]).toFixed(st < .01 ? 3 : st < 1 ? 1 : 0)}${u ? ' ' + u : ''}</output></label>`).join('');
