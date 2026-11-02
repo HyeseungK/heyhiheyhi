@@ -1722,7 +1722,14 @@ function edPrev(id) {
 }
 
 /* export / import */
-function download(name, text, type) { try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); return true; } catch { return false; } }
+// inside the claude.ai viewer files go through the downloads capability (the viewer confirms); a plain link elsewhere
+let dlNs; const dlReady = window.claude?.use ? window.claude.use('downloads').then(n => { dlNs = n; }, () => { dlNs = null; }) : Promise.resolve();
+async function download(name, text, type) {
+  await dlReady;
+  if (dlNs) { try { await dlNs.save({ filename: name, data: text }); return '저장됨'; } catch (e) { return e?.code === 'declined' ? '저장 취소됨' : e?.code === 'rate_limited' ? '잠시 후 다시' : '저장 불가 · 복사를 쓰세요'; } }
+  if (window.claude?.use) return '저장 불가 · 복사를 쓰세요';
+  try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); return '저장됨'; } catch { return '저장 불가 · 복사를 쓰세요'; }
+}
 const exportJSON = () => JSON.stringify({ format: 'zeekr-hud-expert-specs', version: 1, exported: new Date().toISOString(), note: '목표·공차·최종 한계·원문·조건·비고·ISS 기준을 모두 담습니다.', sets: EXP.sets }, null, 2);
 function exportCSV(sets) {
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
@@ -2311,7 +2318,7 @@ $('#specPage').addEventListener('click', e => {
     if (act === 'excsv') { exportDlg('csv'); return; }
     if (act === 'import') { importDlg(); return; }
     if (act === 'dlclose') { $('#xDlg').hidden = true; return; }
-    if (act === 'download') { const d = SP.dlg; const ok = download(d.name, d.text, d.kind === 'json' ? 'application/json' : 'text/csv;charset=utf-8'); if (!ok) t.textContent = '저장 실패 · 복사를 쓰세요'; return; }
+    if (act === 'download') { const d = SP.dlg, btn = t.closest('[data-act]'); download(d.name, d.text, d.kind === 'json' ? 'application/json' : 'text/csv;charset=utf-8').then(m => { btn.textContent = m; setTimeout(() => { btn.textContent = '파일로 저장'; }, 2000); }); return; }
     if (act === 'copy') { copyText(SP.dlg.text.replace(/^﻿/, ''), t); return; }
     if (act === 'copyallq') { copyText(SPECS.map(s => qsText(s.id)).join('\n\n') + '\n\n' + qsText('iss'), t); return; }
     if (act === 'doimport') { const msg = $('#impMsg'); const run = txt => { try { const n = importJSON(txt); msg.textContent = `${n}개 세트를 가져왔습니다.`; specTab(); } catch (err) { msg.textContent = '가져오지 못했습니다: ' + err.message; } };
