@@ -1129,6 +1129,12 @@ function box(w, h, d, mat, x = 0, y = 0, z = 0, parent) { const m = new THREE.Me
 function cyl(r, h, mat, x, y, z, parent, axis = 'y', seg = 24) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), mat); m.position.set(x, y, z); if (axis === 'x') m.rotation.z = Math.PI / 2; if (axis === 'z') m.rotation.x = Math.PI / 2; if (parent) parent.add(m); return m; }
 function topPlane(w, d, mat, x, y, z, parent) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat); m.rotation.x = -Math.PI / 2; m.position.set(x, y, z); parent.add(m); return m; }
 function ribbon(pts, width, mat, up = Y) { const curve = new THREE.CatmullRomCurve3(pts), n = 48, pos = [], idx = []; for (let i = 0; i <= n; i++) { const p = curve.getPoint(i / n), t = curve.getTangent(i / n), s = t.clone().cross(up).normalize().multiplyScalar(width / 2); pos.push(p.x - s.x, p.y - s.y, p.z - s.z, p.x + s.x, p.y + s.y, p.z + s.z); if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } } const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return new THREE.Mesh(g, mat); }
+// a flat band whose width always stays horizontal, so it bends without twisting (the grey Custom FPCB)
+function flatBand(pts, width, mat) { const curve = new THREE.CatmullRomCurve3(pts), n = 48, pos = [], idx = []; let prev = null;
+  for (let i = 0; i <= n; i++) { const p = curve.getPoint(i / n), t = curve.getTangent(i / n), h = V(t.x, 0, t.z);
+    let side = h.lengthSq() > 1e-6 ? V(-h.z, 0, h.x).normalize() : prev.clone(); if (prev && side.dot(prev) < 0) side.negate(); prev = side;
+    const sv = side.clone().multiplyScalar(width / 2); pos.push(p.x - sv.x, p.y, p.z - sv.z, p.x + sv.x, p.y, p.z + sv.z); if (i < n) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return new THREE.Mesh(g, mat); }
 const wire = (pts, r, mat) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, r, 6), mat);
 
 /* ───────────────────────── optics (cm; x lateral, y up, z toward the nose) ─────────────────────────
@@ -1360,7 +1366,9 @@ const motor = {};
 // misc: wiring, label, screws
 { const gc = new THREE.Group();
   const a = V(PCB_POS.x + 8.6, PCB_POS.y + .35, PCB_POS.z + 2.55), b = V(PG.cx - 1.2, Ly + .35, zFp + 1.1);
-  gc.add(ribbon([a, V(a.x + 1, a.y + 2.2, a.z + 2), V(b.x - 1.5, b.y + 2.5, b.z - 2), b], 2.2, M.ffc, X));
+  // flat grey band as in the photo: leaves the Bare PCB connector straight, then slopes gently down to the main PCB (no twist)
+  const along = (k, dy) => b.clone().lerp(a, k).add(V(0, dy, 0)); // points spaced along the straight run, so the band never doubles back
+  gc.add(flatBand([b, along(.2, .25), along(.55, .35), along(.85, .25), a], 2.2, M.ffc));
   box(2.6, .45, .8, M.black, a.x, a.y + .1, a.z, gc); register('cfpcb', gc); }
 { const g = new THREE.Group();
   const from = V(PCB_POS.x + 9.6, PCB_POS.y + .5, PCB_POS.z - 2.3), to = V(motor.x - 1, motor.y, motor.z0 - 1.6);
@@ -2305,30 +2313,43 @@ function arc(cx, cy, r, a0, a1, c) { // angles in screen radians
 const svg = (w, h, body, label) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${body}</svg>`;
 
 /* step drawings */
-function sideView(ld, opts = {}) {
-  const ex = 90, ey = 150, L = 470, a = rad(Math.min(ld * EX, 11)), ix = ex + L, iy = ey + Math.tan(a) * L; // drawn angle capped so the image stays in frame
-  // windshield sits between the eye and the image: it is where light reflects, not where the image is seen
-  const gx0 = 250, gy0 = 290, gx1 = 330, gy1 = 70, t = ((gx0 - ex) * (gy1 - gy0) - (gy0 - ey) * (gx1 - gx0)) / ((L) * (gy1 - gy0) - (iy - ey) * (gx1 - gx0)), hx = ex + t * L, hy = ey + t * (iy - ey);
-  return svg(640, 330, `
-    <rect x="0" y="250" width="640" height="80" fill="var(--soft)"/>${tx(14, 318, '도로', { s: 12, c: 'var(--muted)' })}
-    <path d="M30 330 L30 230 L200 230 L250 290" fill="none" stroke="var(--line)" stroke-width="2"/>${tx(40, 250, '대시보드 · HUD', { s: 12, c: 'var(--muted)' })}
-    ${ln(gx0, gy0, gx1, gy1, 'var(--glass)', 4)}${tx(gx1 + 8, gy1 + 6, '앞유리 (빛이 반사되는 곳)', { s: 12.5, c: 'var(--glass)', w: 600 })}
-    ${ln(ex, ey, 625, ey, 'var(--ref)', 2, '7 6')}${tx(560, ey - 10, '정면 기준선', { s: 12.5, a: 'middle', c: 'var(--ref)' })}
-    ${ln(ex, ey, ix, iy, 'var(--eye)', 3)}${dot(hx, hy, 4, 'var(--glass)')}
-    <rect x="${ix - 5}" y="${iy - 32}" width="10" height="64" fill="var(--img)"/>${tx(ix - 8, iy + 52, '가상 이미지', { s: 13, a: 'end', w: 600, c: 'var(--img)' })}${tx(ix - 8, iy + 69, '눈에는 여기 떠 보임', { s: 12, a: 'end', c: 'var(--img)' })}
-    ${dot(ix, iy, 4.5, 'var(--ink)')}${tx(ix + 10, iy + 4, '중심', { s: 12 })}
-    ${arc(ex, ey, 92, 0, a, 'var(--diff)')}${tx(ex + 100, ey + Math.tan(a / 2) * 100 + 6, `LookDown ${f1(ld)}°`, { s: 14, w: 700, c: 'var(--diff)' })}
-    ${eye(ex, ey)}${tx(14, 22, `옆에서 본 그림 · 각도 ${EX}배 과장 · 거리는 축척 아님`, { s: 12, c: 'var(--muted)' })}`, '옆에서 본 LookDown 각도');
+// a label on a small rounded badge so it stays readable over lines; width estimated from the characters
+const tw = (t, sz) => [...String(t)].reduce((w, c) => w + (c.charCodeAt(0) > 0x2e80 ? sz * 1.0 : sz * .58), 0);
+function pill(x, y, t, o = {}) { const sz = o.s || 12.5, w = tw(t, sz) + 14, h = sz + 10, a = o.a || 'start', x0 = a === 'end' ? x - w : a === 'middle' ? x - w / 2 : x;
+  return `<rect x="${x0}" y="${y - h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${o.bg || 'var(--panel)'}" ${o.stroke ? `stroke="${o.stroke}" stroke-width="1"` : ''}/><text x="${x0 + w / 2}" y="${y + sz * .36}" font-size="${sz}" text-anchor="middle" font-weight="${o.w || 600}" style="fill:${o.c || 'var(--ink)'}">${t}</text>`; }
+const defs = `<defs><pattern id="lsGrid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)"/></pattern>
+  <marker id="lsArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--eye)"/></marker></defs>`;
+function sideView(ld) {
+  const W = 640, H = 340, ex = 96, ey = 132, L = 450, a = rad(Math.min(ld * EX, 11)), ix = ex + L, iy = ey + Math.tan(a) * L;
+  // the windshield leans back over the dashboard; the sight line crosses it on the way to the image beyond
+  const g0 = [262, 262], g1 = [356, 58], t = ((g0[0] - ex) * (g1[1] - g0[1]) - (g0[1] - ey) * (g1[0] - g0[0])) / (L * (g1[1] - g0[1]) - (iy - ey) * (g1[0] - g0[0])), hx = ex + t * L, hy = ey + t * (iy - ey);
+  return svg(W, H, `${defs}<rect width="${W}" height="${H}" fill="url(#lsGrid)" opacity=".7"/>
+    <path d="M0 272 H${W}" stroke="var(--line)" stroke-width="1"/><rect x="0" y="272" width="${W}" height="${H - 272}" fill="var(--soft)"/>${tx(W - 20, H - 16, '도로', { s: 11.5, a: 'end', c: 'var(--muted)' })}
+    <path d="M28 ${H} V232 Q28 222 40 222 H214 Q236 222 248 240 L264 262 V${H}" fill="var(--soft)" stroke="var(--line)" stroke-width="1.5"/>${tx(44, 246, '대시보드 · HUD', { s: 11.5, c: 'var(--muted)' })}
+    <rect x="150" y="214" width="56" height="9" rx="3" fill="var(--ink)" opacity=".75"/>
+    ${ln(g0[0], g0[1], g1[0], g1[1], 'var(--glass)', 5)}${pill(g1[0] + 10, g1[1] + 10, '앞유리 · 빛이 반사되는 곳', { c: 'var(--glass)', stroke: 'var(--line)' })}
+    ${ln(ex, ey, W - 24, ey, 'var(--ref)', 1.6, '6 6')}${pill(W - 24, ey - 16, '정면 기준선', { a: 'end', c: 'var(--ref)', w: 500 })}
+    <line x1="${ex}" y1="${ey}" x2="${ix - 6}" y2="${iy}" stroke="var(--eye)" stroke-width="3" stroke-linecap="round" marker-end="url(#lsArr)"/>${dot(hx, hy, 4.5, 'var(--glass)')}
+    <rect x="${ix - 6}" y="${iy - 34}" width="12" height="68" rx="3" fill="var(--img)" opacity=".9"/>${dot(ix, iy, 4.5, 'var(--panel)')}<circle cx="${ix}" cy="${iy}" r="4.5" fill="none" stroke="var(--ink)" stroke-width="2"/>
+    ${pill(ix - 14, iy + 52, '가상 이미지 · 눈에는 여기 떠 보임', { a: 'end', c: 'var(--img)', stroke: 'var(--line)' })}
+    <path d="M${ex} ${ey} L${ex + 104} ${ey} A104 104 0 0 1 ${ex + 104 * Math.cos(a)} ${ey + 104 * Math.sin(a)} Z" fill="var(--diff)" opacity=".1"/>${arc(ex, ey, 104, 0, a, 'var(--diff)')}
+    ${pill(ex + 118, ey + Math.tan(a / 2) * 118 + 4, `LookDown ${f1(ld)}°`, { c: 'var(--diff)', s: 13.5, w: 700, stroke: 'var(--diff)' })}
+    ${eye(ex, ey, '')}${pill(ex, ey + 32, '운전자 눈', { a: 'middle', s: 12 })}
+    ${tx(16, 22, `옆에서 본 그림 · 각도 ${EX}배 과장 · 거리 축척 아님`, { s: 11.5, c: 'var(--muted)' })}`, '옆에서 본 LookDown 각도');
 }
 function topView(lo) {
-  const ex = 320, ey = 300, L = 240, a = rad(lo * EX), ix = ex + Math.sin(a) * L, iy = ey - Math.cos(a) * L;
-  return svg(640, 340, `
-    ${ln(150, 175, 490, 175, 'var(--glass)', 4)}${tx(495, 180, '앞유리', { s: 12.5, c: 'var(--glass)', w: 600 })}
-    ${ln(ex, ey, ex, 26, 'var(--ref)', 2, '7 6')}${tx(ex - 8, 40, '차량 정면 방향', { s: 12.5, a: 'end', c: 'var(--ref)' })}
-    ${ln(ex, ey, ix, iy, 'var(--eye)', 3)}
-    <rect x="${ix - 60}" y="${iy - 5}" width="120" height="10" fill="var(--img)"/>${tx(ix, iy - 14, '가상 이미지 (떠 보이는 위치)', { s: 12.5, a: 'middle', w: 600, c: 'var(--img)' })}${dot(ix, iy, 4.5, 'var(--ink)')}
-    ${arc(ex, ey, 90, -Math.PI / 2, -Math.PI / 2 + a, 'var(--diff)')}${tx(ex + (lo >= 0 ? 16 : -16), ey - 100, `LookOver ${lo > 0 ? '+' : ''}${f1(lo)}°`, { s: 14, w: 700, a: lo >= 0 ? 'start' : 'end', c: 'var(--diff)' })}
-    ${eye(ex, ey)}${tx(14, 22, `위에서 본 그림 · 각도 ${EX}배 과장 · +는 오른쪽`, { s: 12, c: 'var(--muted)' })}`, '위에서 본 LookOver 각도');
+  const W = 640, H = 360, ex = 320, ey = 304, L = 236, a = rad(lo * EX), ix = ex + Math.sin(a) * L, iy = ey - Math.cos(a) * L;
+  return svg(W, H, `${defs}<rect width="${W}" height="${H}" fill="url(#lsGrid)" opacity=".7"/>
+    <path d="M160 ${H} V250 Q160 176 214 160 Q320 136 426 160 Q480 176 480 250 V${H}" fill="var(--soft)" stroke="var(--line)" stroke-width="1.5"/>${tx(176, H - 14, '차 안 (위에서 본 모습)', { s: 11.5, c: 'var(--muted)' })}
+    <path d="M190 172 Q320 140 450 172" fill="none" stroke="var(--glass)" stroke-width="5" stroke-linecap="round"/>${pill(458, 176, '앞유리', { c: 'var(--glass)', stroke: 'var(--line)' })}
+    <rect x="270" y="236" width="100" height="12" rx="4" fill="var(--ink)" opacity=".7"/>${tx(320, 266, 'HUD', { s: 11, a: 'middle', c: 'var(--muted)' })}
+    ${ln(ex, ey, ex, 26, 'var(--ref)', 1.6, '6 6')}${pill(ex - 12, 36, '차량 정면 방향', { a: 'end', c: 'var(--ref)', w: 500 })}
+    <line x1="${ex}" y1="${ey}" x2="${ix}" y2="${iy + 8}" stroke="var(--eye)" stroke-width="3" stroke-linecap="round" marker-end="url(#lsArr)"/>
+    <rect x="${ix - 64}" y="${iy - 6}" width="128" height="12" rx="4" fill="var(--img)" opacity=".9"/>${pill(ix + 72, iy, '가상 이미지 (떠 보이는 위치)', { c: 'var(--img)', stroke: 'var(--line)' })}
+    ${Math.abs(lo) > .05 ? `<path d="M${ex} ${ey} L${ex} ${ey - 96} A96 96 0 0 ${lo > 0 ? 1 : 0} ${ex + 96 * Math.sin(a)} ${ey - 96 * Math.cos(a)} Z" fill="var(--diff)" opacity=".1"/>${arc(ex, ey, 96, -Math.PI / 2, -Math.PI / 2 + a, 'var(--diff)')}` : ''}
+    ${pill(ex + (lo >= 0 ? 14 : -14), ey - 118, `LookOver ${lo > 0 ? '+' : ''}${f1(lo)}°`, { a: lo >= 0 ? 'start' : 'end', c: 'var(--diff)', s: 13.5, w: 700, stroke: 'var(--diff)' })}
+    ${eye(ex, ey, '')}${pill(ex, ey + 32, '운전자 눈', { a: 'middle', s: 12 })}
+    ${tx(16, 22, `위에서 본 그림 · 각도 ${EX}배 과장 · +는 오른쪽`, { s: 11.5, c: 'var(--muted)' })}`, '위에서 본 LookOver 각도');
 }
 // simple model: the image centre is one fixed point D metres ahead; only the eye moves
 const anglesAt = (ez, ex) => ({ ld: S.ld + deg(Math.atan(ez / (S.D * 1000))), lo: S.lo - deg(Math.atan(ex / (S.D * 1000))) });
