@@ -1408,8 +1408,8 @@ const SPECS = [
     measure: '격자 패턴 네 변의 각도를 잽니다.',
     key: { ids: ['upper', 'epson'], why: '회전은 하우징·미러 조립 공차에서 생깁니다. 비스듬한 반사에서 생기는 사다리꼴과 함께 결국 워프 IC가 보정합니다.' }, demo: 'edge' },
   { id: 'lda', cat: 'geo', en: 'LookDown / LookOver angle tolerance', ko: '하방각·측방각 공차', unit: 'deg', dir: 'low',
-    def: 'LDA(Look-Down Angle)는 운전자 눈의 수평 시선에서 허상 중심까지 내려다보는 각도, LOA(Look-Over Angle)는 정면에서 좌우로 벗어난 각도입니다. 이 항목은 그 각도가 설계값에서 얼마나 벗어나도 되는지입니다.',
-    why: ['각도가 1° 틀어지면 수 m 앞에서는 허상이 수 cm~십수 cm 움직입니다.', '너무 내려가면 보닛에 묻히고, 올라가면 앞차를 가립니다. AR 그래픽이 도로에 붙어 보이려면 각도가 정확해야 합니다.', 'LDA는 모터로 곡면경을 기울여 운전자마다 맞추지만, 기준 위치의 공차는 장착 정밀도에 달려 있습니다.'],
+    def: '아이박스 중심의 눈에서 허상 중심을 바라보는 방향을 두 각도로 나눈 것입니다. LDA(Look-Down Angle, 하방각)는 눈높이 수평선에서 얼마나 내려다보는지, LOA(Look-Over Angle, 측방각)는 정면에서 좌우로 얼마나 비켜 있는지입니다.',
+    why: ['설계는 공차가 아니라 설계값을 목표로 합니다(예: 아래로 5°, 좌우 0°). 하지만 실제 차마다 부품·조립·차량 장착이 조금씩 틀어져서 각도도 조금씩 달라집니다. 공차는 "설계값에서 이만큼까지 틀어져도 합격"이라는 범위이고, 설계자는 여러 오차가 겹쳐도 이 범위 안에 들도록 공차 분석을 합니다.', '아이박스는 이해하신 대로 "눈이 이 안에 있으면 허상 전체가 보이는 공간"입니다. 보통 가로 13 cm × 세로 5 cm 안팎이고 앞뒤 깊이도 있습니다. 밖으로 나가면 갑자기 꺼지기보다 나간 쪽 가장자리부터 잘려 보입니다. 모터가 곡면경을 기울이면 이 상자가 운전자 키에 맞춰 위아래로 옮겨집니다.', '같은 차 안에서도 눈이 상자 안에서 움직이면 각도가 조금 변합니다. 눈이 2.5 cm 올라가면 5 m 앞 허상까지의 각도는 약 0.3° 변합니다. 그래서 공차는 보통 아이박스 중심에서 재고, "아이박스 안 각도 변화"는 다른 값입니다. 받은 수치가 어느 쪽인지 확인해야 합니다.', '1° 틀어지면 5 m 앞에서 약 9 cm 어긋납니다. AR 화살표가 차선·앞차에서 그만큼 비켜 보입니다.'],
     measure: '아이박스 중심에서 허상 중심 방향을 측정해 설계 각도와 비교합니다.',
     key: { ids: ['motor', 'concave'], why: '곡면경 각도가 곧 내려다보는 각도이고, 그 각도를 모터가 움직입니다. 기준 각도는 차량 장착 공차도 받습니다.' }, demo: 'lda' },
   { id: 'res', cat: 'geo', en: 'VI Resolution', ko: '허상 해상도', unit: 'lp/deg', dir: 'high',
@@ -1443,8 +1443,8 @@ const SPECS = [
     measure: '어두운 방에서 검은 화면을 띄우고 여러 지점의 휘도를 잽니다.',
     key: { ids: ['tft'], why: '검은 화면 휘도는 LCD 빛샘입니다. 빛샘이 고르지 않은 주원인은 지지대·방진 폼이 TFT에 거는 조립 응력입니다.' }, demo: 'black' },
   { id: 'contrast', cat: 'lum', en: 'Contrast', ko: '명암비', unit: '-', dir: 'high',
-    def: '흰 화면 휘도 ÷ 검은 화면 휘도입니다.',
-    why: ['명암비가 낮으면 그래픽이 없는 검은 영역도 희미하게 빛나서, 밤에 허상 크기만 한 회색 사각형("포스트카드")이 보입니다.', '햇빛이 HUD 안으로 들어와 반사되는 미광도 검은 휘도를 올려 명암비를 떨어뜨립니다.'],
+    def: '흰 화면 휘도 ÷ 검은 화면 휘도입니다. 뒤집어 보면 검은 휘도 = 흰 휘도 ÷ 명암비, 즉 그래픽이 없는 곳이 얼마나 빛나는지를 정하는 값입니다.',
+    why: ['LCD는 검은색에서도 빛이 조금 샙니다. 그 빛이 허상 크기의 사각형 전체에 깔려 밤에 회색 사각형("포스트카드")으로 떠 보입니다.', '보이는 정도는 검은 휘도와 배경의 비율로 정해집니다. 같은 검은 휘도도 어두운 밤하늘 위에서는 배경의 수십 배가 되고, 가로등 비친 노면 위에서는 몇 % 차이에 그칩니다.', '낮에는 배경이 수천 nit라 검은 휘도가 묻힙니다. 그래서 명암비는 사실상 밤 스펙이고, 밤 휘도 설정과 함께 봐야 합니다.', '햇빛이 HUD 안으로 들어와 반사되는 미광도 검은 휘도를 올립니다.'],
     measure: '흰 화면과 검은 화면 휘도를 각각 재서 나눕니다.',
     key: { ids: ['tft'], why: 'LCD 자체 명암비가 상한이고, HUD 안으로 들어온 햇빛의 반사(미광)가 그 아래로 끌어내립니다.' }, demo: 'contrast' },
   { id: 'ctol', cat: 'color', en: 'Color tolerance', ko: '색좌표 공차', unit: 'Cx, Cy', dir: 'low',
@@ -1553,22 +1553,40 @@ const DEMOS = {
       g.strokeStyle = 'rgba(31,98,209,.8)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 + t * .03), hh / 2); g.lineTo(-hw / 2 * (1 + t * .03), hh / 2); g.closePath(); g.stroke(); g.restore();
       g.strokeStyle = 'rgba(255,255,255,.7)'; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, cy - hh / 2); g.lineTo(w, cy - hh / 2); g.stroke(); g.setLineDash([]);
       return `점선이 수평 기준입니다. 허상 너비 ${f1(imgW())} cm에서 ${f1(Math.abs(v.r))}° 회전하면 양 끝 높이 차가 <b>${f1(imgW() * Math.tan(Math.abs(v.r) * Math.PI / 180))} cm</b>입니다.`; } },
-  lda: { ctl: [['dv', 'LDA 오차', -1.5, 1.5, .1, .5, '°'], ['dh', 'LOA 오차', -1.5, 1.5, .1, .5, '°']],
-    draw(g, w, h, v) { const half = w / 2, EX = 6, lda = Math.asin(-OPT0.v0.y) * 180 / Math.PI, rad = d => d * Math.PI / 180;
-      g.fillStyle = '#f6f8fa'; g.fillRect(0, 0, w, h); g.strokeStyle = '#dde1e6'; g.beginPath(); g.moveTo(half, 10); g.lineTo(half, h - 10); g.stroke();
-      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('옆에서 본 LDA (각도 6배 과장)', 12, 20); g.fillText('위에서 본 LOA (각도 6배 과장)', half + 12, 20);
-      // side view: eye → virtual image
-      const ex = 34, ey = h * .38, L = half - 80, ray = (deg, col, wdt) => { const a = rad(deg * EX), x = ex + L * Math.cos(a), y = ey + L * Math.sin(a); g.strokeStyle = col; g.lineWidth = wdt; g.beginPath(); g.moveTo(ex, ey); g.lineTo(x, y); g.stroke(); g.fillStyle = col; g.fillRect(x - 3, y - 16, 6, 32); return [x, y]; };
-      g.setLineDash([4, 4]); g.strokeStyle = '#9aa4ae'; g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex + L + 20, ey); g.stroke(); g.setLineDash([]);
-      g.fillStyle = '#3a3f45'; g.fillRect(0, h * .82, half, h * .18); g.fillStyle = '#9aa4ae'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('도로', 10, h * .82 + 16); g.fillText('눈높이 수평선', ex + 10, ey - 6);
-      ray(lda, '#b7c2cf', 2); const [x2, y2] = ray(lda + v.dv, '#1f62d1', 2.5); g.lineWidth = 1;
-      g.fillStyle = '#1c2228'; g.beginPath(); g.arc(ex, ey, 6, 0, 7); g.fill(); g.fillStyle = '#1f62d1'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('실제', x2 - 10, y2 + 30); g.fillStyle = '#9aa4ae'; g.fillText('설계', ex + L * Math.cos(rad(lda * EX)) + 8, ey + L * Math.sin(rad(lda * EX)) - 18);
-      // top view: eye looking forward (up the canvas)
-      const cx = half + (half / 2), cy = h - 34, R = h - 90, dot = (deg, col) => { const a = rad(deg * EX), x = cx + R * Math.sin(a), y = cy - R * Math.cos(a); g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(x, y); g.stroke(); g.fillStyle = col; g.fillRect(x - 22, y - 4, 44, 8); g.lineWidth = 1; };
-      g.setLineDash([4, 4]); g.strokeStyle = '#9aa4ae'; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx, cy - R - 16); g.stroke(); g.setLineDash([]);
-      dot(0, '#b7c2cf'); dot(v.dh, '#1f62d1'); g.fillStyle = '#1c2228'; g.beginPath(); g.arc(cx, cy, 6, 0, 7); g.fill();
-      const dvcm = SP.vid * 100 * Math.tan(rad(Math.abs(v.dv))), dhcm = SP.vid * 100 * Math.tan(rad(Math.abs(v.dh)));
-      return `모델의 하방각(LDA)은 약 <b>${f1(lda)}°</b>입니다(추정). 회색이 설계, 파랑이 실제입니다.<br>${f1(SP.vid)} m 앞에서 LDA ${f1(Math.abs(v.dv))}° 오차 → 허상이 위아래로 <b>${f1(dvcm)} cm</b>, LOA ${f1(Math.abs(v.dh))}° 오차 → 좌우로 <b>${f1(dhcm)} cm</b> 움직입니다.`; } },
+  lda: { ctl: [['dv', '이 차의 LDA 오차', -1.5, 1.5, .1, .5, '°'], ['dh', '이 차의 LOA 오차', -1.5, 1.5, .1, .3, '°'], ['ez', '눈 높이 (아이박스 중심 기준)', -60, 60, 1, 0, 'mm'], ['exx', '눈 좌우', -110, 110, 1, 0, 'mm']],
+    draw(g, w, h, v) { const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, vid = SP.vid * 1000, EBW = 130, EBH = 50;
+      const lda0 = deg(Math.asin(-OPT0.v0.y)), fh = deg(HFOV), fv = deg(VFOV);
+      // the eye moving inside the eyebox changes the angle to a virtual image that stays put
+      const eyeDv = deg(Math.atan(v.ez / vid)), eyeDh = deg(Math.atan(v.exx / vid)), ldaNow = lda0 + v.dv + eyeDv, loaNow = v.dh - eyeDh;
+      const sw = Math.min(w * .64, w - 250), k = sw / 30, hy = h * .30, cx = sw / 2, X = a => cx + a * k, Yd = d => hy + d * k;
+      // driver's view in true angles: 1° = k px
+      const sky = g.createLinearGradient(0, 0, 0, hy); sky.addColorStop(0, '#9fb6cf'); sky.addColorStop(1, '#d6dee6'); g.fillStyle = sky; g.fillRect(0, 0, sw, hy); g.fillStyle = '#6b737c'; g.fillRect(0, hy, sw, h - hy);
+      g.strokeStyle = '#e9ecef'; g.lineWidth = 2; g.beginPath(); g.moveTo(cx - 4, hy); g.lineTo(cx - sw * .42, h); g.moveTo(cx + 4, hy); g.lineTo(cx + sw * .42, h); g.stroke();
+      g.setLineDash([5, 4]); g.strokeStyle = '#1c2228'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, hy); g.lineTo(sw, hy); g.moveTo(cx, 0); g.lineTo(cx, h); g.stroke(); g.setLineDash([]);
+      g.fillStyle = '#1c2228'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('눈높이 수평선 (0°)', 8, hy - 6); g.fillText('정면 (0°)', cx + 6, 14);
+      // eyebox cropping: leaving the box cuts the image from the side you moved toward (simplified)
+      const outV = Math.max(0, Math.abs(v.ez) - EBH / 2), outH = Math.max(0, Math.abs(v.exx) - EBW / 2), cutV = Math.min(1, outV / 25), cutH = Math.min(1, outH / 40);
+      const box = (lda, loa, col, dash, img) => { const x = X(loa) - fh / 2 * k, y = Yd(lda) - fv / 2 * k, bw = fh * k, bh = fv * k;
+        if (img) { g.save(); g.beginPath(); g.rect(x + (v.exx < 0 ? cutH * bw : 0), y + (v.ez > 0 ? cutV * bh : 0), bw * (1 - cutH), bh * (1 - cutV)); g.clip(); g.drawImage(hudClear, x, y, bw, bh); g.restore(); }
+        g.setLineDash(dash); g.strokeStyle = col; g.lineWidth = 1.6; g.strokeRect(x, y, bw, bh); g.setLineDash([]); g.fillStyle = col; g.beginPath(); g.arc(X(loa), Yd(lda), 3.5, 0, 7); g.fill(); };
+      box(lda0, 0, '#ffffff', [5, 4]); box(ldaNow, loaNow, '#1f62d1', [], true);
+      // angle arrows from the reference lines
+      g.strokeStyle = g.fillStyle = '#c8780f'; g.lineWidth = 2; g.beginPath(); g.moveTo(X(loaNow) + fh / 2 * k + 14, hy); g.lineTo(X(loaNow) + fh / 2 * k + 14, Yd(ldaNow)); g.stroke();
+      g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(`LDA ${f1(ldaNow)}°`, X(loaNow) + fh / 2 * k + 20, (hy + Yd(ldaNow)) / 2 + 4);
+      if (Math.abs(loaNow) > .05) { g.beginPath(); g.moveTo(cx, Yd(ldaNow) + fv / 2 * k + 14); g.lineTo(X(loaNow), Yd(ldaNow) + fv / 2 * k + 14); g.stroke(); g.fillText(`LOA ${loaNow > 0 ? '+' : ''}${f1(loaNow)}°`, Math.min(cx, X(loaNow)), Yd(ldaNow) + fv / 2 * k + 30); }
+      g.lineWidth = 1; g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, h - 30, 250, 22); g.fillStyle = '#fff'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('운전자 시야 · 실제 각도 그대로 · 점선 = 설계 위치', 16, h - 15);
+      // eyebox, seen from behind the driver
+      const ox = sw + 24, ow = w - ox - 10, sc = Math.min(ow / 260, (h - 90) / 150), bx = ox + ow / 2, by = 46 + 75 * sc;
+      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('아이박스 (운전자 뒤에서 본 모습)', ox, 18);
+      g.fillStyle = 'rgba(31,98,209,.08)'; g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.fillRect(bx - EBW / 2 * sc, by - EBH / 2 * sc, EBW * sc, EBH * sc); g.strokeRect(bx - EBW / 2 * sc, by - EBH / 2 * sc, EBW * sc, EBH * sc);
+      g.fillStyle = '#1f62d1'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText(`${EBW} × ${EBH} mm`, bx - EBW / 2 * sc, by - EBH / 2 * sc - 6);
+      g.strokeStyle = '#9aa4ae'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(bx - 130 * sc, by); g.lineTo(bx + 130 * sc, by); g.moveTo(bx, by - 75 * sc); g.lineTo(bx, by + 75 * sc); g.stroke(); g.setLineDash([]);
+      const inside = !outV && !outH, epx = bx + v.exx * sc, epy = by - v.ez * sc;
+      g.fillStyle = inside ? '#1c2228' : '#d1493f'; g.beginPath(); g.arc(epx, epy, 7, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(epx, epy, 2.5, 0, 7); g.fill();
+      g.fillStyle = inside ? '#2a7d4f' : '#d1493f'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(inside ? '눈이 상자 안: 허상 전체가 보임' : '상자 밖: 그쪽 가장자리부터 잘림', ox, by + 75 * sc + 22);
+      g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; ['모터가 곡면경을 기울이면 이 상자가', '운전자 키에 맞춰 위아래로 옮겨집니다.'].forEach((t, i) => g.fillText(t, ox, by + 75 * sc + 42 + i * 16));
+      const cm = d => f1(SP.vid * 100 * Math.tan(rad(Math.abs(d))));
+      return `설계 LDA <b>${f1(lda0)}°</b>·LOA <b>0°</b>(모델 추정)를 목표로 만들지만, 실제 차에서는 부품·조립·장착 오차로 조금 달라집니다. 공차는 "이만큼까지 틀어져도 합격"이라는 범위입니다.<br>지금 이 차: 오차만으로 허상이 ${f1(SP.vid)} m 앞에서 위아래 <b>${cm(v.dv)} cm</b>, 좌우 <b>${cm(v.dh)} cm</b> 어긋납니다.${v.ez || v.exx ? ` 눈을 움직인 효과는 LDA ${eyeDv >= 0 ? '+' : ''}${f2(eyeDv)}°, LOA ${-eyeDh >= 0 ? '+' : ''}${f2(-eyeDh)}°로, 같은 차 안에서도 눈 위치에 따라 각도가 조금씩 변합니다. 그래서 공차는 보통 아이박스 중심에서 잽니다.` : ''}`; } },
   res: { ctl: [['lp', '해상도', 5, 40, 1, 15, 'lp/deg']],
     draw(g, w, h, v) { g.fillStyle = '#000'; g.fillRect(0, 0, w, h); const viewDeg = hfovDeg(), pxDeg = 2 * v.lp, cw = Math.max(4, Math.round(pxDeg * viewDeg)), ch = Math.round(cw * h / w);
       const off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'); o.fillStyle = '#000'; o.fillRect(0, 0, cw, ch); o.drawImage(hudClear, 0, 0, HUD_W, HUD_H, 0, (ch - cw / ASPECT) / 2, cw, cw / ASPECT);
@@ -1603,10 +1621,28 @@ const DEMOS = {
       g.fillStyle = 'rgba(120,130,140,.12)'; g.fillRect(x0, y0, hw, hh); const leak = (100 - v.u) / 70;
       for (const [cx, cy] of [[x0, y0], [x0 + hw, y0 + hh]]) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, hh * 1.1); gr.addColorStop(0, `rgba(170,180,195,${.55 * leak})`); gr.addColorStop(1, 'rgba(170,180,195,0)'); g.fillStyle = gr; g.fillRect(x0, y0, hw, hh); }
       hud(g, x0, y0, hw, hh, .9); return `밤, 검은 바탕 위 HUD. 균일도가 낮을수록 모서리 빛샘(뿌연 얼룩)이 커집니다. 조립 때 TFT를 누르는 힘이 모서리에 몰리면 생기기 쉽습니다.`; } },
-  contrast: { ctl: [['cr', '명암비', 100, 5000, 50, 1000, ':1'], ['n', '밤 휘도 설정', 50, 1000, 10, 300, 'nit']],
-    draw(g, w, h, v) { road(g, w, h, 0, true); const blk = v.n / v.cr, bgL = 1.5, vis = Math.min(.6, blk / bgL * .35); const hw = w * .6, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .42 - hh / 2;
-      g.fillStyle = `rgba(150,160,175,${vis})`; g.fillRect(x0, y0, hw, hh); hud(g, x0, y0, hw, hh, .95);
-      return `밤에 ${v.n} nit로 띄우면 검은 영역 휘도 = ${v.n} ÷ ${v.cr} = <b>${f2(blk)} nit</b>. 밤 도로 배경(약 1~2 nit)에 비해 크면 회색 사각형("포스트카드")이 보입니다.`; } },
+  contrast: { ctl: [['cr', '명암비', 100, 5000, 50, 400, ':1'], ['n', '밤 휘도 설정', 20, 1000, 10, 150, 'nit'], ['bg', '밤 배경', 0, 1, 1, 0, 'sel:가로등 없는 길|가로등 있는 도심']],
+    draw(g, w, h, v) { const blk = v.n / v.cr, [skyL, roadL] = v.bg ? [.05, 1.5] : [.001, .3];
+      // screen grey from luminance on a log scale (the eye responds roughly to ratios, not differences)
+      const LMIN = .0005, LMAX = 2000, t = L => Math.max(0, Math.min(1, Math.log10(L / LMIN) / Math.log10(LMAX / LMIN))), grey = L => { const c = Math.round(255 * t(L)); return `rgb(${c},${c},${Math.min(255, c + 6)})`; };
+      const sw = w * .7, hy = h * .5, hw = sw * .74, hh = hw / ASPECT, x0 = (sw - hw) / 2, y0 = hy - hh * .55;
+      g.fillStyle = grey(skyL); g.fillRect(0, 0, sw, hy); g.fillStyle = grey(roadL); g.fillRect(0, hy, sw, h - hy);
+      g.strokeStyle = grey(roadL * 3); g.lineWidth = 3; g.beginPath(); g.moveTo(sw / 2 - 5, hy); g.lineTo(sw * .1, h); g.moveTo(sw / 2 + 5, hy); g.lineTo(sw * .9, h); g.stroke();
+      // the "postcard": wherever the HUD is black, the background gets the black luminance added
+      g.save(); g.beginPath(); g.rect(x0, y0, hw, hh); g.clip(); g.fillStyle = grey(skyL + blk); g.fillRect(x0, y0, hw, hy - y0); g.fillStyle = grey(roadL + blk); g.fillRect(x0, hy, hw, y0 + hh - hy);
+      g.strokeStyle = grey((roadL + blk) * 3); g.lineWidth = 3; g.beginPath(); g.moveTo(sw / 2 - 5, hy); g.lineTo(sw * .1, h); g.moveTo(sw / 2 + 5, hy); g.lineTo(sw * .9, h); g.stroke(); g.restore();
+      hud(g, x0, y0, hw, hh, Math.min(1, .35 + .65 * t(v.n)));
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, 8, 218, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('밤 운전자 시야 (밝기는 로그 스케일)', 16, 23);
+      // luminance ladder: every value on one log axis
+      const lx = sw + 54, top = 34, bot = h - 24, Y = L => bot - t(L) * (bot - top);
+      g.fillStyle = '#fff'; g.fillRect(sw, 0, w - sw, h); g.fillStyle = '#1c2228'; g.fillText('휘도 (nit, 로그)', sw + 14, 20);
+      g.strokeStyle = '#c3cad1'; g.lineWidth = 1; g.beginPath(); g.moveTo(lx, top); g.lineTo(lx, bot); g.stroke(); g.font = '10px "IBM Plex Mono", monospace'; g.fillStyle = '#9aa4ae';
+      [.001, .01, .1, 1, 10, 100, 1000].forEach(L => { g.fillRect(lx - 4, Y(L), 8, 1); g.fillText(L >= 1 ? String(L) : String(L), sw + 8, Y(L) + 3); });
+      const marks = [[v.n, 'HUD 흰색', '#1f62d1'], [roadL + blk, '도로 + HUD 검정', '#c8780f'], [roadL, '도로', '#66717c'], [skyL + blk, '하늘 + HUD 검정', '#c8780f'], [skyL, '하늘', '#66717c']].sort((a, b) => b[0] - a[0]);
+      let lastY = -99; marks.forEach(([L, txt, c]) => { const y = Y(L), ty = Math.max(y, lastY + 14); lastY = ty; g.fillStyle = c; g.beginPath(); g.arc(lx, y, 3.5, 0, 7); g.fill(); g.strokeStyle = c; g.beginPath(); g.moveTo(lx + 4, y); g.lineTo(lx + 12, ty); g.stroke();
+        g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${txt} ${L < .01 ? L.toFixed(3) : L < 10 ? f2(L) : Math.round(L)}`, lx + 15, ty + 4); });
+      const xs = (skyL + blk) / skyL, xr = (roadL + blk) / roadL;
+      return `검은 영역 휘도 = 밤 휘도 ÷ 명암비 = ${v.n} ÷ ${v.cr} = <b>${blk < .01 ? blk.toFixed(3) : f2(blk)} nit</b>. 이 빛이 허상 사각형 전체에 깔립니다.<br>하늘 쪽은 배경이 어두워 <b>${xs >= 10 ? Math.round(xs) : f1(xs)}배</b> 밝아지고, 도로 쪽은 <b>+${Math.round((xr - 1) * 100)}%</b>만 밝아집니다. 그래서 회색 사각형("포스트카드")은 배경이 어두운 곳에서 먼저 보입니다. 밤 휘도를 낮추면 검은 휘도도 같이 내려갑니다.<br><span class="note">배경 휘도는 대략값입니다(가로등 도로 노면 약 0.3~2 nit, 맑은 시골 밤하늘 약 0.001 nit). 낮에는 배경이 수천 nit라 검은 휘도가 묻혀서 명암비는 사실상 밤 스펙입니다.</span>`; } },
   ctol: { ctl: [['d', '공차 (Δx, Δy)', 0, .03, .001, .01, ''], ['dir', '벗어나는 쪽', 0, 3, 1, 0, 'sel:노랑·주황 쪽 (x+, y+)|파랑 쪽 (x−, y−)|초록 쪽 (x−, y+)|분홍·보라 쪽 (x+, y−)'], ['ex', '보기', 0, 1, 1, 0, 'sel:실제 차이|차이 3배 과장']],
     draw(g, w, h, v) { const [sx, sy] = [[1, 1], [-1, -1], [-1, 1], [1, -1]][v.dir], k = v.ex ? 3 : 1, dx = sx * v.d * k, dy = sy * v.d * k;
       // xy → linear sRGB, normalised so the brightest channel is 1
