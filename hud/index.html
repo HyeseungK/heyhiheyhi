@@ -586,6 +586,20 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .lesson svg .mono { font-family: var(--mono); }
 @media (max-width: 860px) { .lesson .ls-stage { grid-template-columns: minmax(0, 1fr); } .lesson .ctl label { grid-template-columns: 7.5em minmax(0, 1fr) 4.6em; } }
 @media (prefers-reduced-motion: no-preference) { .ls-fig svg * { transition: none; } }
+.sp-detail { grid-template-columns: minmax(0, 1fr) 12px var(--sideW, 400px) !important; gap: 0 !important; }
+.sp-split { cursor: col-resize; position: relative; touch-action: none; }
+.sp-split::after { content: ""; position: absolute; top: 50%; left: 50%; width: 4px; height: 44px; margin: -22px 0 0 -2px; border-radius: 2px; background: var(--line); }
+.sp-split:hover::after, .sp-split.on::after, .sp-split:focus-visible::after { background: var(--accent); }
+.sp-split:focus-visible { outline: none; }
+.sp-more { padding: 14px 18px 18px; border-top: 1px solid var(--line-2); display: grid; gap: 8px; font-size: 14px; line-height: 1.65; }
+.sp-more h3 { margin: 0; font-size: 14px; }
+.sp-more p { margin: 0; max-width: 70ch; }
+.sp-more ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.sp-more details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.sts2 button { flex: 1 1 auto; }
+.sp-side .ent-step h3 { font-size: 14.5px; }
+.sp-side .ent-step h4 { display: flex; align-items: center; justify-content: space-between; }
+@media (max-width: 900px) { .sp-detail { grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; } .sp-split { display: none; } }
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
@@ -1708,7 +1722,7 @@ const SP = { view: 'items', cur: 'disparity', vals: {}, vid: Math.round(OPT0.vid
 const EXP_KEY = 'hudexp:v1';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const TOLT = { rel: '목표값의 상대 %', abs: '단위 그대로 ±', pp: '%p (퍼센트포인트)', unk: '방식 확인 필요', none: '공차 없음' };
-const STT = { ok: '판정 가능', cond: '한계 명확 · 시험 조건 확인 필요', check: '판정 기준 확인 필요' };
+const STT = { ok: '확정', cond: '숫자만 확정', check: '확인 필요' };
 const DER_MEAN = { unk: '미확정', lum: '허상 휘도', cur: '광원 전류', etc: '기타' };
 const SETCOL = ['#1f62d1', '#c8780f', '#2a9d6a', '#8a4fd1', '#d1493f'];
 const blankItem = () => ({ raw: { t: '', tol: '' }, unit: '', sfx: '', op: '', tv: '', tt: '', tolType: 'unk', tm: '', tp: '', stated: { op: '', v: '', v2: '' }, cond: '', note: '', st: 'check', meas: '' });
@@ -1820,7 +1834,7 @@ function specLine(id) {
 const OPS = [['≥', '이상 ≥'], ['≤', '이하 ≤'], ['=', '공칭값 ± 범위'], ['', '없음']];
 const TOLS = [['rel', '목표의 %'], ['abs', '단위 그대로'], ['pp', '%p'], ['unk', '아직 모름'], ['none', '공차 없음']];
 const SOPS = [['', '적혀 있지 않음'], ['≥', '하한 ≥'], ['≤', '상한 ≤'], ['범위', '범위']];
-const STS = [['ok', '판정 가능', '정의·공차·시험 조건이 모두 확인됨'], ['cond', '한계 명확', '최종 숫자는 분명하고 시험 조건만 확인 필요'], ['check', '판정 기준 확인 필요', '정의나 공차 적용이 불명확 · 판정하지 않음']];
+const STS = [['ok', '확정', '정의·공차·시험 조건이 모두 확인됨'], ['cond', '숫자만 확정', '최종 숫자는 분명하고 시험 조건만 확인 필요'], ['check', '확인 필요', '정의나 공차 적용이 불명확해 판정하지 않음']];
 // a best-effort reading of the sheet's wording; always shown as a suggestion, never applied over values the user set
 function parseRaw(t, tol, unit) {
   const N = s => String(s ?? '').replace(/,/g, '').replace(/−/g, '-'), nums = s => (N(s).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
@@ -1844,7 +1858,7 @@ function parseRaw(t, tol, unit) {
 }
 const READ_KEYS = ['op', 'tv', 'tt', 'tolType', 'tm', 'tp'];
 const same = (a, b) => { const x = nv(a), y = nv(b); return x != null && y != null ? Math.abs(x - y) < 1e-9 : String(a ?? '') === String(b ?? ''); };
-function sugDiff(it) { const r = parseRaw(it.raw.t, it.raw.tol, it.unit); const d = READ_KEYS.some(k => !same(it[k], r[k])) || ['op', 'v', 'v2'].some(k => !same(it.stated[k], r.stated[k])); return d ? r : null; }
+function sugDiff(it) { const r = parseRaw(it.raw.t, it.raw.tol, it.unit); const d = READ_KEYS.filter(k => k !== 'tt').some(k => !same(it[k], r[k])) || ['op', 'v', 'v2'].some(k => !same(it.stated[k], r.stated[k])); return d ? r : null; }
 const readingEmpty = it => READ_KEYS.every(k => it[k] === '' || it[k] == null || (k === 'tolType' && it[k] === 'unk')) && !it.stated.op;
 function applyReading(it, r) { READ_KEYS.forEach(k => { it[k] = r[k] ?? ''; }); it.stated = { ...r.stated }; }
 const itemDot = it => !it.raw.t && !it.raw.tol && it.tv === '' ? 'empty' : it.st;
@@ -1858,8 +1872,8 @@ function sugHTML(id) {
 }
 function resultHTML(id) {
   const it = curSet().items[id], f = finalOf(it), j = judge(it);
-  const why = !f.use ? '목표와 공차 방식이 정해지거나, 원본에 최종 한계가 적혀 있으면 계산됩니다.' : f.src === 'stated' ? (f.mismatch ? `원본에 적힌 값입니다. 공차로 계산하면 ${esc(rngTxt(f.calc, it))}이라 서로 다릅니다.` : f.calc ? '원본에 적힌 값이며, 공차로 계산한 값과 같습니다.' : '원본에 적힌 값입니다.') : '목표와 공차로 계산한 값입니다.';
-  return `<div class="res res-${!f.use ? 'none' : it.st}"><div><span class="rl">최종 합격 조건</span>${finalChip(it)}</div><p>${why}${it.st === 'check' && f.use ? ' 상태가 "판정 기준 확인 필요"라서 확정 기준으로 쓰지 않습니다.' : ''}</p>${j ? `<div class="rj"><span class="rl">측정값 ${esc(it.meas)}</span><span class="jd jd-${j.k}">${j.t}</span></div>` : ''}</div>`;
+  const why = f.mismatch ? `공차로 계산하면 ${esc(rngTxt(f.calc, it))}이라 원본 값과 다릅니다.` : '';
+  return `<div class="res res-${!f.use ? 'none' : it.st}"><div><span class="rl">최종 합격 조건</span>${finalChip(it)}</div>${why ? `<p class="warn">${why}</p>` : ''}${j ? `<div class="rj"><span class="rl">측정값 ${esc(it.meas)}</span><span class="jd jd-${j.k}">${j.t}</span></div>` : ''}</div>`;
 }
 function readHTML(id) {
   const it = curSet().items[id], d = it.der;
@@ -1964,7 +1978,7 @@ function gamutCov(g, w, h, v) {
   box(232, `면적비 = HUD 전체 ÷ 기준 = ${Math.round(H)}%`, `(겹침 ${Math.round(I)} + HUD에만 ${Math.round(hudOnly)}) ÷ 100 · 100을 넘을 수 있음`, C.hud);
   box(288, `커버리지 = 겹침 ÷ 기준 = ${Math.round(I)}%`, `기준 색 중 HUD가 실제로 낼 수 있는 비율 · 최대 100`, C.both);
   g.font = '11.5px "IBM Plex Sans KR", sans-serif'; [['겹침: 둘 다 낼 수 있는 색', C.both], [`${rn}에만: 기준엔 있는데 HUD는 못 내는 색`, C.ref], ['HUD에만: 기준 밖이지만 HUD는 내는 색', C.hud]].forEach(([t, c], k) => { g.fillStyle = c; g.fillRect(x0, 330 + k * 19, 10, 10); g.fillStyle = '#1c2228'; g.fillText(t, x0 + 16, 339 + k * 19); });
-  return `질문이 두 가지입니다. <b>"HUD 색역이 기준보다 얼마나 큰가?"</b>가 면적비, <b>"기준의 색을 HUD가 얼마나 낼 수 있나?"</b>가 커버리지입니다. 지금 면적비는 <b>${Math.round(H)}%</b>로 기준보다 크지만, 빨간 부분(${rn}에만 있는 색) ${Math.round(refOnly)}만큼은 HUD가 내지 못해서 커버리지는 <b>${Math.round(I)}%</b>입니다.<br>"삼각형 모양"을 0°로 두면 같은 면적비에서 커버리지가 100%가 되고, 돌릴수록 줄어듭니다(모양은 ${TA('설명용')}). 그래서 "125% ${rn}"라는 말만으로는 기준 색을 다 낼 수 있는지 알 수 없습니다.`;
+  return `질문이 두 가지입니다. <b>"HUD 색역이 기준보다 얼마나 큰가?"</b>가 면적비, <b>"기준의 색을 HUD가 얼마나 낼 수 있나?"</b>가 커버리지입니다. 지금 면적비는 <b>${Math.round(H)}%</b>로 기준보다 크지만, 빨간 부분(${rn}에만 있는 색) ${Math.round(refOnly)}만큼은 HUD가 내지 못해서 커버리지는 <b>${Math.round(I)}%</b>입니다.<br>"삼각형 모양"을 0°로 두면 같은 면적비에서 커버리지가 100%가 되고, 돌릴수록 줄어듭니다(삼각형 모양은 설명용). 그래서 "125% ${rn}"라는 말만으로는 기준 색을 다 낼 수 있는지 알 수 없습니다.`;
 }
 // ④ what the driver sees: designed HUD colours pulled toward white until they fit the HUD triangle
 function gamutHud(g, w, h, pN) {
@@ -1990,7 +2004,7 @@ function gamutHud(g, w, h, pN) {
     COLS.forEach(([n], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(n, cx, cy + r * 1.9); g.textAlign = 'start'; });
     g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
   const pr = (a, b) => Math.round(Math.min(1, dist(got[a], got[b]) / dist(want[a], want[b])) * 100), rw = pr(0, 1), gc = pr(2, 3);
-  return `색역이 좁으면 원색이 흰색 쪽으로 끌려가 물빠져 보이고, 비슷한 색끼리 가까워집니다. 설계 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b>, 정상↔안내 <b>${gc}%</b>. 왼쪽 그림의 회색 선이 각 색이 끌려간 거리입니다.<br>이 화면 자체가 sRGB라 그보다 넓은 색은 똑같이 보입니다. 아이콘 색과 HUD 삼각형 모양은 ${TA('설명용')}입니다.`;
+  return `색역이 좁으면 원색이 흰색 쪽으로 끌려가 물빠져 보이고, 비슷한 색끼리 가까워집니다. 설계 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b>, 정상↔안내 <b>${gc}%</b>. 왼쪽 그림의 회색 선이 각 색이 끌려간 거리입니다.<br>이 화면 자체가 sRGB라 그보다 넓은 색은 똑같이 보입니다. 아이콘 색과 HUD 삼각형 모양은 설명용입니다.`;
 }
 // colour tolerance demo, second view: each axis on its own, so the allowed region is a square
 function ctolBox(g, w, h, v) {
@@ -2003,75 +2017,75 @@ function ctolBox(g, w, h, v) {
   g.fillStyle = '#1c2228'; g.beginPath(); g.arc(X(0), Y(0), 4, 0, 7); g.fill(); g.fillStyle = ok ? '#2a7d4f' : '#d1493f'; g.beginPath(); g.arc(X(v.mx), Y(v.my), 6, 0, 7); g.fill();
   const tx = ox + S + 24; g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('ΔCx (가로) · ΔCy (세로)', ox, 12);
   [['파란 네모: |ΔCx| ≤ d 그리고 |ΔCy| ≤ d', '#1f62d1'], ['회색 점선 원: 두 차이를 합친 색차라면 (원본과 다름)', '#66717c'], ['검은 점: 기준 색좌표', '#1c2228'], [`${ok ? '초록' : '빨강'} 점: 측정 예시`, ok ? '#2a7d4f' : '#d1493f']].forEach(([t, c], i) => { g.fillStyle = c; g.font = '11.5px "IBM Plex Sans KR", sans-serif'; g.fillText(t, tx, 50 + i * 20); });
-  return `측정 예시 ΔCx = ${v.mx.toFixed(3)}, ΔCy = ${v.my.toFixed(3)} → |ΔCx| ${okx ? '≤' : '>'} ${v.d.toFixed(3)}, |ΔCy| ${oky ? '≤' : '>'} ${v.d.toFixed(3)} → <b>${ok ? '두 축 모두 범위 안' : '범위 밖'}</b> (설명용 예시).<br>Cx와 Cy를 <b>각각</b> 보는 조건이라 허용 범위는 원이 아니라 네모입니다. 기준 색좌표는 원본에 ${TC('없음')} → 그림 중심은 ${TA('D65 (0.3127, 0.3290)')}. "전 온도 범위 유지"는 이 행에만 붙은 조건입니다.`;
+  return `측정 예시 ΔCx = ${v.mx.toFixed(3)}, ΔCy = ${v.my.toFixed(3)} → |ΔCx| ${okx ? '≤' : '>'} ${v.d.toFixed(3)}, |ΔCy| ${oky ? '≤' : '>'} ${v.d.toFixed(3)} → <b>${ok ? '두 축 모두 범위 안' : '범위 밖'}</b>.<br>Cx와 Cy를 각각 보므로 허용 범위는 원이 아니라 네모입니다. 그림 중심은 흔히 쓰는 흰색 D65(0.3127, 0.3290)로 잡았습니다.`;
 }
 const RS = triArea(SRGB) / triArea(NTSC); // sRGB area ÷ NTSC 1953 area, CIE 1931 xy
-// plain-language text per item: one-line meaning, longer explanation, and the questions still open with the expert
+// plain-language text per item: one line, a short explanation, why it matters, and only the questions that change the definition
 const SPEC_TXT = {
-  disparity: { one: '같은 점이 두 방향으로 갈라져 보이는 정도를 각도로 나타낸 값입니다. mrad(밀리라디안)는 1/1000 라디안, 약 0.057°입니다.',
-    def: '원본에는 Disparity, 단위 mrad, 목표 ≤1.0, 공차 ±0.5, 상한 1.5만 있습니다. HUD에서 이 이름은 보통 둘 중 하나를 뜻합니다. ① 양안 시차: 왼눈과 오른눈이 보는 상의 방향 차이. ② 주상–고스트 간격: 한 눈 위치에서 실제 상(주상)과 윈드실드 뒷면 반사로 생기는 희미한 복제 상(고스트)이 떨어진 각도. 둘은 다른 현상이라 전문가 확인 전에는 어느 쪽으로도 확정하지 않습니다.',
-    why: ['양안 시차가 크면 두 눈의 상이 합쳐지지 않아 겹쳐 보이거나 눈이 피로해집니다. 위아래 어긋남은 눈이 거의 맞추지 못해 보통 더 엄격하게 봅니다.', '고스트 간격이 크면 글자·아이콘 옆에 흐린 그림자가 생겨 번져 보입니다.', '어느 쪽이든 아이박스의 어느 위치(들)에서 쟀는지, 그중 최댓값을 보는지에 따라 숫자의 의미가 바뀝니다.'],
-    qs: ['원본의 Disparity는 양안 시차인가요, 주상–고스트 간격인가요?', '양안 시차라면 수평(수렴·발산)과 수직을 각각 어떻게 제한하나요? 좌우 눈 간격은 몇 mm로 잡나요?', '아이박스 몇 지점에서 측정하고, 그중 최댓값으로 판정하나요?', '±0.5 공차를 적용한 최종 상한이 1.5 mrad라는 해석이 맞나요?'] },
-  visize: { one: '실제로 보이는 허상의 크기가 기준(공칭) 크기의 몇 %인지입니다.',
-    def: '"공칭 36.21″"는 비교의 기준이 되는 대표 크기(대각선 인치)라는 뜻입니다. 목표 100%, 공차 ±5%이면 기준 대비 95~105%입니다. 인치·cm로 나타내는 허상 크기는 거리에 따라 달라지고, FOV(°, 눈에서 본 화면의 각도 범위)는 각도로 나타낸 크기라 둘은 다른 단위입니다.',
-    why: ['±5%를 대각선 길이에 그대로 적용한다고 가정하면 약 34.40~38.02″입니다. 실제로 대각선·가로·세로·FOV 중 어디에 적용하는지는 확인이 필요합니다.', 'AR 그래픽은 도로 위 물체에 겹쳐야 해서, 크기가 틀리면 가장자리일수록 많이 어긋납니다.', '그림의 허상 거리와 크기는 3D 모델에서 역산한 설명용 가정이며 실제 Zeekr 값이 아닙니다.'],
-    qs: ['±5%는 대각선, 가로·세로 길이, FOV(°) 중 무엇에 적용하나요?', '공칭 36.21″의 허상 거리와 FOV(가로×세로 °)는 얼마인가요?', '워프 보정(소프트웨어 왜곡 보정) 전 값인가요, 후 값인가요?'] },
-  aspect: { one: '허상의 가로 : 세로 비율입니다. 비율 자체(3:1)는 단위가 없고, 원본 unit 열의 %는 공차의 단위입니다.',
-    def: '3:1은 가로가 세로의 3배라는 뜻입니다. 상대 ±5%를 비율값 3에 적용하면 2.85:1 ~ 3.15:1입니다. 다만 공차를 비율값에 적용하는지, 가로·세로 길이 각각에 적용하는지는 확인이 필요합니다.',
-    why: ['비율이 틀어지면 원이 타원으로, 정사각 아이콘이 납작하게 보입니다.', '가로와 세로가 다르게 확대되면 생기고, 워프 보정으로 맞춥니다.'],
-    qs: ['±5%는 비율값(3)에 대한 상대 %인가요, 가로·세로 길이 각각의 공차인가요?', '측정은 격자 패턴의 어느 구간(외곽 전체 / 중앙 영역)으로 하나요?'] },
-  edge: { one: '허상 네 변이 수평·수직 기준선에서 기울어진 각도(°)입니다.',
-    def: '전체가 돌아간 "회전"과, 위아래 폭이 다른 "사다리꼴"이 이 값으로 드러납니다. 원본은 목표 ≤0.3°(4면), 공차 0~+0.3°입니다. 공차를 상한에 더하면 ≤0.6°가 되지만, 적용 방식이 확인되지 않은 추정입니다.',
-    why: ['기울어진 허상은 도로·대시보드의 수평선과 어긋나 바로 눈에 띕니다.', 'AR 그래픽의 차선 정합도 함께 틀어집니다.'],
-    qs: ['최종 합격선은 0.3°인가요, 0.6°인가요? "0 ~ +0.3"은 무슨 뜻인가요?', '기준선(수평·수직)은 무엇으로 잡나요? 측정 위치는 아이박스 중심인가요?', '회전과 사다리꼴을 따로 관리하나요?'] },
+  disparity: { one: '같은 점이 두 방향으로 갈라져 보이는 정도를 각도로 나타낸 값입니다. mrad(밀리라디안)는 약 0.057°입니다.',
+    def: 'HUD에서 이 이름은 보통 둘 중 하나를 뜻합니다. 왼눈과 오른눈이 보는 상의 방향 차이(양안 시차), 또는 실제 상과 앞유리 뒷면 반사로 생기는 희미한 복제 상(고스트) 사이의 각도입니다. 그림에서 둘을 바꿔 볼 수 있습니다.',
+    why: ['양안 시차가 크면 두 상이 합쳐지지 않아 겹쳐 보이거나 눈이 피로해집니다.', '고스트 간격이 크면 글자 옆에 흐린 그림자가 생겨 번져 보입니다.'],
+    qs: ['Disparity는 양안 시차인가요, 주상–고스트 간격인가요?'] },
+  visize: { one: '실제로 보이는 허상 크기가 기준 크기의 몇 %인지입니다.',
+    def: '기준 크기를 100%로 두고 실제 크기를 비교합니다. 공차가 ±5%면 95~105% 사이가 합격입니다. 허상 크기(인치·cm)는 거리에 따라 달라지고, FOV(°)는 눈에서 본 각도로 나타낸 크기입니다.',
+    why: ['AR 그래픽은 도로 위 물체에 겹쳐야 해서, 크기가 틀리면 가장자리일수록 많이 어긋납니다.'],
+    qs: ['±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
+  aspect: { one: '허상의 가로 : 세로 비율입니다.',
+    def: '3:1이면 가로가 세로의 3배입니다. ±5%를 비율값에 적용하면 2.85:1 ~ 3.15:1입니다.',
+    why: ['비율이 틀어지면 원이 타원으로, 정사각 아이콘이 납작하게 보입니다.'],
+    qs: ['±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
+  edge: { one: '허상 네 변이 수평·수직 기준선에서 기울어진 각도입니다.',
+    def: '허상 전체가 돌아간 "회전"과, 위아래 폭이 다른 "사다리꼴"이 이 값으로 드러납니다.',
+    why: ['기울어진 허상은 도로와 대시보드의 수평선과 어긋나 바로 눈에 띕니다.'],
+    qs: ['최종 합격선은 0.3°인가요, 공차를 더한 0.6°인가요?'] },
   lda: { one: '운전자 눈에서 허상 중심을 바라보는 방향의 각도입니다. 위아래가 LookDown, 좌우가 LookOver입니다.',
-    def: '그림은 여덟 단계로 나눠 봅니다. 핵심은 네 가지입니다. ① LookDown: 눈높이 수평선에서 허상 중심까지 내려다보는 각도. ② LookOver: 정면에서 좌우로 비켜 있는 각도. ③ 설계 대비 오차: 한 관찰 위치에서 설계 각도와 실제 각도의 차이. ④ 아이박스 내 편차: 같은 차에서 눈 위치가 아이박스 안에서 달라질 때 각도가 변하는 정도. 원본은 "≤1.0° (Eye-box 내 시야각 편차)"라서 ④를 주된 검토 대상으로 보되, 실제 시험 정의는 확인되지 않았습니다.',
-    why: ['아이박스는 "눈이 이 안에 있으면 허상 전체가 보이는 공간"입니다. 밖으로 나가면 나간 쪽 가장자리부터 잘려 보입니다.', '허상은 공간에 떠 있는 위치가 거의 고정이라 눈이 움직이면 바라보는 각도가 조금 변합니다. 이 변화가 크면 머리 위치에 따라 AR 그래픽이 도로에서 어긋나 보입니다.', '±0.5°를 상한에 더한 ≤1.5°는 가능한 해석 중 하나일 뿐 확정 기준이 아닙니다.'],
-    qs: ['"Eye-box 내 시야각 편차"는 중심 각도 대비 최대 차이인가요, 측정 각도의 최대–최소 차이인가요?', '아이박스 측정점은 몇 개이고 어디인가요? LookDown과 LookOver를 각각 판정하나요?', '±0.5°는 최종 상한을 1.5°로 늘린다는 뜻인가요, 측정 불확도인가요?', '설계 LookDown·LookOver 각도와 그 장착 공차는 별도로 관리하나요?'] },
-  res: { one: '시야각 1° 안에 구분해서 보이는 선 쌍(밝은 선 + 어두운 선 한 쌍)의 수입니다. 단위 lp/deg = line pair per degree.',
-    def: '선 쌍 하나를 표시하려면 이상적으로 화소 2개(밝은 화소 1 + 어두운 화소 1)가 필요합니다. 이것은 최소 샘플링을 설명하는 이상적인 경우이고, 실제로 선이 구분되는지는 광학 흐림, 영상 처리(워프 보간), 그리고 "대비(MTF)가 얼마나 남아야 구분된 것으로 보는지"의 판정 기준에 따라 달라집니다.',
-    why: ['원본: 목표 ≥40, 공차 −10%, 최종 하한 ≥36 lp/deg.', '글자와 아이콘이 또렷한지를 정합니다. 시력 1.0은 대략 30 lp/deg(1분각) 수준입니다.'],
-    qs: ['몇 % MTF(대비) 기준에서 구분된 것으로 보나요?', '측정 위치(중앙/가장자리)와 방향(가로/세로)은?', '패널 해상도와 FOV 기준의 이론 상한은 얼마인가요?'] },
-  bright: { one: '운전자 눈 위치에서 보이는 허상의 밝기입니다. nit = cd/m²(1 m²당 촛불 밝기).',
-    def: '원본은 두 값을 구분합니다. ≥10,000 nit는 계속 유지하는 "지속 정격", 12,000 nit는 잠깐 낼 수 있는 "순간 피크"입니다(12,000 nit는 Zeekr 공개 발표값과도 같습니다). 공차 "사용 기간 내 −20%"는 수명 동안 밝기 감소를 허용한다는 뜻으로 읽히며, 지속 정격에 적용하면 8,000 nit가 됩니다(해석 예시).',
-    why: ['맑은 낮 도로·하늘을 배경으로도 보여야 해서 높은 휘도가 필요합니다. 밤에는 크게 낮춥니다.', '허상 휘도인지, 광원·패널 휘도인지에 따라 같은 숫자의 의미가 크게 다릅니다.'],
-    qs: ['허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요? 윈드실드 반사를 포함하나요?', '−20%는 어떤 수명(시간)·온도 조건에 적용하나요? 지속 정격과 피크 중 무엇의 −20%인가요?', '"순간 피크"는 몇 초, 어떤 조건에서 허용되나요?'] },
-  grad: { one: '아이박스 안에서 눈을 1 cm 옮길 때 허상 밝기가 몇 % 변하는지입니다(%/cm).',
-    def: '"화면 안 위치별 밝기 차이(균일도)"와는 다른 값입니다. 이 항목은 같은 화면 지점을 보면서 눈 위치를 옮길 때의 변화입니다. 원본은 목표 ≤3, 원본 기재 상한 5입니다.',
-    why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.', '빛을 아이박스 쪽으로 좁게 모으면 밝지만 변화가 커지는, 휘도와 맞바꾸는 관계입니다.'],
-    qs: ['%를 계산하는 기준 휘도는 아이박스 중심값인가요, 최댓값인가요?', '측정 방향(가로/세로)과 측정점 간격은?', '합격선은 3인가요, 5인가요?'] },
-  sun: { one: '선글라스를 쓰고 볼 때의 허상 밝기(nit)입니다.',
-    def: '원본에는 ≥1,200 nit, 공차 −20%만 있습니다. −20%를 적용한 960 nit는 추정 하한입니다. 선글라스 종류(편광 여부), 렌즈 투과율, 편광 방향, 측정 조건이 없어서 어떤 선글라스 기준인지는 확인이 필요합니다. 그림은 편광 선글라스인 경우의 예시입니다.',
-    why: ['편광 선글라스라면 HUD 빛의 편광 방향에 따라 밝기가 크게 달라질 수 있습니다.', '일반(비편광) 선글라스라면 렌즈 투과율만큼 어두워집니다.'],
-    qs: ['어떤 선글라스(편광/비편광, 투과율)를 기준으로 하나요?', '편광이라면 선글라스 축 각도와 머리 기울기 조건은?', '960 nit(−20%)를 최종 하한으로 보면 되나요?'] },
-  white: { one: '흰 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지(%)입니다.',
-    def: '원본은 ≥85%, 공차 −5%, 그리고 ≥80이 함께 적혀 있습니다. 85 → 80은 −5%p(퍼센트포인트, % 값끼리의 차이)입니다. 85의 상대 −5%라면 80.75가 되므로 원본 의도는 %p로 읽힙니다.',
-    why: ['고르지 않으면 화면 일부가 얼룩지거나 가장자리가 어둡게 보입니다.', '계산식(최소/최대, 최소/평균)과 측정점 수(9점 등)에 따라 같은 화면도 숫자가 달라집니다.'],
-    qs: ['균일도 계산식(최소/최대 또는 최소/평균)과 측정점 위치는?', '−5%를 %p로 보고 최종 ≥80%로 판정하면 되나요?'] },
-  black: { one: '검은 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지(%)입니다.',
-    def: '원본은 ≥80%, 공차 −5%입니다. −5%가 상대 %이면 76%, %p이면 75%라서 최종값을 확정하지 않습니다. 검은 화면은 휘도가 매우 낮아 측정기 노이즈와 주변광의 영향을 받을 수 있습니다.',
-    why: ['LCD는 검은색에서도 빛이 조금 새고, 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 보입니다.', '값이 높거나 낮다고 단정하기보다 계산식과 측정 조건을 먼저 확인합니다.'],
-    qs: ['−5%는 상대 %인가요, %p인가요? 최종 하한은 76%인가요, 75%인가요?', '계산식과 측정점, 암실 조건, 측정기 노이즈 처리 방법은?'] },
-  contrast: { one: '같은 조건에서 "흰 상태 밝기 ÷ 검은 상태 밝기"입니다. 원본 조건은 암실(외부 빛을 막은 측정 환경)·정적(정지 화면)입니다.',
-    def: '원본: 목표 ≥400:1, 공차 −10%, 하한 ≥360:1. 흑백을 차례로 띄워 쟀는지, 흑백 바둑판(체커보드)으로 동시에 쟀는지는 원본에 없습니다. 암실 명암비는 대낮 실제 주행 환경의 명암비와 같지 않습니다. 주행 중에는 배경과 햇빛이 더해지기 때문입니다.',
-    why: ['검은 휘도 = 흰 휘도 ÷ 명암비라서, 그래픽이 없는 곳이 얼마나 빛날지를 정합니다.', '밤에는 검은 영역이 허상 사각형 전체에 깔려 희미한 "포스트카드"로 보일 수 있습니다.'],
-    qs: ['흑백 순차 측정인가요, 체커보드 동시 측정인가요?', '측정할 때 휘도 설정(최대/밤 설정)과 측정 위치는?'] },
-  ctol: { one: '흰색(또는 지정 색)의 색좌표가 기준 색좌표에서 벗어나도 되는 범위입니다.',
-    def: '원본 "ΔCx ≤ ±0.01 ; ΔCy ≤ ±0.01"은 기준 색좌표 대비 Cx와 Cy가 각각 ±0.01 이내라는 뜻으로 읽을 수 있습니다. 수식으로는 |ΔCx| ≤ 0.01 그리고 |ΔCy| ≤ 0.01, 즉 −0.01 ≤ ΔCx ≤ +0.01이고 −0.01 ≤ ΔCy ≤ +0.01입니다. 두 차이를 합친 하나의 색차 값이 아니라 축마다 따로 보는 조건이라 허용 범위는 원이 아니라 네모입니다. "전 온도 범위 유지"는 이 행에 붙은 조건이며 다른 색 항목에는 자동으로 적용하지 않습니다.',
-    why: ['제품마다 흰색이 노랗거나 푸르게 보이면 다른 화면과 색이 안 맞습니다.', 'LED는 생산 묶음(빈, bin)마다 색이 조금씩 달라서 빈 관리가 핵심입니다.'],
-    qs: ['기준 색좌표(Cx, Cy)는 얼마인가요? 흰색만인가요, R·G·B 원색도인가요?', '"전 온도 범위"는 몇 ℃부터 몇 ℃인가요?'] },
-  sat: { one: '한 가지 색(예: 빨강)이 흰빛 없이 얼마나 순수하고 선명한지입니다.',
-    def: '채도는 "한 가지 색"의 선명도이고, 색역(Gamut)은 디스플레이가 낼 수 있는 "색 전체의 범위"입니다. 채도는 R·G·B마다 다른 값을 가질 수 있고, 어떤 정의와 산식을 쓰느냐에 따라 숫자의 의미가 달라집니다. 디자인 도구의 채도 설정값(HSV의 S 등)과 계측기로 잰 광학 성능값은 같은 것이 아닙니다.',
-    why: ['원본은 Color Saturation ≥90% sRGB, Gamut ≥90% sRGB(≥70% NTSC)로 두 행에 같은 "90% sRGB"가 있습니다. 같은 측정값인지 별도 지표인지는 확인되지 않아 중복이라고 단정하지 않습니다.', '선명도가 떨어지면 빨간 경고·초록 상태 표시가 바랜 분홍·연두처럼 보입니다.'],
-    qs: ['Color Saturation의 90% sRGB는 특정 색의 채도인가요, sRGB 대비 색역 면적비 또는 커버리지인가요? Gamut 행과 동일한 측정값인가요?', 'R·G·B를 각각 판정하나요? 사용한 채도 산식은 무엇인가요?'] },
-  gamut: { one: '디스플레이가 낼 수 있는 색의 범위입니다. 색좌표 위에서 R·G·B 세 원색이 만드는 삼각형으로 나타냅니다.',
-    def: 'RGB는 세 원색을 섞어 색을 만드는 방식이고, NTSC·sRGB는 그 세 원색의 위치를 정해 둔 기준 삼각형입니다. "기준 대비 %"에는 두 종류가 있습니다. 면적비 = HUD 삼각형 면적 ÷ 기준 면적(100%를 넘을 수 있음, 예: 125% NTSC). 커버리지 = 겹치는 면적 ÷ 기준 면적(최대 100%). 면적비가 125%라도 기준 영역을 다 덮는다는 보장은 없습니다.',
-    why: [`같은 색도도(CIE 1931 xy)·같은 면적비 방식·NTSC 1953 기준을 가정하면 sRGB 면적은 NTSC의 약 ${Math.round(RS * 100)}%입니다(흔히 약 72%로 인용). 이때 90% sRGB 면적비 ≈ ${Math.round(90 * RS)}% NTSC 면적비입니다. 원본 값이 커버리지라면 이 단순 환산은 쓸 수 없습니다.`, '원본의 "≥90% sRGB (≥70% NTSC)"가 각각 만족해야 하는 두 조건인지, 환산 표기인지는 확인되지 않았습니다. 두 조건을 동시에 만족하는 것은 가능합니다.', '영역이 좁으면 비슷한 색(빨강↔주황, 초록↔청록)이 가까워져 구분이 어려워집니다.'],
-    qs: ['90% sRGB와 70% NTSC는 면적비인가요, 커버리지인가요? 색도도는 CIE 1931 xy인가요, 1976 u′v′인가요?', '두 값은 각각 만족해야 하는 조건인가요, 같은 값을 환산해 병기한 것인가요?', '−5% 공차는 상대 %인가요, %p인가요?'] },
-  derating: { one: '온도가 오르면 부품을 보호하려고 출력(밝기 등)의 허용 한계를 낮추는 것입니다.',
-    def: '원본: 65℃부터 선형으로 낮추고 85℃에서 약 50%, 공차 ±3℃. 65℃에서 100%로 보는 것은 설명용 가정입니다. "무엇의 50%인지(허상 휘도, 광원 전류 등)", 기준 휘도, 온도 센서 위치, ±3℃의 적용 대상은 확인이 필요합니다. 기준 휘도를 모르면 nit로 바꾸지 않고 상대 %만 봅니다.',
-    why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁고, 햇빛이 HUD 안으로 거꾸로 들어와 내부를 달굽니다.', '저감이 일찍 시작되면 가장 밝아야 할 맑은 낮에 HUD가 어두워질 수 있습니다.'],
-    qs: ['50%는 무엇의 50%인가요(허상 휘도, 광원 전류, 기타)? 기준은 10,000 nit(지속)와 12,000 nit(피크) 중 무엇인가요?', '온도는 어디서 재나요(센서 위치)?', '±3℃는 시작 온도에 적용하나요, 곡선 전체에 적용하나요?', '65℃ 이전과 85℃ 이후에는 어떻게 동작하나요?'] },
+    def: '이 항목의 "편차"는 같은 차에서 눈 위치를 아이박스 안에서 옮길 때 이 각도가 얼마나 달라지는지입니다. 그림의 여덟 단계에서 각도, 아이박스, 편차를 차례로 봅니다.',
+    why: ['편차가 크면 머리를 움직일 때 AR 그래픽이 도로에서 어긋나 보입니다.'],
+    qs: ['편차는 중심점 대비 최대 차이인가요, 측정점 간 최대–최소인가요?', '±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
+  res: { one: '시야각 1° 안에 구분해서 보이는 선 쌍(밝은 선 + 어두운 선)의 수입니다.',
+    def: '선 쌍 하나를 그리려면 이상적으로 화소 2개가 필요합니다. 실제로 선이 구분되는지는 광학 흐림과 "대비가 얼마나 남아야 구분된 것으로 보는지"에 따라 달라집니다.',
+    why: ['글자와 아이콘이 또렷한지를 정합니다. 시력 1.0은 대략 30 lp/deg 수준입니다.'],
+    qs: ['몇 % 대비(MTF)에서 구분된 것으로 보나요?'] },
+  bright: { one: '운전자 눈 위치에서 보이는 허상의 밝기입니다. 단위 nit = cd/m².',
+    def: '계속 낼 수 있는 "지속" 밝기와 잠깐 낼 수 있는 "피크" 밝기를 구분합니다. 배경이 밝을수록 HUD가 더 밝아야 보입니다.',
+    why: ['맑은 낮 도로·하늘을 배경으로도 보여야 해서 높은 휘도가 필요합니다. 밤에는 크게 낮춥니다.'],
+    qs: ['허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
+  grad: { one: '아이박스 안에서 눈을 1 cm 옮길 때 허상 밝기가 몇 % 변하는지입니다.',
+    def: '화면 안 위치별 밝기 차이(균일도)와는 다릅니다. 같은 화면 지점을 보면서 눈 위치만 옮길 때의 변화입니다.',
+    why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.'],
+    qs: ['합격선은 3인가요, 5인가요?'] },
+  sun: { one: '선글라스를 쓰고 볼 때의 허상 밝기입니다.',
+    def: 'HUD 빛은 한 방향으로 진동하는 빛(편광)이라, 편광 선글라스를 쓰면 축 방향에 따라 많이 어두워질 수 있습니다. 일반 선글라스는 렌즈 투과율만큼 어두워집니다.',
+    why: ['선글라스를 쓰는 순간 HUD가 사라지면 안전 정보가 안 보입니다.'],
+    qs: ['어떤 선글라스(편광 여부, 투과율) 기준인가요?'] },
+  white: { one: '흰 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지입니다.',
+    def: '여러 지점의 밝기를 재서 가장 어두운 곳 ÷ 가장 밝은 곳 같은 식으로 계산합니다. 85% → 80%처럼 % 값끼리 빼는 것을 %p(퍼센트포인트)라고 합니다.',
+    why: ['고르지 않으면 화면 일부가 얼룩지거나 가장자리가 어둡게 보입니다.'],
+    qs: ['균일도 계산식은 최소/최대인가요, 최소/평균인가요?'] },
+  black: { one: '검은 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지입니다.',
+    def: 'LCD는 검은색에서도 빛이 조금 샙니다. 그 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 보입니다.',
+    why: ['밤에 검은 바탕이 얼룩져 보이면 거슬립니다.'],
+    qs: ['−5%는 상대 %인가요, %p인가요?'] },
+  contrast: { one: '흰 상태 밝기 ÷ 검은 상태 밝기입니다.',
+    def: '명암비가 400:1이면 흰색이 검은색보다 400배 밝습니다. 뒤집으면 검은 부분 밝기 = 흰 밝기 ÷ 명암비라서, 그래픽이 없는 곳이 얼마나 빛날지를 정합니다. 암실은 외부 빛을 막은 측정 환경입니다.',
+    why: ['명암비가 낮으면 밤에 허상 크기의 희미한 회색 사각형("포스트카드")이 보입니다.'],
+    qs: ['흑백을 차례로 재나요, 바둑판 패턴으로 동시에 재나요?'] },
+  ctol: { one: '흰색의 색좌표가 기준 색좌표에서 벗어나도 되는 범위입니다.',
+    def: 'Cx와 Cy를 각각 ±0.01 이내로 봅니다. 두 축을 따로 보므로 허용 범위는 원이 아니라 네모 모양입니다.',
+    why: ['차마다 흰색이 노랗거나 푸르게 보이면 다른 화면과 색이 안 맞습니다.'],
+    qs: ['기준 색좌표(Cx, Cy)는 얼마인가요?'] },
+  sat: { one: '한 가지 색(예: 빨강)이 흰빛 없이 얼마나 선명한지입니다.',
+    def: '채도는 색 하나의 선명도이고, 색역은 낼 수 있는 색 전체의 범위입니다. 채도는 계산 방법에 따라 숫자가 달라지고, 디자인 도구의 채도 값과 측정값은 같은 것이 아닙니다.',
+    why: ['선명도가 떨어지면 빨간 경고가 분홍처럼, 초록 표시가 연두처럼 보입니다.'],
+    qs: ['이 90% sRGB는 색 하나의 채도인가요, Gamut 행과 같은 값인가요?'] },
+  gamut: { one: '디스플레이가 낼 수 있는 색의 범위입니다. 색 지도 위에서 R·G·B 세 원색이 만드는 삼각형입니다.',
+    def: '"기준 대비 %"에는 두 가지가 있습니다. 면적비는 HUD 삼각형이 기준보다 얼마나 큰지(100%를 넘을 수 있음), 커버리지는 기준 색을 HUD가 얼마나 낼 수 있는지(최대 100%)입니다.',
+    why: [`같은 조건이면 sRGB 넓이는 NTSC의 약 ${Math.round(RS * 100)}%입니다. 그래서 같은 화면도 기준에 따라 숫자가 다르게 적힙니다.`, '색역이 좁으면 빨강↔주황, 초록↔청록처럼 비슷한 색을 구분하기 어려워집니다.'],
+    qs: ['면적비인가요, 커버리지인가요?'] },
+  derating: { one: '온도가 오르면 부품을 보호하려고 밝기(출력)의 허용 한계를 낮추는 것입니다.',
+    def: '정해진 온도부터 출력 한계를 조금씩 낮춥니다. 예를 들어 70℃부터 낮추기 시작해 90℃에서 50%가 되면, 그 사이 80℃에서는 75%입니다.',
+    why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁습니다. 저감이 일찍 시작되면 가장 밝아야 할 때 어두워집니다.'],
+    qs: ['50%는 무엇의 50%인가요? 온도는 어디서 재나요?'] },
 };
 SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 
@@ -2287,62 +2301,70 @@ const DEMOS = {
       else { hud(g, x + ox, y + oy, hw, hh, .22); hud(g, x, y, hw, hh, .95); const a = tag('주상 (실제 상)', x, y + hh + 18, '#2a7d4f'); tag('고스트 상 (희미한 복제)', x + a + 8, y + hh + 18, '#66717c'); }
       tag(`${v.mode ? '주상–고스트 간격인 경우의 예시' : '양안 시차인 경우의 예시'} · 간격 6배 과장 · 점선 = 설계상 목표 위치`, 8, 8, 'rgba(0,0,0,.6)');
       const conv = `${TA('허상 거리 ' + f1(SP.vid) + ' m')} 위치에서 약 <b>${f1(mm)} mm</b>(예시 환산: mrad × m)`;
-      return (v.mode ? `<b>주상–고스트 간격인 경우</b>: 한 눈 위치에서 실제 상(주상)과 희미한 복제 상(고스트)이 ${f1(v.d)} mrad 떨어져 보이면 ${conv}입니다. 고스트는 윈드실드 안쪽 면과 바깥쪽 면에서 각각 반사돼 생기는 두 번째 상입니다.<br>측정 기준: 아이박스의 어느 위치(중심 한 점 / 여러 점의 최댓값)에서 쟀는지 ${TC('원본 미기재')}.`
-        : `<b>양안 시차인 경우</b>: 왼눈(빨강 테두리)과 오른눈(파랑 테두리)이 보는 상의 방향이 ${f1(v.d)} mrad 다르면 ${conv} 어긋난 셈입니다. ${v.ax ? '위아래 어긋남은 눈이 거의 맞추지 못해 보통 더 엄격하게 봅니다.' : '좌우 어긋남은 거리감을 바꿔 그래픽이 앞뒤로 떠 보이게 합니다.'}<br>측정 기준: 좌우 눈 간격 ${TA('보통 약 65 mm')}(원본 미기재), 아이박스 안 여러 눈 위치 쌍 중 최댓값으로 보는지 ${TC('원본 미기재')}.`)
-        + `<br>점선 = 설계상 목표 위치, 진한 상 = 실제로 보이는 상. 원본의 Disparity가 둘 중 무엇인지는 ${TC('정의 미확정')}입니다.`; } },
+      return (v.mode ? `한 눈 위치에서 실제 상과 희미한 고스트가 <b>${f1(v.d)} mrad</b> 떨어져 보이는 예시입니다. 허상이 ${f1(SP.vid)} m 앞에 있다면 약 <b>${f1(mm)} mm</b> 간격입니다. 고스트는 앞유리 안쪽 면과 바깥쪽 면에서 각각 반사돼 생깁니다.`
+        : `왼눈(빨강 테두리)과 오른눈(파랑 테두리)이 보는 상이 <b>${f1(v.d)} mrad</b> 어긋난 예시입니다. 허상이 ${f1(SP.vid)} m 앞에 있다면 약 <b>${f1(mm)} mm</b> 차이입니다. ${v.ax ? '위아래 어긋남은 눈이 거의 맞추지 못해 더 거슬립니다.' : '좌우 어긋남은 그래픽이 앞뒤로 떠 보이게 합니다.'}`) + '<br>점선은 설계상 목표 위치, 진한 상은 실제로 보이는 상입니다.'; } },
+
   visize: { ctl: [['s', '크기 편차', -10, 10, .5, 3, '%']],
     draw(g, w, h, v) { road(g, w, h, .8); const k = 1 + v.s / 100, hw = w * .5, hh = hw / ASPECT, cx = w / 2, cy = h * .42;
       g.setLineDash([6, 5]); g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.strokeRect(cx - hw / 2, cy - hh / 2, hw, hh); g.setLineDash([]);
       hud(g, cx - hw * k / 2, cy - hh * k / 2, hw * k, hh * k, .95);
-      const dcm = imgW() * Math.abs(v.s) / 100 / 2; return `파란 점선이 기준(100%) 크기입니다. ${TA('허상 너비 ' + f1(imgW()) + ' cm')} 기준으로 가장자리 그래픽이 <b>${f1(dcm)} cm</b> 밀립니다.<br>원본 공칭 ${TE('36.21″')} ±5%를 대각선 길이에 그대로 적용한다고 가정하면 <b>34.40 ~ 38.02″</b>입니다. 적용 대상(대각선 / 가로·세로 / FOV)은 ${TC('미확정')}.`; } },
+      const dcm = imgW() * Math.abs(v.s) / 100 / 2; return `파란 점선이 기준(100%) 크기입니다. 허상 너비가 ${f1(imgW())} cm라면 가장자리 그래픽이 <b>${f1(dcm)} cm</b> 밀립니다.<br>예: 기준 36.21″에 ±5%를 대각선에 적용하면 34.40 ~ 38.02″입니다.`; } },
+
   aspect: { ctl: [['a', '가로세로 비 편차', -10, 10, .5, 4, '%']],
     draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .5, hh = hw / ASPECT * (1 + v.a / 100), cx = w / 2, cy = h * .42;
       g.setLineDash([6, 5]); g.strokeStyle = '#1f62d1'; g.lineWidth = 1.5; g.strokeRect(cx - hw / 2, cy - hw / ASPECT / 2, hw, hw / ASPECT); g.setLineDash([]);
       hud(g, cx - hw / 2, cy - hh / 2, hw, hh, .95); g.strokeStyle = '#ff5a4a'; g.lineWidth = 3; g.beginPath(); g.ellipse(w * .85, h * .8, 22, 22 * (1 + v.a / 100), 0, 0, 7); g.stroke();
-      return `세로가 ${v.a > 0 ? '늘어' : '줄어'} 오른쪽 아래 원 아이콘이 타원이 됩니다. ${TA('허상 높이 ' + f1(imgH()) + ' cm')} 기준 <b>${f1(imgH() * Math.abs(v.a) / 100)} cm</b> 차이입니다.<br>원본 ${TE('3:1')} ±5%를 비율값에 상대 %로 적용하면 <b>2.85:1 ~ 3.15:1</b>입니다. 적용 방식은 ${TC('미확정')}.`; } },
+      return `세로가 ${v.a > 0 ? '늘어' : '줄어'} 오른쪽 아래 원 아이콘이 타원이 됩니다. 허상 높이가 ${f1(imgH())} cm라면 <b>${f1(imgH() * Math.abs(v.a) / 100)} cm</b> 차이입니다.<br>예: 3:1에 ±5%면 2.85:1 ~ 3.15:1입니다.`; } },
+
   edge: { ctl: [['r', '회전', -3, 3, .1, 1, '°'], ['k', '사다리꼴', -3, 3, .1, 0, '°']],
     draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .5, hh = hw / ASPECT, cx = w / 2, cy = h * .42;
       g.save(); g.translate(cx, cy); g.rotate(v.r * Math.PI / 180); const t = Math.tan(v.k * Math.PI / 180) * 6; g.transform(1, 0, t * .02, 1, 0, 0); hud(g, -hw / 2, -hh / 2, hw, hh, .95);
       g.strokeStyle = 'rgba(31,98,209,.8)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 - t * .03), -hh / 2); g.lineTo(hw / 2 * (1 + t * .03), hh / 2); g.lineTo(-hw / 2 * (1 + t * .03), hh / 2); g.closePath(); g.stroke(); g.restore();
       g.strokeStyle = 'rgba(255,255,255,.7)'; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(0, cy - hh / 2); g.lineTo(w, cy - hh / 2); g.stroke(); g.setLineDash([]);
-      return `점선이 수평 기준입니다. ${TA('허상 너비 ' + f1(imgW()) + ' cm')}에서 ${f1(Math.abs(v.r))}° 회전하면 양 끝 높이 차가 <b>${f1(imgW() * Math.tan(Math.abs(v.r) * Math.PI / 180))} cm</b>입니다.<br>원본 목표 ${TE('≤ 0.3°')}, 공차 ${TE('0 ~ +0.3°')}. 공차를 상한에 더한 ≤ 0.6°는 ${TC('추정')}입니다. 기준선과 측정 위치도 ${TC('미기재')}.`; } },
+      return `점선이 수평 기준입니다. 허상 너비가 ${f1(imgW())} cm일 때 ${f1(Math.abs(v.r))}° 기울면 양 끝 높이 차가 <b>${f1(imgW() * Math.tan(Math.abs(v.r) * Math.PI / 180))} cm</b>입니다.`; } },
+
   lda: { ctl: [], lesson: true },
   res: { ctl: [['lp', '해상도', 5, 40, 1, 15, 'lp/deg']],
     draw(g, w, h, v) { g.fillStyle = '#000'; g.fillRect(0, 0, w, h); const viewDeg = hfovDeg(), pxDeg = 2 * v.lp, cw = Math.max(4, Math.round(pxDeg * viewDeg)), ch = Math.round(cw * h / w);
       const off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'); o.fillStyle = '#000'; o.fillRect(0, 0, cw, ch); o.drawImage(hudClear, 0, 0, HUD_W, HUD_H, 0, (ch - cw / ASPECT) / 2, cw, cw / ASPECT);
       for (let i = 0; i < 8; i++) { o.fillStyle = i % 2 ? '#000' : '#fff'; o.fillRect(Math.round(cw * .04) + i, Math.round(ch * .82), 1, Math.max(2, Math.round(ch * .14))); }
       g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, w, h); g.fillStyle = '#9aa4ae'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('왼쪽 아래 막대: 선 쌍 4개 · 화면 전체 = 허상 FOV', 12, h - 6);
-      const tftPx = Math.round(2 * v.lp * hfovDeg()); return `시야각 1°에 화소 <b>${2 * v.lp}개</b>(이상적인 최소 샘플링: 선 쌍 1개 = 밝은 화소 1 + 어두운 화소 1). ${TA('FOV ' + f1(hfovDeg()) + '°')}라면 TFT 가로 화소가 약 <b>${tftPx}개</b> 필요합니다(흐림이 없다는 이상적인 경우).<br>실제로 선이 구분되는지는 광학 흐림, 영상 처리, MTF(대비) 판정 기준 ${TC('원본 미기재')}에 따라 달라집니다. 사람 눈의 한계는 약 30 lp/deg(1분각)입니다. 원본 ${TE('≥ 40')} → 최종 하한 ${TE('≥ 36 lp/deg')}(40 × 0.9 = 36).`; } },
+      const tftPx = Math.round(2 * v.lp * hfovDeg()); return `시야각 1°에 화소 <b>${2 * v.lp}개</b>(선 쌍 1개 = 밝은 화소 1 + 어두운 화소 1). 화면 폭이 ${f1(hfovDeg())}°라면 TFT 가로 화소가 약 <b>${tftPx}개</b> 필요합니다.<br>사람 눈은 약 30 lp/deg까지 구분합니다.`; } },
+
   bright: { ctl: [['n', '휘도', 500, 20000, 100, 10000, 'nit'], ['amb', '배경', 0, 3, 1, 2, 'sel:밤 (2 nit)|흐린 낮 (2,000)|맑은 낮 도로 (6,000)|눈길·역광 (15,000)']],
     draw(g, w, h, v) { const bg = [2, 2000, 6000, 15000][v.amb], lvl = [0, .45, .75, 1][v.amb]; road(g, w, h, lvl, v.amb === 0);
       const seen = bg * .7, cr = (v.n + seen) / seen, vis = Math.max(0, Math.min(1, (cr - 1) / 1.5)); const hw = w * .55, hh = hw / ASPECT;
       hud(g, (w - hw) / 2, h * .42 - hh / 2, hw, hh, v.amb === 0 ? Math.min(1, v.n / 300) : .15 + .85 * vis);
-      return `배경은 ${TA('윈드실드 투과 약 70%')} 후 ${TA(Math.round(seen).toLocaleString() + ' nit')}(배경 밝기는 대략값). 배경 대비 HUD의 비율 <b>${f2(cr)}</b>. 1에 가까울수록 배경에 묻힙니다. 그림의 선명도는 이 비율로 계산한 예시입니다.${v.amb === 0 ? ' 밤에는 크게 낮춰도 충분하고, 너무 밝으면 눈이 부십니다.' : ''}<br>원본: 지속 정격 ${TE('≥ 10,000 nit')}, 순간 피크 ${TE('12,000 nit')}(Zeekr 공개 발표값과도 같음). 허상 휘도인지 광원 휘도인지, −20%의 수명 조건은 ${TC('미확정')}.`; } },
+      return `배경 밝기 약 ${Math.round(seen).toLocaleString()} nit 대비 HUD 비율 <b>${f2(cr)}</b>. 1에 가까울수록 배경에 묻힙니다.${v.amb === 0 ? ' 밤에는 크게 낮춰도 충분하고, 너무 밝으면 눈이 부십니다.' : ''}`; } },
+
   grad: { ctl: [['gr', '휘도 변화율', 0, 10, .5, 3, '%/cm'], ['x', '머리 위치', -6.5, 6.5, .5, 3, 'cm']],
     draw(g, w, h, v) { g.fillStyle = '#f6f8fa'; g.fillRect(0, 0, w, h); const bw = w - 80, bh = h * .45, bx = 40, by = 30;
       for (let i = 0; i < 52; i++) { const xc = -6.5 + 13 * (i + .5) / 52, L = Math.max(0, 1 - v.gr / 100 * Math.abs(xc)); g.fillStyle = `rgb(${Math.round(255 * L)},${Math.round(225 * L + 20)},${Math.round(130 * L + 20)})`; g.fillRect(bx + bw * i / 52, by, bw / 52 + 1, bh); }
       g.strokeStyle = '#1c2228'; g.strokeRect(bx, by, bw, bh); g.fillStyle = '#1c2228'; g.font = '12px "IBM Plex Sans KR", sans-serif'; g.fillText('아이박스 13 cm (가로, 설명용 가정)', bx, by - 8);
       const hx = bx + bw * (v.x + 6.5) / 13; g.beginPath(); g.arc(hx, by + bh / 2, 9, 0, 7); g.fillStyle = '#1f62d1'; g.fill();
       const L = Math.max(0, 1 - v.gr / 100 * Math.abs(v.x)); hud(g, w / 2 - 120, by + bh + 14, 240, 240 / ASPECT, .2 + .8 * L);
-      return `중심에서 ${f1(Math.abs(v.x))} cm 움직이면 휘도가 <b>${f1((1 - L) * 100)}%</b> 줄어듭니다. 아이박스 끝(6.5 cm)에서는 ${f1(Math.min(100, v.gr * 6.5))}%. 아이박스 크기 ${TA('13 cm')}, 중심 기준 계산은 ${TA('예시')}입니다.<br>원본 목표 ${TE('≤ 3 %/cm')}, 원본 기재 상한 ${TE('5')}. 기준 휘도와 측정 방향·위치는 ${TC('미기재')}.`; } },
+      return `중심에서 ${f1(Math.abs(v.x))} cm 움직이면 밝기가 <b>${f1((1 - L) * 100)}%</b> 줄어듭니다. 아이박스 끝(6.5 cm)에서는 ${f1(Math.min(100, v.gr * 6.5))}%입니다.`; } },
+
   sun: { ctl: [['pol', 'HUD 빛의 편광 (예시)', 0, 2, 1, 0, 'sel:수평|수직|원편광'], ['ax', '선글라스 축', 0, 90, 5, 90, '°'], ['tr', '선글라스 기본 투과율', 10, 60, 1, 30, '%']],
     draw(g, w, h, v) { road(g, w, h, .9); const pa = [0, 90, null][v.pol], T = pa === null ? .5 : Math.cos((v.ax - pa) * Math.PI / 180) ** 2;
       g.fillStyle = 'rgba(30,25,15,.55)'; g.fillRect(0, 0, w, h); const hw = w * .55, hh = hw / ASPECT; hud(g, (w - hw) / 2, h * .42 - hh / 2, hw, hh, Math.max(.03, T));
       g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, 8, 230, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('편광 선글라스인 경우의 예시', 16, 23);
-      const bt = nv(curSet().items.bright.tv), B = bt ?? 10000, Bt = bt != null ? TE(`${fmtN(B)} nit (${esc(curSet().name)} 휘도 목표)`) : TA(`${fmtN(B)} nit`);
-      return `원본은 선글라스 종류를 ${TC('적지 않았습니다')}. 이 그림은 편광 선글라스라고 가정한 예시입니다. 통과율 cos²(축 각도 차) = <b>${Math.round(T * 100)}%</b>.<br>${Bt} × 기본 투과 ${TA(v.tr + '%')} × ${Math.round(T * 100)}% ≈ <b>${Math.round(B * v.tr / 100 * T).toLocaleString()} nit</b>. 원본 ${TE('≥ 1,200 nit')}, −20%를 적용한 960 nit는 ${TC('추정 하한')}입니다.`; } },
+      const B = 10000; return `편광 선글라스 예시입니다. 선글라스 축과 HUD 빛의 방향이 어긋난 만큼 어두워집니다. 통과율 = cos²(각도 차) = <b>${Math.round(T * 100)}%</b>.<br>예: HUD ${B.toLocaleString()} nit × 렌즈 기본 투과 ${v.tr}% × ${Math.round(T * 100)}% ≈ <b>${Math.round(B * v.tr / 100 * T).toLocaleString()} nit</b>`; } },
+
   white: { ctl: [['u', '균일도 (최소/최대)', 50, 100, 1, 80, '%']],
     draw(g, w, h, v) { const k = 1 - v.u / 100, pts = []; for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) pts.push([i, j]);
       const L = (x, y) => 1 - k * Math.min(1, Math.hypot(x - .5, (y - .5) * .8) / .62);
       for (let y = 0; y < h; y += 4) for (let x = 0; x < w; x += 4) { const l = L(x / w, y / h); const c = Math.round(255 * l); g.fillStyle = `rgb(${c},${c},${Math.round(c * .97)})`; g.fillRect(x, y, 4, 4); }
       g.font = '600 12px "IBM Plex Mono", monospace'; let mn = 1, mx = 0;
       pts.forEach(([i, j]) => { const x = (i * .4 + .1) * w, y = (j * .4 + .1) * h, l = L(i * .4 + .1, j * .4 + .1); mn = Math.min(mn, l); mx = Math.max(mx, l); g.fillStyle = '#1f62d1'; g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); g.fillText(Math.round(l * 100) + '%', x + 7, y + 4); });
-      return `흰 화면 9점 측정 예시(계산식 최소/최대는 ${TA('예시')}). 최소/최대 = <b>${Math.round(mn / mx * 100)}%</b>. 가장자리가 어두워지는 형태로 그렸습니다.<br>원본 ${TE('≥ 85%')} → 최종 ${TE('≥ 80%')}: 85 − 5 = 80이므로 <b>−5%p</b>입니다(상대 −5%라면 80.75%).`; } },
+      return `흰 화면 9점 측정 예시. 최소/최대 = <b>${Math.round(mn / mx * 100)}%</b>.<br>85%에서 5%p를 빼면 80%, 85%의 5%를 빼면 80.75%로, %p와 %는 다른 계산입니다.`; } },
+
   black: { ctl: [['u', '균일도', 30, 100, 1, 60, '%']],
     draw(g, w, h, v) { g.fillStyle = '#05070b'; g.fillRect(0, 0, w, h); const hw = w * .62, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .45 - hh / 2;
       g.fillStyle = 'rgba(120,130,140,.12)'; g.fillRect(x0, y0, hw, hh); const leak = (100 - v.u) / 70;
       for (const [cx, cy] of [[x0, y0], [x0 + hw, y0 + hh]]) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, hh * 1.1); gr.addColorStop(0, `rgba(170,180,195,${.55 * leak})`); gr.addColorStop(1, 'rgba(170,180,195,0)'); g.fillStyle = gr; g.fillRect(x0, y0, hw, hh); }
-      hud(g, x0, y0, hw, hh, .9); return `밤, 검은 바탕 위 HUD. 균일도가 낮을수록 모서리 빛샘(뿌연 얼룩)이 커지는 ${TA('예시')}입니다.<br>원본 ${TE('≥ 80%')}, 공차 −5%가 상대 %(76%)인지 %p(75%)인지 ${TC('미확정')}. 검은 화면은 매우 어두워 측정기 노이즈와 주변광의 영향을 받기 쉽습니다. 그렇다고 원본 80%가 잘못됐다는 뜻은 아닙니다.`; } },
+      hud(g, x0, y0, hw, hh, .9); return `밤, 검은 바탕 위 HUD. 균일도가 낮을수록 모서리 빛샘(뿌연 얼룩)이 커집니다.`; } },
+
   contrast: { ctl: [['cr', '명암비', 100, 5000, 50, 400, ':1'], ['n', '밤 휘도 설정 (가정)', 20, 1000, 10, 150, 'nit'], ['bg', '밤 배경', 0, 1, 1, 0, 'sel:가로등 없는 길|가로등 있는 도심']],
     draw(g, w, h, v) { const blk = v.n / v.cr, [skyL, roadL] = v.bg ? [.05, 1.5] : [.001, .3];
       // screen grey from luminance on a log scale (the eye responds roughly to ratios, not differences)
@@ -2364,7 +2386,8 @@ const DEMOS = {
       let lastY = -99; marks.forEach(([L, txt, c]) => { const y = Y(L), ty = Math.max(y, lastY + 14); lastY = ty; g.fillStyle = c; g.beginPath(); g.arc(lx, y, 3.5, 0, 7); g.fill(); g.strokeStyle = c; g.beginPath(); g.moveTo(lx + 4, y); g.lineTo(lx + 12, ty); g.stroke();
         g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${txt} ${L < .01 ? L.toFixed(3) : L < 10 ? f2(L) : Math.round(L)}`, lx + 15, ty + 4); });
       const xs = (skyL + blk) / skyL, xr = (roadL + blk) / roadL;
-      return `검은 영역 휘도 = 밤 휘도 ÷ 명암비 = ${v.n} ÷ ${v.cr} = <b>${blk < .01 ? blk.toFixed(3) : f2(blk)} nit</b>. 이 빛이 허상 사각형 전체에 깔립니다.<br>하늘 쪽은 배경이 어두워 <b>${xs >= 10 ? Math.round(xs) : f1(xs)}배</b> 밝아지고, 도로 쪽은 <b>+${Math.round((xr - 1) * 100)}%</b>만 밝아집니다. 그래서 회색 사각형("포스트카드")은 배경이 어두운 곳에서 먼저 보입니다. 밤 휘도를 낮추면 검은 휘도도 같이 내려갑니다.<br><span class="note">배경 휘도는 대략값입니다(가로등 도로 노면 약 0.3~2 nit, 맑은 시골 밤하늘 약 0.001 nit). 낮에는 배경이 수천 nit라 검은 휘도가 묻혀서 명암비는 사실상 밤 스펙입니다.</span><br>원본은 ${TE('암실 정적 ≥ 400:1')}(하한 ${TE('≥ 360:1')}). 이 그림은 밤 도로 ${TA('예시')}이며, 암실 명암비를 실제 주행 환경의 명암비와 같다고 보지 않습니다. 흑백 순차/체커보드 측정 여부는 ${TC('미기재')}.`; } },
+      return `검은 부분 밝기 = 밤 밝기 ÷ 명암비 = ${v.n} ÷ ${v.cr} = <b>${blk < .01 ? blk.toFixed(3) : f2(blk)} nit</b>. 이 빛이 허상 사각형 전체에 깔립니다.<br>어두운 하늘 쪽은 배경보다 <b>${xs >= 10 ? Math.round(xs) : f1(xs)}배</b> 밝아져 사각형이 잘 보이고, 가로등 비친 도로 쪽은 <b>+${Math.round((xr - 1) * 100)}%</b>만 밝아집니다. 낮에는 배경이 수천 nit라 검은 부분이 묻힙니다.`; } },
+
   ctol: { ctl: [['view', '보기', 0, 1, 1, 0, 'sel:두 HUD 나란히|허용 범위 (네모)'], ['d', '공차 (각 축)', 0, .03, .001, .01, ''], ['dir', '벗어나는 쪽', 0, 3, 1, 0, 'sel:노랑·주황 쪽 (x+, y+)|파랑 쪽 (x−, y−)|초록 쪽 (x−, y+)|분홍·보라 쪽 (x+, y−)'], ['ex', '차이 표시', 0, 1, 1, 0, 'sel:실제 차이|차이 3배 과장'], ['mx', '측정 예시 ΔCx', -.03, .03, .001, .006, ''], ['my', '측정 예시 ΔCy', -.03, .03, .001, -.012, '']],
     show: v => v.view ? ['view', 'd', 'mx', 'my'] : ['view', 'd', 'dir', 'ex'],
     draw(g, w, h, v) { if (v.view) return ctolBox(g, w, h, v); const [sx, sy] = [[1, 1], [-1, -1], [-1, 1], [1, -1]][v.dir], k = v.ex ? 3 : 1, dx = sx * v.d * k, dy = sy * v.d * k;
@@ -2382,7 +2405,7 @@ const DEMOS = {
       g.fillStyle = '#fff'; g.fillRect(half - 1, 0, 2, ph);
       g.fillStyle = `rgb(${t0.map(gam)})`; g.fillRect(0, ph, half, 46); g.fillStyle = `rgb(${t1.map(gam)})`; g.fillRect(half, ph, half, 46);
       g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('흰색만 비교', 10, ph + 28);
-      return `같은 차종인데 HUD마다 흰색이 이만큼 다를 수 있다는 뜻입니다. 흰 숫자·글자가 ${['누렇게', '푸르게', '초록빛으로', '분홍빛으로'][v.dir]} 보입니다.<br>흰색 근처에서 눈이 겨우 구분하는 차이는 대략 0.003~0.005(대략적 기준)라, 0.01이면 클러스터나 센터 화면과 나란히 볼 때 눈에 띕니다. LED 빈(bin)을 좁게 관리할수록 공차를 줄일 수 있습니다.<br>그림의 목표 흰색은 ${TA('D65')}로 잡았습니다. 원본의 기준 색좌표는 ${TC('미기재')}.`; } },
+      return `같은 차종인데 HUD마다 흰색이 이만큼 다를 수 있다는 뜻입니다. 흰 숫자·글자가 ${['누렇게', '푸르게', '초록빛으로', '분홍빛으로'][v.dir]} 보입니다.<br>흰색 근처에서 눈이 겨우 구분하는 차이는 대략 0.003~0.005(대략적 기준)라, 0.01이면 클러스터나 센터 화면과 나란히 볼 때 눈에 띕니다. LED 빈(bin)을 좁게 관리할수록 공차를 줄일 수 있습니다.`; } },
   sat: { ctl: [['r', '빨강 채도', 30, 100, 1, 95, '%'], ['gg', '초록 채도', 30, 100, 1, 80, '%'], ['bb', '파랑 채도', 30, 100, 1, 90, '%']],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       // example definition: how far from the white point toward the sRGB primary each colour reaches
@@ -2398,7 +2421,8 @@ const DEMOS = {
       rgb.forEach((c, i) => { const cx = x0 + cw * (i + .5), cy = h * .3; g.fillStyle = `rgb(${c})`; g.beginPath(); g.arc(cx, cy, Math.min(cw * .3, 46), 0, 7); g.fill();
         g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.textAlign = 'center'; g.fillText(`${['빨강', '초록', '파랑'][i]}`, cx, h * .62 + 22); g.font = '11.5px "IBM Plex Mono", monospace';
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
-      return `<b>채도</b>는 한 가지 색의 선명도입니다. 여기서는 예시 정의로 "백색점에서 sRGB 원색까지 거리 중 몇 %까지 왔나"를 썼고, R·G·B가 서로 다른 값을 가질 수 있습니다. 같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 <b>다른 값</b>이 나옵니다. 정의·산식이 다르면 숫자의 의미도 다릅니다.<br><b>색역</b>은 색 하나가 아니라 세 원색이 만드는 삼각형 전체의 범위입니다(→ 색 영역 항목). 원본 Color Saturation ${TE('≥ 90% sRGB')}가 어떤 정의인지, Gamut 행과 같은 값인지는 ${TC('미확정')}입니다.`; } },
+      return `채도는 색 하나의 선명도입니다. 여기서는 "백색점에서 원색까지 거리 중 몇 %까지 왔나"로 계산했고, R·G·B가 서로 다를 수 있습니다.<br>같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 다른 값이 나옵니다. 계산 방법이 다르면 숫자도 다릅니다.`; } },
+
   gamut: { ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (NTSC·sRGB)|③ 면적비 vs 커버리지|④ 운전자 눈에서 달라지는 것'], ['p', 'HUD 색역 크기 (면적비)', 30, 150, 1, 125, '%'], ['b', '기준', 0, 1, 1, 1, 'sel:sRGB 대비|NTSC 대비'], ['rot', '삼각형 모양 (설명용)', -40, 40, 1, 22, '°']],
     show: v => [['step'], ['step', 'p', 'b'], ['step', 'p', 'b', 'rot'], ['step', 'p', 'b']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
@@ -2412,29 +2436,25 @@ const DEMOS = {
       if (v.step === 2) return gamutCov(g, w, h, v);
       return gamutHud(g, w, h, pN);
     } },
-  derating: { ctl: [['t', '현재 온도', 20, 110, 1, 80, '℃']],
+  derating: { ctl: [['src', '곡선', 0, 1, 1, 0, 'sel:예시 곡선|선택한 전문가 값'], ['t1', '낮추기 시작', 50, 100, 1, 70, '℃'], ['t2', '50%가 되는 온도', 60, 110, 1, 90, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
+    show: v => v.src ? ['src', 't'] : ['src', 't1', 't2', 't'],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
-      const L = 52, R = w - 24, T = 30, B = h - 36, X = t => L + (t - 20) / 90 * (R - L), Y = p => B - p / 110 * (B - T), sets = shownSets(), act = sets[0].items.derating;
+      const sets = v.src ? shownSets().map(st => ({ name: st.name, d: st.items.derating.der })) : [{ name: '예시', d: { t1: v.t1, p1: 100, t2: Math.max(v.t2, v.t1 + 1), p2: 50 } }];
+      const L = 52, R = w - 24, T = 30, B = h - 36, X = t => L + (t - 20) / 90 * (R - L), Y = p => B - p / 110 * (B - T);
       g.strokeStyle = '#e6ebf0'; g.lineWidth = 1; g.font = '11px "IBM Plex Mono", monospace'; g.fillStyle = '#66717c';
       for (let t = 20; t <= 110; t += 10) { g.beginPath(); g.moveTo(X(t), T); g.lineTo(X(t), B); g.stroke(); g.fillText(t + '℃', X(t) - 13, B + 16); }
       for (let p = 0; p <= 100; p += 25) { g.beginPath(); g.moveTo(L, Y(p)); g.lineTo(R, Y(p)); g.stroke(); g.fillText(p + '%', 12, Y(p) + 4); }
-      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(`출력 허용 한계 (${DER_MEAN[act.der.mean]})`, L, 18);
-      const val = (d, t) => { const t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2); if ([t1, p1, t2, p2].some(x => x == null) || t2 === t1) return null; return t < t1 ? { p: p1, out: 'before' } : t > t2 ? { p: null, out: 'after' } : { p: p1 + (p2 - p1) * (t - t1) / (t2 - t1) }; };
-      // start-temperature tolerance band (active set only)
-      const d0 = act.der, tol = nv(act.tm), t10 = nv(d0.t1);
-      if (tol != null && t10 != null) { g.fillStyle = 'rgba(200,120,15,.10)'; g.fillRect(X(t10 - tol), T, X(t10 + tol) - X(t10), B - T); g.fillStyle = '#c8780f'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(`±${fmtN(tol)}℃ (적용 대상 확인 필요)`, X(t10 - tol), B - 24); }
-      sets.forEach((st, i) => { const d = st.items.derating.der, t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2), c = SETCOL[i % 5]; if ([t1, p1, t2, p2].some(x => x == null)) return;
-        g.strokeStyle = c; g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(t1), Y(p1)); g.lineTo(X(t2), Y(p2)); g.stroke();
-        g.setLineDash([5, 4]); g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(20), Y(p1)); g.lineTo(X(t1), Y(p1)); g.stroke(); g.setLineDash([]);
-        [[t1, p1, d.p1asm], [t2, p2, false]].forEach(([t, p, asm]) => { g.fillStyle = c; g.beginPath(); g.arc(X(t), Y(p), 4.5, 0, 7); g.fill(); g.font = '600 11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${fmtN(t)}℃ ${fmtN(p)}%${asm ? ' (가정)' : ''}`, X(t) + 7, Y(p) - 8 - i * 14); });
-        if (i === 0) { g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(d.before ? `시작 전: ${d.before}` : '시작 전 점선: 원본에 없음 · 그대로 유지는 설명용 가정', X(20) + 4, Y(p1) + 16);
-          g.fillStyle = 'rgba(140,150,160,.12)'; g.fillRect(X(t2), T, R - X(t2), B - T); g.fillStyle = '#66717c'; g.fillText(d.after ? `이후: ${d.after}` : `${fmtN(t2)}℃ 이후: 원본에 없음`, X(t2) + 6, B - 10); } });
+      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('밝기(출력) 허용 한계', L, 18);
+      const val = (d, t) => { const t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2); if ([t1, p1, t2, p2].some(x => x == null) || t2 === t1) return null; return t <= t1 ? p1 : t >= t2 ? p2 : p1 + (p2 - p1) * (t - t1) / (t2 - t1); };
+      sets.forEach(({ name, d }, i) => { const t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2), c = SETCOL[i % 5]; if ([t1, p1, t2, p2].some(x => x == null)) return;
+        g.strokeStyle = c; g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(20), Y(p1)); g.lineTo(X(t1), Y(p1)); g.lineTo(X(t2), Y(p2)); g.stroke();
+        [[t1, p1], [t2, p2]].forEach(([t, p]) => { g.fillStyle = c; g.beginPath(); g.arc(X(t), Y(p), 4.5, 0, 7); g.fill(); g.font = '600 11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${fmtN(t)}℃ ${fmtN(p)}%`, X(t) + 7, Y(p) - 8 - i * 14); });
+        if (sets.length > 1) { g.fillStyle = c; g.fillText(name, R - 120, T + 14 + i * 16); } });
       g.strokeStyle = '#d1493f'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(X(v.t), T); g.lineTo(X(v.t), B); g.stroke();
-      const r = val(d0, v.t); if (r && r.p != null) { g.fillStyle = '#d1493f'; g.beginPath(); g.arc(X(v.t), Y(r.p), 6, 0, 7); g.fill(); }
-      const base = nv(d0.base), here = !r ? '곡선 값이 아직 입력되지 않았습니다' : r.out === 'after' ? `${v.t}℃는 두 번째 온도 이후라 원본에 없음` : `${v.t}℃ → <b>${fmtN(+r.p.toFixed(2))}%</b>${r.out === 'before' ? ' (시작 전: 유지는 가정)' : ''}${base != null ? ` ≈ ${fmtN(Math.round(base * r.p / 100))} nit (기준 ${fmtN(base)} nit)` : ' · 기준 휘도 미입력 → nit로 바꾸지 않음'}`;
-      const chk = [75, 80, 85].map(t => { const q = val(d0, t); return q && q.p != null ? `${t}℃ ${fmtN(+q.p.toFixed(2))}%` : `${t}℃ —`; }).join(' · ');
-      const open = [d0.mean === 'unk' && '50%가 무엇의 50%인지', !d0.sensor && '온도 센서 위치', !d0.tolTarget && `±${fmtN(tol ?? 0)}℃가 어디에 적용되는지`, base == null && '기준 휘도(nit)'].filter(Boolean);
-      return `온도가 오르면 출력 한계를 낮춥니다. 이 그래프는 <b>${esc(curSet().name)}</b> 값으로 그렸습니다.<br><b>${here}</b><br>계산 확인: ${chk}${d0.p1asm ? ` · 시작점 ${fmtN(nv(d0.p1))}%는 설명용 가정` : ''}${open.length ? `<br><span class="note">아직 모르는 것: ${open.join(', ')}</span>` : ''}`; } },
+      const p = val(sets[0].d, v.t); if (p != null) { g.fillStyle = '#d1493f'; g.beginPath(); g.arc(X(v.t), Y(p), 6, 0, 7); g.fill(); }
+      const d = sets[0].d; if (p == null) return `${esc(sets[0].name)}의 곡선 값이 비어 있습니다. 오른쪽 창의 "디레이팅 곡선" 칸을 채우면 여기 그려집니다.`;
+      return `${fmtN(d.t1)}℃까지는 ${fmtN(d.p1)}%, 그 뒤로 조금씩 낮아져 ${fmtN(d.t2)}℃에서 ${fmtN(d.p2)}%가 됩니다. 지금 ${v.t}℃ → <b>${fmtN(+p.toFixed(2))}%</b>.<br>예: 1만 nit HUD라면 ${v.t}℃에서 약 ${Math.round(100 * p).toLocaleString()} nit까지만 냅니다.`; } },
+
 };
 
 const CAT_COL = { geo: '#1f62d1', lum: '#c8780f', color: '#8a4fd1', heat: '#d1493f' };
@@ -2486,30 +2506,34 @@ function renderExpBar() {
   if (!$('#expPanel').hidden) $('#expPanel').innerHTML = panelHTML();
 }
 function sideEntry(id) {
-  const s = SPECS.find(x => x.id === id), set = curSet(), it = set.items[id], others = shownSets().slice(1);
-  return `<div class="ent-step"><h3><span class="stepn">3</span>${esc(set.name)}의 값</h3>
-      <div class="er-grid">${fld('raw.t', id, '목표 사양 (원문 그대로)', 'w')}${fld('raw.tol', id, 'Tolerance (원문 그대로)', 'w')}${fld('unit', id, '단위 (원본)', 'sm')}</div>
-      <p class="note">원문 칸은 해석과 상관없이 그대로 보존됩니다. 붙여 넣으면 아래 해석을 제안합니다.</p></div>
-    <div class="ent-step"><h4>이렇게 읽었어요</h4><div id="entSug">${sugHTML(id)}</div><div id="entRead">${readHTML(id)}</div><div id="entRes">${resultHTML(id)}</div></div>
-    <div class="ent-step"><h4>조건 · 확인 상태</h4><div class="er-grid">${fld('cond', id, '적용 조건', 'w', '예: 암실 정적')}${fld('note', id, '비고', 'w')}</div>
-      <div class="sts">${STS.map(([v, t, d]) => `<button type="button" data-seg="st" data-eid="${id}" data-val="${v}" aria-pressed="${it.st === v}" class="st-${v}"><b>${t}</b><span>${d}</span></button>`).join('')}</div></div>
-    <div class="ent-step"><h4>실제 측정값</h4><div class="er-grid">${fld('meas', id, id === 'ctol' ? 'ΔCx, ΔCy' : '측정값', 'sm', id === 'ctol' ? '0.004, -0.006' : '측정 후 입력')}</div><p class="note">판정은 상태가 "판정 가능"·"한계 명확"이고 최종 한계가 있을 때만 합니다.</p></div>
-    ${others.length ? `<div class="ent-step"><h4>다른 전문가와 비교</h4><table class="cmpmini"><thead><tr><th>전문가</th><th>목표</th><th>공차</th><th>최종</th></tr></thead><tbody>${others.map((st, k) => { const o = st.items[id]; return `<tr><td><i style="background:${SETCOL[(k + 1) % 5]}"></i>${esc(st.name)}</td><td>${esc(tgtTxt(o) || '—')}</td><td>${esc(tolTxt(o) || '—')}</td><td>${finalChip(o)}</td></tr>`; }).join('')}</tbody></table></div>` : ''}`;
+  const set = curSet(), it = set.items[id], others = shownSets().slice(1);
+  return `<div class="ent-step"><h3>${esc(set.name)}</h3>
+      <div class="er-grid">${fld('raw.t', id, '목표 사양 (원문)', 'w')}${fld('raw.tol', id, 'Tolerance (원문)', 'w')}${fld('unit', id, '단위', 'sm')}</div></div>
+    <div class="ent-step"><h4>읽은 결과</h4><div id="entSug">${sugHTML(id)}</div><div id="entRead">${readHTML(id)}</div><div id="entRes">${resultHTML(id)}</div></div>
+    <div class="ent-step"><h4>상태 · 측정값</h4><div class="sg sts2" role="group">${STS.map(([v, t, d]) => `<button type="button" data-seg="st" data-eid="${id}" data-val="${v}" aria-pressed="${it.st === v}" title="${d}">${t}</button>`).join('')}</div>
+      <div class="er-grid">${fld('meas', id, id === 'ctol' ? '측정값 ΔCx, ΔCy' : '측정값', 'sm', id === 'ctol' ? '0.004, -0.006' : '')}${fld('note', id, '메모', 'w')}</div></div>
+    ${others.length ? `<div class="ent-step"><h4>비교</h4><table class="cmpmini"><tbody>${others.map((st, k) => { const o = st.items[id]; return `<tr><td><i style="background:${SETCOL[(k + 1) % 5]}"></i>${esc(st.name)}</td><td>${esc(tgtTxt(o) || '—')}</td><td>${finalChip(o)}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
+    <div class="ent-step"><h4>전문가에게 확인 <button class="mini" data-copyq="${id}">복사</button></h4><ul class="qs">${SPECS.find(x => x.id === id).qs.map(q => `<li>${q}</li>`).join('')}</ul></div>`;
 }
 function renderSpecDetail() {
   const s = SPECS.find(x => x.id === SP.cur), cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
-  el.style.setProperty('--cat', CAT_COL[s.cat]);
-  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div>
-      <p class="one"><span class="stepn">1</span>${s.one}</p></div>
-      <div class="demo"><div class="demo-h"><span class="stepn">2</span>그림으로 이해 <span class="note">설명용 시뮬레이션 · 판정에 쓰지 않음</span></div><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><div class="demo-out" id="demoOut"></div></div></section>
-    <aside class="sp-side" id="spSide">${sideEntry(s.id)}
-      <div class="ent-step"><h3><span class="stepn">4</span>확인할 질문 <button class="mini" data-copyq="${s.id}">복사</button></h3><ol class="qs">${s.qs.map(q => `<li>${q}</li>`).join('')}</ol></div>
-      <div class="ent-step"><h3>자세히</h3><p class="lead">${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
-      <h4>어디가 좌우하나</h4><figure class="schem">${schematic(s)}<figcaption>칠한 곳이 이 값을 주로 좌우하는 부품입니다. 부품 구성은 BOM·분해 사진 기준, 배치는 모델(설명용)입니다. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
-      <div class="sp-key"><div class="chips">${s.key.ids.map(id => `<button class="pchip lv2" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button>`).join('')}${s.key.sys ? '<span class="sys">+ 광로 전체</span>' : ''}</div><p>${s.key.why}</p></div>
-      <h4>측정 (일반적인 방법)</h4><p class="note">${s.measure}</p></div></aside>`;
+  el.style.setProperty('--cat', CAT_COL[s.cat]); el.style.setProperty('--sideW', sideW() + 'px');
+  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div><p class="one">${s.one}</p></div>
+      <div class="demo"><div class="demo-h">그림으로 이해 <span class="note">숫자는 예시</span></div><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><div class="demo-out" id="demoOut"></div></div>
+      <div class="sp-more"><h3>조금 더</h3><p>${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
+        <details><summary>이 값을 좌우하는 부품</summary><figure class="schem">${schematic(s)}<figcaption>칠한 곳을 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure><div class="sp-key"><div class="chips">${s.key.ids.map(id => `<button class="pchip lv2" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button>`).join('')}${s.key.sys ? '<span class="sys">+ 광로 전체</span>' : ''}</div><p>${s.key.why}</p></div></details></div></section>
+    <div class="sp-split" role="separator" aria-orientation="vertical" aria-label="설명과 값 입력 칸 너비 조절" tabindex="0"></div>
+    <aside class="sp-side" id="spSide">${sideEntry(s.id)}</aside>`;
   buildDemo(s);
 }
+// the divider between the explanation and the value panel; the width is remembered in this browser
+const sideW = () => { const sv = SP.sideW ?? (() => { try { return +localStorage.getItem('hudSideW') || null; } catch { return null; } })(); return sv || (innerWidth > 1300 ? 400 : 340); };
+function setSideW(px) { const el = $('#spDetail'); if (!el) return; const r = el.getBoundingClientRect(), w = Math.round(Math.max(280, Math.min(r.width - 380, px))); SP.sideW = w; el.style.setProperty('--sideW', w + 'px'); try { localStorage.setItem('hudSideW', w); } catch {} }
+$('#specPage').addEventListener('pointerdown', e => { const sp = e.target.closest('.sp-split'); if (!sp) return; e.preventDefault(); sp.setPointerCapture(e.pointerId); sp.classList.add('on');
+  let raf = 0; const mv = ev => { const r = $('#spDetail').getBoundingClientRect(); setSideW(r.right - ev.clientX); if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (SP.redraw) SP.redraw(); }); };
+  const up = () => { sp.classList.remove('on'); sp.removeEventListener('pointermove', mv); sp.removeEventListener('pointerup', up); if (SP.redraw) SP.redraw(); };
+  sp.addEventListener('pointermove', mv); sp.addEventListener('pointerup', up); });
+$('#specPage').addEventListener('keydown', e => { if (!e.target.classList?.contains('sp-split')) return; if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); setSideW(sideW() + (e.key === 'ArrowLeft' ? 30 : -30)); if (SP.redraw) SP.redraw(); } });
 function buildDemo(s) {
   const D = DEMOS[s.demo], ctl = $('#demoCtl');
   $('#demoCv').hidden = !!D.lesson; if (D.lesson) { ctl.innerHTML = ''; LDALESSON.mount($('#demoOut')); SP.redraw = LDALESSON.render; return; } SP.vals[s.id] ||= Object.fromEntries(D.ctl.map(c => [c[0], c[5]]));
