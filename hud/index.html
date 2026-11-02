@@ -548,10 +548,10 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .lesson .ls-text { min-width: 0; display: grid; gap: 12px; }
 .lesson .ls-text h2 { margin: 0; font-size: 19px; text-wrap: balance; }
 .lesson .ls-text p { margin: 0; max-width: 62ch; }
-.lesson .ctl { display: grid; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-.lesson .ctl label { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 5.2em; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
-.lesson .ctl input[type=range] { width: 100%; accent-color: var(--eye); }
-.lesson .ctl output { font: 600 13.5px/1 var(--mono); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.lesson .ls-ctl { display: grid; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.lesson .ls-ctl label { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 5.2em; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
+.lesson .ls-ctl input[type=range] { width: 100%; accent-color: var(--eye); }
+.lesson .ls-ctl output { font: 600 13.5px/1 var(--mono); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
 .lesson .nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .lesson .nums label { display: grid; gap: 4px; grid-template-columns: none; font-size: 12.5px; }
 .lesson .nums input { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: 600 15px/1 var(--mono); }
@@ -584,7 +584,7 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .lesson .ls-nav { display: flex; justify-content: space-between; gap: 8px; }
 .lesson svg text { font-family: var(--sans); fill: var(--ink); }
 .lesson svg .mono { font-family: var(--mono); }
-@media (max-width: 860px) { .lesson .ls-stage { grid-template-columns: minmax(0, 1fr); } .lesson .ctl label { grid-template-columns: 7.5em minmax(0, 1fr) 4.6em; } }
+@media (max-width: 860px) { .lesson .ls-stage { grid-template-columns: minmax(0, 1fr); } .lesson .ls-ctl label { grid-template-columns: 7.5em minmax(0, 1fr) 4.6em; } }
 @media (prefers-reduced-motion: no-preference) { .ls-fig svg * { transition: none; } }
 .sp-detail { grid-template-columns: minmax(0, 1fr) 12px var(--sideW, 400px) !important; gap: 0 !important; }
 .sp-split { cursor: col-resize; position: relative; touch-action: none; }
@@ -600,6 +600,14 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .sp-side .ent-step h3 { font-size: 14.5px; }
 .sp-side .ent-step h4 { display: flex; align-items: center; justify-content: space-between; }
 @media (max-width: 900px) { .sp-detail { grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; } .sp-split { display: none; } }
+.lesson { container-type: inline-size; }
+.lesson .ls-body { display: grid; gap: 14px; align-items: start; }
+@container (min-width: 760px) { .lesson .ls-body { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+.lesson .ls-fig svg { max-height: 360px; margin: 0 auto; }
+.lesson .ls-ctl label { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "l o" "r r"; gap: 2px 10px; }
+.lesson .ls-ctl label > span { grid-area: l; }
+.lesson .ls-ctl label > output { grid-area: o; }
+.lesson .ls-ctl input[type=range] { grid-area: r; width: 100%; min-width: 0; height: 26px; margin: 0; }
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
@@ -621,8 +629,8 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 <div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
   <div class="phead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span>보기 설정</span><button class="x" id="setClose" aria-label="보기 설정 접기">접기 ▴</button></div>
   <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
-  <div class="ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
-  <div class="ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
+  <div class="ls-ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
+  <div class="ls-ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
   <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
   <div class="chks"><label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label><label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label></div>
 </div>
@@ -2114,7 +2122,7 @@ const svg = (w, h, body, label) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria
 
 /* step drawings */
 function sideView(ld, opts = {}) {
-  const ex = 90, ey = 150, L = 470, a = rad(ld * EX), ix = ex + L, iy = ey + Math.tan(a) * L;
+  const ex = 90, ey = 150, L = 470, a = rad(Math.min(ld * EX, 11)), ix = ex + L, iy = ey + Math.tan(a) * L; // drawn angle capped so the image stays in frame
   // windshield sits between the eye and the image: it is where light reflects, not where the image is seen
   const gx0 = 250, gy0 = 290, gx1 = 330, gy1 = 70, t = ((gx0 - ex) * (gy1 - gy0) - (gy0 - ey) * (gx1 - gx0)) / ((L) * (gy1 - gy0) - (iy - ey) * (gx1 - gx0)), hx = ex + t * L, hy = ey + t * (iy - ey);
   return svg(640, 330, `
@@ -2192,7 +2200,7 @@ function errVsDev() {
 const slider = (k, label, mn, mx, st, unit) => `<label for="ls-${k}"><span>${label}</span><input id="ls-${k}" type="range" min="${mn}" max="${mx}" step="${st}" value="${S[k]}" data-lk="${k}"><output id="lso-${k}">${(+S[k]).toFixed(st < 1 ? 1 : 0)} ${unit}</output></label>`;
 function render() {
   const it = curSet().items.lda;
-  const pos = S.step, st = ORDER[pos], fig = $('#lsFig'), text = $('#lsText'), A = anglesAt(S.ez, S.ex), mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b), mCenter = Math.max(Math.abs(S.a - S.c), Math.abs(S.b - S.c)), mRange = mx - mn;
+  const pos = S.step, st = ORDER[pos], fig = document.createElement('div'), text = document.createElement('div'), A = anglesAt(S.ez, S.ex), mx = Math.max(S.c, S.a, S.b), mn = Math.min(S.c, S.a, S.b), mCenter = Math.max(Math.abs(S.a - S.c), Math.abs(S.b - S.c)), mRange = mx - mn;
   $('#lsSteps').innerHTML = LABELS.map((t, i) => `<button data-lstep="${i}" aria-current="${i === pos}"><span class="n">${i + 1}</span>${t}</button>`).join('');
   $('#lsPrev').disabled = pos === 0; $('#lsNext').disabled = pos === ORDER.length - 1;
   if (st === 0) {
@@ -2208,14 +2216,14 @@ function render() {
     text.innerHTML = `<h2>LookDown: 위아래로 얼마나 내려다보나</h2>
       <p>눈에서 <b>정면 기준선</b>(점선)과 <b>가상 이미지 중심을 보는 선</b>(실선) 사이의 위아래 각도입니다. 두 선 사이의 분홍 호가 LookDown입니다.</p>
       <p>앞유리는 HUD 빛이 반사되는 곳일 뿐, 이미지는 그 너머 ${ASM(`약 ${S.D} m 앞`)}에 떠 보입니다. 그래서 각도는 앞유리가 아니라 <b>떠 보이는 이미지</b>를 향한 선으로 잽니다.</p>
-      <div class="ctl">${slider('ld', '예시 LookDown', 0, 8, .1, '°')}</div>
+      <div class="ls-ctl">${slider('ld', '예시 LookDown', 0, 8, .1, '°')}</div>
       <p class="note">정면을 기준으로 삼은 것은 이해를 위한 단순화입니다. 실제 측정 기준축(수평선, 차량 좌표계 등)은 제품 정의를 확인해야 합니다 ${CHK('')}.</p>`;
   }
   if (st === 2) {
     fig.innerHTML = topView(S.lo);
     text.innerHTML = `<h2>LookOver: 좌우로 얼마나 비켜 있나</h2>
       <p>위에서 내려다본 그림입니다. 눈에서 <b>차량 정면 방향</b>(점선)과 <b>이미지 중심을 보는 선</b>(실선) 사이의 좌우 각도가 LookOver입니다. 이미지가 운전석 바로 앞에 있으면 0°에 가깝습니다.</p>
-      <div class="ctl">${slider('lo', '예시 LookOver', -4, 4, .1, '°')}</div>
+      <div class="ls-ctl">${slider('lo', '예시 LookOver', -4, 4, .1, '°')}</div>
       <p class="note">+ 를 오른쪽으로 정한 것도 설명용입니다. 부호와 기준축은 제품 정의를 따릅니다.</p>`;
   }
   if (st === 3) {
@@ -2223,7 +2231,7 @@ function render() {
     const inside = Math.abs(S.ex) <= S.ebw / 2 && Math.abs(S.ez) <= S.ebh / 2;
     text.innerHTML = `<h2>아이박스: 눈이 있어야 하는 영역</h2>
       <p>아이박스는 <b>운전자 눈이 이 안에 있으면 이미지 전체가 보이는 영역</b>입니다. 이 단계에서 차와 HUD, 이미지는 그대로 있고 <b>눈의 위치만</b> 옮깁니다.</p>
-      <div class="ctl">${slider('ez', '눈 위 / 아래', -40, 40, 1, 'mm')}${slider('ex', '눈 왼쪽 / 오른쪽', -90, 90, 1, 'mm')}</div>
+      <div class="ls-ctl">${slider('ez', '눈 위 / 아래', -40, 40, 1, 'mm')}${slider('ex', '눈 왼쪽 / 오른쪽', -90, 90, 1, 'mm')}</div>
       <div class="readout"><div class="kv"><span>중심에서의 LookDown</span><b>${f2(S.ld)}°</b></div><div class="kv"><span>지금 눈의 LookDown</span><b>${f2(A.ld)}°</b></div><div class="kv"><span>지금 눈의 LookOver</span><b>${f2(A.lo)}°</b></div>${inside ? '' : '<div class="kv"><span>상태</span><b style="color:var(--bad)">아이박스 밖 · 이미지가 잘려 보일 수 있음</b></div>'}</div>
       <p class="note">단순 기하 모델입니다: 이미지 중심이 ${ASM(`${S.D} m 앞의 한 점`)}에 고정돼 있고 눈만 움직인다고 봤습니다. 아이박스 크기 ${ASM(`${S.ebw} × ${S.ebh} mm`)}, 중심 LookDown ${ASM(`${f1(S.ld)}°`)}도 예시입니다. 실제 HUD는 시차, 미러·앞유리의 광학 특성, 영상 보정 때문에 이 모델과 다를 수 있습니다.</p>
       <p>스펙의 "아이박스 내 시야각 편차"는 이렇게 눈 위치마다 달라지는 각도가 <b>얼마나 퍼져 있는지</b>입니다. 다음 단계에서 그 퍼짐을 세는 방법을 봅니다.</p>`;
@@ -2233,7 +2241,7 @@ function render() {
     text.innerHTML = `<h2>"각도"와 "편차"는 다른 숫자입니다</h2>
       <div class="cards"><div class="card"><h3>"LookDown 각도가 3.0°다"</h3><p>한 눈 위치에서 잰 <b>각도 자체</b>입니다. 그림의 동그라미 하나하나가 이런 숫자입니다.</p></div>
       <div class="card"><h3>"아이박스 내 LookDown 각도 편차가 1.0° 이내다"</h3><p>여러 위치에서 잰 각도들이 <b>서로 얼마나 다른지</b>입니다. 그림의 분홍 괄호가 이런 숫자입니다.</p></div></div>
-      <div class="ctl"><div class="nums"><label for="lsn-c">중심<input id="lsn-c" type="number" step="0.1" value="${S.c}" data-lk="c"></label><label for="lsn-a">위치 A<input id="lsn-a" type="number" step="0.1" value="${S.a}" data-lk="a"></label><label for="lsn-b">위치 B<input id="lsn-b" type="number" step="0.1" value="${S.b}" data-lk="b"></label></div><p class="note">측정 예시 숫자입니다 ${ASM('')}. 바꾸면 그림과 차이가 함께 바뀝니다.</p></div>`;
+      <div class="ls-ctl"><div class="nums"><label for="lsn-c">중심<input id="lsn-c" type="number" step="0.1" value="${S.c}" data-lk="c"></label><label for="lsn-a">위치 A<input id="lsn-a" type="number" step="0.1" value="${S.a}" data-lk="a"></label><label for="lsn-b">위치 B<input id="lsn-b" type="number" step="0.1" value="${S.b}" data-lk="b"></label></div><p class="note">측정 예시 숫자입니다 ${ASM('')}. 바꾸면 그림과 차이가 함께 바뀝니다.</p></div>`;
   }
   if (st === 5) {
     const pA = mCenter <= S.crit, pB = mRange <= S.crit;
@@ -2242,7 +2250,7 @@ function render() {
       <p>아이박스 안 세 위치에서 LookDown을 쟀다고 해 봅시다: 중심 ${f1(S.c)}°, 위치 A ${f1(S.a)}°, 위치 B ${f1(S.b)}° ${ASM('')}. "편차"를 <b>어느 점을 기준으로</b> 세느냐에 따라 같은 측정값이 다른 숫자가 됩니다.</p>
       <div class="cards"><div class="card"><h3>① 중심점 대비 최대 차이</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 큰 값 <b>${f1(mCenter)}°</b></p><p><span class="verdict ${pA ? 'v-ok' : 'v-bad'}">${pA ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div>
       <div class="card"><h3>② 측정점 간 최대 − 최소</h3><p>${f1(mx)} − ${f1(mn)} = <b>${f1(mRange)}°</b></p><p><span class="verdict ${pB ? 'v-ok' : 'v-bad'}">${pB ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div></div>
-      <div class="ctl">${slider('crit', '합격 기준', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}는 계산 차이를 보여 주기 위한 가상 기준이며 전문가 스펙이 아닙니다.</p></div>
+      <div class="ls-ctl">${slider('crit', '합격 기준', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}는 계산 차이를 보여 주기 위한 가상 기준이며 전문가 스펙이 아닙니다.</p></div>
       <div class="card"><h3>그래서 묻는 것</h3><p>원본의 "≤ 1.0° (Eye-box 내 시야각 편차)"가 ①인지 ②인지에 따라 같은 제품이 합격도, 불합격도 될 수 있습니다. 그래서 "중심점 대비 차이인가요, 측정점 간 최대–최소인가요?"를 확인하는 것입니다.</p></div>`;
   }
   if (st === 6) {
@@ -2250,7 +2258,7 @@ function render() {
     text.innerHTML = `<h2>설계 위치 대비 오차와 아이박스 내 편차</h2>
       <div class="cards"><div class="card"><h3>① 설계 위치 대비 오차</h3><p><b>눈 위치는 하나</b>로 고정합니다. 설계상 목표했던 이미지 각도와 실제로 만든 제품의 이미지 각도를 비교합니다. 조립·장착이 조금씩 틀어지면 생깁니다.</p></div>
       <div class="card"><h3>② 아이박스 내 편차</h3><p><b>이미지는 그대로</b> 두고 같은 차 안에서 눈 위치만 바꿉니다. 위치마다 잰 각도들이 서로 얼마나 다른지를 봅니다.</p></div></div>
-      <div class="ctl">${slider('err', '① 실제 − 설계', -1, 1, .1, '°')}${slider('mv', '② 눈 이동', 0, 40, 1, 'mm')}</div>
+      <div class="ls-ctl">${slider('err', '① 실제 − 설계', -1, 1, .1, '°')}${slider('mv', '② 눈 이동', 0, 40, 1, 'mm')}</div>
       <p class="note">둘은 비교하는 대상이 다른 별개의 개념입니다. 원본 행의 괄호는 ②에 가깝게 읽히지만, ①이 같은 표의 다른 곳이나 별도 항목에서 관리되는지는 ${CHK('확인 필요')}입니다. 그림 ②의 편차는 ${ASM(`${S.D} m`)} 단순 기하 모델 값입니다.</p>`;
   }
   if (st === 7) {
@@ -2266,11 +2274,20 @@ function render() {
       <div class="q"><blockquote id="lsQ">${q}</blockquote><button class="btn" id="lsCopyq">질문 복사</button></div>`;
     $('#lsCopyq').addEventListener('click', async e => { const b = e.currentTarget; try { await navigator.clipboard.writeText(q); b.textContent = '복사됨'; } catch { const r = document.createRange(); r.selectNodeContents($('#lsQ')); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = '선택됨 · Ctrl+C로 복사'; } setTimeout(() => { b.textContent = '질문 복사'; }, 1600); });
   }
+  $('#lsFig').innerHTML = fig.innerHTML; morph($('#lsText'), text);
 }
+  // copy only what changed; elements holding the active control are walked into, never replaced
+  function morph(old, nw, top = true) {
+    if (old.children.length !== nw.children.length || (top && old.dataset.step !== String(S.step))) { old.innerHTML = nw.innerHTML; if (top) old.dataset.step = S.step; return; }
+    [...old.children].forEach((o, i) => { const n = nw.children[i];
+      if (o.tagName === 'INPUT') { if (o !== document.activeElement && o.value !== n.getAttribute('value')) o.value = n.getAttribute('value'); return; }
+      if (o.querySelector('input')) { if (o.tagName === 'OUTPUT' || !o.children.length) o.textContent = n.textContent; else morph(o, n, false); return; }
+      if (o.outerHTML !== n.outerHTML) o.replaceWith(n.cloneNode(true)); });
+  }
   Object.defineProperty(S, 'D', { get: () => SP.vid }); // image distance follows the page's 허상 거리 (an assumption)
   function mount(root) {
-    root.innerHTML = `<div class="lesson"><nav class="ls-steps" id="lsSteps" aria-label="단계"></nav><div class="ls-fig" id="lsFig"></div><div class="ls-text" id="lsText"></div><div class="ls-nav"><button class="btn" id="lsPrev">← 이전 단계</button><button class="btn primary" id="lsNext">다음 단계 →</button></div></div>`;
-    root.oninput = e => { const k = e.target.dataset.lk; if (!k) return; const v = parseFloat(e.target.value); if (Number.isNaN(v)) return; S[k] = v; const id = e.target.id; render(); const el = document.getElementById(id); if (el) el.focus(); };
+    root.innerHTML = `<div class="lesson"><nav class="ls-steps" id="lsSteps" aria-label="단계"></nav><div class="ls-body"><div class="ls-fig" id="lsFig"></div><div class="ls-text" id="lsText"></div></div><div class="ls-nav"><button class="btn" id="lsPrev">← 이전 단계</button><button class="btn primary" id="lsNext">다음 단계 →</button></div></div>`;
+    root.oninput = e => { const k = e.target.dataset.lk; if (!k) return; const v = parseFloat(e.target.value); if (Number.isNaN(v)) return; S[k] = v; render(); };
     root.onclick = e => { const b = e.target.closest('[data-lstep]'); if (b) { S.step = +b.dataset.lstep; render(); return; }
       if (e.target.closest('#lsPrev') && S.step > 0) { S.step--; render(); } if (e.target.closest('#lsNext') && S.step < ORDER.length - 1) { S.step++; render(); } };
     render();
