@@ -411,7 +411,6 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .demo-spec { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); display: grid; gap: 4px; font-size: 12.5px; }
 .demo-spec .ds { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
 .demo-spec .ds > i, .cmpmini i, .cmpt th i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
-.facts .v, .facts .st { align-self: center; }
 .nb { display: grid; gap: 8px; }
 .nb-raw { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 10px; font-size: 12px; background: #f6f8fa; border-radius: 8px; padding: 8px 10px; }
 .nb-raw span { color: var(--muted); }
@@ -472,6 +471,59 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .iss-l, .iss-r { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
 @media (max-width: 1100px) { .iss2 { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 1380px) { .legend { display: none; } }
+/* item page: both columns scroll on their own; value entry lives in the right column */
+.sp-detail { grid-template-columns: minmax(0, 1fr) 420px; }
+.sp-main { overflow-y: auto; }
+.sp-main > *, .sp-main .demo { flex: none; }
+.sp-main .demo canvas { flex: none; height: clamp(280px, 46vh, 500px); }
+.sp-main .demo-out { max-height: none; }
+.sp-side { padding: 0; }
+.ent-step { padding: 14px 16px; border-bottom: 1px solid var(--line-2); display: grid; gap: 8px; }
+.ent-step:last-child { border-bottom: 0; }
+.ent-step h3 { margin: 0; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.ent-step h4 { margin: 4px 0 0; font: 700 11.5px/1.2 var(--sans); color: var(--muted); letter-spacing: .04em; }
+.ent-step .note { margin: 0; }
+.ent-step .lead { margin: 0; font-size: 13.5px; }
+.er-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ef { display: grid; gap: 3px; min-width: 0; }
+.ef > span { font-size: 11.5px; color: var(--muted); }
+.ef.w { grid-column: 1 / -1; }
+.ef.sm { grid-column: span 1; }
+.ef input:not([type=checkbox]) { width: 100%; min-width: 0; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; font: 500 13px/1.3 var(--sans); color: var(--fg); background: var(--panel); }
+.ef input:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+#ef-raw-t, #ef-raw-tol { font-family: var(--mono); font-size: 12.5px; background: #f6f8fa; }
+.ef.chk { display: flex; align-items: center; gap: 6px; grid-column: span 3; font-size: 12px; color: var(--muted); }
+.er-row { display: grid; gap: 6px; justify-items: start; }
+.er-f { display: flex; gap: 8px; width: 100%; }
+.er-f .ef { flex: 0 1 130px; }
+.rl { font-size: 11.5px; color: var(--muted); }
+.sg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.sg button { padding: 6px 10px; font-size: 12.5px; color: var(--muted); border-right: 1px solid var(--line); white-space: nowrap; }
+.sg button:last-child { border-right: 0; }
+.sg button:hover { background: #f3f5f7; color: var(--fg); }
+.sg button[aria-pressed="true"] { background: var(--cat, var(--accent)); color: #fff; font-weight: 600; }
+.sg button:focus-visible, .sts button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.er-sub { display: grid; gap: 8px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.sug { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 12.5px; background: #fdf8ee; border: 1px dashed #e0b56d; border-radius: 8px; padding: 8px 10px; }
+.res { border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; border: 1px solid var(--line); background: #f6f8fa; }
+.res > div { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.res .v { font-size: 16px; }
+.res p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.res-ok, .res-cond { background: #eef4fd; border-color: #c2d4f3; }
+.res-check { background: #fdf6ec; border-color: #ecd2ad; }
+.rj { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 2px; }
+.sts { display: grid; gap: 6px; }
+.sts button { display: grid; gap: 1px; text-align: left; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.sts button b { font-size: 13px; }
+.sts button span { font-size: 11.5px; color: var(--muted); }
+.sts button[aria-pressed="true"].st-ok { border-color: #1f6b41; background: #e3f4ea; box-shadow: inset 3px 0 0 #1f6b41; }
+.sts button[aria-pressed="true"].st-cond { border-color: #1f62d1; background: #e9f0fc; box-shadow: inset 3px 0 0 #1f62d1; }
+.sts button[aria-pressed="true"].st-check { border-color: #d1493f; background: #fbeceb; box-shadow: inset 3px 0 0 #d1493f; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.d-ok { background: #2a9d6a; } .d-cond { background: #1f62d1; } .d-check { background: #d1493f; } .d-empty { background: transparent; border: 1.5px solid #b7c0c9; }
+.sp-item .dot { margin-right: 2px; }
+@media (max-width: 1180px) { .sp-detail { grid-template-columns: minmax(0, 1fr) 360px; } }
+@media (max-width: 900px) { .sp-main { overflow: visible; } .sp-main .demo canvas { height: 260px; } }
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
@@ -1580,7 +1632,7 @@ const ISS_PARTS = [
   ['cover', '방진 커버', -1, '허상에는 맺히지 않습니다. 운전자가 대시보드를 볼 때 직접 보이고, 햇빛을 산란시켜 미광과 눈부심을 만듭니다.'],
 ];
 const SPEC_PART = id => id === 'ws' ? WSPART : P[id];
-const SP = { view: 'items', cur: 'disparity', vals: {}, vid: Math.round(OPT0.vid) / 100, edSide: false, edRow: null, csvAll: false };
+const SP = { view: 'items', cur: 'disparity', vals: {}, vid: Math.round(OPT0.vid) / 100, csvAll: false };
 /* ───────────────────────── expert spec sets ─────────────────────────
    Saved in this browser (localStorage 'hudexp:v1'), never synced. Each set keeps the original wording (raw) next to
    the parsed target / tolerance, so a reading can always be checked against what the expert actually wrote. */
@@ -1695,32 +1747,62 @@ function specLine(id) {
   return `<div class="demo-spec">${shownSets().map((st, i) => { const it = st.items[id]; return `<span class="ds"><i style="background:${SETCOL[i % 5]}"></i><b>${esc(st.name)}</b> 목표 ${esc(tgtTxt(it) || '—')} · 공차 ${esc(tolTxt(it) || '—')} · 최종 ${finalChip(it)}</span>`; }).join('')}</div>`;
 }
 
-/* editor for one item (shared by the table and the item page) */
-function setPath(o, path, v) { const k = path.split('.'); let t = o; k.slice(0, -1).forEach(p => { t[p] ||= {}; t = t[p]; }); t[k.at(-1)] = v; }
-function getPath(o, path) { return path.split('.').reduce((t, p) => t?.[p], o); }
-function editorHTML(id) {
-  const it = curSet().items[id], s = SPECS.find(x => x.id === id), inp = (p, label, cls = '', ph = '') => `<label class="${cls}">${label}<input data-ef="${p}" data-eid="${id}" value="${esc(getPath(it, p))}" placeholder="${esc(ph)}"></label>`;
-  const sel = (p, label, opts, cls = '') => `<label class="${cls}">${label}<select data-ef="${p}" data-eid="${id}">${Object.entries(opts).map(([k, t]) => `<option value="${esc(k)}" ${getPath(it, p) === k ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
-  const d = it.der;
-  return `<div class="ed" data-edfor="${id}">
-    <div class="ed-g"><div class="ed-h">원문 (그대로 보존)</div>${inp('raw.t', '원본 목표 사양', 'w2')}${inp('raw.tol', '원본 Tolerance', 'w2')}</div>
-    <div class="ed-g"><div class="ed-h">목표</div>${inp('unit', '단위 (원본)')}${sel('op', '부등호', { '': '없음', '≥': '≥ 이상', '≤': '≤ 이하', '=': '= 공칭값 (± 범위)' })}${inp('tv', '목표값 (숫자)')}${inp('tt', '표시 문구 (선택)', '', '예: 3:1')}</div>
-    <div class="ed-g"><div class="ed-h">공차</div>${sel('tolType', '공차 방식', TOLT)}${inp('tm', '− 쪽 크기')}${inp('tp', '+ 쪽 크기')}</div>
-    <div class="ed-g"><div class="ed-h">원본에 적힌 최종 한계 (있을 때만)</div>${sel('stated.op', '형태', { '': '원본에 없음', '≥': '≥ 하한', '≤': '≤ 상한', '범위': '범위' })}${inp('stated.v', '값 (범위면 아래쪽)')}${inp('stated.v2', '범위 위쪽')}</div>
-    <div class="ed-g"><div class="ed-h">조건 · 상태</div>${inp('cond', '적용 조건', 'w2')}${inp('note', '비고', 'w2')}${sel('st', '확인 상태', STT, 'w2')}${inp('meas', id === 'ctol' ? '측정값 (ΔCx, ΔCy)' : '실제 측정값', 'w2', id === 'ctol' ? '예: 0.004, -0.006' : '')}</div>
-    ${id === 'derating' ? `<div class="ed-g"><div class="ed-h">디레이팅 곡선</div>${inp('der.t1', '시작 온도 ℃')}${inp('der.p1', '시작 출력 %')}<label class="chk"><input type="checkbox" data-ef="der.p1asm" data-eid="${id}" ${d.p1asm ? 'checked' : ''}> 시작 % 는 설명용 가정</label>${inp('der.t2', '두 번째 온도 ℃')}${inp('der.p2', '그때 출력 %')}${sel('der.mean', '출력의 의미', DER_MEAN)}${inp('der.base', '기준 휘도 nit (확인된 경우만)')}${inp('der.sensor', '온도 측정 위치', 'w2')}${inp('der.tolTarget', '공차 적용 대상', 'w2')}${inp('der.before', '시작 전 동작 (확인된 경우만)', 'w2')}${inp('der.after', '두 번째 온도 이후 동작 (확인된 경우만)', 'w2')}</div>` : ''}
-    <div class="ed-prev" id="edPrev-${id}">${edPrev(id)}</div></div>`;
+/* value entry in the item page's side panel: the expert's wording first, then how the page reads it */
+const OPS = [['≥', '이상 ≥'], ['≤', '이하 ≤'], ['=', '공칭값 ± 범위'], ['', '없음']];
+const TOLS = [['rel', '목표의 %'], ['abs', '단위 그대로'], ['pp', '%p'], ['unk', '아직 모름'], ['none', '공차 없음']];
+const SOPS = [['', '적혀 있지 않음'], ['≥', '하한 ≥'], ['≤', '상한 ≤'], ['범위', '범위']];
+const STS = [['ok', '판정 가능', '정의·공차·시험 조건이 모두 확인됨'], ['cond', '한계 명확', '최종 숫자는 분명하고 시험 조건만 확인 필요'], ['check', '판정 기준 확인 필요', '정의나 공차 적용이 불명확 · 판정하지 않음']];
+// a best-effort reading of the sheet's wording; always shown as a suggestion, never applied over values the user set
+function parseRaw(t, tol, unit) {
+  const N = s => String(s ?? '').replace(/,/g, '').replace(/−/g, '-'), nums = s => (N(s).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+  const T = String(t || ''), L = String(tol || ''), pct = /%/.test(unit || '') || /%/.test(T), r = {};
+  const ratio = T.match(/(\d+(?:\.\d+)?)\s*:\s*1\b/), n = nums(T);
+  r.op = /≥|>=|이상/.test(T) ? '≥' : /≤|<=|이하/.test(T) ? '≤' : n.length ? '=' : '';
+  r.tv = ratio ? ratio[1] : n.length ? String(n[0]) : ''; r.tt = ratio ? `${ratio[1]}:1` : '';
+  const lo = N(L).match(/(?:하한|≥|>=)\s*(-?\d+(?:\.\d+)?)/), hi = N(L).match(/(?:상한|≤|<=)\s*(-?\d+(?:\.\d+)?)/);
+  r.stated = lo ? { op: '≥', v: lo[1], v2: '' } : hi ? { op: '≤', v: hi[1], v2: '' } : { op: '', v: '', v2: '' };
+  const main = N(L).replace(/\(.*?\)/g, ' ').replace(/(하한|상한|≥|≤|>=|<=)\s*-?\d+(\.\d+)?/g, ' ');
+  const pm = main.match(/±\s*(\d+(?:\.\d+)?)/), rg = main.match(/(-?\d+(?:\.\d+)?)\s*~\s*\+?\s*(\d+(?:\.\d+)?)/), mi = main.match(/-\s*(\d+(?:\.\d+)?)/), pl = main.match(/\+\s*(\d+(?:\.\d+)?)/);
+  r.tm = pm ? pm[1] : rg ? String(Math.abs(+rg[1])) : mi ? mi[1] : ''; r.tp = pm ? pm[1] : rg ? rg[2] : pl ? pl[1] : '';
+  if (!pm && !rg && !mi && !pl) r.tolType = lo || hi ? 'unk' : 'none';
+  else if (/%p/.test(main)) r.tolType = 'pp';
+  else if (/%/.test(main)) {
+    // on a % quantity "−5%" can mean relative or points; let a written final limit decide, else leave it open
+    const tv = +r.tv, m = +r.tm, s = lo ? +lo[1] : hi ? +hi[1] : null, rel = r.op === '≤' ? tv * (1 + (+r.tp) / 100) : tv * (1 - m / 100), pp = r.op === '≤' ? tv + (+r.tp) : tv - m;
+    r.tolType = !pct || Math.abs(rel - pp) < 1e-9 ? 'rel' : s != null && Math.abs(s - pp) < 1e-9 ? 'pp' : s != null && Math.abs(s - rel) < 1e-9 ? 'rel' : 'unk';
+  } else r.tolType = 'abs';
+  return r;
 }
-function edPrev(id) {
-  const it = curSet().items[id], f = finalOf(it);
-  const lines = [`목표 <b>${esc(tgtTxt(it) || '—')}</b> · 공차 <b>${esc(tolTxt(it) || '—')}</b>${it.tolType === 'unk' ? '' : ` (${TOLT[it.tolType]})`}`];
-  lines.push(`공차로 계산한 최종: <b>${f.calc ? esc(rngTxt(f.calc, it)) : '계산 불가'}</b> · 원본 기재 최종: <b>${f.stated ? esc(rngTxt(f.stated, it)) : '없음'}</b>`);
-  if (f.mismatch) lines.push('<span class="warn">원본에 적힌 최종 한계와 계산값이 다릅니다. 원본 값을 우선 표시합니다.</span>');
-  if (id === 'black' && it.tolType === 'unk' && nv(it.tv) != null && nv(it.tm) != null) lines.push(`참고: 상대 %라면 ≥ ${fmtN(nv(it.tv) * (1 - nv(it.tm) / 100))}%, %p라면 ≥ ${fmtN(nv(it.tv) - nv(it.tm))}% · 확인 전에는 확정하지 않음`);
-  lines.push(`최종 합격 조건: ${finalChip(it)} ${stChip(it)} · 판정: ${judgeChip(it)}`);
-  return lines.join('<br>');
+const READ_KEYS = ['op', 'tv', 'tt', 'tolType', 'tm', 'tp'];
+const same = (a, b) => { const x = nv(a), y = nv(b); return x != null && y != null ? Math.abs(x - y) < 1e-9 : String(a ?? '') === String(b ?? ''); };
+function sugDiff(it) { const r = parseRaw(it.raw.t, it.raw.tol, it.unit); const d = READ_KEYS.some(k => !same(it[k], r[k])) || ['op', 'v', 'v2'].some(k => !same(it.stated[k], r.stated[k])); return d ? r : null; }
+const readingEmpty = it => READ_KEYS.every(k => it[k] === '' || it[k] == null || (k === 'tolType' && it[k] === 'unk')) && !it.stated.op;
+function applyReading(it, r) { READ_KEYS.forEach(k => { it[k] = r[k] ?? ''; }); it.stated = { ...r.stated }; }
+const itemDot = it => !it.raw.t && !it.raw.tol && it.tv === '' ? 'empty' : it.st;
+const segBtns = (path, id, opts, cur) => `<div class="sg" role="group">${opts.map(([v, t]) => `<button type="button" data-seg="${path}" data-eid="${id}" data-val="${esc(v)}" aria-pressed="${cur === v}">${t}</button>`).join('')}</div>`;
+const fld = (path, id, label, cls = '', ph = '') => { const it = curSet().items[id]; return `<label class="ef ${cls}"><span>${label}</span><input id="ef-${path.replace(/\./g, '-')}" data-ef="${path}" data-eid="${id}" value="${esc(getPath(it, path))}" placeholder="${esc(ph)}" autocomplete="off"></label>`; };
+function sugHTML(id) {
+  const it = curSet().items[id]; if (id === 'derating' || id === 'ctol') return ''; // wording too free-form to read automatically
+  const r = sugDiff(it); if (!r || (!it.raw.t && !it.raw.tol)) return '';
+  const tmp = Object.assign(blankItem(), it, r, { stated: r.stated }), f = finalOf(tmp);
+  return `<div class="sug"><span>원문을 다시 읽으면 → 목표 <b>${esc(tgtTxt(tmp) || '—')}</b> · 공차 <b>${esc(tolTxt(tmp) || '—')}</b> (${TOLT[tmp.tolType]})${f.stated ? ` · 원본 최종 <b>${esc(rngTxt(f.stated, tmp))}</b>` : ''}</span><button class="btn" data-act="entapply" data-eid="${id}">이 해석 적용</button></div>`;
+}
+function resultHTML(id) {
+  const it = curSet().items[id], f = finalOf(it), j = judge(it);
+  const why = !f.use ? '목표와 공차 방식이 정해지거나, 원본에 최종 한계가 적혀 있으면 계산됩니다.' : f.src === 'stated' ? (f.mismatch ? `원본에 적힌 값입니다. 공차로 계산하면 ${esc(rngTxt(f.calc, it))}이라 서로 다릅니다.` : f.calc ? '원본에 적힌 값이며, 공차로 계산한 값과 같습니다.' : '원본에 적힌 값입니다.') : '목표와 공차로 계산한 값입니다.';
+  return `<div class="res res-${!f.use ? 'none' : it.st}"><div><span class="rl">최종 합격 조건</span>${finalChip(it)}</div><p>${why}${it.st === 'check' && f.use ? ' 상태가 "판정 기준 확인 필요"라서 확정 기준으로 쓰지 않습니다.' : ''}</p>${j ? `<div class="rj"><span class="rl">측정값 ${esc(it.meas)}</span><span class="jd jd-${j.k}">${j.t}</span></div>` : ''}</div>`;
+}
+function readHTML(id) {
+  const it = curSet().items[id], d = it.der;
+  return `<div class="er-row"><span class="rl">목표</span>${segBtns('op', id, OPS, it.op)}<div class="er-f">${fld('tv', id, '목표값', 'sm')}${it.op === '=' || it.tt ? fld('tt', id, '표시 (선택)', 'sm', '예: 3:1') : ''}</div></div>
+    <div class="er-row"><span class="rl">공차 방식</span>${segBtns('tolType', id, TOLS, it.tolType)}${it.tolType === 'none' ? '' : `<div class="er-f">${fld('tm', id, '− 쪽', 'xs')}${fld('tp', id, '+ 쪽', 'xs')}</div>`}</div>
+    <div class="er-row"><span class="rl">원본에 적힌 최종 한계</span>${segBtns('stated.op', id, SOPS, it.stated.op)}${it.stated.op ? `<div class="er-f">${fld('stated.v', id, it.stated.op === '범위' ? '아래쪽' : '값', 'xs')}${it.stated.op === '범위' ? fld('stated.v2', id, '위쪽', 'xs') : ''}</div>` : ''}</div>
+    ${id === 'derating' ? `<div class="er-sub"><span class="rl">디레이팅 곡선</span><div class="er-grid">${fld('der.t1', id, '시작 온도 ℃', 'xs')}${fld('der.p1', id, '시작 출력 %', 'xs')}<label class="ef chk"><input type="checkbox" data-ef="der.p1asm" data-eid="${id}" ${d.p1asm ? 'checked' : ''}><span>시작 %는 설명용 가정</span></label>${fld('der.t2', id, '두 번째 온도 ℃', 'xs')}${fld('der.p2', id, '그때 출력 %', 'xs')}${fld('der.base', id, '기준 휘도 nit', 'xs', '확인된 경우만')}</div>
+      <div class="er-row"><span class="rl">출력의 의미</span>${segBtns('der.mean', id, Object.entries(DER_MEAN), d.mean)}</div><div class="er-grid">${fld('der.sensor', id, '온도 측정 위치', 'w')}${fld('der.tolTarget', id, '공차 적용 대상', 'w')}${fld('der.before', id, '시작 전 동작', 'w', '확인된 경우만')}${fld('der.after', id, '두 번째 온도 이후', 'w', '확인된 경우만')}</div></div>` : ''}`;
 }
 
+function setPath(o, path, v) { const k = path.split('.'); let t = o; k.slice(0, -1).forEach(p => { t[p] ||= {}; t = t[p]; }); t[k.at(-1)] = v; }
+function getPath(o, path) { return path.split('.').reduce((t, p) => t?.[p], o); }
 /* export / import */
 // inside the claude.ai viewer files go through the downloads capability (the viewer confirms); a plain link elsewhere
 let dlNs; const dlReady = window.claude?.use ? window.claude.use('downloads').then(n => { dlNs = n; }, () => { dlNs = null; }) : Promise.resolve();
@@ -1784,18 +1866,62 @@ function clipPoly(subj, clip) { const s = Math.sign(polyArea(clip, true)) || 1; 
     for (let j = 0; j < inp.length; j++) { const P = inp[j], Q = inp[(j + 1) % inp.length], sp = side(P), sq = side(Q); if (sp >= 0) out.push(P); if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t]); } } }
   return out; }
 // gamut demo, third view: area ratio vs coverage against one reference triangle
+// paint the horseshoe with the colours this screen can show at each point (sampled every 2 px)
+function cieFill(g, m, w, h, alpha) {
+  const inside = (x, y) => { let c = false; for (let i = 0, j = CIE.length - 1; i < CIE.length; j = i++) { const [xi, yi] = CIE[i], [xj, yj] = CIE[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const k = 2, cw = Math.ceil(w / k), ch = Math.ceil(h / k), off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'), img = o.createImageData(cw, ch);
+  const x0 = m.X(0), sx = (m.X(.8) - x0) / .8, y0 = m.Yp(0), sy = (y0 - m.Yp(.9)) / .9;
+  for (let py = 0; py < ch; py++) for (let px = 0; px < cw; px++) { const x = (px * k - x0) / sx, y = (y0 - py * k) / sy; if (y <= .005 || !inside(x, y)) continue; const c = xy2rgb(x, y), q = (py * cw + px) * 4; img.data[q] = c[0]; img.data[q + 1] = c[1]; img.data[q + 2] = c[2]; img.data[q + 3] = 255 * alpha; }
+  o.putImageData(img, 0, 0); g.save(); g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, cw * k, ch * k); g.restore();
+  g.beginPath(); CIE.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); g.strokeStyle = '#1c2228'; g.lineWidth = 1.2; g.stroke();
+}
+const polyPath = (g, m, p) => { g.beginPath(); p.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); };
+// ③ area ratio vs coverage: the reference and the HUD triangle overlap like a Venn diagram, and two stacked bars share the overlap
 function gamutCov(g, w, h, v) {
-  const ref = v.b ? SRGB : NTSC, rn = v.b ? 'sRGB' : 'NTSC', c0 = ref.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(v.p / 100), a = v.rot * Math.PI / 180;
+  const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', c0 = ref.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(v.p / 100), a = v.rot * Math.PI / 180;
   const hudT = ref.map(([x, y]) => { const dx = (x - c0[0]) * sc, dy = (y - c0[1]) * sc; return [c0[0] + dx * Math.cos(a) - dy * Math.sin(a), c0[1] + dx * Math.sin(a) + dy * Math.cos(a)]; });
-  const inter = clipPoly(hudT, ref), ar = polyArea(hudT) / polyArea(ref) * 100, cov = inter.length > 2 ? polyArea(inter) / polyArea(ref) * 100 : 0;
-  const tw = Math.min(w * .55, h * .95), m = cie(g, tw, h);
-  if (inter.length > 2) { g.beginPath(); inter.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); g.fillStyle = 'rgba(42,157,106,.35)'; g.fill(); }
-  tri(g, m, ref, '#66717c', null, [5, 4]); tri(g, m, hudT, '#1f62d1', null);
-  g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#66717c'; g.fillText(`회색 점선: 기준 ${rn}`, 30, 16); g.fillStyle = '#1f62d1'; g.fillText('파랑: HUD 색역 (모양은 설명용)', 30, 30); g.fillStyle = '#2a7d4f'; g.fillText('초록: 겹친 부분', 30, 44);
-  const x0 = tw + 28, bw = w - x0 - 60, Xb = p => x0 + Math.min(p, 150) / 150 * bw;
-  [['면적비', ar, '#1f62d1', 60], ['커버리지', cov, '#2a9d6a', 130]].forEach(([n, p, c, y]) => { g.fillStyle = '#e6ebf0'; g.fillRect(x0, y, bw, 20); g.fillStyle = c; g.fillRect(x0, y, Xb(p) - x0, 20); g.fillStyle = '#1c2228'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(`${n} ${Math.round(p)}%`, x0, y - 8); });
-  g.strokeStyle = '#1c2228'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(Xb(100), 44); g.lineTo(Xb(100), 160); g.stroke(); g.setLineDash([]); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('100%', Xb(100) - 14, 176);
-  return `<b>면적비</b> = HUD 삼각형 면적 ÷ ${rn} 면적 = <b>${Math.round(ar)}%</b> · <b>커버리지</b> = 겹친 면적(초록) ÷ ${rn} 면적 = <b>${Math.round(cov)}%</b>.<br>면적비는 100%를 넘을 수 있지만(예: 125% ${rn}), 그래도 ${rn} 영역을 모두 덮는다는 보장은 없습니다. "모양" 슬라이더를 움직이면 같은 면적비에서 커버리지가 줄어드는 것을 볼 수 있습니다(삼각형 모양은 ${TA('설명용')}). 커버리지는 최대 100%입니다.<br>sRGB↔NTSC 면적 환산(sRGB ≈ NTSC의 ${Math.round(RS * 100)}%)은 같은 색도도(CIE 1931 xy)와 면적비 방식을 가정할 때만 성립하며, 커버리지 값에는 쓸 수 없습니다.`;
+  const inter = clipPoly(hudT, ref), A = polyArea(ref), I = inter.length > 2 ? polyArea(inter) / A * 100 : 0, H = polyArea(hudT) / A * 100, refOnly = 100 - I, hudOnly = H - I;
+  const C = { both: '#2a9d6a', ref: '#d1493f', hud: '#1f62d1' }, tw = Math.min(w * .5, h * .98), m = cie(g, tw, h);
+  g.globalAlpha = .28; g.fillStyle = C.ref; polyPath(g, m, ref); g.fill(); g.fillStyle = C.hud; polyPath(g, m, hudT); g.fill(); g.globalAlpha = 1;
+  if (inter.length > 2) { g.fillStyle = 'rgba(42,157,106,.85)'; polyPath(g, m, inter); g.fill(); }
+  g.setLineDash([5, 4]); g.strokeStyle = C.ref; g.lineWidth = 1.8; polyPath(g, m, ref); g.stroke(); g.setLineDash([]); g.strokeStyle = C.hud; polyPath(g, m, hudT); g.stroke();
+  // right: the two questions as stacked bars
+  const x0 = tw + 26, bw = w - x0 - 16, U = bw / Math.max(150, H + 5), y1 = 58, y2 = 150, bh = 26;
+  const seg = (x, y, val, col, label) => { if (val <= .2) return x; const ww = val * U; g.fillStyle = col; g.fillRect(x, y, ww, bh); if (ww > 46) { g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(`${label} ${Math.round(val)}`, x + 6, y + 17); } return x + ww; };
+  g.fillStyle = '#1c2228'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(`기준 ${rn} 영역 = 100`, x0, y1 - 8); seg(seg(x0, y1, I, C.both, '겹침'), y1, refOnly, C.ref, `${rn}에만`);
+  g.fillStyle = '#1c2228'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(`HUD 색역 = ${Math.round(H)}`, x0, y2 - 8); seg(seg(x0, y2, I, C.both, '겹침'), y2, hudOnly, C.hud, 'HUD에만');
+  g.strokeStyle = '#1c2228'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x0 + 100 * U, y1 - 4); g.lineTo(x0 + 100 * U, y2 + bh + 4); g.stroke(); g.setLineDash([]); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('100', x0 + 100 * U - 10, y2 + bh + 16);
+  const box = (y, t1, t2, col) => { g.fillStyle = col; g.font = '700 14px "IBM Plex Sans KR", sans-serif'; g.fillText(t1, x0, y); g.fillStyle = '#4a5560'; g.font = '12.5px "IBM Plex Sans KR", sans-serif'; g.fillText(t2, x0, y + 20); };
+  box(232, `면적비 = HUD 전체 ÷ 기준 = ${Math.round(H)}%`, `(겹침 ${Math.round(I)} + HUD에만 ${Math.round(hudOnly)}) ÷ 100 · 100을 넘을 수 있음`, C.hud);
+  box(288, `커버리지 = 겹침 ÷ 기준 = ${Math.round(I)}%`, `기준 색 중 HUD가 실제로 낼 수 있는 비율 · 최대 100`, C.both);
+  g.font = '11.5px "IBM Plex Sans KR", sans-serif'; [['겹침: 둘 다 낼 수 있는 색', C.both], [`${rn}에만: 기준엔 있는데 HUD는 못 내는 색`, C.ref], ['HUD에만: 기준 밖이지만 HUD는 내는 색', C.hud]].forEach(([t, c], k) => { g.fillStyle = c; g.fillRect(x0, 330 + k * 19, 10, 10); g.fillStyle = '#1c2228'; g.fillText(t, x0 + 16, 339 + k * 19); });
+  return `질문이 두 가지입니다. <b>"HUD 색역이 기준보다 얼마나 큰가?"</b>가 면적비, <b>"기준의 색을 HUD가 얼마나 낼 수 있나?"</b>가 커버리지입니다. 지금 면적비는 <b>${Math.round(H)}%</b>로 기준보다 크지만, 빨간 부분(${rn}에만 있는 색) ${Math.round(refOnly)}만큼은 HUD가 내지 못해서 커버리지는 <b>${Math.round(I)}%</b>입니다.<br>"삼각형 모양"을 0°로 두면 같은 면적비에서 커버리지가 100%가 되고, 돌릴수록 줄어듭니다(모양은 ${TA('설명용')}). 그래서 "125% ${rn}"라는 말만으로는 기준 색을 다 낼 수 있는지 알 수 없습니다.`;
+}
+// ④ what the driver sees: designed HUD colours pulled toward white until they fit the HUD triangle
+function gamutHud(g, w, h, pN) {
+  const COLS = [['경고', [255, 45, 35]], ['주의', [255, 150, 0]], ['정상', [40, 220, 70]], ['안내', [30, 200, 255]], ['내비', [70, 100, 255]]];
+  const toLin = c => c / 255 <= .04045 ? c / 255 / 12.92 : Math.pow((c / 255 + .055) / 1.055, 2.4), toS = c => Math.round(255 * (c <= .0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055));
+  const xyY = rgb => { const [r, gg, b] = rgb.map(toLin), X = .4124 * r + .3576 * gg + .1805 * b, Y = .2126 * r + .7152 * gg + .0722 * b, Z = .0193 * r + .1192 * gg + .9505 * b, t = X + Y + Z; return [X / t, Y / t, Y]; };
+  const rgbOf = ([x, y, Y]) => { const X = x / y * Y, Z = (1 - x - y) / y * Y, l = [3.2406 * X - 1.5372 * Y - .4986 * Z, -.9689 * X + 1.8758 * Y + .0415 * Z, .0557 * X - .204 * Y + 1.057 * Z], mx = Math.max(1, ...l); return l.map(c => toS(Math.max(0, c / mx))); };
+  const c0 = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(pN / 100), disp = NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]);
+  const fit = ([x, y, Y]) => { let t = 1; const [wx, wy] = D65, dx = x - wx, dy = y - wy; for (let k = 0; k < 3; k++) { const [ax, ay] = disp[k], [bx, by] = disp[(k + 1) % 3], ex = bx - ax, ey = by - ay, den = dx * ey - dy * ex; if (Math.abs(den) < 1e-9) continue; const u = ((ax - wx) * ey - (ay - wy) * ex) / den, q = ((ax - wx) * dy - (ay - wy) * dx) / den; if (u > 0 && q >= 0 && q <= 1) t = Math.min(t, u); } return [wx + dx * t, wy + dy * t, Y]; };
+  const want = COLS.map(c => xyY(c[1])), got = want.map(fit), dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const tw = Math.min(w * .36, h * .95), m = cie(g, tw, h); tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.10)');
+  want.forEach((p, i) => { const q = got[i]; g.strokeStyle = '#66717c'; g.lineWidth = 1; g.beginPath(); g.moveTo(m.X(p[0]), m.Yp(p[1])); g.lineTo(m.X(q[0]), m.Yp(q[1])); g.stroke(); g.strokeStyle = `rgb(${COLS[i][1]})`; g.lineWidth = 2; g.beginPath(); g.arc(m.X(p[0]), m.Yp(p[1]), 5, 0, 7); g.stroke(); g.fillStyle = `rgb(${rgbOf(q)})`; g.beginPath(); g.arc(m.X(q[0]), m.Yp(q[1]), 4, 0, 7); g.fill(); });
+  g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#66717c'; g.fillText('○ 설계 색 → ● 실제 보이는 색', 30, 16);
+  const x0 = tw + 14, pw = w - x0, ph = (h - 8) / 2;
+  const icon = (cx, cy, r, i, col) => { g.fillStyle = g.strokeStyle = col; g.lineWidth = r * .22; g.lineJoin = g.lineCap = 'round';
+    if (i === 0) { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r * 1.05, cy + r * .8); g.lineTo(cx - r * 1.05, cy + r * .8); g.closePath(); g.stroke(); g.fillRect(cx - r * .09, cy - r * .35, r * .18, r * .65); }
+    if (i === 1) { g.beginPath(); g.arc(cx, cy, r * .9, 0, 7); g.stroke(); g.fillRect(cx - r * .09, cy - r * .5, r * .18, r * .6); }
+    if (i === 2) { g.beginPath(); g.roundRect(cx - r * .9, cy - r * .2, r * 1.8, r * .7, r * .2); g.stroke(); }
+    if (i === 3) { g.beginPath(); g.moveTo(cx - r * .5, cy + r); g.lineTo(cx - r * .2, cy - r); g.moveTo(cx + r * .5, cy + r); g.lineTo(cx + r * .2, cy - r); g.stroke(); }
+    if (i === 4) { g.beginPath(); g.moveTo(cx - r * .4, cy + r); g.lineTo(cx - r * .4, cy); g.quadraticCurveTo(cx - r * .4, cy - r * .5, cx + r * .2, cy - r * .5); g.stroke(); g.beginPath(); g.moveTo(cx + r * .9, cy - r * .5); g.lineTo(cx + r * .2, cy - r); g.lineTo(cx + r * .2, cy); g.closePath(); g.fill(); } };
+  [[0, '설계한 색', COLS.map(c => `rgb(${c[1]})`)], [ph + 8, `이 HUD에서 보이는 색 (NTSC ${pN}%)`, got.map(q => `rgb(${rgbOf(q)})`)]].forEach(([y0, label, cols]) => {
+    g.save(); g.beginPath(); g.rect(x0, y0, pw, ph); g.clip(); g.translate(x0, y0); road(g, pw, ph, 0, true); const step = pw / COLS.length, r = Math.min(step * .22, ph * .16);
+    COLS.forEach(([n], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(n, cx, cy + r * 1.9); g.textAlign = 'start'; });
+    g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
+  const pr = (a, b) => Math.round(Math.min(1, dist(got[a], got[b]) / dist(want[a], want[b])) * 100), rw = pr(0, 1), gc = pr(2, 3);
+  return `색역이 좁으면 원색이 흰색 쪽으로 끌려가 물빠져 보이고, 비슷한 색끼리 가까워집니다. 설계 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b>, 정상↔안내 <b>${gc}%</b>. 왼쪽 그림의 회색 선이 각 색이 끌려간 거리입니다.<br>이 화면 자체가 sRGB라 그보다 넓은 색은 똑같이 보입니다. 아이콘 색과 HUD 삼각형 모양은 ${TA('설명용')}입니다.`;
 }
 // colour tolerance demo, second view: each axis on its own, so the allowed region is a square
 function ctolBox(g, w, h, v) {
@@ -1893,7 +2019,7 @@ function gamutStd(g, w, h, pN, pS, RS) {
   const rh = Math.min(52, (h - 40) / rows.length);
   rows.forEach(([n, a, c, t], i) => { const y = 36 + i * rh, bwid = a / mx * bw; g.fillStyle = c; g.globalAlpha = n === '이 HUD' ? 1 : .75; g.fillRect(x0, y, bwid, 16); g.globalAlpha = 1;
     g.fillStyle = '#1c2228'; g.font = `${n === '이 HUD' ? 700 : 600} 12px "IBM Plex Sans KR", sans-serif`; g.fillText(`${n}  ${Math.round(a)}`, x0 + bwid + 6, y + 13); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x0, y + 30); });
-  return `<b>RGB</b>는 기준이 아니라 방식입니다. 모든 디스플레이가 빨강·초록·파랑 세 원색을 섞어 색을 만들고, 세 원색의 위치가 삼각형 꼭짓점입니다. <b>NTSC·sRGB·DCI-P3·BT.2020</b>은 "이 세 점을 기준으로 삼자"고 정한 기준 삼각형입니다.<br>
+  return `<b>RGB</b>는 기준이 아니라 색을 만드는 방식입니다. 모든 디스플레이가 빨강·초록·파랑 세 원색을 섞어 색을 만들고, 세 원색의 위치가 삼각형 꼭짓점입니다. <b>NTSC·sRGB·DCI-P3·BT.2020</b>은 "이 세 점을 기준으로 삼자"고 정한 기준 삼각형입니다.<br>
     그래서 같은 디스플레이도 기준에 따라 숫자가 바뀝니다. 같은 색도도(CIE 1931 xy)·같은 면적비 방식을 가정하면 sRGB는 NTSC 면적의 약 ${Math.round(RS * 100)}%(흔히 약 72%로 인용)라서 <b>NTSC ${Math.round(RS * 100)}% ≈ sRGB 100%</b>, <b>sRGB 90% ≈ NTSC ${Math.round(90 * RS)}%</b>, <b>NTSC 70% ≈ sRGB ${Math.round(70 / RS)}%</b>입니다.<br>
     또 "면적비"는 넓이만 비교하고, "커버리지"는 기준 삼각형을 실제로 얼마나 덮는지입니다. 면적이 100%여도 삼각형이 비뚤면 커버리지는 낮을 수 있어서, 스펙에는 기준·면적/커버리지·CIE 1931/1976 중 무엇인지 함께 적어야 합니다.`;
 }
@@ -2067,44 +2193,19 @@ const DEMOS = {
         g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.textAlign = 'center'; g.fillText(`${['빨강', '초록', '파랑'][i]}`, cx, h * .62 + 22); g.font = '11.5px "IBM Plex Mono", monospace';
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `<b>채도</b>는 한 가지 색의 선명도입니다. 여기서는 예시 정의로 "백색점에서 sRGB 원색까지 거리 중 몇 %까지 왔나"를 썼고, R·G·B가 서로 다른 값을 가질 수 있습니다. 같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 <b>다른 값</b>이 나옵니다. 정의·산식이 다르면 숫자의 의미도 다릅니다.<br><b>색역</b>은 색 하나가 아니라 세 원색이 만드는 삼각형 전체의 범위입니다(→ 색 영역 항목). 원본 Color Saturation ${TE('≥ 90% sRGB')}가 어떤 정의인지, Gamut 행과 같은 값인지는 ${TC('미확정')}입니다.`; } },
-  gamut: { ctl: [['mode', '보기', 0, 2, 1, 0, 'sel:HUD 그래픽으로|기준 삼각형끼리|면적비 vs 커버리지'], ['p', '색 영역 (면적비)', 30, 150, 1, 65, '%'], ['b', '기준', 0, 1, 1, 0, 'sel:NTSC 대비|sRGB 대비'], ['rot', '모양 (설명용)', -40, 40, 1, 0, '°']],
-    show: v => v.mode === 2 ? ['mode', 'p', 'b', 'rot'] : ['mode', 'p', 'b'],
+  gamut: { ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (NTSC·sRGB)|③ 면적비 vs 커버리지|④ 운전자 눈에서 달라지는 것'], ['p', 'HUD 색역 크기 (면적비)', 30, 150, 1, 125, '%'], ['b', '기준', 0, 1, 1, 1, 'sel:sRGB 대비|NTSC 대비'], ['rot', '삼각형 모양 (설명용)', -40, 40, 1, 22, '°']],
+    show: v => [['step'], ['step', 'p', 'b'], ['step', 'p', 'b', 'rot'], ['step', 'p', 'b']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
-      const RS = triArea(SRGB) / triArea(NTSC), pN = Math.round(v.b ? v.p * RS : v.p), pS = Math.round(pN / RS), lab = `NTSC ${pN}% = sRGB ${pS}%`;
-      if (v.mode === 1) return gamutStd(g, w, h, pN, pS, RS); if (v.mode === 2) return gamutCov(g, w, h, v);
-      // HUD colours as designed (sRGB); a narrower display pulls each one toward white until it fits inside its triangle
-      const COLS = [['경고', [255, 45, 35]], ['주의', [255, 150, 0]], ['정상', [40, 220, 70]], ['안내', [30, 200, 255]], ['내비', [70, 100, 255]]];
-      const toLin = c => c / 255 <= .04045 ? c / 255 / 12.92 : Math.pow((c / 255 + .055) / 1.055, 2.4), toSrgb = c => Math.round(255 * (c <= .0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055));
-      const xyY = rgb => { const [r, gg, b] = rgb.map(toLin), X = .4124 * r + .3576 * gg + .1805 * b, Y = .2126 * r + .7152 * gg + .0722 * b, Z = .0193 * r + .1192 * gg + .9505 * b, t = X + Y + Z; return [X / t, Y / t, Y]; };
-      const rgbOf = ([x, y, Y]) => { const X = x / y * Y, Z = (1 - x - y) / y * Y, l = [3.2406 * X - 1.5372 * Y - .4986 * Z, -.9689 * X + 1.8758 * Y + .0415 * Z, .0557 * X - .204 * Y + 1.057 * Z], m = Math.max(1, ...l); return l.map(c => toSrgb(Math.max(0, c / m))); };
-      const c0 = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(pN / 100), disp = NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]);
-      const fit = ([x, y, Y]) => { let t = 1; const [wx, wy] = D65, dx = x - wx, dy = y - wy;
-        for (let k = 0; k < 3; k++) { const [ax, ay] = disp[k], [bx, by] = disp[(k + 1) % 3], ex = bx - ax, ey = by - ay, den = dx * ey - dy * ex; if (Math.abs(den) < 1e-9) continue;
-          const u = ((ax - wx) * ey - (ay - wy) * ex) / den, q = ((ax - wx) * dy - (ay - wy) * dx) / den; if (u > 0 && q >= 0 && q <= 1) t = Math.min(t, u); }
-        return [wx + dx * t, wy + dy * t, Y]; };
-      const want = COLS.map(c => xyY(c[1])), got = want.map(fit), dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-      // left: chromaticity diagram with designed (ring) and shown (dot) colours
-      const tw = Math.min(w * .36, h * .95), m = cie(g, tw, h);
-      tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.10)');
-      want.forEach((p, i) => { const q = got[i], col = `rgb(${COLS[i][1]})`; g.strokeStyle = '#66717c'; g.lineWidth = 1; g.beginPath(); g.moveTo(m.X(p[0]), m.Yp(p[1])); g.lineTo(m.X(q[0]), m.Yp(q[1])); g.stroke();
-        g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.arc(m.X(p[0]), m.Yp(p[1]), 5, 0, 7); g.stroke(); g.fillStyle = `rgb(${rgbOf(q)})`; g.beginPath(); g.arc(m.X(q[0]), m.Yp(q[1]), 4, 0, 7); g.fill(); g.strokeStyle = '#1c2228'; g.lineWidth = .8; g.stroke(); });
-      g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1f62d1'; g.fillText(`파랑: 이 HUD (${lab})`, 30, 16); g.fillStyle = '#c8780f'; g.fillText('주황 점선: sRGB', 30, 30); g.fillStyle = '#66717c'; g.fillText('○ 설계 색 → ● 실제 보이는 색', 30, 44);
-      // right: the same HUD graphics, as designed vs on this display
-      const x0 = tw + 14, pw = w - x0, ph = (h - 8) / 2;
-      const icon = (cx, cy, r, i, col) => { g.fillStyle = g.strokeStyle = col; g.lineWidth = r * .22; g.lineJoin = 'round'; g.lineCap = 'round';
-        if (i === 0) { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r * 1.05, cy + r * .8); g.lineTo(cx - r * 1.05, cy + r * .8); g.closePath(); g.stroke(); g.fillRect(cx - r * .09, cy - r * .35, r * .18, r * .65); g.fillRect(cx - r * .09, cy + r * .42, r * .18, r * .18); }
-        if (i === 1) { g.beginPath(); g.arc(cx, cy, r * .9, 0, 7); g.stroke(); g.fillRect(cx - r * .09, cy - r * .5, r * .18, r * .6); g.fillRect(cx - r * .09, cy + r * .28, r * .18, r * .18); }
-        if (i === 2) { g.beginPath(); g.roundRect(cx - r * .9, cy - r * .2, r * 1.8, r * .7, r * .2); g.moveTo(cx - r * .55, cy - r * .2); g.lineTo(cx - r * .35, cy - r * .7); g.lineTo(cx + r * .35, cy - r * .7); g.lineTo(cx + r * .55, cy - r * .2); g.stroke(); }
-        if (i === 3) { g.beginPath(); g.moveTo(cx - r * .5, cy + r); g.lineTo(cx - r * .2, cy - r); g.moveTo(cx + r * .5, cy + r); g.lineTo(cx + r * .2, cy - r); g.stroke(); }
-        if (i === 4) { g.beginPath(); g.moveTo(cx - r * .4, cy + r); g.lineTo(cx - r * .4, cy); g.quadraticCurveTo(cx - r * .4, cy - r * .5, cx + r * .2, cy - r * .5); g.stroke(); g.beginPath(); g.moveTo(cx + r * .9, cy - r * .5); g.lineTo(cx + r * .2, cy - r); g.lineTo(cx + r * .2, cy); g.closePath(); g.fill(); } };
-      [[0, '설계한 색 (sRGB 기준)', COLS.map(c => `rgb(${c[1]})`)], [ph + 8, `이 HUD에서 보이는 색 (${lab})`, got.map(q => `rgb(${rgbOf(q)})`)]].forEach(([y0, label, cols]) => {
-        g.save(); g.beginPath(); g.rect(x0, y0, pw, ph); g.clip(); g.translate(x0, y0); road(g, pw, ph, 0, true);
-        const step = pw / COLS.length, r = Math.min(step * .22, ph * .16);
-        COLS.forEach(([name], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(name, cx, cy + r * 1.9); g.textAlign = 'start'; });
-        g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
-      const pr = (a, b) => Math.round(Math.min(1, dist(got[a], got[b]) / dist(want[a], want[b])) * 100);
-      const rw = pr(0, 1), gc = pr(2, 3), cb = pr(3, 4), worst = Math.min(rw, gc, cb);
-      return `${lab} (면적 기준). 설계 색 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b> · 정상↔안내 <b>${gc}%</b> · 안내↔내비 <b>${cb}%</b>.<br>${worst >= 90 ? '설계한 색이 거의 그대로 나옵니다. 영역을 더 넓혀도 이 정도 그래픽에서는 차이가 작습니다.' : worst >= 65 ? '색은 구분되지만 전체가 물빠진 느낌이 납니다. 원색 아이콘이 덜 강렬해집니다.' : '비슷한 색끼리 붙기 시작합니다. 경고(빨강)와 주의(주황), 정상(초록)과 안내(청록)를 색만으로 구분하기 어려워집니다.'} 이 화면은 sRGB라 NTSC ${Math.round(RS * 100)}%를 넘는 색은 똑같이 보입니다.<br>슬라이더 값과 아이콘 색은 ${TA('설명용')}입니다. 원본 ${TE('≥ 90% sRGB (≥ 70% NTSC)')}가 면적비인지 커버리지인지는 ${TC('미확정')}.`; } },
+      const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', pS = Math.round(v.b ? v.p / RS : v.p), pN = Math.round(v.b ? v.p : v.p * RS);
+      if (v.step === 0) { const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1); tri(g, m, SRGB, '#1c2228', null);
+        SRGB.forEach(([x, y], k) => { g.fillStyle = ['#e0352b', '#26a843', '#2e56e8'][k]; g.beginPath(); g.arc(m.X(x), m.Yp(y), 6, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); });
+        const x0 = tw + 30; g.fillStyle = '#1c2228'; g.font = '600 14px "IBM Plex Sans KR", sans-serif';
+        [['말발굽 모양 전체', '사람 눈이 볼 수 있는 모든 색'], ['꼭짓점 세 개', '디스플레이의 빨강·초록·파랑 원색'], ['삼각형 안쪽', '세 원색을 섞어서 낼 수 있는 색 = 색역'], ['삼각형 바깥', '이 디스플레이로는 낼 수 없는 색']].forEach(([a, b2], k) => { const y = 50 + k * 64; g.font = '600 14px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1c2228'; g.fillText(a, x0, y); g.font = '13px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#4a5560'; g.fillText(b2, x0, y + 22); });
+        return `<b>색역</b>은 디스플레이가 낼 수 있는 색의 범위입니다. 모든 디스플레이는 빨강·초록·파랑 세 원색을 섞어 색을 만들기 때문에, 색도도(색을 좌표로 펼친 지도) 위에서 세 원색을 꼭짓점으로 하는 <b>삼각형</b>이 됩니다. 원색이 순수할수록 꼭짓점이 바깥으로 나가 삼각형이 커집니다. 그림의 검은 삼각형은 sRGB입니다. 말발굽 안의 색은 이 화면이 낼 수 있는 범위로 대신 그렸습니다.`; }
+      if (v.step === 1) return gamutStd(g, w, h, pN, pS, RS);
+      if (v.step === 2) return gamutCov(g, w, h, v);
+      return gamutHud(g, w, h, pN);
+    } },
   derating: { ctl: [['t', '현재 온도', 20, 110, 1, 80, '℃']],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       const L = 52, R = w - 24, T = 30, B = h - 36, X = t => L + (t - 20) / 90 * (R - L), Y = p => B - p / 110 * (B - T), sets = shownSets(), act = sets[0].items.derating;
@@ -2126,7 +2227,7 @@ const DEMOS = {
       const r = val(d0, v.t); if (r && r.p != null) { g.fillStyle = '#d1493f'; g.beginPath(); g.arc(X(v.t), Y(r.p), 6, 0, 7); g.fill(); }
       const base = nv(d0.base), here = !r ? '곡선 값이 아직 입력되지 않았습니다' : r.out === 'after' ? `${v.t}℃는 두 번째 온도 이후라 원본에 없음` : `${v.t}℃ → <b>${fmtN(+r.p.toFixed(2))}%</b>${r.out === 'before' ? ' (시작 전: 유지는 가정)' : ''}${base != null ? ` ≈ ${fmtN(Math.round(base * r.p / 100))} nit (기준 ${fmtN(base)} nit)` : ' · 기준 휘도 미입력 → nit로 바꾸지 않음'}`;
       const chk = [75, 80, 85].map(t => { const q = val(d0, t); return q && q.p != null ? `${t}℃ ${fmtN(+q.p.toFixed(2))}%` : `${t}℃ —`; }).join(' · ');
-      return `<b>디레이팅</b>은 온도에 따라 정해진 출력 한계를 낮추는 것입니다. ${esc(curSet().name)}: ${here}.<br>선형 계산 확인: ${chk}. 출력의 의미 ${d0.mean === 'unk' ? TC('미확정') : TE(DER_MEAN[d0.mean])}, 센서 위치 ${d0.sensor ? TE(esc(d0.sensor)) : TC('미기재')}, ±${fmtN(tol ?? 0)}℃ 적용 대상 ${d0.tolTarget ? TE(esc(d0.tolTarget)) : TC('미기재')}. ${d0.p1asm ? `시작점 ${fmtN(nv(d0.p1))}%는 ${TA('설명용 가정')}입니다.` : ''} 곡선 값은 오른쪽 "값 편집"에서 바꿀 수 있습니다.`; } }
+      return `<b>디레이팅</b>은 온도에 따라 정해진 출력 한계를 낮추는 것입니다. ${esc(curSet().name)}: ${here}.<br>선형 계산 확인: ${chk}. 출력의 의미 ${d0.mean === 'unk' ? TC('미확정') : TE(DER_MEAN[d0.mean])}, 센서 위치 ${d0.sensor ? TE(esc(d0.sensor)) : TC('미기재')}, ±${fmtN(tol ?? 0)}℃ 적용 대상 ${d0.tolTarget ? TE(esc(d0.tolTarget)) : TC('미기재')}. ${d0.p1asm ? `시작점 ${fmtN(nv(d0.p1))}%는 ${TA('설명용 가정')}입니다.` : ''} 곡선 값은 오른쪽 창의 "디레이팅 곡선" 칸에서 바꿀 수 있습니다.`; } }
 };
 
 const CAT_COL = { geo: '#1f62d1', lum: '#c8780f', color: '#8a4fd1', heat: '#d1493f' };
@@ -2166,7 +2267,7 @@ function specTab() {
   const el = $('#specBody'); renderExpBar();
   if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
   if (SP.view === 'table') { el.innerHTML = tableHTML(); SP.redraw = null; return; }
-  if (!$('#spList')) el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
+  if (!$('#spList') || SP.listFor !== EXP.active) SP.listFor = EXP.active, el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><i class="dot d-${itemDot(curSet().items[x.id])}" id="ldot-${x.id}"></i><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
   document.querySelectorAll('.sp-item').forEach(b => { const on = b.dataset.spec === SP.cur; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'true' : 'false'); });
   const cur = document.querySelector('.sp-item.on'); if (cur) cur.scrollIntoView({ block: 'nearest' });
   renderSpecDetail();
@@ -2177,31 +2278,29 @@ function renderExpBar() {
   const n = EXP.cmp.filter(id => id !== EXP.active).length; $('#cmpInfo').textContent = n ? `비교 중 ${n}개` : '';
   if (!$('#expPanel').hidden) $('#expPanel').innerHTML = panelHTML();
 }
-const heroFacts = (s, it) => `<div><span>단위 (원본)</span><b>${esc(it.unit || s.unit)}</b></div><div><span>목표 사양</span><b>${esc(tgtTxt(it) || '—')}</b></div><div><span>최종 합격 조건</span>${finalChip(it)}</div><div><span>확인 상태</span>${stChip(it)}</div>`;
-function nbSum(id) {
-  const it = curSet().items[id], f = finalOf(it), others = shownSets().slice(1);
-  return `<div class="nb-raw"><span>원문 목표</span><q>${esc(it.raw.t) || '—'}</q><span>원문 공차</span><q>${esc(it.raw.tol) || '—'}</q></div>
-    <dl class="nb-dl"><dt>목표 사양</dt><dd>${esc(tgtTxt(it) || '—')}</dd><dt>공차</dt><dd>${esc(tolTxt(it) || '—')}${it.tolType === 'unk' ? '' : ` <small>${TOLT[it.tolType]}</small>`}</dd><dt>최종 합격 조건</dt><dd>${finalChip(it)}</dd><dt>적용 조건</dt><dd>${esc(it.cond) || '—'}</dd><dt>비고</dt><dd>${esc(it.note) || '—'}</dd><dt>확인 상태</dt><dd>${stChip(it)}</dd></dl>
-    ${f.mismatch ? `<p class="warn">원본에 적힌 최종 한계(${esc(rngTxt(f.stated, it))})와 공차로 계산한 값(${esc(rngTxt(f.calc, it))})이 다릅니다. 원본 값을 표시합니다.</p>` : ''}
-    ${others.length ? `<table class="cmpmini"><thead><tr><th>비교</th><th>목표</th><th>공차</th><th>최종</th></tr></thead><tbody>${others.map((st, i) => { const o = st.items[id]; return `<tr><td><i style="background:${SETCOL[(i + 1) % 5]}"></i>${esc(st.name)}</td><td>${esc(tgtTxt(o) || '—')}</td><td>${esc(tolTxt(o) || '—')}</td><td>${finalChip(o)}</td></tr>`; }).join('')}</tbody></table>` : ''}`;
+function sideEntry(id) {
+  const s = SPECS.find(x => x.id === id), set = curSet(), it = set.items[id], others = shownSets().slice(1);
+  return `<div class="ent-step"><h3><span class="stepn">3</span>${esc(set.name)}의 값</h3>
+      <div class="er-grid">${fld('raw.t', id, '목표 사양 (원문 그대로)', 'w')}${fld('raw.tol', id, 'Tolerance (원문 그대로)', 'w')}${fld('unit', id, '단위 (원본)', 'sm')}</div>
+      <p class="note">원문 칸은 해석과 상관없이 그대로 보존됩니다. 붙여 넣으면 아래 해석을 제안합니다.</p></div>
+    <div class="ent-step"><h4>이렇게 읽었어요</h4><div id="entSug">${sugHTML(id)}</div><div id="entRead">${readHTML(id)}</div><div id="entRes">${resultHTML(id)}</div></div>
+    <div class="ent-step"><h4>조건 · 확인 상태</h4><div class="er-grid">${fld('cond', id, '적용 조건', 'w', '예: 암실 정적')}${fld('note', id, '비고', 'w')}</div>
+      <div class="sts">${STS.map(([v, t, d]) => `<button type="button" data-seg="st" data-eid="${id}" data-val="${v}" aria-pressed="${it.st === v}" class="st-${v}"><b>${t}</b><span>${d}</span></button>`).join('')}</div></div>
+    <div class="ent-step"><h4>실제 측정값</h4><div class="er-grid">${fld('meas', id, id === 'ctol' ? 'ΔCx, ΔCy' : '측정값', 'sm', id === 'ctol' ? '0.004, -0.006' : '측정 후 입력')}</div><p class="note">판정은 상태가 "판정 가능"·"한계 명확"이고 최종 한계가 있을 때만 합니다.</p></div>
+    ${others.length ? `<div class="ent-step"><h4>다른 전문가와 비교</h4><table class="cmpmini"><thead><tr><th>전문가</th><th>목표</th><th>공차</th><th>최종</th></tr></thead><tbody>${others.map((st, k) => { const o = st.items[id]; return `<tr><td><i style="background:${SETCOL[(k + 1) % 5]}"></i>${esc(st.name)}</td><td>${esc(tgtTxt(o) || '—')}</td><td>${esc(tolTxt(o) || '—')}</td><td>${finalChip(o)}</td></tr>`; }).join('')}</tbody></table></div>` : ''}`;
 }
 function renderSpecDetail() {
-  const s = SPECS.find(x => x.id === SP.cur), set = curSet(), it = set.items[s.id], cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
+  const s = SPECS.find(x => x.id === SP.cur), cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
   el.style.setProperty('--cat', CAT_COL[s.cat]);
   el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div>
-      <p class="one"><span class="stepn">1</span>${s.one}</p>
-      <div class="facts" id="heroFacts">${heroFacts(s, it)}</div></div>
+      <p class="one"><span class="stepn">1</span>${s.one}</p></div>
       <div class="demo"><div class="demo-h"><span class="stepn">2</span>그림으로 이해 <span class="note">설명용 시뮬레이션 · 판정에 쓰지 않음</span></div><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><div class="demo-out" id="demoOut"></div></div></section>
-    <aside class="sp-side">
-      <h3 class="sec"><span class="stepn">3</span>숫자와 공차 · ${esc(set.name)}</h3>
-      <div class="nb"><div id="nbSum">${nbSum(s.id)}</div>
-        <label class="meas">실제 측정값 <input data-ef="meas" data-eid="${s.id}" value="${esc(it.meas)}" placeholder="${s.id === 'ctol' ? '예: 0.004, -0.006' : '측정 후 입력'}"></label><div class="jdline" id="jd-${s.id}">${judgeChip(it)}</div>
-        <button class="btn" data-edtoggle>${SP.edSide ? '편집 닫기' : '값 편집 (목표 · 공차 · 조건)'}</button>${SP.edSide ? editorHTML(s.id) : ''}</div>
-      <h3 class="sec"><span class="stepn">4</span>확인할 질문 <button class="mini" data-copyq="${s.id}">복사</button></h3><ol class="qs">${s.qs.map(q => `<li>${q}</li>`).join('')}</ol>
-      <h3 class="sec">자세히</h3><p class="lead">${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
-      <h3 class="sec">어디가 좌우하나</h3><figure class="schem">${schematic(s)}<figcaption>칠한 곳이 이 값을 주로 좌우하는 부품입니다. 부품 구성은 BOM·분해 사진 기준, 배치는 모델(설명용)입니다. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
+    <aside class="sp-side" id="spSide">${sideEntry(s.id)}
+      <div class="ent-step"><h3><span class="stepn">4</span>확인할 질문 <button class="mini" data-copyq="${s.id}">복사</button></h3><ol class="qs">${s.qs.map(q => `<li>${q}</li>`).join('')}</ol></div>
+      <div class="ent-step"><h3>자세히</h3><p class="lead">${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
+      <h4>어디가 좌우하나</h4><figure class="schem">${schematic(s)}<figcaption>칠한 곳이 이 값을 주로 좌우하는 부품입니다. 부품 구성은 BOM·분해 사진 기준, 배치는 모델(설명용)입니다. 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure>
       <div class="sp-key"><div class="chips">${s.key.ids.map(id => `<button class="pchip lv2" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button>`).join('')}${s.key.sys ? '<span class="sys">+ 광로 전체</span>' : ''}</div><p>${s.key.why}</p></div>
-      <h3 class="sec">측정 (일반적인 방법)</h3><p class="note">${s.measure}</p></aside>`;
+      <h4>측정 (일반적인 방법)</h4><p class="note">${s.measure}</p></div></aside>`;
   buildDemo(s);
 }
 function buildDemo(s) {
@@ -2210,8 +2309,8 @@ function buildDemo(s) {
   ctl.innerHTML = D.ctl.filter(c => !keys || keys.includes(c[0])).map(([k, label, mn, mx, st, def, u]) => u.startsWith('sel:') ? `<label>${label} <select data-k="${k}">${u.slice(4).split('|').map((o, i) => `<option value="${i}" ${+v[k] === i ? 'selected' : ''}>${o}</option>`).join('')}</select></label>`
     : `<label>${label} <input type="range" data-k="${k}" min="${mn}" max="${mx}" step="${st}" value="${v[k]}"><output>${(+v[k]).toFixed(st < .01 ? 3 : st < 1 ? 1 : 0)}${u ? ' ' + u : ''}</output></label>`).join('');
   // the readout can change the canvas height, so draw again once the layout has settled
-  const draw = () => { const cv = $('#demoCv'); let [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v) + specLine(s.id);
-    const r = cv.getBoundingClientRect(); if (Math.abs(r.width - w) > 1 || Math.abs(r.height - h) > 1) { [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v) + specLine(s.id); } };
+  const draw = () => { const cv = $('#demoCv'); let [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v);
+    const r = cv.getBoundingClientRect(); if (Math.abs(r.width - w) > 1 || Math.abs(r.height - h) > 1) { [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v); } };
   ctl.oninput = e => { const k = e.target.dataset.k; if (!k) return; v[k] = +e.target.value; if (D.show && e.target.tagName === 'SELECT') { buildDemo(s); return; }
     const o = e.target.nextElementSibling, c = D.ctl.find(c => c[0] === k); if (o && o.tagName === 'OUTPUT') o.textContent = (+v[k]).toFixed(c[4] < .01 ? 3 : c[4] < 1 ? 1 : 0) + (c[6] ? ' ' + c[6] : ''); draw(); };
   draw(); SP.redraw = draw;
@@ -2226,10 +2325,10 @@ function tableHTML() {
   const set = curSet(), sets = shownSets();
   const cmp = sets.length > 1 ? `<h3 class="sec">전문가 비교 · 최종 합격 조건</h3><div class="tablewrap"><table class="etab cmpt"><thead><tr><th>항목</th>${sets.map((st, i) => `<th><i style="background:${SETCOL[i % 5]}"></i>${esc(st.name)}</th>`).join('')}</tr></thead><tbody>${SPECS.map(s => { const vals = sets.map(st => st.items[s.id]), keys = vals.map(it => tgtTxt(it) + '|' + tolTxt(it) + '|' + rngTxt(finalOf(it).use, it)), diff = new Set(keys).size > 1;
       return `<tr class="${diff ? 'diff' : ''}"><td class="nm"><b>${s.ko}</b>${diff ? '<small class="warn">전문가마다 다름</small>' : ''}</td>${vals.map(it => `<td>${esc(tgtTxt(it) || '—')} · ${esc(tolTxt(it) || '—')}<br>${finalChip(it)}</td>`).join('')}</tr>`; }).join('')}</tbody></table></div>` : '';
-  return `<div class="et"><div class="et-top"><div><b>${esc(set.name)}</b>의 스펙 · 행을 누르면 편집합니다. 원문은 그대로 보존되고, 해석(부등호·공차 방식)은 따로 저장됩니다.</div><span class="sp"></span><button class="btn" data-act="copyallq">모든 확인 질문 복사</button><button class="btn" data-act="excsv">표 내보내기 (Excel용)</button></div>
+  return `<div class="et"><div class="et-top"><div><b>${esc(set.name)}</b>의 스펙 · 행을 누르면 그 항목 화면의 오른쪽 창에서 값을 입력합니다. 원문은 그대로 보존되고, 해석(부등호·공차 방식)은 따로 저장됩니다.</div><span class="sp"></span><button class="btn" data-act="copyallq">모든 확인 질문 복사</button><button class="btn" data-act="excsv">표 내보내기 (Excel용)</button></div>
     ${cmp}<h3 class="sec">${esc(set.name)} · 상세</h3>
     <div class="tablewrap"><table class="etab"><thead><tr><th>항목</th><th>단위</th><th>목표 사양</th><th>공차</th><th>최종 합격 조건</th><th>적용 조건 / 비고</th><th>확인 상태</th><th>측정값 → 판정</th></tr></thead><tbody>
-    ${SPECS.map(s => `<tr data-erow="${s.id}" class="${SP.edRow === s.id ? 'on' : ''}">${rowCells(s.id)}</tr>${SP.edRow === s.id ? `<tr class="edrow"><td colspan="8">${editorHTML(s.id)}</td></tr>` : ''}`).join('')}</tbody></table></div>
+    ${SPECS.map(s => `<tr data-erow="${s.id}" title="눌러서 이 항목 값 입력">${rowCells(s.id)}</tr>`).join('')}</tbody></table></div>
     <p class="note">합격·불합격은 측정값이 입력되고, 최종 한계가 원본에 적혀 있거나 공차 방식이 정해진 항목("판정 가능" 또는 "한계 명확")에서만 표시합니다. "판정 기준 확인 필요" 항목의 숫자는 가능한 해석일 뿐입니다.</p></div>`;
 }
 
@@ -2265,11 +2364,13 @@ async function copyText(t, btn) {
 }
 const ISS_QS = ['각 기준은 어느 부품·표면(앞/뒤)·내부·검사 영역(유효 영역, A/B Zone)에 적용하나요?', 'Pore와 Vacuoles는 어떻게 구분하나요? 판정 예시(사진)가 있나요?', '검은 점과 흰 점은 합산해서 세나요, 따로 세나요?', '길이와 폭을 둘 다 만족해야 하나요? 결함 사이 최소 간격 규정이 있나요?', '검사 면적이 100 cm²보다 작을 때 허용 개수는 어떻게 정하나요?', '검사 조명(lux)·거리·각도·배율·시간 조건은?', 'Stain & Discoloration "허용 안 함"은 어떤 조건에서 보이는 것을 기준으로 하나요?'];
 const qsText = id => { if (id === 'iss') return '[외관 결함 (ISS)]\n' + ISS_QS.map((q, i) => `${i + 1}. ${q}`).join('\n'); const s = SPECS.find(x => x.id === id); return `[${s.ko} · ${s.en}]\n` + s.qs.map((q, i) => `${i + 1}. ${q}`).join('\n'); };
-function refreshItem(id) {
-  const p = $('#edPrev-' + id); if (p) p.innerHTML = edPrev(id);
-  const it = curSet().items[id], s = SPECS.find(x => x.id === id);
-  const r = document.querySelector(`tr[data-erow="${id}"]`); if (r) r.innerHTML = rowCells(id);
-  if (SP.view === 'items' && SP.cur === id) { const n = $('#nbSum'); if (n) n.innerHTML = nbSum(id); const h = $('#heroFacts'); if (h) h.innerHTML = heroFacts(s, it); const j = $('#jd-' + id); if (j) j.innerHTML = judgeChip(it); if (SP.redraw) SP.redraw(); }
+function refreshItem(id, rebuildRead) {
+  const it = curSet().items[id], r = document.querySelector(`tr[data-erow="${id}"]`); if (r) r.innerHTML = rowCells(id);
+  const ld = $('#ldot-' + id); if (ld) ld.className = 'dot d-' + itemDot(it);
+  if (SP.view !== 'items' || SP.cur !== id) return;
+  if (rebuildRead) { const rd = $('#entRead'); if (rd) rd.innerHTML = readHTML(id); }
+  const res = $('#entRes'); if (res) res.innerHTML = resultHTML(id); const sg = $('#entSug'); if (sg) sg.innerHTML = sugHTML(id);
+  if (SP.redraw) SP.redraw();
 }
 
 /* 외관 결함 (ISS) */
@@ -2326,8 +2427,10 @@ $('#specPage').addEventListener('click', e => {
   }
   if (t.id === 'xDlg') { t.hidden = true; return; }
   const cq = t.closest('[data-copyq]'); if (cq) { copyText(qsText(cq.dataset.copyq), cq); return; }
-  if (t.closest('[data-edtoggle]')) { SP.edSide = !SP.edSide; renderSpecDetail(); return; }
-  const er = t.closest('tr[data-erow]'); if (er) { SP.edRow = SP.edRow === er.dataset.erow ? null : er.dataset.erow; $('#specBody').innerHTML = tableHTML(); return; }
+  const sg = t.closest('[data-seg]'); if (sg) { const id = sg.dataset.eid, path = sg.dataset.seg; setPath(curSet().items[id], path, sg.dataset.val); if (path !== 'st') curSet().items[id].auto = false; saveEXP();
+    sg.parentElement.querySelectorAll('[data-seg]').forEach(b => b.setAttribute('aria-pressed', b === sg)); refreshItem(id, ['stated.op', 'op', 'tolType'].includes(path)); return; }
+  const ap = t.closest('[data-act="entapply"]'); if (ap) { const it = curSet().items[ap.dataset.eid]; applyReading(it, parseRaw(it.raw.t, it.raw.tol, it.unit)); saveEXP(); refreshItem(ap.dataset.eid, true); return; }
+  const er = t.closest('tr[data-erow]'); if (er) { SP.view = 'items'; SP.cur = er.dataset.erow; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); specTab(); $('#spSide')?.scrollTo(0, 0); return; }
   const sp = t.closest('[data-spec]'), pt = t.closest('[data-part]'), ws = t.closest('[data-ws]'), vw = t.closest('[data-spview]');
   if (vw) { SP.view = vw.dataset.spview; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b === vw)); specTab(); return; }
   if (sp) { SP.view = 'items'; SP.cur = sp.dataset.spec; document.querySelectorAll('[data-spview]').forEach(b => b.setAttribute('aria-pressed', b.dataset.spview === 'items')); specTab(); const d = $('#spDetail'); if (d && d.getBoundingClientRect().top < 60) $('#specPage').scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); return; }
@@ -2336,12 +2439,15 @@ $('#specPage').addEventListener('click', e => {
 });
 $('#specPage').addEventListener('input', e => {
   const t = e.target;
-  if (t.dataset.ef) { setPath(curSet().items[t.dataset.eid], t.dataset.ef, t.type === 'checkbox' ? t.checked : t.value); saveEXP(); refreshItem(t.dataset.eid); return; }
+  if (t.dataset.ef) { const id = t.dataset.eid, it = curSet().items[id]; setPath(it, t.dataset.ef, t.type === 'checkbox' ? t.checked : t.value);
+    // fresh item: read the pasted wording straight away; afterwards only suggest
+    let rb = false; if (/^(raw\.|unit$)/.test(t.dataset.ef)) { if ((readingEmpty(it) || it.auto) && (it.raw.t || it.raw.tol)) { applyReading(it, parseRaw(it.raw.t, it.raw.tol, it.unit)); it.auto = true; rb = true; } } else if (READ_KEYS.includes(t.dataset.ef) || t.dataset.ef.startsWith('stated.')) it.auto = false;
+    saveEXP(); refreshItem(id, rb); return; }
   if (t.dataset.iss) { setPath(curSet().iss, t.dataset.iss, t.value); saveEXP(); return; }
 });
 $('#specPage').addEventListener('change', e => {
   const t = e.target;
-  if (t.id === 'expSel' || t.name === 'expActive') { EXP.active = t.value; EXP.cmp = EXP.cmp.filter(x => x !== EXP.active); saveEXP(); specTab(); return; }
+  if (t.id === 'expSel' || t.name === 'expActive') { EXP.active = t.value; SP.listFor = null; EXP.cmp = EXP.cmp.filter(x => x !== EXP.active); saveEXP(); specTab(); return; }
   if (t.dataset.cmp) { const id = t.dataset.cmp; EXP.cmp = t.checked ? [...new Set([...EXP.cmp, id])] : EXP.cmp.filter(x => x !== id); saveEXP(); specTab(); return; }
   if (t.id === 'csvAll') { SP.csvAll = t.checked; exportDlg('csv'); }
 });
