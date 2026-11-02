@@ -7,8 +7,10 @@
 <meta name="description" content="Zeekr 7X AR-HUD(HA1SZK63E)를 분해 사진과 BOM으로 재구성한 3D 해부도. 부품별 보기, 분해, 차량 장착 상태의 광로.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* Pretendard (SIL OFL 1.1, fonts/Pretendard-LICENSE.txt) shipped with the page: one variable file for every weight */
+@font-face { font-family: 'Pretendard Variable'; font-weight: 45 920; font-style: normal; font-display: swap; src: url('fonts/PretendardVariable.woff2') format('woff2-variations'), url('fonts/PretendardVariable.woff2') format('woff2'); }
 /* Layout: the 3D stage fills everything under a slim header. Three folding windows float over it:
    parts (top-left, list ⇄ part detail), playback (top-right), product info (bottom-right). Light, plain engineering look. */
 :root {
@@ -24,7 +26,7 @@
   --ok: #1f8a4c;
   --stage: #e6e9ed;
   --hdr: 52px;
-  --sans: 'IBM Plex Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
   color-scheme: light;
 }
@@ -619,7 +621,7 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
   --sh-1: 0 1px 2px rgba(16, 24, 40, .05), 0 0 0 1px rgba(16, 24, 40, .04);
   --sh-2: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .08);
 }
-body { letter-spacing: -.003em; }
+body { letter-spacing: -.01em; }
 /* header */
 header { border-bottom: 1px solid var(--line); box-shadow: 0 1px 0 rgba(16,24,40,.02); }
 header h1 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
@@ -1022,7 +1024,7 @@ const pcbTex = canvasTex(1400, 325, (g, w, h) => {
 function chipTex(lines, big) { return canvasTex(256, 256, (g, w) => { g.fillStyle = '#16171a'; g.fillRect(0, 0, w, w); g.fillStyle = '#2a2b2f'; g.beginPath(); g.arc(34, 34, 12, 0, 7); g.fill(); g.fillStyle = '#c3c6cc'; g.textAlign = 'center'; lines.forEach((t, i) => { g.font = (i === 0 && big ? '700 46px ' : '500 28px ') + '"IBM Plex Mono", monospace'; g.fillText(t, w / 2, 100 + i * 42); }); }); }
 const fpcTex = canvasTex(1024, 256, (g, w, h) => { const r = rng(11); g.fillStyle = '#c96a1c'; g.fillRect(0, 0, w, h); g.fillStyle = '#a8501a'; g.fillRect(60, 40, 900, 170); for (let i = 0; i < 260; i++) { g.fillStyle = r() < .7 ? '#d8d2c8' : '#2a2a2a'; g.fillRect(80 + r() * 860, 50 + r() * 150, 8 + r() * 6, 5 + r() * 4); } g.fillStyle = '#f4f2ee'; g.fillRect(110, 150, 300, 90); g.fillStyle = '#222'; g.font = '500 17px "IBM Plex Mono", monospace'; ['CUS PN:123420000260', 'TM PN:TL051XFKP01-01', 'DATE:25-09-12', 'SN:05165'].forEach((t, i) => g.fillText(t, 190, 172 + i * 20)); });
 const hexTex = canvasTex(512, 256, (g, w, h) => { g.fillStyle = 'rgba(235,242,248,.5)'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(120,140,160,.8)'; g.lineWidth = 2; const s = 16; for (let y = 0, row = 0; y < h + s; y += s * 1.5, row++) for (let x = 0; x < w + s; x += s * Math.sqrt(3)) { const ox = x + (row % 2 ? s * Math.sqrt(3) / 2 : 0); g.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 3 * k + Math.PI / 6; g.lineTo(ox + s * Math.cos(a), y + s * Math.sin(a)); } g.closePath(); g.stroke(); } });
-const labelTex = canvasTex(600, 300, (g, w, h) => { g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, w, h); g.fillStyle = '#111'; g.font = '500 17px "IBM Plex Mono", monospace'; ['SN: 2510051668', 'HWSD:8896963628/C', 'SWBL:8896965321/D', 'SWLM:6608451110/A', '车型: CX1E', '零件名称: 抬头显示器', '生产日期: 2025.10.05'].forEach((t, i) => g.fillText(t, 22, 40 + i * 27)); g.font = '500 32px "IBM Plex Sans KR", sans-serif'; ['ZEEKR', 'HA1SZK63E', '752007', '6608451043', 'MADE IN CHINA'].forEach((t, i) => g.fillText(t, 330, 50 + i * 40)); for (let i = 0; i < 70; i++) g.fillRect(22 + i * 7, 262, (i % 3) + 1, 26); });
+const labelTex = canvasTex(600, 300, (g, w, h) => { g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, w, h); g.fillStyle = '#111'; g.font = '500 17px "IBM Plex Mono", monospace'; ['SN: 2510051668', 'HWSD:8896963628/C', 'SWBL:8896965321/D', 'SWLM:6608451110/A', '车型: CX1E', '零件名称: 抬头显示器', '生产日期: 2025.10.05'].forEach((t, i) => g.fillText(t, 22, 40 + i * 27)); g.font = '500 32px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; ['ZEEKR', 'HA1SZK63E', '752007', '6608451043', 'MADE IN CHINA'].forEach((t, i) => g.fillText(t, 330, 50 + i * 40)); for (let i = 0; i < 70; i++) g.fillRect(22 + i * 7, 262, (i % 3) + 1, 26); });
 
 // the graphic the cockpit computer sends (unwarped); two copies: black ground for the panel, clear ground for the floating image
 const HUD_W = 1200, HUD_H = 440, ASPECT = HUD_W / HUD_H;
@@ -1039,11 +1041,11 @@ function paintHUD(g, black) {
   [[600, 390, 1], [640, 320, .78], [672, 266, .6]].forEach(([x, y, s]) => { g.beginPath(); g.moveTo(x - 70 * s, y + 34 * s); g.lineTo(x, y - 20 * s); g.lineTo(x + 70 * s, y + 34 * s); g.stroke(); });
   g.lineWidth = 20; g.beginPath(); g.moveTo(690, 215); g.quadraticCurveTo(720, 150, 810, 150); g.stroke();
   g.fillStyle = '#3fe3ff'; g.beginPath(); g.moveTo(860, 150); g.lineTo(800, 112); g.lineTo(800, 188); g.fill();
-  g.fillStyle = '#e9fbff'; g.font = '600 46px "IBM Plex Sans KR", sans-serif'; g.fillText('200 m', 830, 236);
-  g.fillStyle = '#fff'; g.font = '700 176px "IBM Plex Sans KR", sans-serif'; g.fillText('72', 70, 236);
-  g.font = '500 44px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#d7dde2'; g.fillText('km/h', 92, 300);
+  g.fillStyle = '#e9fbff'; g.font = '600 46px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('200 m', 830, 236);
+  g.fillStyle = '#fff'; g.font = '700 176px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('72', 70, 236);
+  g.font = '500 44px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#d7dde2'; g.fillText('km/h', 92, 300);
   g.strokeStyle = '#ff4a3d'; g.lineWidth = 18; g.beginPath(); g.arc(1080, 120, 72, 0, 7); g.stroke();
-  g.fillStyle = '#fff'; g.font = '700 74px "IBM Plex Sans KR", sans-serif'; g.textAlign = 'center'; g.fillText('80', 1080, 146); g.textAlign = 'left';
+  g.fillStyle = '#fff'; g.font = '700 74px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.textAlign = 'center'; g.fillText('80', 1080, 146); g.textAlign = 'left';
   g.strokeStyle = '#7dff9a'; g.lineWidth = 10; g.strokeRect(1030, 270, 100, 56);
   for (let i = 0; i < 3; i++) { g.fillStyle = `rgba(125,255,154,${.9 - i * .25})`; g.fillRect(1020 + i * 10, 344 + i * 22, 120 - i * 20, 12); }
 }
@@ -2099,14 +2101,14 @@ function gamutCov(g, w, h, v) {
   g.setLineDash([5, 4]); g.strokeStyle = C.ref; g.lineWidth = 1.8; polyPath(g, m, ref); g.stroke(); g.setLineDash([]); g.strokeStyle = C.hud; polyPath(g, m, hudT); g.stroke();
   // right: the two questions as stacked bars
   const x0 = tw + 26, bw = w - x0 - 16, U = bw / Math.max(150, H + 5), y1 = 58, y2 = 150, bh = 26;
-  const seg = (x, y, val, col, label) => { if (val <= .2) return x; const ww = val * U; g.fillStyle = col; g.fillRect(x, y, ww, bh); if (ww > 46) { g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(`${label} ${Math.round(val)}`, x + 6, y + 17); } return x + ww; };
-  g.fillStyle = '#1c2228'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(`기준 ${rn} 영역 = 100`, x0, y1 - 8); seg(seg(x0, y1, I, C.both, '겹침'), y1, refOnly, C.ref, `${rn}에만`);
-  g.fillStyle = '#1c2228'; g.font = '600 13px "IBM Plex Sans KR", sans-serif'; g.fillText(`HUD 색역 = ${Math.round(H)}`, x0, y2 - 8); seg(seg(x0, y2, I, C.both, '겹침'), y2, hudOnly, C.hud, 'HUD에만');
+  const seg = (x, y, val, col, label) => { if (val <= .2) return x; const ww = val * U; g.fillStyle = col; g.fillRect(x, y, ww, bh); if (ww > 46) { g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`${label} ${Math.round(val)}`, x + 6, y + 17); } return x + ww; };
+  g.fillStyle = '#1c2228'; g.font = '600 13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`기준 ${rn} 영역 = 100`, x0, y1 - 8); seg(seg(x0, y1, I, C.both, '겹침'), y1, refOnly, C.ref, `${rn}에만`);
+  g.fillStyle = '#1c2228'; g.font = '600 13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`HUD 색역 = ${Math.round(H)}`, x0, y2 - 8); seg(seg(x0, y2, I, C.both, '겹침'), y2, hudOnly, C.hud, 'HUD에만');
   g.strokeStyle = '#1c2228'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x0 + 100 * U, y1 - 4); g.lineTo(x0 + 100 * U, y2 + bh + 4); g.stroke(); g.setLineDash([]); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('100', x0 + 100 * U - 10, y2 + bh + 16);
-  const box = (y, t1, t2, col) => { g.fillStyle = col; g.font = '700 14px "IBM Plex Sans KR", sans-serif'; g.fillText(t1, x0, y); g.fillStyle = '#4a5560'; g.font = '12.5px "IBM Plex Sans KR", sans-serif'; g.fillText(t2, x0, y + 20); };
+  const box = (y, t1, t2, col) => { g.fillStyle = col; g.font = '700 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t1, x0, y); g.fillStyle = '#4a5560'; g.font = '12.5px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t2, x0, y + 20); };
   box(232, `면적비 = HUD 전체 ÷ 기준 = ${Math.round(H)}%`, `(겹침 ${Math.round(I)} + HUD에만 ${Math.round(hudOnly)}) ÷ 100 · 100을 넘을 수 있음`, C.hud);
   box(288, `커버리지 = 겹침 ÷ 기준 = ${Math.round(I)}%`, `기준 색 중 HUD가 실제로 낼 수 있는 비율 · 최대 100`, C.both);
-  g.font = '11.5px "IBM Plex Sans KR", sans-serif'; [['겹침: 둘 다 낼 수 있는 색', C.both], [`${rn}에만: 기준엔 있는데 HUD는 못 내는 색`, C.ref], ['HUD에만: 기준 밖이지만 HUD는 내는 색', C.hud]].forEach(([t, c], k) => { g.fillStyle = c; g.fillRect(x0, 330 + k * 19, 10, 10); g.fillStyle = '#1c2228'; g.fillText(t, x0 + 16, 339 + k * 19); });
+  g.font = '11.5px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; [['겹침: 둘 다 낼 수 있는 색', C.both], [`${rn}에만: 기준엔 있는데 HUD는 못 내는 색`, C.ref], ['HUD에만: 기준 밖이지만 HUD는 내는 색', C.hud]].forEach(([t, c], k) => { g.fillStyle = c; g.fillRect(x0, 330 + k * 19, 10, 10); g.fillStyle = '#1c2228'; g.fillText(t, x0 + 16, 339 + k * 19); });
   return `질문이 두 가지입니다. <b>"HUD 색역이 기준보다 얼마나 큰가?"</b>가 면적비, <b>"기준의 색을 HUD가 얼마나 낼 수 있나?"</b>가 커버리지입니다. 지금 면적비는 <b>${Math.round(H)}%</b>로 기준보다 크지만, 빨간 부분(${rn}에만 있는 색) ${Math.round(refOnly)}만큼은 HUD가 내지 못해서 커버리지는 <b>${Math.round(I)}%</b>입니다.<br>"삼각형 모양"을 0°로 두면 같은 면적비에서 커버리지가 100%가 되고, 돌릴수록 줄어듭니다(삼각형 모양은 설명용). 그래서 "125% ${rn}"라는 말만으로는 기준 색을 다 낼 수 있는지 알 수 없습니다.`;
 }
 // ④ what the driver sees: designed HUD colours pulled toward white until they fit the HUD triangle
@@ -2120,7 +2122,7 @@ function gamutHud(g, w, h, pN) {
   const want = COLS.map(c => xyY(c[1])), got = want.map(fit), dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
   const tw = Math.min(w * .36, h * .95), m = cie(g, tw, h); tri(g, m, SRGB, '#c8780f', null, [2, 3]); tri(g, m, disp, '#1f62d1', 'rgba(31,98,209,.10)');
   want.forEach((p, i) => { const q = got[i]; g.strokeStyle = '#66717c'; g.lineWidth = 1; g.beginPath(); g.moveTo(m.X(p[0]), m.Yp(p[1])); g.lineTo(m.X(q[0]), m.Yp(q[1])); g.stroke(); g.strokeStyle = `rgb(${COLS[i][1]})`; g.lineWidth = 2; g.beginPath(); g.arc(m.X(p[0]), m.Yp(p[1]), 5, 0, 7); g.stroke(); g.fillStyle = `rgb(${rgbOf(q)})`; g.beginPath(); g.arc(m.X(q[0]), m.Yp(q[1]), 4, 0, 7); g.fill(); });
-  g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#66717c'; g.fillText('○ 설계 색 → ● 실제 보이는 색', 30, 16);
+  g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#66717c'; g.fillText('○ 설계 색 → ● 실제 보이는 색', 30, 16);
   const x0 = tw + 14, pw = w - x0, ph = (h - 8) / 2;
   const icon = (cx, cy, r, i, col) => { g.fillStyle = g.strokeStyle = col; g.lineWidth = r * .22; g.lineJoin = g.lineCap = 'round';
     if (i === 0) { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r * 1.05, cy + r * .8); g.lineTo(cx - r * 1.05, cy + r * .8); g.closePath(); g.stroke(); g.fillRect(cx - r * .09, cy - r * .35, r * .18, r * .65); }
@@ -2130,8 +2132,8 @@ function gamutHud(g, w, h, pN) {
     if (i === 4) { g.beginPath(); g.moveTo(cx - r * .4, cy + r); g.lineTo(cx - r * .4, cy); g.quadraticCurveTo(cx - r * .4, cy - r * .5, cx + r * .2, cy - r * .5); g.stroke(); g.beginPath(); g.moveTo(cx + r * .9, cy - r * .5); g.lineTo(cx + r * .2, cy - r); g.lineTo(cx + r * .2, cy); g.closePath(); g.fill(); } };
   [[0, '설계한 색', COLS.map(c => `rgb(${c[1]})`)], [ph + 8, `이 HUD에서 보이는 색 (NTSC ${pN}%)`, got.map(q => `rgb(${rgbOf(q)})`)]].forEach(([y0, label, cols]) => {
     g.save(); g.beginPath(); g.rect(x0, y0, pw, ph); g.clip(); g.translate(x0, y0); road(g, pw, ph, 0, true); const step = pw / COLS.length, r = Math.min(step * .22, ph * .16);
-    COLS.forEach(([n], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(n, cx, cy + r * 1.9); g.textAlign = 'start'; });
-    g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
+    COLS.forEach(([n], i) => { const cx = step * (i + .5), cy = ph * .45; icon(cx, cy, r, i, cols[i]); g.fillStyle = cols[i]; g.font = `600 ${Math.max(11, r * .55)}px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`; g.textAlign = 'center'; g.fillText(n, cx, cy + r * 1.9); g.textAlign = 'start'; });
+    g.fillStyle = 'rgba(0,0,0,.55)'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillRect(8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.fillText(label, 18, 23); g.restore(); });
   const pr = (a, b) => Math.round(Math.min(1, dist(got[a], got[b]) / dist(want[a], want[b])) * 100), rw = pr(0, 1), gc = pr(2, 3);
   return `색역이 좁으면 원색이 흰색 쪽으로 끌려가 물빠져 보이고, 비슷한 색끼리 가까워집니다. 설계 대비 남은 색 차이: 경고↔주의 <b>${rw}%</b>, 정상↔안내 <b>${gc}%</b>. 왼쪽 그림의 회색 선이 각 색이 끌려간 거리입니다.<br>이 화면 자체가 sRGB라 그보다 넓은 색은 똑같이 보입니다. 아이콘 색과 HUD 삼각형 모양은 설명용입니다.`;
 }
@@ -2144,8 +2146,8 @@ function ctolBox(g, w, h, v) {
   g.setLineDash([4, 4]); g.strokeStyle = '#9aa4ae'; g.beginPath(); g.arc(X(0), Y(0), X(v.d) - X(0), 0, 7); g.stroke(); g.setLineDash([]);
   const okx = Math.abs(v.mx) <= v.d + 1e-12, oky = Math.abs(v.my) <= v.d + 1e-12, ok = okx && oky;
   g.fillStyle = '#1c2228'; g.beginPath(); g.arc(X(0), Y(0), 4, 0, 7); g.fill(); g.fillStyle = ok ? '#2a7d4f' : '#d1493f'; g.beginPath(); g.arc(X(v.mx), Y(v.my), 6, 0, 7); g.fill();
-  const tx = ox + S + 24; g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('ΔCx (가로) · ΔCy (세로)', ox, 12);
-  [['파란 네모: |ΔCx| ≤ d 그리고 |ΔCy| ≤ d', '#1f62d1'], ['회색 점선 원: 두 차이를 합친 색차라면 (원본과 다름)', '#66717c'], ['검은 점: 기준 색좌표', '#1c2228'], [`${ok ? '초록' : '빨강'} 점: 측정 예시`, ok ? '#2a7d4f' : '#d1493f']].forEach(([t, c], i) => { g.fillStyle = c; g.font = '11.5px "IBM Plex Sans KR", sans-serif'; g.fillText(t, tx, 50 + i * 20); });
+  const tx = ox + S + 24; g.fillStyle = '#1c2228'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('ΔCx (가로) · ΔCy (세로)', ox, 12);
+  [['파란 네모: |ΔCx| ≤ d 그리고 |ΔCy| ≤ d', '#1f62d1'], ['회색 점선 원: 두 차이를 합친 색차라면 (원본과 다름)', '#66717c'], ['검은 점: 기준 색좌표', '#1c2228'], [`${ok ? '초록' : '빨강'} 점: 측정 예시`, ok ? '#2a7d4f' : '#d1493f']].forEach(([t, c], i) => { g.fillStyle = c; g.font = '11.5px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t, tx, 50 + i * 20); });
   return `측정 예시 ΔCx = ${v.mx.toFixed(3)}, ΔCy = ${v.my.toFixed(3)} → |ΔCx| ${okx ? '≤' : '>'} ${v.d.toFixed(3)}, |ΔCy| ${oky ? '≤' : '>'} ${v.d.toFixed(3)} → <b>${ok ? '두 축 모두 범위 안' : '범위 밖'}</b>.<br>Cx와 Cy를 각각 보므로 허용 범위는 원이 아니라 네모입니다. 그림 중심은 흔히 쓰는 흰색 D65(0.3127, 0.3290)로 잡았습니다.`;
 }
 const RS = triArea(SRGB) / triArea(NTSC); // sRGB area ÷ NTSC 1953 area, CIE 1931 xy
@@ -2425,10 +2427,10 @@ function gamutStd(g, w, h, pN, pS, RS) {
   tri(g, m, NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]), '#1f62d1', 'rgba(31,98,209,.14)');
   STD.forEach(([, p, c, d]) => tri(g, m, p, c, null, d));
   const x0 = tw + 24, bw = w - x0 - 110, A = p => triArea(p) / triArea(NTSC) * 100, rows = [...STD.map(([n, p, c, , t]) => [n, A(p), c, t]), ['이 HUD', pN, '#1f62d1', `= sRGB의 ${pS}%`]].sort((a, b) => b[1] - a[1]), mx = Math.max(...rows.map(r => r[1]));
-  g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1c2228'; g.fillText('삼각형 면적 (NTSC = 100)', x0, 22);
+  g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#1c2228'; g.fillText('삼각형 면적 (NTSC = 100)', x0, 22);
   const rh = Math.min(52, (h - 40) / rows.length);
   rows.forEach(([n, a, c, t], i) => { const y = 36 + i * rh, bwid = a / mx * bw; g.fillStyle = c; g.globalAlpha = n === '이 HUD' ? 1 : .75; g.fillRect(x0, y, bwid, 16); g.globalAlpha = 1;
-    g.fillStyle = '#1c2228'; g.font = `${n === '이 HUD' ? 700 : 600} 12px "IBM Plex Sans KR", sans-serif`; g.fillText(`${n}  ${Math.round(a)}`, x0 + bwid + 6, y + 13); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(t, x0, y + 30); });
+    g.fillStyle = '#1c2228'; g.font = `${n === '이 HUD' ? 700 : 600} 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`; g.fillText(`${n}  ${Math.round(a)}`, x0 + bwid + 6, y + 13); g.fillStyle = '#66717c'; g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t, x0, y + 30); });
   return `<b>RGB</b>는 기준이 아니라 색을 만드는 방식입니다. 모든 디스플레이가 빨강·초록·파랑 세 원색을 섞어 색을 만들고, 세 원색의 위치가 삼각형 꼭짓점입니다. <b>NTSC·sRGB·DCI-P3·BT.2020</b>은 "이 세 점을 기준으로 삼자"고 정한 기준 삼각형입니다.<br>
     그래서 같은 디스플레이도 기준에 따라 숫자가 바뀝니다. 같은 색도도(CIE 1931 xy)·같은 면적비 방식을 가정하면 sRGB는 NTSC 면적의 약 ${Math.round(RS * 100)}%(흔히 약 72%로 인용)라서 <b>NTSC ${Math.round(RS * 100)}% ≈ sRGB 100%</b>, <b>sRGB 90% ≈ NTSC ${Math.round(90 * RS)}%</b>, <b>NTSC 70% ≈ sRGB ${Math.round(70 / RS)}%</b>입니다.<br>
     또 "면적비"는 넓이만 비교하고, "커버리지"는 기준 삼각형을 실제로 얼마나 덮는지입니다. 면적이 100%여도 삼각형이 비뚤면 커버리지는 낮을 수 있어서, 스펙에는 기준·면적/커버리지·CIE 1931/1976 중 무엇인지 함께 적어야 합니다.`;
@@ -2436,7 +2438,7 @@ function gamutStd(g, w, h, pN, pS, RS) {
 const DEMOS = {
   disparity: { ctl: [['mode', '해석', 0, 1, 1, 0, 'sel:양안 시차인 경우 (예시)|주상–고스트 간격인 경우 (예시)'], ['d', '어긋난 각도', 0, 5, .1, 1, 'mrad'], ['ax', '방향', 0, 1, 1, 0, 'sel:수평|수직']],
     draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .46, hh = hw / ASPECT, x = (w - hw) / 2, y = h * .42 - hh / 2, px = v.d * (w / (24 * 17.453)) * 6, ox = v.ax ? 0 : px, oy = v.ax ? px : 0, mm = v.d * SP.vid;
-      const tag = (t, tx, ty, c) => { g.font = '600 12px "IBM Plex Sans KR", sans-serif'; const tw = g.measureText(t).width + 14; g.fillStyle = c; g.fillRect(tx, ty, tw, 20); g.fillStyle = '#fff'; g.fillText(t, tx + 7, ty + 14); return tw; };
+      const tag = (t, tx, ty, c) => { g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; const tw = g.measureText(t).width + 14; g.fillStyle = c; g.fillRect(tx, ty, tw, 20); g.fillStyle = '#fff'; g.fillText(t, tx + 7, ty + 14); return tw; };
       g.setLineDash([6, 5]); g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 1.5; g.strokeRect(x - 8, y - 8, hw + 16, hh + 16); g.setLineDash([]);
       if (!v.mode) { hud(g, x - ox / 2, y - oy / 2, hw, hh, .6); hud(g, x + ox / 2, y + oy / 2, hw, hh, .6); g.lineWidth = 2; g.strokeStyle = '#ff6b5e'; g.strokeRect(x - ox / 2, y - oy / 2, hw, hh); g.strokeStyle = '#4fc3ff'; g.strokeRect(x + ox / 2, y + oy / 2, hw, hh);
         const a = tag('왼눈이 보는 상', x, y + hh + 18, '#d1493f'); tag('오른눈이 보는 상', x + a + 8, y + hh + 18, '#1f7fbf'); }
@@ -2482,7 +2484,7 @@ const DEMOS = {
   grad: { ctl: [['gr', '휘도 변화율', 0, 10, .5, 3, '%/cm'], ['x', '머리 위치', -6.5, 6.5, .5, 3, 'cm']],
     draw(g, w, h, v) { g.fillStyle = '#f6f8fa'; g.fillRect(0, 0, w, h); const bw = w - 80, bh = h * .45, bx = 40, by = 30;
       for (let i = 0; i < 52; i++) { const xc = -6.5 + 13 * (i + .5) / 52, L = Math.max(0, 1 - v.gr / 100 * Math.abs(xc)); g.fillStyle = `rgb(${Math.round(255 * L)},${Math.round(225 * L + 20)},${Math.round(130 * L + 20)})`; g.fillRect(bx + bw * i / 52, by, bw / 52 + 1, bh); }
-      g.strokeStyle = '#1c2228'; g.strokeRect(bx, by, bw, bh); g.fillStyle = '#1c2228'; g.font = '12px "IBM Plex Sans KR", sans-serif'; g.fillText('아이박스 13 cm (가로, 설명용 가정)', bx, by - 8);
+      g.strokeStyle = '#1c2228'; g.strokeRect(bx, by, bw, bh); g.fillStyle = '#1c2228'; g.font = '12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('아이박스 13 cm (가로, 설명용 가정)', bx, by - 8);
       const hx = bx + bw * (v.x + 6.5) / 13; g.beginPath(); g.arc(hx, by + bh / 2, 9, 0, 7); g.fillStyle = '#1f62d1'; g.fill();
       const L = Math.max(0, 1 - v.gr / 100 * Math.abs(v.x)); hud(g, w / 2 - 120, by + bh + 14, 240, 240 / ASPECT, .2 + .8 * L);
       return `중심에서 ${f1(Math.abs(v.x))} cm 움직이면 밝기가 <b>${f1((1 - L) * 100)}%</b> 줄어듭니다. 아이박스 끝(6.5 cm)에서는 ${f1(Math.min(100, v.gr * 6.5))}%입니다.`; } },
@@ -2490,7 +2492,7 @@ const DEMOS = {
   sun: { ctl: [['pol', 'HUD 빛의 편광 (예시)', 0, 2, 1, 0, 'sel:수평|수직|원편광'], ['ax', '선글라스 축', 0, 90, 5, 90, '°'], ['tr', '선글라스 기본 투과율', 10, 60, 1, 30, '%']],
     draw(g, w, h, v) { road(g, w, h, .9); const pa = [0, 90, null][v.pol], T = pa === null ? .5 : Math.cos((v.ax - pa) * Math.PI / 180) ** 2;
       g.fillStyle = 'rgba(30,25,15,.55)'; g.fillRect(0, 0, w, h); const hw = w * .55, hh = hw / ASPECT; hud(g, (w - hw) / 2, h * .42 - hh / 2, hw, hh, Math.max(.03, T));
-      g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, 8, 230, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('편광 선글라스인 경우의 예시', 16, 23);
+      g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(8, 8, 230, 22); g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('편광 선글라스인 경우의 예시', 16, 23);
       const B = 10000; return `편광 선글라스 예시입니다. 선글라스 축과 HUD 빛의 방향이 어긋난 만큼 어두워집니다. 통과율 = cos²(각도 차) = <b>${Math.round(T * 100)}%</b>.<br>예: HUD ${B.toLocaleString()} nit × 렌즈 기본 투과 ${v.tr}% × ${Math.round(T * 100)}% ≈ <b>${Math.round(B * v.tr / 100 * T).toLocaleString()} nit</b>`; } },
 
   white: { ctl: [['u', '균일도 (최소/최대)', 50, 100, 1, 80, '%']],
@@ -2518,7 +2520,7 @@ const DEMOS = {
       g.save(); g.beginPath(); g.rect(x0, y0, hw, hh); g.clip(); g.fillStyle = grey(skyL + blk); g.fillRect(x0, y0, hw, hy - y0); g.fillStyle = grey(roadL + blk); g.fillRect(x0, hy, hw, y0 + hh - hy);
       g.strokeStyle = grey((roadL + blk) * 3); g.lineWidth = 3; g.beginPath(); g.moveTo(sw / 2 - 5, hy); g.lineTo(sw * .1, h); g.moveTo(sw / 2 + 5, hy); g.lineTo(sw * .9, h); g.stroke(); g.restore();
       hud(g, x0, y0, hw, hh, Math.min(1, .35 + .65 * t(v.n)));
-      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, 8, 218, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('밤 운전자 시야 (밝기는 로그 스케일)', 16, 23);
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, 8, 218, 22); g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('밤 운전자 시야 (밝기는 로그 스케일)', 16, 23);
       // luminance ladder: every value on one log axis
       const lx = sw + 54, top = 34, bot = h - 24, Y = L => bot - t(L) * (bot - top);
       g.fillStyle = '#fff'; g.fillRect(sw, 0, w - sw, h); g.fillStyle = '#1c2228'; g.fillText('휘도 (nit, 로그)', sw + 14, 20);
@@ -2526,7 +2528,7 @@ const DEMOS = {
       [.001, .01, .1, 1, 10, 100, 1000].forEach(L => { g.fillRect(lx - 4, Y(L), 8, 1); g.fillText(L >= 1 ? String(L) : String(L), sw + 8, Y(L) + 3); });
       const marks = [[v.n, 'HUD 흰색', '#1f62d1'], [roadL + blk, '도로 + HUD 검정', '#c8780f'], [roadL, '도로', '#66717c'], [skyL + blk, '하늘 + HUD 검정', '#c8780f'], [skyL, '하늘', '#66717c']].sort((a, b) => b[0] - a[0]);
       let lastY = -99; marks.forEach(([L, txt, c]) => { const y = Y(L), ty = Math.max(y, lastY + 14); lastY = ty; g.fillStyle = c; g.beginPath(); g.arc(lx, y, 3.5, 0, 7); g.fill(); g.strokeStyle = c; g.beginPath(); g.moveTo(lx + 4, y); g.lineTo(lx + 12, ty); g.stroke();
-        g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${txt} ${L < .01 ? L.toFixed(3) : L < 10 ? f2(L) : Math.round(L)}`, lx + 15, ty + 4); });
+        g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`${txt} ${L < .01 ? L.toFixed(3) : L < 10 ? f2(L) : Math.round(L)}`, lx + 15, ty + 4); });
       const xs = (skyL + blk) / skyL, xr = (roadL + blk) / roadL;
       return `검은 부분 밝기 = 밤 밝기 ÷ 명암비 = ${v.n} ÷ ${v.cr} = <b>${blk < .01 ? blk.toFixed(3) : f2(blk)} nit</b>. 이 빛이 허상 사각형 전체에 깔립니다.<br>어두운 하늘 쪽은 배경보다 <b>${xs >= 10 ? Math.round(xs) : f1(xs)}배</b> 밝아져 사각형이 잘 보이고, 가로등 비친 도로 쪽은 <b>+${Math.round((xr - 1) * 100)}%</b>만 밝아집니다. 낮에는 배경이 수천 nit라 검은 부분이 묻힙니다.`; } },
 
@@ -2542,11 +2544,11 @@ const DEMOS = {
       [[0, null, '차 A · 목표 색'], [half, tinted(f), `차 B · 공차 끝 (${v.d.toFixed(3)}${k > 1 ? ' × 3' : ''})`]].forEach(([x0, img, label]) => {
         g.save(); g.beginPath(); g.rect(x0, 0, half, ph); g.clip(); g.translate(x0, 0); road(g, half, ph, .35); g.restore();
         const hw = half * .82, hh = hw / ASPECT; g.drawImage(img || hudClear, x0 + (half - hw) / 2, ph * .42 - hh / 2, hw, hh);
-        g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(x0 + 8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText(label, x0 + 18, 23);
+        g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(x0 + 8, 8, g.measureText(label).width + 20, 22); g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(label, x0 + 18, 23);
       });
       g.fillStyle = '#fff'; g.fillRect(half - 1, 0, 2, ph);
       g.fillStyle = `rgb(${t0.map(gam)})`; g.fillRect(0, ph, half, 46); g.fillStyle = `rgb(${t1.map(gam)})`; g.fillRect(half, ph, half, 46);
-      g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('흰색만 비교', 10, ph + 28);
+      g.fillStyle = '#66717c'; g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('흰색만 비교', 10, ph + 28);
       return `같은 차종인데 HUD마다 흰색이 이만큼 다를 수 있다는 뜻입니다. 흰 숫자·글자가 ${['누렇게', '푸르게', '초록빛으로', '분홍빛으로'][v.dir]} 보입니다.<br>흰색 근처에서 눈이 겨우 구분하는 차이는 대략 0.003~0.005(대략적 기준)라, 0.01이면 클러스터나 센터 화면과 나란히 볼 때 눈에 띕니다. LED 빈(bin)을 좁게 관리할수록 공차를 줄일 수 있습니다.`; } },
   sat: { ctl: [['r', '빨강 채도', 30, 100, 1, 95, '%'], ['gg', '초록 채도', 30, 100, 1, 80, '%'], ['bb', '파랑 채도', 30, 100, 1, 90, '%']],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
@@ -2556,12 +2558,12 @@ const DEMOS = {
       tri(g, m, SRGB, '#c8780f', null, [2, 3]);
       pts.forEach(([x, y], i) => { g.strokeStyle = '#9aa4ae'; g.lineWidth = 1; g.beginPath(); g.moveTo(m.X(D65[0]), m.Yp(D65[1])); g.lineTo(m.X(SRGB[i][0]), m.Yp(SRGB[i][1])); g.stroke();
         g.fillStyle = `rgb(${rgb[i]})`; g.beginPath(); g.arc(m.X(x), m.Yp(y), 6, 0, 7); g.fill(); g.strokeStyle = '#1c2228'; g.stroke(); g.fillStyle = '#1c2228'; g.font = '600 11px "IBM Plex Mono", monospace'; g.fillText(`${nm[i]} ${Math.round(ks[i] * 100)}%`, m.X(x) + 8, m.Yp(y) - 6); });
-      g.fillStyle = '#fff'; g.beginPath(); g.arc(m.X(D65[0]), m.Yp(D65[1]), 4, 0, 7); g.fill(); g.strokeStyle = '#1c2228'; g.stroke(); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Sans KR", sans-serif'; g.fillText('백색점 (D65 가정)', m.X(D65[0]) + 6, m.Yp(D65[1]) + 14); g.fillText('주황 점선: sRGB 원색 (100%)', 30, 16);
+      g.fillStyle = '#fff'; g.beginPath(); g.arc(m.X(D65[0]), m.Yp(D65[1]), 4, 0, 7); g.fill(); g.strokeStyle = '#1c2228'; g.stroke(); g.fillStyle = '#66717c'; g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('백색점 (D65 가정)', m.X(D65[0]) + 6, m.Yp(D65[1]) + 14); g.fillText('주황 점선: sRGB 원색 (100%)', 30, 16);
       // right: the same three colours as HUD icons, plus what a design tool would call their saturation
       const x0 = tw + 24, cw = (w - x0 - 10) / 3, hsv = c => { const mx = Math.max(...c), mn = Math.min(...c); return mx ? Math.round((mx - mn) / mx * 100) : 0; };
       g.fillStyle = '#0b0d10'; g.fillRect(x0, 0, w - x0, h * .62);
       rgb.forEach((c, i) => { const cx = x0 + cw * (i + .5), cy = h * .3; g.fillStyle = `rgb(${c})`; g.beginPath(); g.arc(cx, cy, Math.min(cw * .3, 46), 0, 7); g.fill();
-        g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.textAlign = 'center'; g.fillText(`${['빨강', '초록', '파랑'][i]}`, cx, h * .62 + 22); g.font = '11.5px "IBM Plex Mono", monospace';
+        g.fillStyle = '#1c2228'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.textAlign = 'center'; g.fillText(`${['빨강', '초록', '파랑'][i]}`, cx, h * .62 + 22); g.font = '11.5px "IBM Plex Mono", monospace';
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `채도는 색 하나의 선명도입니다. 여기서는 "백색점에서 원색까지 거리 중 몇 %까지 왔나"로 계산했고, R·G·B가 서로 다를 수 있습니다.<br>같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 다른 값이 나옵니다. 계산 방법이 다르면 숫자도 다릅니다.`; } },
 
@@ -2571,8 +2573,8 @@ const DEMOS = {
       const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', pS = Math.round(v.b ? v.p / RS : v.p), pN = Math.round(v.b ? v.p : v.p * RS);
       if (v.step === 0) { const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1); tri(g, m, SRGB, '#1c2228', null);
         SRGB.forEach(([x, y], k) => { g.fillStyle = ['#e0352b', '#26a843', '#2e56e8'][k]; g.beginPath(); g.arc(m.X(x), m.Yp(y), 6, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); });
-        const x0 = tw + 30; g.fillStyle = '#1c2228'; g.font = '600 14px "IBM Plex Sans KR", sans-serif';
-        [['말발굽 모양 전체', '사람 눈이 볼 수 있는 모든 색'], ['꼭짓점 세 개', '디스플레이의 빨강·초록·파랑 원색'], ['삼각형 안쪽', '세 원색을 섞어서 낼 수 있는 색 = 색역'], ['삼각형 바깥', '이 디스플레이로는 낼 수 없는 색']].forEach(([a, b2], k) => { const y = 50 + k * 64; g.font = '600 14px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#1c2228'; g.fillText(a, x0, y); g.font = '13px "IBM Plex Sans KR", sans-serif'; g.fillStyle = '#4a5560'; g.fillText(b2, x0, y + 22); });
+        const x0 = tw + 30; g.fillStyle = '#1c2228'; g.font = '600 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+        [['말발굽 모양 전체', '사람 눈이 볼 수 있는 모든 색'], ['꼭짓점 세 개', '디스플레이의 빨강·초록·파랑 원색'], ['삼각형 안쪽', '세 원색을 섞어서 낼 수 있는 색 = 색역'], ['삼각형 바깥', '이 디스플레이로는 낼 수 없는 색']].forEach(([a, b2], k) => { const y = 50 + k * 64; g.font = '600 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#1c2228'; g.fillText(a, x0, y); g.font = '13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#4a5560'; g.fillText(b2, x0, y + 22); });
         return `<b>색역</b>은 디스플레이가 낼 수 있는 색의 범위입니다. 모든 디스플레이는 빨강·초록·파랑 세 원색을 섞어 색을 만들기 때문에, 색도도(색을 좌표로 펼친 지도) 위에서 세 원색을 꼭짓점으로 하는 <b>삼각형</b>이 됩니다. 원색이 순수할수록 꼭짓점이 바깥으로 나가 삼각형이 커집니다. 그림의 검은 삼각형은 sRGB입니다. 말발굽 안의 색은 이 화면이 낼 수 있는 범위로 대신 그렸습니다.`; }
       if (v.step === 1) return gamutStd(g, w, h, pN, pS, RS);
       if (v.step === 2) return gamutCov(g, w, h, v);
@@ -2586,11 +2588,11 @@ const DEMOS = {
       g.strokeStyle = '#e6ebf0'; g.lineWidth = 1; g.font = '11px "IBM Plex Mono", monospace'; g.fillStyle = '#66717c';
       for (let t = 20; t <= 110; t += 10) { g.beginPath(); g.moveTo(X(t), T); g.lineTo(X(t), B); g.stroke(); g.fillText(t + '℃', X(t) - 13, B + 16); }
       for (let p = 0; p <= 100; p += 25) { g.beginPath(); g.moveTo(L, Y(p)); g.lineTo(R, Y(p)); g.stroke(); g.fillText(p + '%', 12, Y(p) + 4); }
-      g.fillStyle = '#1c2228'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('밝기(출력) 허용 한계', L, 18);
+      g.fillStyle = '#1c2228'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('밝기(출력) 허용 한계', L, 18);
       const val = (d, t) => { const t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2); if ([t1, p1, t2, p2].some(x => x == null) || t2 === t1) return null; return t <= t1 ? p1 : t >= t2 ? p2 : p1 + (p2 - p1) * (t - t1) / (t2 - t1); };
       sets.forEach(({ name, d }, i) => { const t1 = nv(d.t1), p1 = nv(d.p1), t2 = nv(d.t2), p2 = nv(d.p2), c = SETCOL[i % 5]; if ([t1, p1, t2, p2].some(x => x == null)) return;
         g.strokeStyle = c; g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(20), Y(p1)); g.lineTo(X(t1), Y(p1)); g.lineTo(X(t2), Y(p2)); g.stroke();
-        [[t1, p1], [t2, p2]].forEach(([t, p]) => { g.fillStyle = c; g.beginPath(); g.arc(X(t), Y(p), 4.5, 0, 7); g.fill(); g.font = '600 11px "IBM Plex Sans KR", sans-serif'; g.fillText(`${fmtN(t)}℃ ${fmtN(p)}%`, X(t) + 7, Y(p) - 8 - i * 14); });
+        [[t1, p1], [t2, p2]].forEach(([t, p]) => { g.fillStyle = c; g.beginPath(); g.arc(X(t), Y(p), 4.5, 0, 7); g.fill(); g.font = '600 11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`${fmtN(t)}℃ ${fmtN(p)}%`, X(t) + 7, Y(p) - 8 - i * 14); });
         if (sets.length > 1) { g.fillStyle = c; g.fillText(name, R - 120, T + 14 + i * 16); } });
       g.strokeStyle = '#d1493f'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(X(v.t), T); g.lineTo(X(v.t), B); g.stroke();
       const p = val(sets[0].d, v.t); if (p != null) { g.fillStyle = '#d1493f'; g.beginPath(); g.arc(X(v.t), Y(p), 6, 0, 7); g.fill(); }
@@ -2767,7 +2769,7 @@ function drawISS() {
     $('#issSizeO').textContent = d.toFixed(2) + ' mm';
     road(g, w, h, .55); const hw = w * .62, hh = hw / ASPECT, x0 = (w - hw) / 2, y0 = h * .42 - hh / 2; g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(x0, y0, hw, hh); hud(g, x0, y0, hw, hh, .95);
     const M = imgW() / LCDR.w, arcmin = d / 10 * M / (SP.vid * 100) * 180 / Math.PI * 60, pxPerDeg = w / 24, size = Math.max(1.5, arcmin / 60 * pxPerDeg * 4);
-    g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, 8, 232, 22); g.fillStyle = '#fff'; g.font = '600 12px "IBM Plex Sans KR", sans-serif'; g.fillText('설명용 모델 · 결함 크기 4배 과장', 16, 23);
+    g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(8, 8, 232, 22); g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('설명용 모델 · 결함 크기 4배 과장', 16, 23);
     let out;
     if (blur < 0) { g.fillStyle = 'rgba(40,40,40,.9)'; g.beginPath(); g.arc(w * .5, h * .93, Math.max(2, d * 6), 0, 7); g.fill(); out = `${name}: ${note}`; }
     else { const r = size + blur * 40, a = Math.max(.06, 1 - blur) * (kind === 1 ? .9 : .8); const cx = x0 + hw * .3, cy = y0 + hh * .55;
@@ -2826,6 +2828,7 @@ $('#specPage').addEventListener('change', e => {
   if (t.id === 'csvAll') { SP.csvAll = t.checked; exportDlg('csv'); }
 });
 addEventListener('keydown', e => { if (e.key === 'Escape' && curTab === 'spec') { if (!$('#xDlg').hidden) $('#xDlg').hidden = true; else if (!$('#expPanel').hidden) { $('#expPanel').hidden = true; $('[data-act="panel"]').setAttribute('aria-expanded', 'false'); } } });
+document.fonts?.ready.then(() => { if (SP.redraw) SP.redraw(); });
 $('#vidIn').value = SP.vid.toFixed(1);
 $('#vidIn').addEventListener('input', e => { const v = +e.target.value; if (v > 1) { SP.vid = v; if (SP.redraw) SP.redraw(); } });
 addEventListener('resize', () => { if (curTab === 'spec' && SP.redraw) SP.redraw(); });
