@@ -2627,11 +2627,9 @@ function render() {
 })();
 
 /* each demo: controls + draw(g, w, h, v) → readout html */
-const P3 = [[.68, .32], [.265, .69], [.15, .06]], BT2020 = [[.708, .292], [.17, .797], [.131, .046]];
 // gamut demo, second view: the reference triangles side by side and what one number means in each
 // ── gamut demo: standard triangles that move, one screen measured with two rulers, area vs coverage, reading the spec ──
-const ADOBE = [[.64, .33], [.21, .71], [.15, .06]];
-const GSTD = [['sRGB', SRGB, '#c8780f', '웹·PC 모니터·대부분의 앱 화면 (1996)'], ['AdobeRGB', ADOBE, '#8a4fd1', '사진 편집·인쇄 (1998) · 초록 쪽이 넓음'], ['DCI-P3', P3, '#2a9d6a', '영화관·최신 휴대폰 (2007) · 빨강·초록이 넓음'], ['NTSC', NTSC, '#4a5560', '1953년 TV 기준 · 지금은 넓이 비교용 "자"']];
+const GSTD = [['sRGB', SRGB, '#c8780f', '웹·PC 모니터·대부분의 앱 화면 (1996)'], ['NTSC', NTSC, '#4a5560', '1953년 TV 기준 · 지금은 넓이 비교용 "자"']];
 const GF = (wt, sz) => `${wt} ${sz}px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`;
 const gCen = p => p.reduce((a, q) => [a[0] + q[0] / 3, a[1] + q[1] / 3], [0, 0]);
 // the example HUD triangle: sRGB scaled to p% of its area, turned a little for the "crooked" shapes (illustration only)
@@ -2655,7 +2653,7 @@ function gamutStds(g, w, h, v) {
   const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1);
   GSTD.forEach(([, p, c], i) => { if (i !== v.std) tri(g, m, p, 'rgba(255,255,255,.75)', null, [4, 4]); });
   boldTri(g, m, glide('std', GSTD[v.std][1]), '#fff');
-  const x0 = tw + 26, bw = w - x0 - 70, A = p => polyArea(p) / polyArea(NTSC) * 100, rh = Math.min(70, (h - 30) / 4);
+  const x0 = tw + 26, bw = w - x0 - 70, A = p => polyArea(p) / polyArea(NTSC) * 100, rh = Math.min(70, (h - 30) / GSTD.length);
   g.fillStyle = '#1c2228'; g.font = GF(600, 12); g.fillText('삼각형 넓이 (NTSC = 100)', x0, 18);
   GSTD.forEach(([n, p, c, t], i) => { const y = 32 + i * rh, on = i === v.std, bwid = A(p) / 100 * bw;
     if (on) { g.fillStyle = '#eef3fd'; g.fillRect(x0 - 8, y - 6, w - x0, rh - 6); }
@@ -2663,7 +2661,7 @@ function gamutStds(g, w, h, v) {
     g.fillStyle = '#1c2228'; g.font = GF(on ? 700 : 600, 14); g.fillText(n, x0, y + 14); g.font = GF(600, 12); g.fillText(`${Math.round(A(p))}`, x0 + bwid + 6, y + 32);
     g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText(t, x0, y + 48); });
   const [n, p] = GSTD[v.std];
-  return `<b>${n}</b> 삼각형입니다. 기준마다 세 원색(꼭짓점)의 위치가 달라서 삼각형 크기와 모양이 다릅니다. 넓이로 보면 sRGB는 NTSC의 약 <b>${Math.round(RS * 100)}%</b>입니다.<br>스펙의 "90% sRGB", "70% NTSC"는 HUD 삼각형을 이 기준 삼각형 중 하나와 비교한 숫자입니다. 다음 단계에서 같은 HUD를 다른 기준으로 재 봅니다.`;
+  return `<b>${n}</b> 삼각형입니다. 두 기준은 세 원색(꼭짓점)의 위치가 달라서 삼각형 크기와 모양이 다릅니다. 넓이로 보면 sRGB는 NTSC의 약 <b>${Math.round(RS * 100)}%</b>입니다.<br>스펙의 "90% sRGB", "70% NTSC"는 HUD 삼각형을 이 두 기준 삼각형 중 하나와 비교한 숫자입니다. 다음 단계에서 같은 HUD를 다른 기준으로 재 봅니다.`;
 }
 // ③ one HUD, two rulers: only the reference changes, and the number changes with it
 function gamutRuler(g, w, h, v) {
@@ -2851,7 +2849,7 @@ const DEMOS = {
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `채도는 색 하나의 선명도입니다. 여기서는 "백색점에서 원색까지 거리 중 몇 %까지 왔나"로 계산했고, R·G·B가 서로 다를 수 있습니다.<br>같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 다른 값이 나옵니다. 계산 방법이 다르면 숫자도 다릅니다.`; } },
 
-  gamut: { minW: 540, ctl: [['step', '단계', 0, 5, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 4가지|③ 같은 화면, 다른 기준|④ 면적비 vs 커버리지|⑤ 우리 스펙 읽기|⑥ 운전자 눈에서 달라지는 것'], ['std', '기준 삼각형', 0, 3, 1, 0, 'sel:sRGB · 웹·모니터|AdobeRGB · 사진|DCI-P3 · 영화·폰|NTSC · 옛 TV'], ['b', '재는 기준', 0, 1, 1, 0, 'sel:sRGB로 재기|NTSC로 재기'], ['p', 'HUD 크기 (sRGB 넓이 대비)', 50, 140, 1, 90, '%'], ['shape', 'HUD 모양 (설명용)', 0, 2, 1, 1, 'sel:기준과 같은 방향|조금 비뚤어짐|많이 비뚤어짐']],
+  gamut: { minW: 540, ctl: [['step', '단계', 0, 5, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (sRGB·NTSC)|③ 같은 화면, 다른 기준|④ 면적비 vs 커버리지|⑤ 우리 스펙 읽기|⑥ 운전자 눈에서 달라지는 것'], ['std', '기준 삼각형', 0, 1, 1, 0, 'sel:sRGB · 웹·모니터|NTSC · 옛 TV'], ['b', '재는 기준', 0, 1, 1, 0, 'sel:sRGB로 재기|NTSC로 재기'], ['p', 'HUD 크기 (sRGB 넓이 대비)', 50, 140, 1, 90, '%'], ['shape', 'HUD 모양 (설명용)', 0, 2, 1, 1, 'sel:기준과 같은 방향|조금 비뚤어짐|많이 비뚤어짐']],
     show: v => [['step'], ['step', 'std'], ['step', 'b', 'p'], ['step', 'b', 'p', 'shape'], ['step', 'p', 'shape'], ['step', 'p']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       if (v.step === 0) { const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1); tri(g, m, SRGB, '#1c2228', null);
