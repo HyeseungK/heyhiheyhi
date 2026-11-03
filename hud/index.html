@@ -722,6 +722,9 @@ header h1 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
 .lesson .ls-steps button { border: 0; background: var(--line-2); }
 .lesson .ls-steps button[aria-current="true"] { background: var(--panel); box-shadow: var(--sh-1); }
 @media (max-width: 1600px) { .legend { display: none; } }
+.ctrlhint { gap: 14px; padding: 7px 14px; font-size: 12.5px; color: var(--muted); pointer-events: none; }
+.ctrlhint span { display: inline-flex; align-items: center; gap: 6px; padding: 0; color: var(--fg); font-weight: 500; }
+.ctrlhint svg { color: var(--muted); flex: none; }
 /* tutorial: a dark button by the title, then a spotlight that walks through each area */
 .tour-btn { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--fg); color: #fff; font-size: 13px; font-weight: 650; white-space: nowrap; box-shadow: 0 2px 8px rgba(16,24,40,.18); transition: transform .15s, box-shadow .15s; }
 .tour-btn .q { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.18); font-size: 12px; font-weight: 800; }
@@ -812,8 +815,8 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
   <div id="labels"></div>
   <div id="tip" hidden></div>
-  <div class="dragmode" role="group" aria-label="드래그 동작"><span>드래그</span><button data-drag="rot" aria-pressed="true" title="드래그로 돌려 보기 (R)">회전</button><button data-drag="pan" aria-pressed="false" title="드래그로 옆으로 옮기기 (M)">이동</button></div>
-  <div class="hint" id="hint">휠: 커서 쪽으로 확대 · Shift/우클릭 드래그: 반대 동작 · R 회전 / M 이동 · 부품 클릭 선택 · 더블클릭 단독 보기 · Esc 해제</div>
+  <div class="dragmode ctrlhint" role="note" aria-label="3D 조작법"><span><svg viewBox="0 0 16 22" width="12" height="16" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1v8" stroke="currentColor" stroke-width="1.6"/><path d='M1.8 8.5V8a6.2 6.2 0 0 1 6.2-6.2V9H1.8z' fill='var(--accent)'/></svg>드래그 회전</span><span><svg viewBox="0 0 16 22" width="12" height="16" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1v8" stroke="currentColor" stroke-width="1.6"/><path d='M14.2 8.5V8A6.2 6.2 0 0 0 8 1.8V9h6.2z' fill='var(--accent)'/></svg>드래그 이동</span><span><svg viewBox="0 0 16 22" width="12" height="16" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1v8" stroke="currentColor" stroke-width="1.6"/><rect x='6.6' y='4' width='2.8' height='4.4' rx='1.4' fill='var(--accent)'/></svg>휠 확대</span></div>
+  <div class="hint" id="hint">Shift·Space + 드래그도 이동 · 트랙패드: 두 손가락 이동, 핀치 확대 · 부품 클릭 선택 · 더블클릭: 부품만 보기 / 빈 곳은 전체 보기 · Esc 해제</div>
   <div class="col lcol">
     <button class="fbtn" id="leftBtn" aria-controls="left" aria-expanded="false"><span class="ic">☰</span>부품 목록<span class="chev">펼치기 ›</span></button>
     <aside id="left" class="float" hidden aria-label="부품 목록"><div class="phead"><span class="ic">☰</span><span>부품 목록</span><button class="x" data-closep="left" aria-label="부품 목록 접기">‹ 접기</button></div><div class="pbody" id="leftBody"></div></aside>
@@ -1610,10 +1613,11 @@ function focus(ids) {
   ids.forEach(id => { const own = objs[ownerOf(id)]; if (!own) return; if (P[id].on) own.obj.traverse(o => { if (o.isMesh && o.userData.pid === id) b.expandByObject(o); }); else b.expandByObject(own.obj); });
   if (b.isEmpty()) return; const s = b.getSize(V()).length(); cam.gt.copy(b.getCenter(V())); cam.gr = Math.min(200, Math.max(14, s * 2.6));
 }
-const ptr = new Map(); let mode = null, down = null, dragMode = 'rot';
-const setDragMode = m => { dragMode = m; document.querySelectorAll('[data-drag]').forEach(b => b.setAttribute('aria-pressed', b.dataset.drag === m)); canvas.style.cursor = m === 'pan' ? 'move' : 'grab'; };
+// controls as in most web 3D viewers: left drag rotates, right/middle drag (or Shift, Ctrl, Space + drag) pans, wheel zooms toward the cursor
+const ptr = new Map(); let mode = null, down = null, spaceDown = false;
 canvas.addEventListener('contextmenu', e => e.preventDefault());
-canvas.addEventListener('pointerdown', e => { $('#hint').style.opacity = 0; canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; const alt = e.button === 2 || e.shiftKey; mode = alt ? (dragMode === 'pan' ? 'rot' : 'pan') : dragMode; canvas.style.cursor = 'grabbing'; });
+canvas.addEventListener('pointerdown', e => { $('#hint').style.opacity = 0; canvas.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.clientX, y: e.clientY }); down = { x: e.clientX, y: e.clientY, t: performance.now() }; mode = e.button === 1 || e.button === 2 || e.shiftKey || e.ctrlKey || e.metaKey || spaceDown ? 'pan' : 'rot'; canvas.style.cursor = mode === 'pan' ? 'move' : 'grabbing'; });
+canvas.addEventListener('mousedown', e => { if (e.button === 1) e.preventDefault(); }); // no browser autoscroll on middle drag
 canvas.addEventListener('pointermove', e => {
   const p = ptr.get(e.pointerId); if (!p) { hover(e); return; }
   const dx = e.clientX - p.x, dy = e.clientY - p.y;
@@ -1624,9 +1628,11 @@ canvas.addEventListener('pointermove', e => {
 });
 const pxWorld = () => 2 * cam.gr * Math.tan(camera.fov * Math.PI / 360) / (canvas.clientHeight || 1); // world units per screen pixel at the target
 function pan(dx, dy) { const r = V().setFromMatrixColumn(camera.matrixWorld, 0), u = V().setFromMatrixColumn(camera.matrixWorld, 1), k = pxWorld(); cam.gt.addScaledVector(r, -dx * k).addScaledVector(u, dy * k); }
-canvas.addEventListener('pointerup', e => { ptr.delete(e.pointerId); canvas.style.cursor = dragMode === 'pan' ? 'move' : 'grab'; if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.t < 500) click(e); down = null; });
+canvas.addEventListener('pointerup', e => { ptr.delete(e.pointerId); canvas.style.cursor = spaceDown ? 'move' : 'grab'; if (down && e.button === 0 && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.t < 500) click(e); down = null; });
 canvas.addEventListener('pointercancel', e => ptr.delete(e.pointerId));
-canvas.addEventListener('wheel', e => { e.preventDefault(); const r0 = cam.gr, r1 = Math.min(5000, Math.max(6, r0 * Math.exp(e.deltaY * .0012))), rc = canvas.getBoundingClientRect();
+canvas.addEventListener('wheel', e => { e.preventDefault(); $('#hint').style.opacity = 0;
+  if (!e.ctrlKey && Math.abs(e.deltaX) > .5) { pan(-e.deltaX, -e.deltaY); return; } // two-finger trackpad swipe
+  const dz = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY, r0 = cam.gr, r1 = Math.min(5000, Math.max(6, r0 * Math.exp(dz * (e.ctrlKey ? .01 : .0012)))), rc = canvas.getBoundingClientRect();
   const ox = e.clientX - rc.left - rc.width / 2, oy = e.clientY - rc.top - rc.height / 2, k = pxWorld() * (1 - r1 / r0), rv = V().setFromMatrixColumn(camera.matrixWorld, 0), uv = V().setFromMatrixColumn(camera.matrixWorld, 1);
   cam.gt.addScaledVector(rv, ox * k).addScaledVector(uv, -oy * k); cam.gr = r1; }, { passive: false });
 const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -1638,7 +1644,8 @@ function pick(e) {
   return h ? h.object.userData.pid : null;
 }
 let lastClick = { id: null, t: 0 };
-function click(e) { const id = pick(e), now = performance.now(); if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderInfo(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
+function click(e) { const id = pick(e) || null, now = performance.now(); if (!id && lastClick.id === null && now - lastClick.t < 380) { select(null, false); goView('iso'); lastClick = { id: undefined, t: 0 }; return; }
+  if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderInfo(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
 let hq = false;
 function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq = false; const id = pick(e), tip = $('#tip'), r = stageEl.getBoundingClientRect(); if (id) { tip.textContent = P[id].full; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } }); }
 
@@ -1655,8 +1662,9 @@ for (const n of ['left', 'play', 'info']) $('#' + n + 'Btn').addEventListener('c
 function setSettings(open) { $('#settings').hidden = !open; $('#setBtn').setAttribute('aria-expanded', open); $('#setChev').textContent = open ? '접기 ▴' : '펼치기 ▾'; }
 $('#setBtn').addEventListener('click', e => { e.stopPropagation(); setSettings($('#settings').hidden); });
 $('#setClose').addEventListener('click', () => setSettings(false));
-document.querySelectorAll('[data-drag]').forEach(b => b.addEventListener('click', () => setDragMode(b.dataset.drag)));
-addEventListener('keydown', e => { if (curTab === 'spec' || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName)) return; if (e.key === 'r' || e.key === 'R') setDragMode('rot'); if (e.key === 'm' || e.key === 'M') setDragMode('pan'); });
+// hold Space to pan with a plain left drag (as in design tools)
+addEventListener('keydown', e => { if (e.code !== 'Space' || curTab === 'spec' || /INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement?.tagName)) return; e.preventDefault(); if (!spaceDown) { spaceDown = true; canvas.style.cursor = 'move'; } });
+addEventListener('keyup', e => { if (e.code === 'Space') { spaceDown = false; canvas.style.cursor = 'grab'; } });
 
 function markViews(v) { document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v)); }
 function partView(h) { state.car = false; markViews(''); setHousing(h); }
@@ -3111,8 +3119,8 @@ const openPanel = (panel, btn) => { if ($(panel).hidden) $(btn).click(); };
 const TOUR = [
   { tab: 'struct', el: '.tabs', t: '세 가지 화면', p: '3D 구조도에서 부품과 빛의 경로를, 광학 스펙에서 각 스펙의 뜻과 전문가 값을, BOM에서 부품 목록을 봅니다.' },
   { tab: 'struct', el: '#left', before: () => openPanel('#left', '#leftBtn'), t: '부품 목록', p: '부품 이름을 누르면 3D에서 그 부품이 강조되고 카메라가 다가갑니다. 눈 아이콘으로 부품을 숨길 수 있습니다.' },
-  { tab: 'struct', rect: () => { const r = $('#stage').getBoundingClientRect(); return { left: r.left + r.width * .28, top: r.top + 30, width: r.width * .44, height: r.height - 150 }; }, t: '3D 모델', p: '드래그로 돌리고, 휠로 커서 쪽을 확대합니다. 부품을 직접 눌러도 선택되고, 더블클릭하면 그 부품만 남습니다.' },
-  { tab: 'struct', el: '.dragmode', t: '회전 / 이동', p: '드래그로 돌릴지, 옆으로 옮길지 고릅니다. 키보드 R(회전)과 M(이동)으로도 바꿀 수 있습니다.' },
+  { tab: 'struct', rect: () => { const r = $('#stage').getBoundingClientRect(); return { left: r.left + r.width * .28, top: r.top + 30, width: r.width * .44, height: r.height - 150 }; }, t: '3D 모델', p: '부품을 직접 눌러도 선택되고, 더블클릭하면 그 부품만 남습니다.' },
+  { tab: 'struct', el: '.ctrlhint', t: '마우스 조작', p: '왼쪽 버튼으로 끌면 회전, 오른쪽 버튼으로 끌면 이동, 휠은 커서 쪽으로 확대입니다. 트랙패드는 두 손가락으로 이동, 핀치로 확대합니다. 빈 곳을 더블클릭하면 전체 보기로 돌아갑니다.' },
   { tab: 'struct', el: '.viewbar', t: '시점', p: '정해 둔 각도로 바로 이동합니다. "차량 장착"과 "운전자 시점"에서는 앞유리와 허상까지 함께 보입니다.' },
   { tab: 'struct', el: '#play', before: () => openPanel('#play', '#playBtn'), t: 'HUD 작동 원리', p: '재생을 누르면 영상 수신부터 허상까지 빛이 지나가는 순서를 단계별로 보여 줍니다. 단계 이름을 눌러 바로 갈 수도 있습니다.' },
   { tab: 'struct', el: '#info', before: () => openPanel('#info', '#infoBtn'), t: '상세 정보', p: '선택한 부품의 역할, 사진, BOM 정보가 여기에 나옵니다. 아무것도 고르지 않으면 제품 정보가 보입니다.' },
