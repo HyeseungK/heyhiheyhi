@@ -781,6 +781,9 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 .sp-grid { grid-template-columns: 232px minmax(0, 1fr); }
 .lv1-title { background: #fafbfc; color: var(--muted); font-size: 11.5px; letter-spacing: .03em; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.pnav { float: right; display: inline-flex; align-items: center; gap: 4px; margin: -2px 0 4px 8px; font: 500 12px/1 var(--mono); color: var(--muted); }
+.pnav .btn { width: 30px; height: 28px; padding: 0; display: grid; place-items: center; font-size: 17px; line-height: 1; }
+.pnav span { min-width: 44px; text-align: center; }
 /* ── phone layer (≤640px): desktop is untouched. Only the core of each tab stays. ── */
 @media (max-width: 640px) {
   :root { --hdr: 96px; }
@@ -826,10 +829,13 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   body[data-tab="bom"] #setBtn { display: none !important; }
   body[data-tab="bom"] header { grid-template-columns: minmax(0, 1fr); }
   /* spec: pick a spec, read one line, play with the picture. Expert entry stays on desktop. */
-  #specPage .expbar, #specPage .sp-views, #expPanel, #xDlg, .sp-side, .sp-split, .sp-more, .sp-hero .eyebrow { display: none !important; }
+  #specPage .sp-views [data-spview="table"], #specPage .expbar, #expPanel, #xDlg, .sp-side, .sp-split, .sp-more, .sp-hero .eyebrow { display: none !important; }
   .sp-wrap { padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px) !important; height: auto !important; }
   .sp-head { padding: 0 16px; margin-bottom: 8px; }
-  .sp-head { display: none !important; }
+  .sp-head { display: block !important; padding: 8px 16px 0 !important; margin: 0 !important; }
+  .sp-head h2, .sp-head .legend, .sp-head .vid { display: none !important; }
+  .sp-head .sp-views { display: grid !important; grid-template-columns: 1fr 1fr; width: 100%; }
+  .sp-head .sp-views button { padding: 7px 4px; font-size: 13.5px; text-align: center; }
   .sp-hero { background: none !important; box-shadow: none !important; }
   .sp-grid { display: block !important; height: auto !important; }
   .sp-list { position: sticky !important; top: 0; z-index: 2; display: flex !important; gap: 4px; overflow-x: auto; padding: 8px 16px !important; margin: 0 0 6px; border-radius: 0 !important; box-shadow: none !important; background: var(--bg) !important; scrollbar-width: none; max-height: none !important; }
@@ -845,7 +851,10 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   .sp-title h2 { font-size: 22px; }
   .sp-title .en { font-size: 12px; }
   .sp-hero .one { font-size: 15px; line-height: 1.6; margin-top: 6px; }
-  .sp-main .demo { border-radius: var(--r) !important; background: var(--panel) !important; box-shadow: var(--sh-1); overflow: hidden; }
+  .sp-main .demo { border-radius: var(--r) !important; background: var(--panel) !important; box-shadow: var(--sh-1); overflow: clip !important; }
+  /* lesson figures stay pinned under the item bar so a slider further down still shows its picture */
+  .lesson .ls-fig { position: sticky; top: 50px; z-index: 1; box-shadow: 0 6px 14px rgba(16,24,40,.08); }
+  .sp-main, .sp-detail, .sp-grid, .lesson, .lesson .ls-body, #demoOut { overflow: visible !important; }
   .sp-main .demo canvas { height: 230px !important; }
   .demo-ctl, .demo-out { padding-left: 14px !important; padding-right: 14px !important; }
   .demo-out { font-size: 14px; }
@@ -1812,6 +1821,14 @@ function renderPlay() {
     <ol class="slist">${STEPS.map((x, i) => `<li class="${play.on && i === play.i ? 'on' : ''}"><button data-go-step="${i}"><span class="n">${i + 1}</span><span>${x.t}</span></button>${play.on && i === play.i ? `<p class="sdesc">${x.s}</p>${x.wiggle ? readout() : ''}` : ''}</li>`).join('')}</ol>`;
   if (phone()) frameOffset();
 }
+const PART_ORDER = TREE.flatMap(b => b.items.flatMap(it => it.g ? [{ g: it.g }, ...GROUPS[it.g].kids.map(id => ({ id }))] : [{ id: it }]));
+const partIdx = sel => PART_ORDER.findIndex(o => sel && (sel.g ? o.g === sel.g : o.id === sel.id));
+function pnavHTML(sel) { const i = partIdx(sel); if (i < 0) return '';
+  return `<div class="pnav"><button class="btn" data-pnav="-1" aria-label="이전 부품" title="이전 부품 (←)">‹</button><span>${i + 1} / ${PART_ORDER.length}</span><button class="btn" data-pnav="1" aria-label="다음 부품" title="다음 부품 (→)">›</button></div>`; }
+function stepPart(d) { const i = partIdx(state.sel); if (i < 0) return; select(PART_ORDER[(i + d + PART_ORDER.length) % PART_ORDER.length]); }
+{ let sx = null, sy = 0; const ib = $('#info');
+  ib.addEventListener('touchstart', e => { const t = e.touches[0]; sx = e.touches.length === 1 && partIdx(state.sel) >= 0 && !e.target.closest('input') ? t.clientX : null; sy = t.clientY; }, { passive: true });
+  ib.addEventListener('touchend', e => { if (sx === null) return; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; sx = null; if (Math.abs(dx) > 60 && Math.abs(dy) < 40) stepPart(dx < 0 ? 1 : -1); }, { passive: true }); }
 function renderInfo() {
   const el = $('#infoBody'), sel = state.sel, title = $('#infoTitle'), box = $('#info');
   box.classList.toggle('big', !!(sel || state.bl) && !play.on); document.body.classList.toggle('has-sel', !!(sel || state.bl) && !play.on); if (phone()) requestAnimationFrame(frameOffset);
@@ -1846,7 +1863,7 @@ function renderInfo() {
   const blBtn = (sel.g === 'backlight' || (BL_SET.includes(sel.id) && !['heatsink', 'baseplate'].includes(sel.id))) ? '<button class="btn" data-bl>단면으로 자세히</button>' : '';
   if (sel.g) {
     const G = GROUPS[sel.g]; title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
-    el.innerHTML = `<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
+    el.innerHTML = `${pnavHTML(sel)}<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
       <div class="actions">${iso}${blBtn}${back}</div><div class="kids">${G.kids.map(k => `<button data-sel="${k}">${P[k].full}</button>`).join('')}</div>
       ${sel.g === 'chips' ? `<h3 class="sec">주요 칩 · AEC-Q100</h3><div class="tablewrap"><table class="ptable"><thead><tr><th>부품</th><th>제조사</th><th>P/N</th><th>등급</th></tr></thead><tbody>${['mcu', 'max', 'epson', ...G.kids].map(k => `<tr data-sel="${k}"><td>${P[k].name}</td><td>${P[k].maker}</td><td class="mono">${P[k].pn}</td><td>${P[k].grade.replace('Grade ', 'G')}</td></tr>`).join('')}</tbody></table></div>` : ''}
       ${bomInfo('g:' + sel.g)}<h3 class="sec">사진</h3>${thumbs([...new Set(G.kids.flatMap(k => P[k].photos))].slice(0, 9))}`;
@@ -1854,7 +1871,7 @@ function renderInfo() {
   }
   const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
   title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
-  el.innerHTML = `<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div><div class="detail" style="padding:0"><h2>${p.full}</h2><div class="en">${p.en}</div>${badge(p.conf)}</div>
+  el.innerHTML = `${pnavHTML(sel)}<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div><div class="detail" style="padding:0"><h2>${p.full}</h2><div class="en">${p.en}</div>${badge(p.conf)}</div>
     <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
     ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
@@ -1876,6 +1893,7 @@ $('#playBody').addEventListener('click', e => {
 $('#infoBody').addEventListener('input', e => { if (e.target.id === 'blSpread') state.blT = +e.target.value; });
 $('#infoBody').addEventListener('click', e => {
   const t = e.target, k = t.closest('.kids [data-sel], .ptable [data-sel]'), phB = t.closest('[data-photo]');
+  if (t.closest('[data-pnav]')) { stepPart(+t.closest('[data-pnav]').dataset.pnav); return; }
   if (t.closest('[data-iso]')) { state.iso = !state.iso; applyVisual(); renderInfo(); focus(selIds()); return; }
   if (t.closest('[data-gobom]')) { setTab('bom'); return; }
   if (t.closest('[data-gospec]')) { SP.view = 'items'; SP.cur = t.closest('[data-gospec]').dataset.gospec; setTab('spec'); return; }
@@ -1903,6 +1921,7 @@ addEventListener('keydown', e => {
   if (!$('#lightbox').hidden) { if (e.key === 'Escape') $('#lightbox').hidden = true; if (e.key === 'ArrowLeft') $('#lbPrev').click(); if (e.key === 'ArrowRight') $('#lbNext').click(); return; }
   if (e.key === 'Escape' && !$('#settings').hidden) { setSettings(false); return; }
   if (e.key === 'Escape' && state.bl && !play.on) { exitBL(); return; }
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && state.sel && !play.on && document.body.dataset.tab !== 'spec' && !e.target.closest('input, select, textarea, [contenteditable]')) { e.preventDefault(); stepPart(e.key === 'ArrowLeft' ? -1 : 1); return; }
   if (e.key === 'Escape') { if (state.iso) { state.iso = false; applyVisual(); renderCard(); } else select(null); }
 });
 function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
@@ -2838,7 +2857,7 @@ function schematic(s) {
   </svg>`;
 }
 function specTab() {
-  const el = $('#specBody'); if (phone()) SP.view = 'items'; renderExpBar();
+  const el = $('#specBody'); if (phone() && SP.view === 'table') SP.view = 'items'; renderExpBar();
   if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
   if (SP.view === 'table') { el.innerHTML = tableHTML(); SP.redraw = null; return; }
   if (!$('#spList') || SP.listFor !== EXP.active) SP.listFor = EXP.active, el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><i class="dot d-${itemDot(curSet().items[x.id])}" id="ldot-${x.id}"></i><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
