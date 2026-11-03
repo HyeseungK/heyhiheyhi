@@ -781,6 +781,85 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 .sp-grid { grid-template-columns: 232px minmax(0, 1fr); }
 .lv1-title { background: #fafbfc; color: var(--muted); font-size: 11.5px; letter-spacing: .03em; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+/* ── phone layer (≤640px): desktop is untouched. Only the core of each tab stays. ── */
+@media (max-width: 640px) {
+  :root { --hdr: 96px; }
+  body:not([data-tab="spec"]):not([data-tab="bom"]) { --hdr: 134px; }
+  header { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; grid-auto-rows: auto; align-content: center; gap: 8px 8px; padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 8px !important; height: calc(var(--hdr) + env(safe-area-inset-top, 0px)); }
+  header .ttl { grid-column: 1; grid-row: 1; width: auto !important; }
+  header h1 { font-size: 16px; overflow: hidden; text-overflow: ellipsis; }
+  header .sub, header .sp, .tour-btn { display: none !important; }
+  #setBtn { grid-column: 2; grid-row: 1; padding: 6px 10px; font-size: 13px; }
+  #setBtn .chev { display: none; }
+  .tabs { grid-column: 1 / -1; grid-row: 2; width: 100%; display: grid !important; grid-template-columns: repeat(3, 1fr); order: 0 !important; }
+  .tabs button { padding: 8px 4px !important; font-size: 14px !important; text-align: center; }
+  .viewbar { grid-column: 1 / -1; grid-row: 3; width: 100% !important; min-width: 0; order: 0 !important; }
+  body[data-tab="spec"] .viewbar, body[data-tab="bom"] .viewbar { display: none !important; }
+  .views { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; width: 100%; padding: 0; background: none !important; box-shadow: none !important; }
+  .views::-webkit-scrollbar { display: none; }
+  .views button { flex: none; padding: 6px 12px !important; font-size: 13px !important; border-radius: 999px !important; background: var(--line-2); }
+  .views button[aria-pressed="true"] { background: var(--fg) !important; color: #fff !important; }
+  #settings { left: 12px; right: 12px; width: auto; }
+
+  /* 3D: full-bleed model, two buttons at the bottom, a short sheet only when a part is picked */
+  .ctrlhint, .hint, #tip { display: none !important; }
+  .lbl:not(.sel) { display: none; }
+  .col { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important; flex-direction: row !important; align-items: flex-end !important; }
+  .lcol { left: 12px !important; }
+  .rcol { right: 12px !important; }
+  .rcol .sp { display: none; }
+  .fbtn { padding: 9px 12px; font-size: 14px; }
+  .fbtn .chev { display: none; }
+  body:not(.has-sel) #infoBtn { display: none !important; }
+  .col .float { position: fixed !important; left: 8px !important; right: 8px !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: auto !important; max-height: 46vh !important; border-radius: 16px 16px 12px 12px; }
+  #infoBody ul, #infoBody .specs, #infoBody .sec, #infoBody .sec ~ *, #infoBody details, #infoBody .readout, #infoBody .badge, #infoBody .en, #infoBody .tablewrap, #infoBody .layers, #infoBody .note, #infoBody .bominfo { display: none !important; }
+  #infoBody p { font-size: 14px; line-height: 1.6; }
+  #infoBody .detail h2 { font-size: 18px; }
+  #infoBody .kids { max-height: 30vh; overflow: auto; }
+
+  body:has(.col .float:not([hidden])) .fbtn { display: none !important; }
+  body[data-tab="bom"] #setBtn { display: none !important; }
+  body[data-tab="bom"] header { grid-template-columns: minmax(0, 1fr); }
+  /* spec: pick a spec, read one line, play with the picture. Expert entry stays on desktop. */
+  #specPage .expbar, #specPage .sp-views, #expPanel, #xDlg, .sp-side, .sp-split, .sp-more, .sp-hero .eyebrow { display: none !important; }
+  .sp-wrap { padding: 12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px) !important; height: auto !important; }
+  .sp-head { padding: 0 16px; margin-bottom: 8px; }
+  .sp-head { display: none !important; }
+  .sp-hero { background: none !important; box-shadow: none !important; }
+  .sp-grid { display: block !important; height: auto !important; }
+  .sp-list { position: sticky !important; top: 0; z-index: 2; display: flex !important; gap: 6px; overflow-x: auto; padding: 8px 16px !important; margin: 0 0 12px; border-radius: 0 !important; box-shadow: none !important; background: var(--bg) !important; scrollbar-width: none; max-height: none !important; }
+  .sp-list::-webkit-scrollbar { display: none; }
+  .sp-cat { display: none !important; }
+  .sp-item { flex: none !important; width: auto !important; display: flex !important; align-items: center; gap: 6px; padding: 8px 14px !important; border: 0 !important; border-radius: 999px !important; background: var(--panel) !important; box-shadow: var(--sh-1); white-space: nowrap; }
+  .sp-item small, .sp-item .u, .sp-item .dot { display: none !important; }
+  .sp-item .t { font-size: 14px; font-weight: 600; }
+  .sp-item.on { background: var(--fg) !important; color: #fff !important; }
+  .sp-detail { display: block !important; padding: 0 16px; }
+  .sp-main { overflow: visible !important; box-shadow: none !important; background: none !important; padding: 0 !important; }
+  .sp-hero { padding: 0 0 12px !important; }
+  .sp-title h2 { font-size: 22px; }
+  .sp-title .en { font-size: 12px; }
+  .sp-hero .one { font-size: 15px; line-height: 1.6; margin-top: 6px; }
+  .sp-main .demo { border-radius: var(--r) !important; background: var(--panel) !important; box-shadow: var(--sh-1); overflow: hidden; }
+  .sp-main .demo canvas { height: 230px !important; }
+  .demo-ctl, .demo-out { padding-left: 14px !important; padding-right: 14px !important; }
+  .demo-out { font-size: 14px; }
+  .lesson .ls-stage { grid-template-columns: minmax(0, 1fr) !important; }
+
+  /* BOM: just the list — name and quantity. Tap a row for the short detail. */
+  body[data-tab="bom"] .stage { display: none !important; }
+  #bomPage { width: auto !important; right: 0 !important; bottom: 0 !important; padding: 12px 16px 0 !important; gap: 10px; }
+  .bm-head { gap: 8px; }
+  .bm-head h2, .bm-head .note, .bm-kpi, .bm-wt { display: none !important; }
+  #bmFilt { width: 100%; display: grid !important; grid-template-columns: repeat(4, 1fr); }
+  #bmFilt button { padding: 7px 4px; font-size: 13.5px; }
+  .bm-q { flex: 1 1 100% !important; width: 100% !important; max-width: none !important; font-size: 16px; }
+  .bm-tbl { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .bm-tbl th:nth-child(n+3), .bm-tbl tr[data-r] > td:nth-child(n+3) { display: none !important; }
+  .bm-tbl td, .bm-tbl th { font-size: 14px; padding-top: 11px; padding-bottom: 11px; }
+  .bm-det .acts { display: none !important; }
+  .bm-det dl { grid-template-columns: max-content minmax(0, 1fr) !important; font-size: 13.5px; }
+}
 </style>
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
@@ -1645,13 +1724,13 @@ function pick(e) {
 }
 let lastClick = { id: null, t: 0 };
 function click(e) { const id = pick(e) || null, now = performance.now(); if (!id && lastClick.id === null && now - lastClick.t < 380) { select(null, false); goView('iso'); lastClick = { id: undefined, t: 0 }; return; }
-  if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderInfo(); focus([id]); } else select(id ? { id } : null, false); lastClick = { id, t: now }; }
+  if (id && lastClick.id === id && now - lastClick.t < 380) { state.iso = true; applyVisual(); renderInfo(); focus([id]); } else { select(id ? { id } : null, false); if (phone()) setPanel('info', !!id); } lastClick = { id, t: now }; }
 let hq = false;
 function hover(e) { if (hq) return; hq = true; requestAnimationFrame(() => { hq = false; const id = pick(e), tip = $('#tip'), r = stageEl.getBoundingClientRect(); if (id) { tip.textContent = P[id].full; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.hidden = false; canvas.style.cursor = 'pointer'; } else { tip.hidden = true; canvas.style.cursor = 'grab'; } }); }
 
 /* ───────────────────────── UI ───────────────────────── */
 const play = { on: false, paused: false, i: 0, t: 0 }, STEP_T = 3.5;
-const mobile = () => innerWidth <= 900;
+const mobile = () => innerWidth <= 900, phone = () => innerWidth <= 640;
 function setPanel(name, open) {
   $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open; $('#' + name + 'Btn').setAttribute('aria-expanded', open);
   if (open && mobile()) for (const n of ['left', 'play', 'info']) if (n !== name) { $('#' + n).hidden = true; $('#' + n + 'Btn').hidden = false; }
@@ -1728,7 +1807,7 @@ function renderPlay() {
 }
 function renderInfo() {
   const el = $('#infoBody'), sel = state.sel, title = $('#infoTitle'), box = $('#info');
-  box.classList.toggle('big', !!(sel || state.bl) && !play.on);
+  box.classList.toggle('big', !!(sel || state.bl) && !play.on); document.body.classList.toggle('has-sel', !!(sel || state.bl) && !play.on);
   if (state.bl) {
     title.textContent = 'Backlight 단면 상세'; $('#infoBtnLabel').textContent = 'Backlight 단면 상세';
     el.innerHTML = `<div class="crumb">광학 › Backlight</div><p>가운데 LED 한 줄을 자른 단면입니다. <b class="k-amber">주황</b> LED 빛, <b class="k-blue">파랑</b> TFT를 통과한 빛, <b class="k-gray">회색</b> 벽에 흡수되는 빛.</p>
@@ -2623,7 +2702,7 @@ const DEMOS = {
       for (const [cx, cy] of [[x0, y0], [x0 + hw, y0 + hh]]) { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, hh * 1.1); gr.addColorStop(0, `rgba(170,180,195,${.55 * leak})`); gr.addColorStop(1, 'rgba(170,180,195,0)'); g.fillStyle = gr; g.fillRect(x0, y0, hw, hh); }
       hud(g, x0, y0, hw, hh, .9); return `밤, 검은 바탕 위 HUD. 균일도가 낮을수록 모서리 빛샘(뿌연 얼룩)이 커집니다.`; } },
 
-  contrast: { ctl: [['cr', '명암비', 100, 5000, 50, 400, ':1'], ['n', '밤 휘도 설정 (가정)', 20, 1000, 10, 150, 'nit'], ['bg', '밤 배경', 0, 1, 1, 0, 'sel:가로등 없는 길|가로등 있는 도심']],
+  contrast: { minW: 540, ctl: [['cr', '명암비', 100, 5000, 50, 400, ':1'], ['n', '밤 휘도 설정 (가정)', 20, 1000, 10, 150, 'nit'], ['bg', '밤 배경', 0, 1, 1, 0, 'sel:가로등 없는 길|가로등 있는 도심']],
     draw(g, w, h, v) { const blk = v.n / v.cr, [skyL, roadL] = v.bg ? [.05, 1.5] : [.001, .3];
       // screen grey from luminance on a log scale (the eye responds roughly to ratios, not differences)
       const LMIN = .0005, LMAX = 2000, t = L => Math.max(0, Math.min(1, Math.log10(L / LMIN) / Math.log10(LMAX / LMIN))), grey = L => { const c = Math.round(255 * t(L)); return `rgb(${c},${c},${Math.min(255, c + 6)})`; };
@@ -2664,7 +2743,7 @@ const DEMOS = {
       g.fillStyle = `rgb(${t0.map(gam)})`; g.fillRect(0, ph, half, 46); g.fillStyle = `rgb(${t1.map(gam)})`; g.fillRect(half, ph, half, 46);
       g.fillStyle = '#66717c'; g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText('흰색만 비교', 10, ph + 28);
       return `같은 차종인데 HUD마다 흰색이 이만큼 다를 수 있다는 뜻입니다. 흰 숫자·글자가 ${['누렇게', '푸르게', '초록빛으로', '분홍빛으로'][v.dir]} 보입니다.<br>흰색 근처에서 눈이 겨우 구분하는 차이는 대략 0.003~0.005(대략적 기준)라, 0.01이면 클러스터나 센터 화면과 나란히 볼 때 눈에 띕니다. LED 빈(bin)을 좁게 관리할수록 공차를 줄일 수 있습니다.`; } },
-  sat: { ctl: [['r', '빨강 채도', 30, 100, 1, 95, '%'], ['gg', '초록 채도', 30, 100, 1, 80, '%'], ['bb', '파랑 채도', 30, 100, 1, 90, '%']],
+  sat: { minW: 540, ctl: [['r', '빨강 채도', 30, 100, 1, 95, '%'], ['gg', '초록 채도', 30, 100, 1, 80, '%'], ['bb', '파랑 채도', 30, 100, 1, 90, '%']],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       // example definition: how far from the white point toward the sRGB primary each colour reaches
       const tw = Math.min(w * .44, h * .95), m = cie(g, tw, h), ks = [v.r, v.gg, v.bb].map(x => x / 100), nm = ['R', 'G', 'B'];
@@ -2681,7 +2760,7 @@ const DEMOS = {
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `채도는 색 하나의 선명도입니다. 여기서는 "백색점에서 원색까지 거리 중 몇 %까지 왔나"로 계산했고, R·G·B가 서로 다를 수 있습니다.<br>같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 다른 값이 나옵니다. 계산 방법이 다르면 숫자도 다릅니다.`; } },
 
-  gamut: { ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (NTSC·sRGB)|③ 면적비 vs 커버리지|④ 운전자 눈에서 달라지는 것'], ['p', 'HUD 색역 크기 (면적비)', 30, 150, 1, 125, '%'], ['b', '기준', 0, 1, 1, 1, 'sel:sRGB 대비|NTSC 대비'], ['rot', '삼각형 모양 (설명용)', -40, 40, 1, 22, '°']],
+  gamut: { minW: 540, ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (NTSC·sRGB)|③ 면적비 vs 커버리지|④ 운전자 눈에서 달라지는 것'], ['p', 'HUD 색역 크기 (면적비)', 30, 150, 1, 125, '%'], ['b', '기준', 0, 1, 1, 1, 'sel:sRGB 대비|NTSC 대비'], ['rot', '삼각형 모양 (설명용)', -40, 40, 1, 22, '°']],
     show: v => [['step'], ['step', 'p', 'b'], ['step', 'p', 'b', 'rot'], ['step', 'p', 'b']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', pS = Math.round(v.b ? v.p / RS : v.p), pN = Math.round(v.b ? v.p : v.p * RS);
@@ -2694,7 +2773,7 @@ const DEMOS = {
       if (v.step === 2) return gamutCov(g, w, h, v);
       return gamutHud(g, w, h, pN);
     } },
-  derating: { ctl: [['src', '곡선', 0, 1, 1, 0, 'sel:예시 곡선|선택한 전문가 값'], ['t1', '낮추기 시작', 50, 100, 1, 70, '℃'], ['t2', '50%가 되는 온도', 60, 110, 1, 90, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
+  derating: { minW: 540, ctl: [['src', '곡선', 0, 1, 1, 0, 'sel:예시 곡선|선택한 전문가 값'], ['t1', '낮추기 시작', 50, 100, 1, 70, '℃'], ['t2', '50%가 되는 온도', 60, 110, 1, 90, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
     show: v => v.src ? ['src', 't'] : ['src', 't1', 't2', 't'],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       const sets = v.src ? shownSets().map(st => ({ name: st.name, d: st.items.derating.der })) : [{ name: '예시', d: { t1: v.t1, p1: 100, t2: Math.max(v.t2, v.t1 + 1), p2: 50 } }];
@@ -2749,7 +2828,7 @@ function schematic(s) {
   </svg>`;
 }
 function specTab() {
-  const el = $('#specBody'); renderExpBar();
+  const el = $('#specBody'); if (phone()) SP.view = 'items'; renderExpBar();
   if (SP.view === 'iss') { el.innerHTML = issHTML(); drawISS(); return; }
   if (SP.view === 'table') { el.innerHTML = tableHTML(); SP.redraw = null; return; }
   if (!$('#spList') || SP.listFor !== EXP.active) SP.listFor = EXP.active, el.innerHTML = `<div class="sp-grid"><nav class="sp-list" id="spList" aria-label="스펙 항목">${SPEC_CATS.map(([c, t]) => `<div class="sp-cat" style="--cat:${CAT_COL[c]}">${t}</div>` + SPECS.filter(x => x.cat === c).map(x => `<button class="sp-item" style="--cat:${CAT_COL[c]}" data-spec="${x.id}"><i class="dot d-${itemDot(curSet().items[x.id])}" id="ldot-${x.id}"></i><span class="t">${x.ko}<small>${x.en.split(' (')[0]}</small></span><span class="u">${x.dir === 'low' ? '↓' : '↑'} ${x.unit}</span></button>`).join('')).join('')}</nav><article class="sp-detail" id="spDetail"></article></div>`;
@@ -2799,8 +2878,10 @@ function buildDemo(s) {
   ctl.innerHTML = D.ctl.filter(c => !keys || keys.includes(c[0])).map(([k, label, mn, mx, st, def, u]) => u.startsWith('sel:') ? `<label>${label} <select data-k="${k}">${u.slice(4).split('|').map((o, i) => `<option value="${i}" ${+v[k] === i ? 'selected' : ''}>${o}</option>`).join('')}</select></label>`
     : `<label>${label} <input type="range" data-k="${k}" min="${mn}" max="${mx}" step="${st}" value="${v[k]}"><output>${(+v[k]).toFixed(st < .01 ? 3 : st < 1 ? 1 : 0)}${u ? ' ' + u : ''}</output></label>`).join('');
   // the readout can change the canvas height, so draw again once the layout has settled
-  const draw = () => { const cv = $('#demoCv'); let [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v);
-    const r = cv.getBoundingClientRect(); if (Math.abs(r.width - w) > 1 || Math.abs(r.height - h) > 1) { [g, w, h] = fitCanvas(cv); $('#demoOut').innerHTML = D.draw(g, w, h, v); } };
+  // side-by-side figures are drawn at a wider virtual width on phones and scaled down, so nothing is cut off
+  const paint = (g, w, h) => { const k = D.minW && w < D.minW ? w / D.minW : 1; if (k < 1) g.scale(k, k); $('#demoOut').innerHTML = D.draw(g, w / k, h / k, v); };
+  const draw = () => { const cv = $('#demoCv'); let [g, w, h] = fitCanvas(cv); paint(g, w, h);
+    const r = cv.getBoundingClientRect(); if (Math.abs(r.width - w) > 1 || Math.abs(r.height - h) > 1) { [g, w, h] = fitCanvas(cv); paint(g, w, h); } };
   ctl.oninput = e => { const k = e.target.dataset.k; if (!k) return; v[k] = +e.target.value; if (D.show && e.target.tagName === 'SELECT') { buildDemo(s); return; }
     const o = e.target.nextElementSibling, c = D.ctl.find(c => c[0] === k); if (o && o.tagName === 'OUTPUT') o.textContent = (+v[k]).toFixed(c[4] < .01 ? 3 : c[4] < 1 ? 1 : 0) + (c[6] ? ' ' + c[6] : ''); draw(); };
   draw(); SP.redraw = draw;
@@ -3045,7 +3126,7 @@ const BM = { f: 'all', r: null };
 function bomKey(sel) { return !sel ? null : sel.g ? 'g:' + sel.g : sel.id; }
 function bomDetail(b) {
   const f = [['중국어 명칭', b.cn], ['부품 번호', b.pn], ['수량', b.qty && `${b.qty} ${b.unit || ''}`], ['조달', b.src], ['중량', b.w && `${num(b.w)} g`], ['크기', dimTxt(b) && dimTxt(b) + ' mm'], ['두께', b.t && `${b.t} mm`],
-    ['재료 유형', b.mtype], ['재료', b.mat], [b.sec === 'mech' ? '소재 등급' : '규격 · 모델', b.spec], ['제조사', b.maker], ['표면처리', b.surf], ['제조 공정', b.proc], ['조립 공정', b.asm], ['탄소 배출', b.co2 && b.co2.replace(/\s*kgCO2eq\/kg/, ' kgCO₂eq/kg')], ['외관 부품', b.look === 'Y' ? '예' : b.look === 'N' ? '아니오' : '']].filter(x => x[1]);
+    ['재료 유형', b.mtype], ['재료', b.mat], [b.sec === 'mech' ? '소재 등급' : '규격 · 모델', b.spec], ['제조사', b.maker], ['표면처리', b.surf], ['제조 공정', b.proc], ['조립 공정', b.asm], ['탄소 배출', b.co2 && b.co2.replace(/\s*kgCO2eq\/kg/, ' kgCO₂eq/kg')], ['외관 부품', b.look === 'Y' ? '예' : b.look === 'N' ? '아니오' : '']].filter(x => x[1] && (!phone() || ['부품 번호', '중량', '크기', '재료', '소재 등급', '규격 · 모델', '제조사'].includes(x[0])));
   const sel = bomSelOf(b), ph = !sel ? [] : sel.g ? [...new Set(GROUPS[sel.g].kids.flatMap(k => P[k].photos))] : P[sel.id].photos;
   return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? thumbs(ph.slice(0, 4)) : ''}</div>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : b.on ? `<p class="note">아주 작은 칩 부품이라 위치를 하나씩 표시하지 않고 Main PCB 전체를 강조합니다. 이 기판에 ${b.qty}개 들어 있습니다.</p>` : ''}</div>`;
 }
