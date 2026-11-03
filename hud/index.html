@@ -791,8 +791,11 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   header { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; grid-auto-rows: auto; align-content: center; gap: 8px 8px; padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 8px !important; height: calc(var(--hdr) + env(safe-area-inset-top, 0px)); }
   header .ttl { grid-column: 1; grid-row: 1; width: auto !important; }
   header h1 { font-size: 16px; overflow: hidden; text-overflow: ellipsis; }
-  header .sub, header .sp, .tour-btn { display: none !important; }
-  #setBtn { grid-column: 2; grid-row: 1; padding: 6px 10px; font-size: 13px; }
+  header .sub, header .sp { display: none !important; }
+  header { grid-template-columns: minmax(0, 1fr) auto auto !important; }
+  .tour-btn { grid-column: 2; grid-row: 1; padding: 4px 10px 4px 4px !important; font-size: 13px; }
+  .tour-card.top { top: calc(env(safe-area-inset-top, 0px) + 16px) !important; bottom: auto !important; }
+  #setBtn { grid-column: 3; grid-row: 1; padding: 6px 10px; font-size: 13px; }
   #setBtn .chev { display: none; }
   .tabs { grid-column: 1 / -1; grid-row: 2; width: 100%; display: grid !important; grid-template-columns: repeat(3, 1fr); order: 0 !important; }
   .tabs button { padding: 8px 4px !important; font-size: 14px !important; text-align: center; }
@@ -827,7 +830,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 
   body:has(.col .float:not([hidden])) .fbtn { display: none !important; }
   body[data-tab="bom"] #setBtn { display: none !important; }
-  body[data-tab="bom"] header { grid-template-columns: minmax(0, 1fr); }
+  body[data-tab="bom"] header { grid-template-columns: minmax(0, 1fr) auto !important; }
   /* spec: pick a spec, read one line, play with the picture. Expert entry stays on desktop. */
   #specPage .sp-views [data-spview="table"], #specPage .expbar, #expPanel, #xDlg, .sp-side, .sp-split, .sp-more, .sp-hero .eyebrow { display: none !important; }
   .sp-wrap { padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px) !important; height: auto !important; }
@@ -3226,7 +3229,7 @@ document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click',
 
 /* tutorial: each stop opens what it needs, dims the rest and explains one area */
 const openPanel = (panel, btn) => { if ($(panel).hidden) $(btn).click(); };
-const TOUR = [
+const TOUR_D = [
   { tab: 'struct', el: '.tabs', t: '세 가지 화면', p: '3D 구조도에서 부품과 빛의 경로를, 광학 스펙에서 각 스펙의 뜻과 전문가 값을, BOM에서 부품 목록을 봅니다.' },
   { tab: 'struct', el: '#left', before: () => openPanel('#left', '#leftBtn'), t: '부품 목록', p: '부품 이름을 누르면 3D에서 그 부품이 강조되고 카메라가 다가갑니다. 눈 아이콘으로 부품을 숨길 수 있습니다.' },
   { tab: 'struct', rect: () => { const r = $('#stage').getBoundingClientRect(); return { left: r.left + r.width * .28, top: r.top + 30, width: r.width * .44, height: r.height - 150 }; }, t: '3D 모델', p: '부품을 직접 눌러도 선택되고, 더블클릭하면 그 부품만 남습니다.' },
@@ -3242,12 +3245,21 @@ const TOUR = [
   { tab: 'spec', el: '.sp-views', t: '다른 보기', p: '"전문가 스펙 표"는 모든 항목을 한 표로, "외관 결함 (ISS)"은 긁힘·점 같은 외관 기준을 보여 줍니다.' },
   { tab: 'bom', el: '#bomPage', t: 'BOM', p: '부품표를 기구·광학·전자로 나눠 봅니다. 행을 누르면 오른쪽 3D에서 그 부품이 강조됩니다.' },
 ];
+// phones get a short tour: what to tap first, and how to move between parts
+const TOUR_M = [
+  { tab: 'struct', el: '.tabs', before: () => { select(null, false); for (const n of ['left', 'play', 'info']) setPanel(n, false); }, t: '세 가지 화면', p: '3D 구조도에서 부품을, 광학 스펙에서 스펙의 뜻과 그림을, BOM에서 부품 목록을 봅니다.' },
+  { tab: 'struct', rect: () => { const r = $('#stage').getBoundingClientRect(); return { left: r.left + 16, top: r.top + 16, width: r.width - 32, height: r.height * .62 }; }, top: false, t: '부품을 탭해 보세요', p: '모델에서 아무 부품이나 탭하면 아래에 이름과 설명이 뜹니다. 한 손가락으로 끌면 회전, 두 손가락으로 벌리면 확대됩니다.' },
+  { tab: 'struct', el: '#leftBtn', top: true, t: '뭘 눌러야 할지 모르겠다면', p: '"부품 목록"에서 이름으로 고르세요. 처음이라면 TFT(영상이 만들어지는 화면)나 곡면경(영상을 키워 앞유리로 보내는 거울)부터 보면 좋습니다.' },
+  { tab: 'struct', el: '#info', top: true, before: () => { select({ id: 'tft' }); setPanel('info', true); }, t: '다음 부품으로 넘기기', p: '‹ › 버튼을 누르거나 이 창을 좌우로 밀면 다음 부품으로 넘어갑니다. "이것만 보기"는 그 부품만 남깁니다.' },
+  { tab: 'struct', el: '#playBtn', top: true, before: () => { select(null, false); setPanel('info', false); goView('iso'); }, t: 'HUD 작동 원리', p: '누르면 영상이 들어와서 허상이 되기까지 빛이 지나가는 순서를 한 단계씩 재생합니다.' },
+];
+let TOUR = TOUR_D;
 const TR = { i: 0 };
 function tourShow(i) {
   TR.i = Math.max(0, Math.min(TOUR.length - 1, i)); const st = TOUR[TR.i];
   if (curTab !== st.tab) setTab(st.tab); st.before?.();
   $('#tourStep').textContent = `${TR.i + 1} / ${TOUR.length}`; $('#tourTitle').textContent = st.t; $('#tourText').textContent = st.p;
-  $('#tourPrev').disabled = TR.i === 0; $('#tourNext').textContent = TR.i === TOUR.length - 1 ? '끝내기' : '다음';
+  $('#tourCard').classList.toggle('top', !!st.top); $('#tourPrev').disabled = TR.i === 0; $('#tourNext').textContent = TR.i === TOUR.length - 1 ? '끝내기' : '다음';
   requestAnimationFrame(() => requestAnimationFrame(tourPlace));
 }
 function tourPlace() {
@@ -3261,7 +3273,7 @@ function tourPlace() {
   else { x = r.left; y = r.top - g - ch; }                                                              // above
   card.style.left = Math.max(12, Math.min(innerWidth - cw - 12, x)) + 'px'; card.style.top = Math.max(12, Math.min(innerHeight - ch - 12, y)) + 'px';
 }
-function tourOpen() { $('#tour').hidden = false; $('#tourBtn').classList.remove('pulse'); try { localStorage.setItem('hudTourSeen', '1'); } catch {} tourShow(0); $('#tourNext').focus(); }
+function tourOpen() { TOUR = phone() ? TOUR_M : TOUR_D; $('#tour').hidden = false; $('#tourBtn').classList.remove('pulse'); try { localStorage.setItem('hudTourSeen', '1'); } catch {} tourShow(0); $('#tourNext').focus(); }
 function tourClose() { $('#tour').hidden = true; $('#tourBtn').focus(); }
 $('#tourBtn').addEventListener('click', tourOpen);
 $('#tourNext').addEventListener('click', () => TR.i === TOUR.length - 1 ? tourClose() : tourShow(TR.i + 1));
