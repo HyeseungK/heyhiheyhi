@@ -805,10 +805,15 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   .ctrlhint, .hint, #tip { display: none !important; }
   .lbl:not(.sel) { display: none; }
   .col { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important; flex-direction: row !important; align-items: flex-end !important; }
-  .lcol { left: 12px !important; }
-  .rcol { right: 12px !important; }
+  .lcol { left: 12px !important; right: calc(50% + 4px) !important; width: auto !important; }
+  .rcol { left: calc(50% + 4px) !important; right: 12px !important; width: auto !important; }
   .rcol .sp { display: none; }
-  .fbtn { padding: 9px 12px; font-size: 14px; }
+  .col > .fbtn { flex: 1 1 0; min-width: 0; justify-content: center; padding: 10px 8px; font-size: 13.5px; white-space: nowrap; }
+  .fbtn .ic { width: 20px; height: 20px; }
+  body.has-sel #playBtn { display: none !important; }
+  .slist li:not(.on):has(~ li.on), .slist li.on ~ li { display: none; }
+  .slist .readout { display: none; }
+  #playBody .prog { margin: 8px 0 4px; }
   .fbtn .chev { display: none; }
   body:not(.has-sel) #infoBtn { display: none !important; }
   .col .float { position: fixed !important; left: 8px !important; right: 8px !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: auto !important; max-height: 46vh !important; border-radius: 16px 16px 12px 12px; }
@@ -822,17 +827,17 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   body[data-tab="bom"] header { grid-template-columns: minmax(0, 1fr); }
   /* spec: pick a spec, read one line, play with the picture. Expert entry stays on desktop. */
   #specPage .expbar, #specPage .sp-views, #expPanel, #xDlg, .sp-side, .sp-split, .sp-more, .sp-hero .eyebrow { display: none !important; }
-  .sp-wrap { padding: 12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px) !important; height: auto !important; }
+  .sp-wrap { padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 24px) !important; height: auto !important; }
   .sp-head { padding: 0 16px; margin-bottom: 8px; }
   .sp-head { display: none !important; }
   .sp-hero { background: none !important; box-shadow: none !important; }
   .sp-grid { display: block !important; height: auto !important; }
-  .sp-list { position: sticky !important; top: 0; z-index: 2; display: flex !important; gap: 6px; overflow-x: auto; padding: 8px 16px !important; margin: 0 0 12px; border-radius: 0 !important; box-shadow: none !important; background: var(--bg) !important; scrollbar-width: none; max-height: none !important; }
+  .sp-list { position: sticky !important; top: 0; z-index: 2; display: flex !important; gap: 4px; overflow-x: auto; padding: 8px 16px !important; margin: 0 0 6px; border-radius: 0 !important; box-shadow: none !important; background: var(--bg) !important; scrollbar-width: none; max-height: none !important; }
   .sp-list::-webkit-scrollbar { display: none; }
   .sp-cat { display: none !important; }
-  .sp-item { flex: none !important; width: auto !important; display: flex !important; align-items: center; gap: 6px; padding: 8px 14px !important; border: 0 !important; border-radius: 999px !important; background: var(--panel) !important; box-shadow: var(--sh-1); white-space: nowrap; }
+  .sp-item { flex: none !important; width: auto !important; display: flex !important; align-items: center; gap: 6px; padding: 6px 11px !important; border: 0 !important; border-radius: 999px !important; background: var(--panel) !important; box-shadow: var(--sh-1); white-space: nowrap; }
   .sp-item small, .sp-item .u, .sp-item .dot { display: none !important; }
-  .sp-item .t { font-size: 14px; font-weight: 600; }
+  .sp-item .t { font-size: 13px; font-weight: 600; }
   .sp-item.on { background: var(--fg) !important; color: #fff !important; }
   .sp-detail { display: block !important; padding: 0 16px; }
   .sp-main { overflow: visible !important; box-shadow: none !important; background: none !important; padding: 0 !important; }
@@ -1734,6 +1739,7 @@ const mobile = () => innerWidth <= 900, phone = () => innerWidth <= 640;
 function setPanel(name, open) {
   $('#' + name).hidden = !open; $('#' + name + 'Btn').hidden = open; $('#' + name + 'Btn').setAttribute('aria-expanded', open);
   if (open && mobile()) for (const n of ['left', 'play', 'info']) if (n !== name) { $('#' + n).hidden = true; $('#' + n + 'Btn').hidden = false; }
+  if (name === 'play' && phone()) { if (open && !play.on) startPlay(); if (!open && play.on) stopPlay(); }
   frameOffset();
 }
 document.querySelectorAll('[data-closep]').forEach(b => b.addEventListener('click', () => setPanel(b.dataset.closep, false)));
@@ -1804,10 +1810,11 @@ function renderPlay() {
       : `<button class="btn primary" data-pl="start">▶ 재생</button><span class="note">단계를 눌러 바로 볼 수도 있어요</span>`}</div>
     ${play.on ? `<div class="prog"><i id="progBar" style="width:${Math.min(100, play.t / STEP_T * 100)}%"></i></div>` : ''}
     <ol class="slist">${STEPS.map((x, i) => `<li class="${play.on && i === play.i ? 'on' : ''}"><button data-go-step="${i}"><span class="n">${i + 1}</span><span>${x.t}</span></button>${play.on && i === play.i ? `<p class="sdesc">${x.s}</p>${x.wiggle ? readout() : ''}` : ''}</li>`).join('')}</ol>`;
+  if (phone()) frameOffset();
 }
 function renderInfo() {
   const el = $('#infoBody'), sel = state.sel, title = $('#infoTitle'), box = $('#info');
-  box.classList.toggle('big', !!(sel || state.bl) && !play.on); document.body.classList.toggle('has-sel', !!(sel || state.bl) && !play.on);
+  box.classList.toggle('big', !!(sel || state.bl) && !play.on); document.body.classList.toggle('has-sel', !!(sel || state.bl) && !play.on); if (phone()) requestAnimationFrame(frameOffset);
   if (state.bl) {
     title.textContent = 'Backlight 단면 상세'; $('#infoBtnLabel').textContent = 'Backlight 단면 상세';
     el.innerHTML = `<div class="crumb">광학 › Backlight</div><p>가운데 LED 한 줄을 자른 단면입니다. <b class="k-amber">주황</b> LED 빛, <b class="k-blue">파랑</b> TFT를 통과한 빛, <b class="k-gray">회색</b> 벽에 흡수되는 빛.</p>
@@ -1859,7 +1866,7 @@ $('#playBody').addEventListener('click', e => {
   const pl = e.target.closest('[data-pl]'), gs = e.target.closest('[data-go-step]');
   if (pl) { const a = pl.dataset.pl;
     if (a === 'start') startPlay();
-    if (a === 'stop') stopPlay();
+    if (a === 'stop') { stopPlay(); if (phone()) setPanel('play', false); }
     if (a === 'prev' && play.i > 0) goStep(play.i - 1);
     if (a === 'next' && play.i < STEPS.length - 1) goStep(play.i + 1);
     if (a === 'toggle') { if (play.paused && play.i === STEPS.length - 1 && play.t > STEP_T) { goStep(0); play.paused = false; } else { play.paused = !play.paused; if (play.t > STEP_T) play.t = 0; } renderPlay(); }
@@ -1882,7 +1889,8 @@ $('#infoBody').addEventListener('click', e => {
 function frameOffset() {
   const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
   let x = 0; if (!mobile() && document.body.dataset.tab !== 'bom') { if (!$('#left').hidden) x -= 156; if (!$('#info').hidden || !$('#play').hidden) x += 170; }
-  if (x) camera.setViewOffset(w, h, x, 0, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix();
+  let y = 0; if (phone() && document.body.dataset.tab !== 'bom') { const sh = ['left', 'play', 'info'].map(n => $('#' + n)).find(e => !e.hidden); if (sh) { const t = sh.getBoundingClientRect().top - stageEl.getBoundingClientRect().top; if (t > 0 && t < h) y = Math.round((h - t) / 2); } }
+  if (x || y) camera.setViewOffset(w, h, x, y, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix();
 }
 let lb = { list: [], i: 0 };
 function openLB(list, i) { lb = { list, i }; showLB(); $('#lightbox').hidden = false; $('#lbClose').focus(); }
@@ -2411,6 +2419,7 @@ const S = { step: 0, ld: LDA0, lo: 0.0, ez: 0, ex: 0, ebw: 130, ebh: 50, c: 3.0,
 const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, f1 = n => (Math.round(n * 10) / 10).toFixed(1), f2 = n => (Math.round(n * 100) / 100).toFixed(2);
 const ASM = t => `${t}<span class="tag t-asm">설명용 가정</span>`, SRC = t => `${t}<span class="tag t-src">원본</span>`, HYP = t => `${t}<span class="tag t-hyp">가상 기준</span>`, CHK = t => `${t}<span class="tag t-chk">확인 필요</span>`;
 const EX = 4; // drawings exaggerate small angles 4× so they can be seen; numbers stay true
+const EXD = 2; // the side view covers a wider LookDown range, so it exaggerates less
 
 /* small SVG helpers */
 const ln = (x1, y1, x2, y2, c, w = 2, dash = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round"/>`;
@@ -2431,7 +2440,8 @@ function pill(x, y, t, o = {}) { const sz = o.s || 12.5, w = tw(t, sz) + 14, h =
 const defs = `<defs><pattern id="lsGrid" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)"/></pattern>
   <marker id="lsArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--eye)"/></marker></defs>`;
 function sideView(ld) {
-  const W = 640, H = 340, ex = 96, ey = 132, L = 450, a = rad(Math.min(ld * EX, 11)), ix = ex + L, iy = ey + Math.tan(a) * L;
+  const W = 640, H = 340, ex = 96, ey = 132, L = 450, a = rad(ld * EXD), // 2× so the whole 0–8° slider range keeps moving inside the frame
+    ix = ex + L, iy = ey + Math.tan(a) * L;
   // the windshield leans back over the dashboard; the sight line crosses it on the way to the image beyond
   const g0 = [262, 262], g1 = [356, 58], t = ((g0[0] - ex) * (g1[1] - g0[1]) - (g0[1] - ey) * (g1[0] - g0[0])) / (L * (g1[1] - g0[1]) - (iy - ey) * (g1[0] - g0[0])), hx = ex + t * L, hy = ey + t * (iy - ey);
   return svg(W, H, `${defs}<rect width="${W}" height="${H}" fill="url(#lsGrid)" opacity=".7"/>
@@ -2446,7 +2456,7 @@ function sideView(ld) {
     <path d="M${ex} ${ey} L${ex + 104} ${ey} A104 104 0 0 1 ${ex + 104 * Math.cos(a)} ${ey + 104 * Math.sin(a)} Z" fill="var(--diff)" opacity=".1"/>${arc(ex, ey, 104, 0, a, 'var(--diff)')}
     ${pill(ex + 118, ey + Math.tan(a / 2) * 118 + 4, `LookDown ${f1(ld)}°`, { c: 'var(--diff)', s: 13.5, w: 700, stroke: 'var(--diff)' })}
     ${eye(ex, ey, '')}${pill(ex, ey + 32, '운전자 눈', { a: 'middle', s: 12 })}
-    ${tx(16, 22, `옆에서 본 그림 · 각도 ${EX}배 과장 · 거리 축척 아님`, { s: 11.5, c: 'var(--muted)' })}`, '옆에서 본 LookDown 각도');
+    ${tx(16, 22, `옆에서 본 그림 · 각도 ${EXD}배 과장 · 거리 축척 아님`, { s: 11.5, c: 'var(--muted)' })}`, '옆에서 본 LookDown 각도');
 }
 function topView(lo) {
   const W = 640, H = 360, ex = 320, ey = 304, L = 236, a = rad(lo * EX), ix = ex + Math.sin(a) * L, iy = ey - Math.cos(a) * L;
