@@ -2289,38 +2289,21 @@ function clipPoly(subj, clip) { const s = Math.sign(polyArea(clip, true)) || 1; 
   for (let i = 0; i < clip.length && out.length; i++) { const a = clip[i], b = clip[(i + 1) % clip.length], inp = out, side = p => s * ((b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])); out = [];
     for (let j = 0; j < inp.length; j++) { const P = inp[j], Q = inp[(j + 1) % inp.length], sp = side(P), sq = side(Q); if (sp >= 0) out.push(P); if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t]); } } }
   return out; }
-// gamut demo, third view: area ratio vs coverage against one reference triangle
-// paint the horseshoe with the colours this screen can show at each point (sampled every 2 px)
+// paint the horseshoe with the colours this screen can show at each point (sampled every 2 px); cached so moving triangles stay smooth
+const CIEFILL = new Map();
 function cieFill(g, m, w, h, alpha) {
-  const inside = (x, y) => { let c = false; for (let i = 0, j = CIE.length - 1; i < CIE.length; j = i++) { const [xi, yi] = CIE[i], [xj, yj] = CIE[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
-  const k = 2, cw = Math.ceil(w / k), ch = Math.ceil(h / k), off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'), img = o.createImageData(cw, ch);
-  const x0 = m.X(0), sx = (m.X(.8) - x0) / .8, y0 = m.Yp(0), sy = (y0 - m.Yp(.9)) / .9;
-  for (let py = 0; py < ch; py++) for (let px = 0; px < cw; px++) { const x = (px * k - x0) / sx, y = (y0 - py * k) / sy; if (y <= .005 || !inside(x, y)) continue; const c = xy2rgb(x, y), q = (py * cw + px) * 4; img.data[q] = c[0]; img.data[q + 1] = c[1]; img.data[q + 2] = c[2]; img.data[q + 3] = 255 * alpha; }
-  o.putImageData(img, 0, 0); g.save(); g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, cw * k, ch * k); g.restore();
+  const k = 2, cw = Math.ceil(w / k), ch = Math.ceil(h / k), x0 = m.X(0), sx = (m.X(.8) - x0) / .8, y0 = m.Yp(0), sy = (y0 - m.Yp(.9)) / .9, key = [cw, ch, alpha, x0, y0].map(n => Math.round(n * 10)).join(',');
+  let off = CIEFILL.get(key);
+  if (!off) {
+    const inside = (x, y) => { let c = false; for (let i = 0, j = CIE.length - 1; i < CIE.length; j = i++) { const [xi, yi] = CIE[i], [xj, yj] = CIE[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+    off = document.createElement('canvas'); off.width = cw; off.height = ch; const o = off.getContext('2d'), img = o.createImageData(cw, ch);
+    for (let py = 0; py < ch; py++) for (let px = 0; px < cw; px++) { const x = (px * k - x0) / sx, y = (y0 - py * k) / sy; if (y <= .005 || !inside(x, y)) continue; const c = xy2rgb(x, y), q = (py * cw + px) * 4; img.data[q] = c[0]; img.data[q + 1] = c[1]; img.data[q + 2] = c[2]; img.data[q + 3] = 255 * alpha; }
+    o.putImageData(img, 0, 0); if (CIEFILL.size > 8) CIEFILL.clear(); CIEFILL.set(key, off);
+  }
+  g.save(); g.imageSmoothingEnabled = true; g.drawImage(off, 0, 0, cw * k, ch * k); g.restore();
   g.beginPath(); CIE.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); g.strokeStyle = '#1c2228'; g.lineWidth = 1.2; g.stroke();
 }
 const polyPath = (g, m, p) => { g.beginPath(); p.forEach(([x, y], i) => i ? g.lineTo(m.X(x), m.Yp(y)) : g.moveTo(m.X(x), m.Yp(y))); g.closePath(); };
-// ③ area ratio vs coverage: the reference and the HUD triangle overlap like a Venn diagram, and two stacked bars share the overlap
-function gamutCov(g, w, h, v) {
-  const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', c0 = ref.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(v.p / 100), a = v.rot * Math.PI / 180;
-  const hudT = ref.map(([x, y]) => { const dx = (x - c0[0]) * sc, dy = (y - c0[1]) * sc; return [c0[0] + dx * Math.cos(a) - dy * Math.sin(a), c0[1] + dx * Math.sin(a) + dy * Math.cos(a)]; });
-  const inter = clipPoly(hudT, ref), A = polyArea(ref), I = inter.length > 2 ? polyArea(inter) / A * 100 : 0, H = polyArea(hudT) / A * 100, refOnly = 100 - I, hudOnly = H - I;
-  const C = { both: '#2a9d6a', ref: '#d1493f', hud: '#1f62d1' }, tw = Math.min(w * .5, h * .98), m = cie(g, tw, h);
-  g.globalAlpha = .28; g.fillStyle = C.ref; polyPath(g, m, ref); g.fill(); g.fillStyle = C.hud; polyPath(g, m, hudT); g.fill(); g.globalAlpha = 1;
-  if (inter.length > 2) { g.fillStyle = 'rgba(42,157,106,.85)'; polyPath(g, m, inter); g.fill(); }
-  g.setLineDash([5, 4]); g.strokeStyle = C.ref; g.lineWidth = 1.8; polyPath(g, m, ref); g.stroke(); g.setLineDash([]); g.strokeStyle = C.hud; polyPath(g, m, hudT); g.stroke();
-  // right: the two questions as stacked bars
-  const x0 = tw + 26, bw = w - x0 - 16, U = bw / Math.max(150, H + 5), y1 = 58, y2 = 150, bh = 26;
-  const seg = (x, y, val, col, label) => { if (val <= .2) return x; const ww = val * U; g.fillStyle = col; g.fillRect(x, y, ww, bh); if (ww > 46) { g.fillStyle = '#fff'; g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`${label} ${Math.round(val)}`, x + 6, y + 17); } return x + ww; };
-  g.fillStyle = '#1c2228'; g.font = '600 13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`기준 ${rn} 영역 = 100`, x0, y1 - 8); seg(seg(x0, y1, I, C.both, '겹침'), y1, refOnly, C.ref, `${rn}에만`);
-  g.fillStyle = '#1c2228'; g.font = '600 13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(`HUD 색역 = ${Math.round(H)}`, x0, y2 - 8); seg(seg(x0, y2, I, C.both, '겹침'), y2, hudOnly, C.hud, 'HUD에만');
-  g.strokeStyle = '#1c2228'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x0 + 100 * U, y1 - 4); g.lineTo(x0 + 100 * U, y2 + bh + 4); g.stroke(); g.setLineDash([]); g.fillStyle = '#66717c'; g.font = '11px "IBM Plex Mono", monospace'; g.fillText('100', x0 + 100 * U - 10, y2 + bh + 16);
-  const box = (y, t1, t2, col) => { g.fillStyle = col; g.font = '700 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t1, x0, y); g.fillStyle = '#4a5560'; g.font = '12.5px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t2, x0, y + 20); };
-  box(232, `면적비 = HUD 전체 ÷ 기준 = ${Math.round(H)}%`, `(겹침 ${Math.round(I)} + HUD에만 ${Math.round(hudOnly)}) ÷ 100 · 100을 넘을 수 있음`, C.hud);
-  box(288, `커버리지 = 겹침 ÷ 기준 = ${Math.round(I)}%`, `기준 색 중 HUD가 실제로 낼 수 있는 비율 · 최대 100`, C.both);
-  g.font = '11.5px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; [['겹침: 둘 다 낼 수 있는 색', C.both], [`${rn}에만: 기준엔 있는데 HUD는 못 내는 색`, C.ref], ['HUD에만: 기준 밖이지만 HUD는 내는 색', C.hud]].forEach(([t, c], k) => { g.fillStyle = c; g.fillRect(x0, 330 + k * 19, 10, 10); g.fillStyle = '#1c2228'; g.fillText(t, x0 + 16, 339 + k * 19); });
-  return `질문이 두 가지입니다. <b>"HUD 색역이 기준보다 얼마나 큰가?"</b>가 면적비, <b>"기준의 색을 HUD가 얼마나 낼 수 있나?"</b>가 커버리지입니다. 지금 면적비는 <b>${Math.round(H)}%</b>로 기준보다 크지만, 빨간 부분(${rn}에만 있는 색) ${Math.round(refOnly)}만큼은 HUD가 내지 못해서 커버리지는 <b>${Math.round(I)}%</b>입니다.<br>"삼각형 모양"을 0°로 두면 같은 면적비에서 커버리지가 100%가 되고, 돌릴수록 줄어듭니다(삼각형 모양은 설명용). 그래서 "125% ${rn}"라는 말만으로는 기준 색을 다 낼 수 있는지 알 수 없습니다.`;
-}
 // ④ what the driver sees: designed HUD colours pulled toward white until they fit the HUD triangle
 function gamutHud(g, w, h, pN) {
   const COLS = [['경고', [255, 45, 35]], ['주의', [255, 150, 0]], ['정상', [40, 220, 70]], ['안내', [30, 200, 255]], ['내비', [70, 100, 255]]];
@@ -2368,13 +2351,13 @@ const SPEC_TXT = {
     why: ['양안 시차가 크면 두 상이 합쳐지지 않아 겹쳐 보이거나 눈이 피로해집니다.', '고스트 간격이 크면 글자 옆에 흐린 그림자가 생겨 번져 보입니다.'],
     qs: ['Disparity는 양안 시차인가요, 주상–고스트 간격인가요?'] },
   visize: { one: '실제로 보이는 허상 크기가 기준 크기의 몇 %인지입니다.',
-    def: '기준 크기를 100%로 두고 실제 크기를 비교합니다. 공차가 ±5%면 95~105% 사이가 합격입니다. 허상 크기(인치·cm)는 거리에 따라 달라지고, FOV(°)는 눈에서 본 각도로 나타낸 크기입니다.',
+    def: '기준 크기를 100%로 두고 실제 크기를 비교합니다. 공차가 ±5%면 95~105% 사이가 합격입니다. 목표가 100%라서 ±5%(목표의 5%)와 ±5%p(5를 더하고 빼기)가 같은 결과가 나오지만, 목표가 100%가 아닌 항목에서는 둘이 달라집니다. 허상 크기(인치·cm)는 거리에 따라 달라지고, FOV(°)는 눈에서 본 각도로 나타낸 크기입니다.',
     why: ['AR 그래픽은 도로 위 물체에 겹쳐야 해서, 크기가 틀리면 가장자리일수록 많이 어긋납니다.'],
-    qs: ['±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
+    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
   aspect: { one: '허상의 가로 : 세로 비율입니다.',
-    def: '3:1이면 가로가 세로의 3배입니다. ±5%를 비율값에 적용하면 2.85:1 ~ 3.15:1입니다.',
+    def: '3:1이면 가로가 세로의 3배입니다. ±5%를 비율값 3에 적용하면(목표의 5% = 0.15) 2.85:1 ~ 3.15:1입니다. 비율값에는 %p가 자연스럽지 않아서, %로 읽는 것이 일반적입니다.',
     why: ['비율이 틀어지면 원이 타원으로, 정사각 아이콘이 납작하게 보입니다.'],
-    qs: ['±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
+    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
   edge: { one: '허상 네 변이 수평·수직 기준선에서 기울어진 각도입니다.',
     def: '허상 전체가 돌아간 "회전"과, 위아래 폭이 다른 "사다리꼴"이 이 값으로 드러납니다.',
     why: ['기울어진 허상은 도로와 대시보드의 수평선과 어긋나 바로 눈에 띕니다.'],
@@ -2388,9 +2371,9 @@ const SPEC_TXT = {
     why: ['글자와 아이콘이 또렷한지를 정합니다. 시력 1.0은 대략 30 lp/deg 수준입니다.'],
     qs: ['몇 % 대비(MTF)에서 구분된 것으로 보나요?'] },
   bright: { one: '운전자 눈 위치에서 보이는 허상의 밝기입니다. 단위 nit = cd/m².',
-    def: '계속 낼 수 있는 "지속" 밝기와 잠깐 낼 수 있는 "피크" 밝기를 구분합니다. 배경이 밝을수록 HUD가 더 밝아야 보입니다.',
+    def: '계속 낼 수 있는 "지속" 밝기와 잠깐 낼 수 있는 "피크" 밝기를 구분합니다. LED와 패널은 오래 쓰면 조금씩 어두워지는데, "사용 기간 내 감쇠 허용 −20%"는 수명 끝에 처음보다 20%까지 어두워져도 된다는 뜻으로 읽힙니다. 이 −20%를 지속 10,000 nit와 피크 12,000 nit에 각각 적용하면 수명 말기 하한은 8,000 nit와 9,600 nit입니다.',
     why: ['맑은 낮 도로·하늘을 배경으로도 보여야 해서 높은 휘도가 필요합니다. 밤에는 크게 낮춥니다.'],
-    qs: ['허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
+    qs: ['−20%는 수명 말기에 초기 대비 최대 20% 감소를 허용한다는 뜻인가요?', '지속 10,000 nit와 피크 12,000 nit에 각각 적용해 수명 말기 하한이 8,000 nit와 9,600 nit인가요?', '허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
   grad: { one: '아이박스 안에서 눈을 1 cm 옮길 때 허상 밝기가 몇 % 변하는지입니다.',
     def: '화면 안 위치별 밝기 차이(균일도)와는 다릅니다. 같은 화면 지점을 보면서 눈 위치만 옮길 때의 변화입니다.',
     why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.'],
@@ -2412,21 +2395,21 @@ const SPEC_TXT = {
     why: ['명암비가 낮으면 밤에 허상 크기의 희미한 회색 사각형("포스트카드")이 보입니다.'],
     qs: ['흑백을 차례로 재나요, 바둑판 패턴으로 동시에 재나요?'] },
   ctol: { one: '흰색의 색좌표가 기준 색좌표에서 벗어나도 되는 범위입니다.',
-    def: 'Cx와 Cy를 각각 ±0.01 이내로 봅니다. 두 축을 따로 보므로 허용 범위는 원이 아니라 네모 모양입니다.',
+    def: 'Cx와 Cy를 각각 ±0.01 이내로 봅니다. 두 축을 따로 보므로 허용 범위는 원이 아니라 네모 모양입니다. ΔCx·ΔCy는 "기준 색좌표에서 얼마나 벗어났나"라서, 기준점(예: 흰색 D65 = 0.3127, 0.3290, 또는 설계 목표 흰색)이 정해져야 계산할 수 있습니다. "전 온도 범위 유지"는 차가 견뎌야 하는 저온~고온 전체에서 이 범위를 지켜야 한다는 뜻인데, 몇 ℃부터 몇 ℃까지인지는 적혀 있지 않습니다.',
     why: ['차마다 흰색이 노랗거나 푸르게 보이면 다른 화면과 색이 안 맞습니다.'],
-    qs: ['기준 색좌표(Cx, Cy)는 얼마인가요?'] },
+    qs: ['ΔCx·ΔCy를 재는 기준 색좌표는 무엇인가요?', '"전 온도 범위"는 몇 ℃부터 몇 ℃까지인가요?'] },
   sat: { one: '한 가지 색(예: 빨강)이 흰빛 없이 얼마나 선명한지입니다.',
-    def: '채도는 색 하나의 선명도이고, 색역은 낼 수 있는 색 전체의 범위입니다. 채도는 계산 방법에 따라 숫자가 달라지고, 디자인 도구의 채도 값과 측정값은 같은 것이 아닙니다.',
+    def: '채도는 색 하나의 선명도이고, 색역은 낼 수 있는 색 전체의 범위입니다. 그래서 "90% sRGB"는 두 가지로 읽힙니다. ① 채도 지표: 빨강·초록·파랑 원색 각각이 sRGB 원색만큼 선명한 정도(그림처럼 백색점에서 원색까지 거리의 %). ② 색역 수치: Gamut 행처럼 HUD 삼각형을 sRGB 삼각형과 비교한 값. ②라면 Gamut 행과 같은 측정인지, 면적비인지 커버리지인지가 남고, ①이라면 어떤 색을 어떤 식으로 계산하는지가 필요합니다. 디자인 도구의 채도(HSV) 값과 측정값은 같은 것이 아닙니다.',
     why: ['선명도가 떨어지면 빨간 경고가 분홍처럼, 초록 표시가 연두처럼 보입니다.'],
-    qs: ['이 90% sRGB는 색 하나의 채도인가요, Gamut 행과 같은 값인가요?'] },
+    qs: ['90% sRGB는 채도 지표인가요, sRGB 대비 색역 수치인가요?', '색역 수치라면 Gamut 행의 90% sRGB와 같은 측정값인가요? 면적비인가요, 커버리지인가요?', '채도 지표라면 어떤 색을 어떤 방식으로 계산하나요?'] },
   gamut: { one: '디스플레이가 낼 수 있는 색의 범위입니다. 색 지도 위에서 R·G·B 세 원색이 만드는 삼각형입니다.',
-    def: '"기준 대비 %"에는 두 가지가 있습니다. 면적비는 HUD 삼각형이 기준보다 얼마나 큰지(100%를 넘을 수 있음), 커버리지는 기준 색을 HUD가 얼마나 낼 수 있는지(최대 100%)입니다.',
+    def: '"90% sRGB"는 HUD 삼각형을 sRGB 삼각형과 비교한 값입니다. 비교하는 방법이 둘이고(면적비: 넓이만 비교, 커버리지: 겹쳐서 덮인 만큼), 기준도 여럿이라(sRGB, NTSC 등) 같은 화면도 다른 숫자가 나옵니다. 넓이로 환산하면 sRGB 90%는 NTSC 약 ' + Math.round(90 * RS) + '%라서, 괄호의 70% NTSC는 단순 환산값과 맞지 않습니다. 그림의 ②~⑤에서 차례로 봅니다.',
     why: [`같은 조건이면 sRGB 넓이는 NTSC의 약 ${Math.round(RS * 100)}%입니다. 그래서 같은 화면도 기준에 따라 숫자가 다르게 적힙니다.`, '색역이 좁으면 빨강↔주황, 초록↔청록처럼 비슷한 색을 구분하기 어려워집니다.'],
-    qs: ['면적비인가요, 커버리지인가요?'] },
+    qs: ['90% sRGB와 70% NTSC는 각각 면적비인가요, 커버리지인가요?', '두 값을 각각 만족해야 하나요, 하나를 다른 기준으로 환산해 괄호에 적은 건가요?', 'Tolerance −5%는 %인가요, %p인가요?'] },
   derating: { one: '온도가 오르면 부품을 보호하려고 밝기(출력)의 허용 한계를 낮추는 것입니다.',
-    def: '정해진 온도부터 출력 한계를 조금씩 낮춥니다. 예를 들어 70℃부터 낮추기 시작해 90℃에서 50%가 되면, 그 사이 80℃에서는 75%입니다.',
+    def: '정해진 온도부터 출력 한계를 조금씩 낮춥니다. 예를 들어 70℃부터 낮추기 시작해 90℃에서 50%가 되면, 그 사이 80℃에서는 75%입니다. 온도는 재는 위치(TFT 근처 온도 센서, PCB, 하우징 안 공기 등)에 따라 같은 순간에도 다릅니다. "50%"도 무엇의 절반인지에 따라 실제 밝기가 다릅니다: 지속 정격 10,000 nit의 50%인지, 낮추기 시작하는 65℃에서 내던 밝기의 50%인지. ±3은 온도(℃)의 공차로 읽힙니다.',
     why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁습니다. 저감이 일찍 시작되면 가장 밝아야 할 때 어두워집니다.'],
-    qs: ['50%는 무엇의 50%인가요? 온도는 어디서 재나요?'] },
+    qs: ['65℃와 85℃는 어느 위치의 온도인가요? (TFT 근처 온도 센서 등)', '85℃에서 50%는 65℃의 휘도를 100%로 본 것인가요? 기준 휘도는 지속 정격 10,000 nit인가요?', '±3은 온도(℃) 공차인가요?'] },
 };
 SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 
@@ -2646,19 +2629,95 @@ function render() {
 /* each demo: controls + draw(g, w, h, v) → readout html */
 const P3 = [[.68, .32], [.265, .69], [.15, .06]], BT2020 = [[.708, .292], [.17, .797], [.131, .046]];
 // gamut demo, second view: the reference triangles side by side and what one number means in each
-function gamutStd(g, w, h, pN, pS, RS) {
-  const STD = [['NTSC', NTSC, '#66717c', [5, 4], '1953 · 아날로그 TV'], ['sRGB', SRGB, '#c8780f', [2, 3], '1996 · PC·웹·대부분의 모니터'], ['DCI-P3', P3, '#2a9d6a', [6, 3], '2007 · 영화관·최신 휴대폰'], ['BT.2020', BT2020, '#8a4fd1', [1, 3], '2012 · UHD 방송 목표']];
-  const tw = Math.min(w * .5, h * .95), m = cie(g, tw, h), c0 = NTSC.reduce((a, p) => [a[0] + p[0] / 3, a[1] + p[1] / 3], [0, 0]), sc = Math.sqrt(pN / 100);
-  tri(g, m, NTSC.map(([x, y]) => [c0[0] + (x - c0[0]) * sc, c0[1] + (y - c0[1]) * sc]), '#1f62d1', 'rgba(31,98,209,.14)');
-  STD.forEach(([, p, c, d]) => tri(g, m, p, c, null, d));
-  const x0 = tw + 24, bw = w - x0 - 110, A = p => triArea(p) / triArea(NTSC) * 100, rows = [...STD.map(([n, p, c, , t]) => [n, A(p), c, t]), ['이 HUD', pN, '#1f62d1', `= sRGB의 ${pS}%`]].sort((a, b) => b[1] - a[1]), mx = Math.max(...rows.map(r => r[1]));
-  g.font = '600 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#1c2228'; g.fillText('삼각형 면적 (NTSC = 100)', x0, 22);
-  const rh = Math.min(52, (h - 40) / rows.length);
-  rows.forEach(([n, a, c, t], i) => { const y = 36 + i * rh, bwid = a / mx * bw; g.fillStyle = c; g.globalAlpha = n === '이 HUD' ? 1 : .75; g.fillRect(x0, y, bwid, 16); g.globalAlpha = 1;
-    g.fillStyle = '#1c2228'; g.font = `${n === '이 HUD' ? 700 : 600} 12px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`; g.fillText(`${n}  ${Math.round(a)}`, x0 + bwid + 6, y + 13); g.fillStyle = '#66717c'; g.font = '11px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillText(t, x0, y + 30); });
-  return `<b>RGB</b>는 기준이 아니라 색을 만드는 방식입니다. 모든 디스플레이가 빨강·초록·파랑 세 원색을 섞어 색을 만들고, 세 원색의 위치가 삼각형 꼭짓점입니다. <b>NTSC·sRGB·DCI-P3·BT.2020</b>은 "이 세 점을 기준으로 삼자"고 정한 기준 삼각형입니다.<br>
-    그래서 같은 디스플레이도 기준에 따라 숫자가 바뀝니다. 같은 색도도(CIE 1931 xy)·같은 면적비 방식을 가정하면 sRGB는 NTSC 면적의 약 ${Math.round(RS * 100)}%(흔히 약 72%로 인용)라서 <b>NTSC ${Math.round(RS * 100)}% ≈ sRGB 100%</b>, <b>sRGB 90% ≈ NTSC ${Math.round(90 * RS)}%</b>, <b>NTSC 70% ≈ sRGB ${Math.round(70 / RS)}%</b>입니다.<br>
-    또 "면적비"는 넓이만 비교하고, "커버리지"는 기준 삼각형을 실제로 얼마나 덮는지입니다. 면적이 100%여도 삼각형이 비뚤면 커버리지는 낮을 수 있어서, 스펙에는 기준·면적/커버리지·CIE 1931/1976 중 무엇인지 함께 적어야 합니다.`;
+// ── gamut demo: standard triangles that move, one screen measured with two rulers, area vs coverage, reading the spec ──
+const ADOBE = [[.64, .33], [.21, .71], [.15, .06]];
+const GSTD = [['sRGB', SRGB, '#c8780f', '웹·PC 모니터·대부분의 앱 화면 (1996)'], ['AdobeRGB', ADOBE, '#8a4fd1', '사진 편집·인쇄 (1998) · 초록 쪽이 넓음'], ['DCI-P3', P3, '#2a9d6a', '영화관·최신 휴대폰 (2007) · 빨강·초록이 넓음'], ['NTSC', NTSC, '#4a5560', '1953년 TV 기준 · 지금은 넓이 비교용 "자"']];
+const GF = (wt, sz) => `${wt} ${sz}px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif`;
+const gCen = p => p.reduce((a, q) => [a[0] + q[0] / 3, a[1] + q[1] / 3], [0, 0]);
+// the example HUD triangle: sRGB scaled to p% of its area, turned a little for the "crooked" shapes (illustration only)
+function hudTri(p, shape) { const c0 = gCen(SRGB), sc = Math.sqrt(p / 100), a = [0, 12, 26][shape] * Math.PI / 180;
+  return SRGB.map(([x, y]) => { const dx = (x - c0[0]) * sc, dy = (y - c0[1]) * sc; return [c0[0] + dx * Math.cos(a) - dy * Math.sin(a), c0[1] + dx * Math.sin(a) + dy * Math.cos(a)]; }); }
+const gRatio = (T, ref) => polyArea(T) / polyArea(ref) * 100;
+const gCover = (T, ref) => { const i = clipPoly(ref, T); return i.length > 2 ? polyArea(i) / polyArea(ref) * 100 : 0; };
+// triangles glide to their new place instead of jumping
+const GM = {};
+function glide(key, to) { const a = GM[key], now = performance.now();
+  if (!a) { GM[key] = { from: to, to, t0: 0, shown: to }; return to; }
+  if (a.to !== to) { a.from = a.shown; a.to = to; a.t0 = now; }
+  const t = Math.min(1, (now - a.t0) / 520), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  a.shown = a.to.map((p, i) => [a.from[i][0] + (p[0] - a.from[i][0]) * e, a.from[i][1] + (p[1] - a.from[i][1]) * e]);
+  if (t < 1) requestAnimationFrame(() => { if (SP.cur === 'gamut' && SP.redraw) SP.redraw(); });
+  return a.shown; }
+function boldTri(g, m, p, col, fill) { polyPath(g, m, p); if (fill) { g.fillStyle = fill; g.fill(); } g.strokeStyle = 'rgba(0,0,0,.55)'; g.lineWidth = 4.5; g.stroke(); g.strokeStyle = col; g.lineWidth = 2.4; g.stroke();
+  p.forEach(([x, y]) => { g.beginPath(); g.arc(m.X(x), m.Yp(y), 5.5, 0, 7); g.fillStyle = '#fff'; g.fill(); g.strokeStyle = 'rgba(0,0,0,.6)'; g.lineWidth = 1.5; g.stroke(); }); }
+// ② the common standards on the colour map; the picked one moves into place
+function gamutStds(g, w, h, v) {
+  const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1);
+  GSTD.forEach(([, p, c], i) => { if (i !== v.std) tri(g, m, p, 'rgba(255,255,255,.75)', null, [4, 4]); });
+  boldTri(g, m, glide('std', GSTD[v.std][1]), '#fff');
+  const x0 = tw + 26, bw = w - x0 - 70, A = p => polyArea(p) / polyArea(NTSC) * 100, rh = Math.min(70, (h - 30) / 4);
+  g.fillStyle = '#1c2228'; g.font = GF(600, 12); g.fillText('삼각형 넓이 (NTSC = 100)', x0, 18);
+  GSTD.forEach(([n, p, c, t], i) => { const y = 32 + i * rh, on = i === v.std, bwid = A(p) / 100 * bw;
+    if (on) { g.fillStyle = '#eef3fd'; g.fillRect(x0 - 8, y - 6, w - x0, rh - 6); }
+    g.fillStyle = c; g.globalAlpha = on ? 1 : .55; g.fillRect(x0, y + 22, bwid, 10); g.globalAlpha = 1;
+    g.fillStyle = '#1c2228'; g.font = GF(on ? 700 : 600, 14); g.fillText(n, x0, y + 14); g.font = GF(600, 12); g.fillText(`${Math.round(A(p))}`, x0 + bwid + 6, y + 32);
+    g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText(t, x0, y + 48); });
+  const [n, p] = GSTD[v.std];
+  return `<b>${n}</b> 삼각형입니다. 기준마다 세 원색(꼭짓점)의 위치가 달라서 삼각형 크기와 모양이 다릅니다. 넓이로 보면 sRGB는 NTSC의 약 <b>${Math.round(RS * 100)}%</b>입니다.<br>스펙의 "90% sRGB", "70% NTSC"는 HUD 삼각형을 이 기준 삼각형 중 하나와 비교한 숫자입니다. 다음 단계에서 같은 HUD를 다른 기준으로 재 봅니다.`;
+}
+// ③ one HUD, two rulers: only the reference changes, and the number changes with it
+function gamutRuler(g, w, h, v) {
+  const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h), H = hudTri(v.p, 0), ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB';
+  boldTri(g, m, glide('ruler', ref), v.b ? '#4a5560' : '#c8780f', 'rgba(200,120,15,.07)');
+  polyPath(g, m, H); g.fillStyle = 'rgba(31,98,209,.28)'; g.fill(); g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.stroke();
+  const rS = gRatio(H, SRGB), rN = gRatio(H, NTSC), x0 = tw + 30;
+  g.fillStyle = '#1f62d1'; g.font = GF(700, 13); g.fillText('파란 삼각형 = 이 HUD (그대로)', x0, 30);
+  [[0, 'sRGB로 재면', rS, '#c8780f'], [1, 'NTSC로 재면', rN, '#4a5560']].forEach(([k, t, val, c], i) => { const y = 70 + i * 92, on = k === v.b;
+    g.fillStyle = on ? '#eef3fd' : '#f6f8fa'; g.fillRect(x0 - 10, y - 18, w - x0, 80); g.fillStyle = c; g.fillRect(x0 - 10, y - 18, 4, 80);
+    g.fillStyle = '#4a5560'; g.font = GF(600, 13); g.fillText(t, x0, y + 2); g.fillStyle = on ? '#1c2228' : '#8a949e'; g.font = GF(800, 34); g.fillText(`${Math.round(val)}%`, x0, y + 44); });
+  g.fillStyle = '#4a5560'; g.font = GF(500, 12.5); g.fillText(`sRGB % × ${f2(RS)} ≈ NTSC %`, x0, 270); g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText('(넓이 기준, CIE 1931 xy)', x0, 290);
+  return `HUD는 그대로 두고 <b>자(기준)만 ${rn}로 바꿨습니다.</b> 같은 화면이 sRGB로는 <b>${Math.round(rS)}%</b>, NTSC로는 <b>${Math.round(rN)}%</b>입니다.<br>그래서 "≥ 90% sRGB (≥ 70% NTSC)"의 괄호가 단순히 환산한 값이라면 90 × ${f2(RS)} ≈ <b>${Math.round(90 * RS)}%</b>여야 하는데 원본은 70%입니다. 숫자가 맞지 않으니 "두 조건을 각각 따로 만족해야 하는지, 하나를 환산해 적은 것인지"를 묻게 됩니다.`;
+}
+// ④ area ratio vs coverage, side by side: compare sizes apart, then lay one on the other
+function gamutAreaCov(g, w, h, v) {
+  const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', H = hudTri(v.p, v.shape), R = gRatio(H, ref), C = gCover(H, ref), inter = clipPoly(ref, H);
+  const pw = (w - 20) / 2, ph = h - 70, all = [...ref, ...H], xs = all.map(p => p[0]), ys = all.map(p => p[1]), bx = [Math.min(...xs), Math.max(...xs)], by = [Math.min(...ys), Math.max(...ys)];
+  const sp = Math.max(bx[1] - bx[0], by[1] - by[0]), mk = (ox, oy, s) => ({ X: x => ox + (x - bx[0]) * s, Yp: y => oy + (by[1] - y) * s });
+  // left: the two triangles apart, like two pieces of paper being compared
+  const s1 = Math.min((pw - 30) / 2.1 / sp, (ph - 30) / sp), cR = gCen(ref), cH = gCen(H), shift = p => p.map(([x, y]) => [x - cH[0] + cR[0], y - cH[1] + cR[1]]);
+  const mL = mk(10, 50, s1), mL2 = mk(10 + pw * .48, 50, s1);
+  g.fillStyle = '#1c2228'; g.font = GF(700, 14); g.fillText('면적비: 넓이만 비교', 10, 20); g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText('겹치는지는 보지 않음 · 100%를 넘을 수 있음', 10, 38);
+  polyPath(g, mL, ref); g.fillStyle = 'rgba(200,120,15,.18)'; g.fill(); g.setLineDash([5, 4]); g.strokeStyle = '#c8780f'; g.lineWidth = 2; g.stroke(); g.setLineDash([]);
+  polyPath(g, mL2, shift(H)); g.fillStyle = 'rgba(31,98,209,.25)'; g.fill(); g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.stroke();
+  g.font = GF(600, 12); g.fillStyle = '#c8780f'; g.fillText(`${rn} 넓이 100`, 14, h - 34); g.fillStyle = '#1f62d1'; g.fillText(`HUD 넓이 ${Math.round(R)}`, 10 + pw * .5, h - 34);
+  g.fillStyle = '#1c2228'; g.font = GF(800, 20); g.fillText(`= ${Math.round(R)}%`, 10, h - 8);
+  // right: laid on top of each other, only the covered part counts
+  const s2 = Math.min((pw - 20) / sp, (ph - 30) / sp), mR = mk(pw + 30, 50, s2);
+  g.fillStyle = '#1c2228'; g.font = GF(700, 14); g.fillText('커버리지: 겹쳐서 덮인 만큼', pw + 30, 20); g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText(`${rn} 중 HUD가 덮은 부분 · 최대 100%`, pw + 30, 38);
+  polyPath(g, mR, ref); g.fillStyle = 'rgba(209,73,63,.22)'; g.fill(); polyPath(g, mR, H); g.fillStyle = 'rgba(31,98,209,.16)'; g.fill();
+  if (inter.length > 2) { polyPath(g, mR, inter); g.fillStyle = 'rgba(42,157,106,.8)'; g.fill(); }
+  polyPath(g, mR, ref); g.setLineDash([5, 4]); g.strokeStyle = '#c8780f'; g.lineWidth = 2; g.stroke(); g.setLineDash([]); polyPath(g, mR, H); g.strokeStyle = '#1f62d1'; g.stroke();
+  g.font = GF(600, 12); g.fillStyle = '#2a9d6a'; g.fillText(`초록 = 덮은 부분 ${Math.round(C)}`, pw + 34, h - 34); g.fillStyle = '#d1493f'; g.fillText(`빨강 = 못 덮은 ${Math.round(100 - C)}`, pw + 34 + 130, h - 34);
+  g.fillStyle = '#1c2228'; g.font = GF(800, 20); g.fillText(`= ${Math.round(C)}%`, pw + 30, h - 8);
+  g.strokeStyle = '#e6ebf0'; g.lineWidth = 1; g.beginPath(); g.moveTo(pw + 15, 10); g.lineTo(pw + 15, h - 10); g.stroke();
+  return `같은 HUD인데 <b>면적비 ${Math.round(R)}%</b>, <b>커버리지 ${Math.round(C)}%</b>입니다. 면적비는 넓이만 비교하고, 커버리지는 ${rn}의 색 중 HUD가 실제로 낼 수 있는 비율입니다.<br>"HUD 모양"을 비뚤게 바꾸면 넓이(면적비)는 그대로인데 덮는 부분(커버리지)만 줄어듭니다. 그래서 "90% sRGB"만으로는 어느 쪽인지 알 수 없고, 어느 쪽이냐에 따라 합격·불합격이 바뀔 수 있습니다.`;
+}
+// ⑤ reading "≥ 90% sRGB (≥ 70% NTSC)": the same example HUD under each reading
+function gamutRead(g, w, h, v) {
+  const H = hudTri(v.p, v.shape), V = { sa: gRatio(H, SRGB), sc: gCover(H, SRGB), na: gRatio(H, NTSC), nc: gCover(H, NTSC) };
+  const tw = Math.min(w * .4, h * .98), m = cie(g, tw, h); tri(g, m, NTSC, '#4a5560', null, [5, 4]); tri(g, m, SRGB, '#c8780f', null, [2, 3]); polyPath(g, m, H); g.fillStyle = 'rgba(31,98,209,.25)'; g.fill(); g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.stroke();
+  g.font = GF(500, 11); g.fillStyle = '#4a5560'; g.fillText('회색 NTSC · 주황 sRGB · 파랑 HUD', 30, 14);
+  const x0 = tw + 24, cw = (w - x0 - 90) / 2, ok = (val, lim) => val >= lim - 1e-9;
+  g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('이 HUD를 재면', x0, 20);
+  g.font = GF(600, 12); g.fillStyle = '#66717c'; g.fillText('면적비', x0 + 90, 44); g.fillText('커버리지', x0 + 90 + cw, 44);
+  [['sRGB (≥ 90)', V.sa, V.sc, 90], ['NTSC (≥ 70)', V.na, V.nc, 70]].forEach(([t, a, c, lim], i) => { const y = 74 + i * 40;
+    g.fillStyle = '#1c2228'; g.font = GF(600, 12.5); g.fillText(t, x0, y);
+    [[a, 0], [c, 1]].forEach(([val, k]) => { const pass = ok(val, lim); g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.font = GF(800, 18); g.fillText(`${Math.round(val)}%`, x0 + 90 + k * cw, y + 2); g.font = GF(600, 11); g.fillText(pass ? '충족' : '미달', x0 + 90 + k * cw + 52, y); }); });
+  const rd = [['A. 둘 다 면적비, 각각 만족', ok(V.sa, 90) && ok(V.na, 70)], ['B. 둘 다 커버리지, 각각 만족', ok(V.sc, 90) && ok(V.nc, 70)], ['C. sRGB 면적비만 판정 (괄호는 참고 환산)', ok(V.sa, 90)]];
+  g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('읽는 방법에 따라 판정', x0, 186);
+  rd.forEach(([t, pass], i) => { const y = 212 + i * 26; g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.beginPath(); g.arc(x0 + 6, y - 4, 6, 0, 7); g.fill(); g.fillStyle = '#1c2228'; g.font = GF(500, 12.5); g.fillText(`${t} → ${pass ? '합격' : '불합격'}`, x0 + 20, y); });
+  const same = new Set(rd.map(r => r[1])).size === 1;
+  return `원본 "≥ 90% sRGB (≥ 70% NTSC)"를 어떻게 읽느냐에 따라 같은 HUD의 판정이 ${same ? '지금은 같지만, 크기·모양을 바꾸면 달라집니다' : '<b>달라집니다</b>'}. 크기를 90%로 두면 sRGB는 통과하지만 NTSC는 약 ${Math.round(90 * RS)}%라 70%에 못 미칩니다.<br>공차 −5%도 읽는 방법이 둘입니다. 상대 %면 90 × 0.95 = 85.5%, %p면 90 − 5 = 85%입니다. HUD 모양은 설명용입니다.`;
 }
 const DEMOS = {
   disparity: { ctl: [['mode', '해석', 0, 1, 1, 0, 'sel:양안 시차인 경우 (예시)|주상–고스트 간격인 경우 (예시)'], ['d', '어긋난 각도', 0, 5, .1, 1, 'mrad'], ['ax', '방향', 0, 1, 1, 0, 'sel:수평|수직']],
@@ -2792,18 +2851,19 @@ const DEMOS = {
         g.fillText(`예시 정의 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 채도 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `채도는 색 하나의 선명도입니다. 여기서는 "백색점에서 원색까지 거리 중 몇 %까지 왔나"로 계산했고, R·G·B가 서로 다를 수 있습니다.<br>같은 색을 디자인 도구의 HSV 채도로 재면 보라색 숫자처럼 다른 값이 나옵니다. 계산 방법이 다르면 숫자도 다릅니다.`; } },
 
-  gamut: { minW: 540, ctl: [['step', '단계', 0, 3, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (NTSC·sRGB)|③ 면적비 vs 커버리지|④ 운전자 눈에서 달라지는 것'], ['p', 'HUD 색역 크기 (면적비)', 30, 150, 1, 125, '%'], ['b', '기준', 0, 1, 1, 1, 'sel:sRGB 대비|NTSC 대비'], ['rot', '삼각형 모양 (설명용)', -40, 40, 1, 22, '°']],
-    show: v => [['step'], ['step', 'p', 'b'], ['step', 'p', 'b', 'rot'], ['step', 'p', 'b']][v.step],
+  gamut: { minW: 540, ctl: [['step', '단계', 0, 5, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 4가지|③ 같은 화면, 다른 기준|④ 면적비 vs 커버리지|⑤ 우리 스펙 읽기|⑥ 운전자 눈에서 달라지는 것'], ['std', '기준 삼각형', 0, 3, 1, 0, 'sel:sRGB · 웹·모니터|AdobeRGB · 사진|DCI-P3 · 영화·폰|NTSC · 옛 TV'], ['b', '재는 기준', 0, 1, 1, 0, 'sel:sRGB로 재기|NTSC로 재기'], ['p', 'HUD 크기 (sRGB 넓이 대비)', 50, 140, 1, 90, '%'], ['shape', 'HUD 모양 (설명용)', 0, 2, 1, 1, 'sel:기준과 같은 방향|조금 비뚤어짐|많이 비뚤어짐']],
+    show: v => [['step'], ['step', 'std'], ['step', 'b', 'p'], ['step', 'b', 'p', 'shape'], ['step', 'p', 'shape'], ['step', 'p']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
-      const ref = v.b ? NTSC : SRGB, rn = v.b ? 'NTSC' : 'sRGB', pS = Math.round(v.b ? v.p / RS : v.p), pN = Math.round(v.b ? v.p : v.p * RS);
       if (v.step === 0) { const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1); tri(g, m, SRGB, '#1c2228', null);
         SRGB.forEach(([x, y], k) => { g.fillStyle = ['#e0352b', '#26a843', '#2e56e8'][k]; g.beginPath(); g.arc(m.X(x), m.Yp(y), 6, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); });
         const x0 = tw + 30; g.fillStyle = '#1c2228'; g.font = '600 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
         [['말발굽 모양 전체', '사람 눈이 볼 수 있는 모든 색'], ['꼭짓점 세 개', '디스플레이의 빨강·초록·파랑 원색'], ['삼각형 안쪽', '세 원색을 섞어서 낼 수 있는 색 = 색역'], ['삼각형 바깥', '이 디스플레이로는 낼 수 없는 색']].forEach(([a, b2], k) => { const y = 50 + k * 64; g.font = '600 14px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#1c2228'; g.fillText(a, x0, y); g.font = '13px "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif'; g.fillStyle = '#4a5560'; g.fillText(b2, x0, y + 22); });
         return `<b>색역</b>은 디스플레이가 낼 수 있는 색의 범위입니다. 모든 디스플레이는 빨강·초록·파랑 세 원색을 섞어 색을 만들기 때문에, 색도도(색을 좌표로 펼친 지도) 위에서 세 원색을 꼭짓점으로 하는 <b>삼각형</b>이 됩니다. 원색이 순수할수록 꼭짓점이 바깥으로 나가 삼각형이 커집니다. 그림의 검은 삼각형은 sRGB입니다. 말발굽 안의 색은 이 화면이 낼 수 있는 범위로 대신 그렸습니다.`; }
-      if (v.step === 1) return gamutStd(g, w, h, pN, pS, RS);
-      if (v.step === 2) return gamutCov(g, w, h, v);
-      return gamutHud(g, w, h, pN);
+      if (v.step === 1) return gamutStds(g, w, h, v);
+      if (v.step === 2) return gamutRuler(g, w, h, v);
+      if (v.step === 3) return gamutAreaCov(g, w, h, v);
+      if (v.step === 4) return gamutRead(g, w, h, v);
+      return gamutHud(g, w, h, Math.round(v.p * RS));
     } },
   derating: { minW: 540, ctl: [['src', '곡선', 0, 1, 1, 0, 'sel:예시 곡선|선택한 전문가 값'], ['t1', '낮추기 시작', 50, 100, 1, 70, '℃'], ['t2', '50%가 되는 온도', 60, 110, 1, 90, '℃'], ['t', '현재 온도', 20, 110, 1, 80, '℃']],
     show: v => v.src ? ['src', 't'] : ['src', 't1', 't2', 't'],
