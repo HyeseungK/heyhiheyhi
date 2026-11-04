@@ -968,8 +968,8 @@ import * as THREE from 'three';
 /* ───────────────────────── content ───────────────────────── */
 const PHOTO = {
   'side':'측면 전체','label':'제품 라벨 (HA1SZK63E)','rear-heatsink':'뒷면 방열판 핀','rear-angle':'뒤쪽 비스듬히','connector-side':'측면 커넥터',
-  'top-housing':'상부 하우징 외관','housing-detail':'하우징 리브 구조','heatsink-top':'방열판 핀','weight':'무게 측정','weight-scale':'저울 2,053 g',
-  'heatsink-back':'방열판 정면','upper-inside':'상부 하우징 안쪽','opening':'상·하부 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
+  'top-housing':'하부 베이스 외관','housing-detail':'하우징 리브 구조','heatsink-top':'방열판 핀','weight':'무게 측정','weight-scale':'저울 2,053 g',
+  'heatsink-back':'방열판 정면','upper-inside':'하부 베이스 안쪽','opening':'베이스·모터 커버 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
   'motor-bay':'모터 베이','ffc':'Custom FPCB (회색 케이블)와 커넥터','tft-fpcb-map':'① TFT · ② Bare PCB (Flexible) · ③ ACF 접합선 · ④ Custom FPCB','tcon-mounted':'TFT와 Bare PCB 장착 상태','pcb-shield':'메인 PCB (차폐 캔 장착)','pcb-noshield':'메인 PCB (차폐 캔 제거)',
   'pcb-out':'메인 PCB 단품','pcb-back-out':'메인 PCB 뒷면 단품','heatsink-fins':'방열판 핀과 Base Plate','bracket-inside':'하우징 속 방열판과 PGU','pgu-pad':'PGU 뒷면 실리콘 패드',
   'lens-array':'렌즈 어레이 (PC)','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'2차 렌즈 (허니콤) · TFT 브래킷에 장착','lens1-s2g':'1차 렌즈 (돔) 단품','film-s2g':'광학 필름 단품 (0.25 mm)','lens2-s2g':'2차 렌즈 (허니콤) 단품','blframe-s2g':'백라이트 프레임 (추정)','tftholder-s2g':'TFT 지지대 단품','motorcover-s2g':'모터 커버 + 방열판 A','base-s2g':'하부 베이스 곡면경 (보호 필름 부착)','mirror-housing':'미러 하우징 (곡면경·평면경)','pcb-housing':'하부 하우징 전체',
@@ -978,19 +978,18 @@ const PHOTO = {
   'bracket-mark':'각인 HA-DZK-617 / ADC12','pgu-module':'PGU와 실리콘 패드','cover-top':'방진 커버 (보호필름)','fpcb-acf':'Bare PCB의 좁은 띠 · ACF 접합선 · LED 전원 탭'
 };
 const P = {
-  upper: { name:'상부 하우징', full:'상부 하우징 (미러 기구, 대형)', en:'Upper housing · mirror carrier', mat:'PP', conf:'photo', housing:true, ex:[0,34,0], photos:['base-s2g','top-housing','mirror-housing','upper-inside','housing-detail','rear-angle'],
-    desc:'곡면경과 평면경을 정해진 각도로 잡아 주는 가장 큰 케이스입니다. 안쪽은 무광 검정이고, 바닥 가운데 사각 구멍으로 PGU 빛이 올라옵니다. 위쪽 개구부는 방진 커버가 막습니다.',
-    points:['광학 부품 사이 거리와 각도를 고정하는 것이 역할입니다. 미러가 0.1° 틀어져도 허상 위치가 눈에 띄게 움직입니다.','안쪽의 무광 검정과 리브는 미광을 흡수해 고스트 이미지와 빛샘을 줄입니다.'],
-    specs:[['소재','PP (BOM)'],['내부','무광 검정 · 광 트랩 리브']] },
-  lower: { name:'하부 하우징', full:'하부 하우징 (PCB 기구, 중형)', en:'Lower housing · electronics carrier', mat:'PC+ABS', conf:'photo', housing:true, ex:[0,-28,0], photos:['pcb-housing','lower-open','lower-pcb','opening','label'],
-    desc:'메인 PCB, PGU, 모터를 담는 아래 케이스입니다. 위에서 보면 L자 모양입니다. 긴 쪽에 메인 PCB, 가운데에 PGU, 모서리에 모터가 들어갑니다. 측면으로 커넥터가 나오고 차체 고정용 귀가 있습니다.',
-    points:['라벨: ZEEKR / HA1SZK63E / 752007 / 6608451043 / 차종 CX1E / 생산 2025.10.05 / 부품명 抬头显示器(헤드업 디스플레이).','전체 무게 실측 2,053 g (저울 사진).'],
-    specs:[['소재','PC+ABS (BOM)'],['전체 무게','2,053 g (실측)']] },
-  baseplate: { name:'하부 Base Plate', full:'하부 Base Plate (방열판 기구, 소형)', en:'Heatsink base plate', mat:'PP+GF10', conf:'photo', ex:[0,-18,0], photos:['heatsink-fins','rear-heatsink','heatsink-back'],
-    desc:'방열판을 하우징 바닥에 고정하는 작은 플라스틱 받침입니다. 방열판 핀이 이 틀의 창으로 밖에 드러납니다.',
-    points:['유리섬유 10% 강화 PP로 열에 덜 휘고 가볍습니다.','방열판 단품 사진에서 핀을 감싸는 검은 틀입니다.'],
-    specs:[['소재','PP+GF10 (BOM)']] },
-  heatsink: { name:'방열판', full:'방열판', en:'Die-cast heatsink HA-DZK-617', mat:'ADC12', conf:'photo', ex:[0,-10,0], photos:['motorcover-s2g','bracket-front','bracket-mark','bracket-back','bracket-inside','heatsink-fins','heatsink-top'],
+  upper: { name:'하부 베이스', full:'하부 베이스 (곡면경·평면경 장착)', en:'Base · mirror carrier', mat:'', conf:'photo', housing:true, ex:[0,34,0], photos:['base-s2g','top-housing','mirror-housing','upper-inside','housing-detail','rear-angle'],
+    desc:'곡면경과 평면경을 정해진 각도로 잡아 주는 가장 큰 몸통입니다. 양 끝에 구멍 3개짜리 장착 귀가 있어 차체에 고정됩니다. 안쪽은 무광 검정이고, 바닥 가운데 사각 구멍으로 PGU 빛이 올라옵니다.',
+    points:['광학 부품 사이 거리와 각도를 고정하는 것이 역할입니다. 미러가 0.1° 틀어져도 허상 위치가 눈에 띄게 움직입니다.','안쪽의 무광 검정과 리브는 미광을 흡수해 고스트 이미지와 빛샘을 줄입니다.','곡면경까지 장착한 상태 1,366 g (외부자재 p.7).'],
+    specs:[['내부','무광 검정 · 광 트랩 리브'],['중량','1,366 g (곡면경·평면경 포함)']] },
+  topcover: { name:'상부 커버', full:'상부 커버 (방진 필름 창)', en:'Top cover · window frame', mat:'', conf:'guess', housing:true, ex:[0,40,0], photos:['cover-top','weight'],
+    desc:'하부 베이스 위를 덮는 앞쪽 커버입니다. 가운데 창에 방진 커버가 끼워지고, 앞쪽 비스듬한 면이 대시보드 개구부 쪽을 향합니다.',
+    points:['사진으로 본 위치에서 추정한 형태입니다. 정확한 경계(어디까지가 커버인지)는 확인이 필요합니다.'], specs:[] },
+  lower: { name:'모터 커버', full:'모터 커버 (PCB·PGU·모터 수납)', en:'Motor cover · electronics carrier', mat:'', conf:'photo', housing:true, ex:[0,-28,0], photos:['motorcover-s2g','pcb-housing','lower-open','lower-pcb','opening','label'],
+    desc:'베이스 아래를 덮는 계단형 플라스틱 커버입니다. 열어 보면 메인 PCB, TFT 지지대와 TFT, 오른쪽 끝 칸의 모터·웜·위치 감지 PCB가 차례로 나옵니다. 가운데 사각 창으로 방열판 A의 핀이 밖에 드러납니다.',
+    points:['라벨: ZEEKR / HA1SZK63E / 752007 / 6608451043 / 차종 CX1E / 생산 2025.10.05 / 부품명 抬头显示器(헤드업 디스플레이).','방열판 A와 합친 무게 467 g (외부자재 p.6). 전체 무게 실측 2,053 g.'],
+    specs:[['중량','467 g (방열판 A 포함)'],['전체 무게','2,053 g (실측)']] },
+  heatsink: { name:'방열판 A', full:'방열판 A (금속)', en:'Die-cast heatsink HA-DZK-617', mat:'ADC12', conf:'photo', ex:[0,-10,0], photos:['motorcover-s2g','bracket-front','bracket-mark','bracket-back','bracket-inside','heatsink-fins','heatsink-top'],
     desc:'PGU 바로 아래에서 LED 열을 받아 핀으로 내보내는 알루미늄 다이캐스트 부품입니다. 위쪽 판이 PGU를 받치고, 아래쪽 핀이 대시보드 속 공기로 열을 버립니다.',
     points:['각인: HA-DZK-617, >ADC12<(알루미늄 다이캐스트 합금), 생산 연·월 날짜 휠.','팬이 보이지 않아 자연대류로 식히는 구조입니다. 핀 면적과 간격이 중요합니다.','사진에서는 판과 핀이 따로 보여서 일체형인지 조립형인지 확인이 필요합니다. 모델은 한 부품으로 그렸습니다.'],
     specs:[['품번','HA-DZK-617 (각인)'],['소재','ADC12 (각인·BOM)']] },
@@ -1005,9 +1004,6 @@ const P = {
     desc:'곡면경 각도를 바꾸는 구동부입니다. 은색 원통이 스텝 모터, 검은 나선이 웜(파란 것은 그리스), 옆의 작은 보드가 원점 감지 보드입니다.',
     points:['운전자가 차량 화면에서 HUD 높이를 바꾸면 LIN 명령이 오고 MCU가 이 모터를 돌려 곡면경을 기울입니다.','웜이 돌면 너트가 앞뒤로 움직이고 링크가 곡면경 아래쪽을 밀거나 당깁니다. 감속비가 커서 정밀하고, 전원이 꺼져도 각도가 유지됩니다.','작은 보드(HATDF579-0200, Ver:V01)는 원점 위치를 감지하는 센서 보드로 보입니다(추정).','모터가 하부 하우징 모서리에 있는 것은 사진으로 확인했습니다. 곡면경과 잇는 링크는 보이지 않아 추정으로 그렸습니다.'],
     specs:[['모터','PM 스텝 모터 추정'],['전달','웜 + 너트 + 링크 (링크 추정)'],['센서 보드','HATDF579-0200 V01']] },
-  motorcover: { name:'모터 커버', full:'모터 커버', en:'Motor cover', mat:'', conf:'bom', ex:[20,8,8], photos:['motorcover-s2g','motor-bay'],
-    desc:'모터와 웜을 덮는 플라스틱 커버입니다. 그리스가 튀거나 먼지가 들어가는 것을 막고 구동 소음을 줄입니다.',
-    points:['모양은 BOM 항목만 보고 단순한 상자로 그렸습니다.'], specs:[] },
   tft: { name:'TFT', full:'TFT (Tianma)', en:'Tianma 5.1" TFT-LCD panel · TL051XFKP01', mat:'', conf:'photo', maker:'Tianma (天马)', ex:[0,16,0], photos:['tft-fpcb-map','tft-panel','tft-board','lower-open'],
     desc:'HUD 영상을 만드는 액정 화면입니다. 스스로 빛을 내지 않고, 뒤에서 오는 백라이트를 픽셀마다 통과시키거나 막는 빛의 밸브입니다.',
     points:['편광판 두 장과 컬러 필터 때문에 백라이트 빛의 약 5%만 통과합니다. 그래서 HUD 백라이트는 매우 밝아야 합니다. Zeekr가 발표한 이 HUD의 밝기는 12,000 nit입니다.','검은 픽셀은 빛을 막습니다. 흐름 보기에서 백라이트 빛 대부분은 TFT에서 멈추고, 그림이 있는 픽셀을 지난 빛만 미러로 갑니다.','TFT 위 영상은 좌우가 뒤집히고 휘어 있습니다. 미러와 윈드실드가 만들 반전과 왜곡을 미리 거꾸로 걸어 둔 것입니다. 이 모양은 모델의 광선 추적으로 계산했습니다.','라벨: TM PN TL051XFKP01-01, DATE 25-09-12. TM은 Tianma(천마) 패널로 추정합니다.'],
@@ -1131,7 +1127,7 @@ const GROUPS = {
   chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
 const TREE = [
-  { t:'기구', items:['upper','lower','baseplate','heatsink','pad','cover','motor','motorcover'] },
+  { t:'기구', items:['topcover','upper','lower','heatsink','pad','cover','motor'] },
   { t:'광학', items:['tft', { g:'backlight' }, 'concave', 'fold'] },
   { t:'HW (전자부품)', items:['epson','max','pcb','mcu', { g:'chips' }, { g:'board' }] },
   { t:'기타 부자재', items:['foam','misc'] },
@@ -1442,12 +1438,7 @@ const LEDS = [];
   const hw = PG.w + 2, hd = PG.d + 1; box(hw, .6, hd, M.alu, PG.cx, -.45, PG.cz, g);
   for (let i = 0; i < 20; i++) box(.16, 5.2, hd - .4, M.alu, PG.cx - hw / 2 + .4 + i * (hw - .8) / 19, -3.4, PG.cz, g);
   register('heatsink', g); }
-{ // base plate: plastic frame around the fins, fixed to the lower housing floor
-  const g = new THREE.Group(), hw = PG.w + 2.8, hd = PG.d + 1.8, y = -1.5;
-  box(hw, 1.2, .6, M.plastic, PG.cx, y, PG.cz - hd / 2, g); box(hw, 1.2, .6, M.plastic, PG.cx, y, PG.cz + hd / 2, g);
-  box(.6, 1.2, hd, M.plastic, PG.cx - hw / 2, y, PG.cz, g); box(.6, 1.2, hd, M.plastic, PG.cx + hw / 2, y, PG.cz, g);
-  for (const s of [-1, 1]) box(2.4, .4, 2, M.plastic, PG.cx + s * (hw / 2 + 1), y + .4, PG.cz, g);
-  register('baseplate', g); }
+
 
 // main PCB with its chips
 const PCB_POS = V(-7.5, 1.4, -18), shieldMeshes = [];
@@ -1501,9 +1492,7 @@ const motor = {};
   motor.nut = box(1.1, 1.1, 1.2, M.white, motor.x, motor.y, ear.z, g);
   motor.link = cyl(.18, 1, M.silver, 0, 0, 0, g);
   register('motor', g); }
-{ const g = new THREE.Group(), x = motor.x, w = 3.4, h = 3.2, z0 = motor.z0 - 2.8, z1 = motor.z1 + .9;
-  box(w, .3, z1 - z0, M.plastic, x, motor.y + 1.6, (z0 + z1) / 2, g); for (const s of [-1, 1]) box(.3, h, z1 - z0, M.plastic, x + s * w / 2, motor.y, (z0 + z1) / 2, g);
-  register('motorcover', g); }
+
 // misc: wiring, label, screws
 { const gc = new THREE.Group();
   const a = V(PCB_POS.x + 8.6, PCB_POS.y + .35, PCB_POS.z + 2.55), b = V(PG.cx - 1.2, Ly + .35, zFp + 1.1);
@@ -1529,11 +1518,25 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   const prof = [{ z: z0, y: YFLOOR }, { z: z1, y: YFLOOR }, { z: z1 + 2.2, y: 17 }, { z: z1 - .5, y: YTOP }, { z: z0 + 5, y: YTOP }, { z: z0, y: YTOP - 6 }];
   slab({ z: z0, y: YFLOOR }, { z: HOLE.z0, y: YFLOOR }, t, W, M.plastic, g); slab({ z: HOLE.z1, y: YFLOOR }, { z: z1, y: YFLOOR }, t, W, M.plastic, g);
   for (const s of [-1, 1]) slab({ z: HOLE.z0, y: YFLOOR }, { z: HOLE.z1, y: YFLOOR }, t, UH.hw - HOLE.x, M.plastic, g, s * (HOLE.x + (UH.hw - HOLE.x) / 2));
-  slab(prof[1], prof[2], t, W, M.plastic, g); slab(prof[2], prof[3], t, W, M.plastic, g);
-  const a0 = Math.max(AP.z0, z0 + 5.2), a1 = Math.min(AP.z1, z1 - .7);
-  slab(prof[3], { z: a1, y: YTOP }, t, W, M.plastic, g); slab({ z: a0, y: YTOP }, prof[4], t, W, M.plastic, g);
-  for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, g, s * (AP.x + (UH.hw - AP.x) / 2));
-  slab(prof[4], prof[5], t, W, M.plastic, g); slab(prof[5], prof[0], t, W, M.plastic, g);
+  slab(prof[1], prof[2], t, W, M.plastic, g); slab(prof[5], prof[0], t, W, M.plastic, g);
+  const a0 = Math.max(AP.z0, z0 + 5.2), a1 = Math.min(AP.z1, z1 - .7), tc = new THREE.Group();
+  // top cover: the window frame around the dust cover plus the slanted faces front and back
+  slab(prof[2], prof[3], t, W, M.plastic, tc); slab(prof[3], { z: a1, y: YTOP }, t, W, M.plastic, tc); slab({ z: a0, y: YTOP }, prof[4], t, W, M.plastic, tc);
+  for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, tc, s * (AP.x + (UH.hw - AP.x) / 2));
+  slab(prof[4], prof[5], t, W, M.plastic, tc);
+  for (const s of [-1, 1]) { box(W, .7, .5, M.plastic, 0, YTOP + .1, s > 0 ? a1 + .2 : a0 - .2, tc); box(.5, .7, a1 - a0, M.plastic, s * (AP.x + .2), YTOP + .1, (a0 + a1) / 2, tc); }
+  { const f0 = prof[4], f1 = prof[5], mz = (f0.z + f1.z) / 2, my = (f0.y + f1.y) / 2, ang = Math.atan2(f0.y - f1.y, f0.z - f1.z);
+    for (const x of [-9, 9]) { const m = box(7, 1.4, Math.hypot(f0.z - f1.z, f0.y - f1.y) * .7, M.plastic, x, my + .6, mz + .4, tc); m.rotation.x = -ang; } }
+  addEdges(tc); register('topcover', tc);
+  // mounting ears: a ribbed plate with three holes at each end of the base
+  for (const s of [-1, 1]) { const ex = s * (UH.hw + 2.6), ez = (z0 + z1) / 2 - 2, ey = YFLOOR + 1.2;
+    box(4.6, .6, 13, M.plastic, ex, ey, ez, g); box(.5, 3.4, 13, M.plastic, ex - s * 2.1, ey + 1.4, ez, g); box(4.6, .45, .35, M.plastic, ex, ey + .5, ez - 6.3, g); box(4.6, .45, .35, M.plastic, ex, ey + .5, ez + 6.3, g);
+    for (const dz of [-2.2, 2.2]) box(4.2, .35, .25, M.plastic, ex, ey + .45, ez + dz, g);
+    for (const dz of [-4.5, 4.5]) { cyl(.95, .7, M.plastic, ex + s * .4, ey + .1, ez + dz, g); cyl(.55, .76, M.black, ex + s * .4, ey + .1, ez + dz, g); }
+    cyl(.35, 1.4, M.plastic, ex + s * .4, ey - .6, ez, g); }
+  // moulded ribs on the side walls and screw bosses along the seam, as on the part
+  for (const s of [-1, 1]) { for (const z of [-15, -9, -3, 3, 9]) box(.35, 7, .45, M.plastic, s * (UH.hw + .55), YFLOOR + 4.5, z, g);
+    for (const z of [-19, -6, 7]) { box(1.2, 1.6, 1.4, M.plastic, s * (UH.hw + .6), YFLOOR + .8, z, g); cyl(.3, .2, M.black, s * (UH.hw + 1.25), YFLOOR + .8, z, g, 'x'); } }
   const shape = new THREE.Shape(prof.map(p => new THREE.Vector2(p.z, p.y)));
   for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.y = -Math.PI / 2; m.position.x = s > 0 ? UH.hw + t : -UH.hw; g.add(m); }
   for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
@@ -1546,7 +1549,16 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   box(x1 - x0, h, t, M.plastic, 0, ym, z0, g); box(x1 - x0, h, t, M.plastic, 0, ym, z1, g); box(t, h, z1 - z0, M.plastic, x1, ym, (z0 + z1) / 2, g);
   const cz = PCB_POS.z; box(t, h, cz - 2.6 - z0, M.plastic, x0, ym, (z0 + cz - 2.6) / 2, g); box(t, h, z1 - cz - 2.6, M.plastic, x0, ym, (cz + 2.6 + z1) / 2, g); box(t, h - 3.2, 5.2, M.plastic, x0, y1 - (h - 3.2) / 2, cz, g);
   box(x1 - x0, t, UH.zmin - z0 + .4, M.plastic, 0, y1, (z0 + UH.zmin + .4) / 2, g);
-  for (const s of [-1, 1]) for (const z of [-15, 4]) { box(3.4, .5, 4.5, M.plastic, s * 24, 2, z, g); cyl(.6, .52, M.black, s * 24.6, 2, z, g); }
+  for (const s of [-1, 1]) box(Math.abs(x1) - UH.hw, t, z1 - z0, M.plastic, s * (UH.hw + (Math.abs(x1) - UH.hw) / 2), y1, (z0 + z1) / 2, g);
+  { const bx0 = motor.x - 3.4, bz0 = motor.z0 - 3.2, bz1 = z1, bh = 2.6; // stepped bay over the motor and its worm
+    box(x1 - bx0, t, bz1 - bz0, M.plastic, (bx0 + x1) / 2, y1 + bh, (bz0 + bz1) / 2, g); box(t, bh, bz1 - bz0, M.plastic, bx0, y1 + bh / 2, (bz0 + bz1) / 2, g);
+    box(x1 - bx0, bh, t, M.plastic, (bx0 + x1) / 2, y1 + bh / 2, bz0, g); box(x1 - bx0, bh, t, M.plastic, (bx0 + x1) / 2, y1 + bh / 2, bz1, g); box(t, bh, bz1 - bz0, M.plastic, x1, y1 + bh / 2, (bz0 + bz1) / 2, g); }
+  for (const [a, b, c, d] of [[hx0 - .7, hx1 + .7, hz0 - .7, hz0 - .2], [hx0 - .7, hx1 + .7, hz1 + .2, hz1 + .7]]) box(b - a, 1.2, d - c, M.plastic, (a + b) / 2, y0 - .5, (c + d) / 2, g);
+  for (const x of [hx0 - .45, hx1 + .45]) box(.5, 1.2, hz1 - hz0 + 1.4, M.plastic, x, y0 - .5, (hz0 + hz1) / 2, g);
+  box(9, 1, 2.2, M.plastic, PG.cx + 3, y0 - .5, hz0 - 1.8, g); // the tab over the window edge seen in the photos
+  box(1.4, 2.4, 2.4, M.white, x0 - .7, 2.6, cz - 1.4, g); cyl(.7, 1.6, M.black, x0 - .8, 2.6, cz + 1.6, g, 'x'); cyl(.35, 1.8, M.silver, x0 - .9, 2.6, cz + 1.6, g, 'x');
+  for (const [x, z] of [[-19, -20], [19, -20], [-19, 8.5], [hx0 - 2, hz1 + 2], [hx1 + 2, hz1 + 2], [hx0 - 2, hz0 - 2], [hx1 + 2, hz0 - 2]]) cyl(.32, .2, M.black, x, y0 - .3, z, g);
+  for (const z of [-17, -11, -5, 1, 7]) for (const s of [-1, 1]) box(.3, 2.2, .5, M.plastic, s * (x1 + .3), y1 - 1.4, z, g);
   addEdges(g); register('lower', g); }
 
 /* ───────────────────────── car environment ───────────────────────── */
@@ -1639,8 +1651,8 @@ function rebuildLight() {
 
 
 /* ───────────────────────── backlight close-up: section through the middle LED row ───────────────────────── */
-const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftholder', 'tft', 'pad', 'heatsink', 'baseplate', 'foam', 'fpcb', 'acf'];
-const BL_OFF = { heatsink: -3.2, baseplate: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, film: 3.6, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
+const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftholder', 'tft', 'pad', 'heatsink', 'foam', 'fpcb', 'acf'];
+const BL_OFF = { heatsink: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, film: 3.6, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
 const blCut = new THREE.Plane(V(0, 0, -1), PG.cz + .001);
 const BL_LABELS = [
   ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산 시트', 'film', 2.5, 'L'], ['2차 렌즈 · 허니콤', 'lens2', 2.1, 'R'],
@@ -1698,7 +1710,7 @@ function applyVisual() {
     if (BL_SET.includes(id)) o.obj.traverse(m => { if (m.material) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => { mm.clippingPlanes = state.bl ? [blCut] : []; }); });
     o.obj.traverse(m => { if (m.isMesh) setOpacity(m, f); if (m.material && (isH || id === 'cover')) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => mm.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
   }
-  housingEdges.forEach(e => { e.visible = state.housing !== 'solid'; });
+  housingEdges.forEach(e => { e.visible = true; e.material.opacity = state.housing === 'solid' ? .32 : .5; e.material.color.setHex(state.housing === 'solid' ? 0x8a96a3 : 0x5b6672); });
   const under = ids.includes('epson') || ids.includes('max'); shieldMeshes.forEach(m => setOpacity(m, under ? .1 : (objs.pcb.fade ?? 1)));
   pickables.forEach(o => { const on = ids.includes(o.userData.pid); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.emissive && m.userData.em) m.emissive.copy(on ? HL : m.userData.em); }); });
   carG.visible = state.car; grid.visible = !state.car; virtMesh.visible = state.light !== 'off';
@@ -1882,7 +1894,7 @@ function renderInfo() {
     return;
   }
   const iso = `<button class="btn primary" data-iso>${state.iso ? '전체 보기' : '이것만 보기'}</button>`, back = `<button class="btn" data-close>선택 해제</button>`;
-  const blBtn = (sel.g === 'backlight' || (BL_SET.includes(sel.id) && !['heatsink', 'baseplate'].includes(sel.id))) ? '<button class="btn" data-bl>단면으로 자세히</button>' : '';
+  const blBtn = (sel.g === 'backlight' || (BL_SET.includes(sel.id) && !['heatsink'].includes(sel.id))) ? '<button class="btn" data-bl>단면으로 자세히</button>' : '';
   if (sel.g) {
     const G = GROUPS[sel.g]; title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
     el.innerHTML = `${pnavHTML(sel)}<div class="crumb">${sel.g === 'backlight' ? '광학' : 'HW (전자부품)'}</div><div class="detail" style="padding:0"><h2>${G.name}</h2></div><p>${G.desc}</p>
@@ -3197,7 +3209,7 @@ const BOM = [
   {"lv": 2, "sec": "mech", "cn": "", "r": 3, "ko": "2차 렌즈 (허니콤 렌즈 어레이)", "w": "13", "id": "lens2", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "백라이트 프레임 (렌즈·필름 홀더, 추정)", "w": "22", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 5, "ko": "TFT 지지대", "w": "28", "id": "tftholder", "cat": "opt"},
-  {"lv": 2, "sec": "mech", "cn": "", "r": 6, "ko": "모터 커버 + 방열판 A", "w": "467", "id": "motorcover", "cat": "mech", "note": "플라스틱 모터 커버에 금속 방열판 A를 조립한 상태의 무게입니다."},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 6, "ko": "모터 커버 + 방열판 A", "w": "467", "id": "lower", "cat": "mech", "note": "플라스틱 모터 커버에 금속 방열판 A를 조립한 상태의 무게입니다."},
   {"lv": 2, "sec": "mech", "cn": "", "r": 6.5, "pg": 6, "ko": "└ 방열판 A (금속)", "wt": "위 467 g에 포함", "id": "heatsink", "cat": "mech"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 7, "ko": "하부 베이스 (곡면경·평면경 장착)", "w": "1366", "id": "upper", "cat": "mech"},
 ];
@@ -3208,7 +3220,7 @@ const BOM_ORD = Object.keys(BOM_SEC);
 BOM.forEach(b => { const k = b.id?.replace('g:', ''), t = k && TREE.find(x => x.items.some(it => it === k || it.g === k));
   b.cat ||= b.lv === 1 ? 'asm' : b.sec !== 'mech' ? 'elec' : t?.t === '광학' ? 'opt' : 'mech'; });
 BOM.sort((a, b) => BOM_ORD.indexOf(a.cat) - BOM_ORD.indexOf(b.cat) || a.r - b.r);
-const BOM_KIND = { upper: 'pl', lower: 'pl', motorcover: 'pl', tftholder: 'pl', heatsink: 'mt', 'g:backlight': 'bl', motor: 'mo', tft: 'op', concave: 'op', fold: 'op', cover: 'op' };
+const BOM_KIND = { upper: 'pl', lower: 'pl', topcover: 'pl', tftholder: 'pl', heatsink: 'mt', 'g:backlight': 'bl', motor: 'mo', tft: 'op', concave: 'op', fold: 'op', cover: 'op' };
 const BOM_COL = { pl: ['#7f93a8', '수지 하우징'], mt: ['#a77d4a', '금속'], op: ['#4f7fd6', '광학'], bl: ['#d39a2c', '백라이트'], mo: ['#5e9e80', '조정 기구'] };
 const bomOf = r => BOM.find(b => b.r === r);
 const bomFor = key => BOM.filter(b => b.id === key);
