@@ -1509,6 +1509,20 @@ const motor = {};
   for (const [x, z] of [[-20.5, -21], [20.5, -21], [-20.5, 8.5], [20.5, 8.5], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
   register('misc', g); }
 
+// moulded details: chamfered blocks, faceted plates (profile in z–y, extruded along x), thin gussets
+function cbox(w, h, d, c, mat, x, y, z, parent) { c = Math.min(c, w / 2 - .01, h / 2 - .01, d / 2 - .01); const sh = new THREE.Shape(), a = w / 2 - c, b = h / 2 - c;
+  sh.moveTo(-a, -b); sh.lineTo(a, -b); sh.lineTo(a, b); sh.lineTo(-a, b); sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * c, bevelEnabled: true, bevelThickness: c, bevelSize: c, bevelSegments: 1 }); geo.translate(0, 0, -(d - 2 * c) / 2);
+  const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m); return m; }
+function prism(pts, x0, x1, mat, parent, c = .12) { const sh = new THREE.Shape(pts.map(([z, y]) => new THREE.Vector2(z, y)));
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: Math.max(.05, x1 - x0 - 2 * c), bevelEnabled: c > 0, bevelThickness: c, bevelSize: c, bevelSegments: 1 });
+  const m = new THREE.Mesh(geo, mat); m.rotation.y = -Math.PI / 2; m.position.x = x1 - c; parent.add(m); return m; }
+function gusset(w, h, t, mat, x, y, z, flip, parent) { const sh = new THREE.Shape([new THREE.Vector2(0, 0), new THREE.Vector2(w, 0), new THREE.Vector2(0, h)]);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: false }), mat); m.position.set(x, y, z - t / 2); if (flip) m.rotation.y = Math.PI, m.position.z = z + t / 2; parent.add(m); return m; }
+function clip(x, y, z, axis, mat, parent) { // the U-shaped snap hooks along the seams
+  const g = new THREE.Group(); cbox(.4, 2.6, .4, .08, mat, 0, 0, -.6, g); cbox(.4, 2.6, .4, .08, mat, 0, 0, .6, g); cbox(.45, .45, 1.6, .08, mat, 0, -1.1, 0, g); cbox(.6, .8, .8, .12, mat, -.15, .6, 0, g);
+  g.position.set(x, y, z); if (axis === 'z') g.rotation.y = Math.PI / 2; parent.add(g); return g; }
+
 // housings, as wall slabs so they can go see-through or be cut in half
 const cutPlane = new THREE.Plane(V(-1, 0, 0), 0);
 function slab(a, b, t, width, mat, parent, xOff = 0) { const dz = b.z - a.z, dy = b.y - a.y; const m = new THREE.Mesh(new THREE.BoxGeometry(width, t, Math.hypot(dz, dy)), mat); m.position.set(xOff, (a.y + b.y) / 2, (a.z + b.z) / 2); m.rotation.x = Math.atan2(-dy, dz); parent.add(m); return m; }
@@ -1527,6 +1541,9 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   for (const s of [-1, 1]) { box(W, .7, .5, M.plastic, 0, YTOP + .1, s > 0 ? a1 + .2 : a0 - .2, tc); box(.5, .7, a1 - a0, M.plastic, s * (AP.x + .2), YTOP + .1, (a0 + a1) / 2, tc); }
   { const f0 = prof[4], f1 = prof[5], mz = (f0.z + f1.z) / 2, my = (f0.y + f1.y) / 2, ang = Math.atan2(f0.y - f1.y, f0.z - f1.z);
     for (const x of [-9, 9]) { const m = box(7, 1.4, Math.hypot(f0.z - f1.z, f0.y - f1.y) * .7, M.plastic, x, my + .6, mz + .4, tc); m.rotation.x = -ang; } }
+  cbox(W - 6, 1.6, Math.max(1, z1 - .5 - a1 - .6), .4, M.plastic, 0, YTOP + .7, (a1 + z1 - .5) / 2, tc); // raised hood behind the window
+  cbox(8, 1, 1.4, .25, M.plastic, 6, YTOP + 1.8, (a1 + z1 - .5) / 2, tc);
+  for (const s of [-1, 1]) { cbox(2.2, 1.2, a1 - a0 + 1, .3, M.plastic, s * (UH.hw - 1.4), YTOP + .5, (a0 + a1) / 2, tc); for (const z of [a0 + 2, a1 - 2]) cbox(1.2, .8, 1.2, .2, M.plastic, s * (UH.hw - 1.4), YTOP + 1.4, z, tc); }
   addEdges(tc); register('topcover', tc);
   // mounting ears: a ribbed plate with three holes at each end of the base
   for (const s of [-1, 1]) { const ex = s * (UH.hw + 2.6), ez = (z0 + z1) / 2 - 2, ey = YFLOOR + 1.2;
@@ -1540,6 +1557,17 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   const shape = new THREE.Shape(prof.map(p => new THREE.Vector2(p.z, p.y)));
   for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.y = -Math.PI / 2; m.position.x = s > 0 ? UH.hw + t : -UH.hw; g.add(m); }
   for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
+  { const hw = UH.hw; // faceted side panels, gussets and snap hooks, after the teardown photos
+    for (const s of [-1, 1]) { const o = s > 0 ? [hw + .2, hw + 1.1] : [-hw - 1.1, -hw - .2], o2 = s > 0 ? [hw + 1, hw + 1.6] : [-hw - 1.6, -hw - 1];
+      prism([[z0 + 3, 9], [z1 - 3.5, 9], [z1 - 3.5, 18.5], [z1 - 9, 24.5], [z0 + 9, 24.5], [z0 + 3, 19.5]], o[0], o[1], M.plastic, g, .2);
+      prism([[z0 + 12, 11.5], [z1 - 12, 11.5], [z1 - 12, 17], [z1 - 16, 21], [z0 + 15, 21], [z0 + 12, 18]], o2[0], o2[1], M.plastic, g, .15);
+      for (const k of [0, 1, 2]) gusset(2.6, 6 - k * 1.2, .3, M.plastic, s * (hw + .2), YFLOOR + .2, z0 + .6 + k * 1.1, s < 0, g);
+      for (const z of [z1 - 5, z0 + 10]) clip(s * (hw + 1.2), 18.8, z, 'x', M.plastic, g);
+      cbox(1.4, 3.2, 5, .3, M.plastic, s * (hw + .7), YFLOOR + 1.6, z1 - 6, g); }
+    // front face: a raised plate with a centre rib pair; back face: a ledge and a hump
+    cbox(22, 6.5, 1.1, .35, M.plastic, 0, 14, z0 - .5, g); for (const x of [-1.2, 1.2]) cbox(.5, 6.5, .9, .1, M.plastic, x, 14, z0 - 1.2, g);
+    for (const x of [-13, 13]) clip(x, 19.5, z0 - .5, 'z', M.plastic, g);
+    cbox(UH.hw * 2 - 4, 1.2, 1.6, .3, M.plastic, 0, 12, z1 + 1.2, g); cbox(14, 4, 1.6, .5, M.plastic, -4, 15.5, z1 + 1.5, g); }
   addEdges(g); register('upper', g); }
 { const g = new THREE.Group(), t = .45, x0 = -22, x1 = 22, z0 = -22.5, z1 = 11, y0 = -1, y1 = YFLOOR;
   const hx0 = PG.cx - PG.w / 2 - 1.2, hx1 = PG.cx + PG.w / 2 + 1.2, hz0 = PG.cz - PG.d / 2 - .6, hz1 = PG.cz + PG.d / 2 + .6;
@@ -1559,6 +1587,13 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   box(1.4, 2.4, 2.4, M.white, x0 - .7, 2.6, cz - 1.4, g); cyl(.7, 1.6, M.black, x0 - .8, 2.6, cz + 1.6, g, 'x'); cyl(.35, 1.8, M.silver, x0 - .9, 2.6, cz + 1.6, g, 'x');
   for (const [x, z] of [[-19, -20], [19, -20], [-19, 8.5], [hx0 - 2, hz1 + 2], [hx1 + 2, hz1 + 2], [hx0 - 2, hz0 - 2], [hx1 + 2, hz0 - 2]]) cyl(.32, .2, M.black, x, y0 - .3, z, g);
   for (const z of [-17, -11, -5, 1, 7]) for (const s of [-1, 1]) box(.3, 2.2, .5, M.plastic, s * (x1 + .3), y1 - 1.4, z, g);
+  // stepped tiers under the floor, as in the bottom view: a sloped front plate with a nose, a tall end block, a block under the motor bay
+  prism([[z0, y0], [z0 + 1.6, y0 - 1.8], [hz0 - 2.4, y0 - 1.8], [hz0 - 1.4, y0]], -16, 16, M.plastic, g, .15);
+  cbox(3.2, 1.2, 1.6, .3, M.plastic, 0, y0 - 2.1, z0 + 1.6, g); cbox(20, .5, 6, .1, M.matte, 0, y0 - 1.85, (z0 + hz0) / 2 - 1, g);
+  prism([[hz1 + 1.2, y0], [hz1 + 2, y0 - 1.3], [z1 - 1.2, y0 - 1.3], [z1, y0]], -14, 14, M.plastic, g, .15);
+  cbox(7, 2.8, 17, .45, M.plastic, x0 + 3.6, y0 - 1.3, (z0 + hz0) / 2 + 2, g); cbox(6.4, 2, 15, .4, M.plastic, x1 - 3.4, y0 - 1, 2.5, g);
+  for (const s of [-1, 1]) cbox(.7, 5, 18, .25, M.plastic, s * (x1 + .35), 3.4, -3, g);
+  for (const x of [-10, 10]) clip(x, 4.6, z0 - .4, 'z', M.plastic, g);
   addEdges(g); register('lower', g); }
 
 /* ───────────────────────── car environment ───────────────────────── */
