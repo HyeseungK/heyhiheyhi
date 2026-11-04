@@ -784,6 +784,12 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 .pnav { float: right; display: inline-flex; align-items: center; gap: 4px; margin: -2px 0 4px 8px; font: 500 12px/1 var(--mono); color: var(--muted); }
 .pnav .btn { width: 30px; height: 28px; padding: 0; display: grid; place-items: center; font-size: 17px; line-height: 1; }
 .pnav span { min-width: 44px; text-align: center; }
+/* DLPQ answers on an item page */
+.sp-ans { margin: 12px 0 0; padding: 10px 14px; border-radius: var(--r); background: #eef6f1; border-left: 3px solid #2a7d4f; }
+.sp-ans h4 { margin: 0 0 4px; font-size: 13px; color: #1f6b43; display: flex; gap: 8px; align-items: baseline; }
+.sp-ans h4 span { font-weight: 500; font-size: 11.5px; color: #4a8a66; }
+.sp-ans ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.sp-ans li { font-size: 13.5px; line-height: 1.55; }
 /* ── phone layer (≤640px): desktop is untouched. Only the core of each tab stays. ── */
 @media (max-width: 640px) {
   :root { --hdr: 96px; }
@@ -2041,7 +2047,7 @@ const SPECS = [
 const ISS = [
   { id: 'scratch', en: 'Scratch', ko: '긁힘', def: '선 모양의 표면 결함입니다.', chk: '길이·폭 동시 만족 여부', subs: ['Length (mm): 긁힌 자국 길이 한도', 'Width (mm): 폭 한도', 'n/A: 지정 영역 안 허용 개수'] },
   { id: 'pore', en: 'Pore', ko: '미세 구멍 (핀홀)', def: '작은 구멍 모양 결함으로 흔히 설명합니다(표면 구멍, 코팅이 빠진 자리 등).', chk: 'Vacuoles와의 구분 · 판정 예시', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
-  { id: 'dot', en: 'Black & White dot', ko: '검은 점 · 흰 점', def: '이물이나 점 모양 결함입니다. 검은 점은 빛을 막고, 흰 점은 빛이 새거나 반사합니다.', chk: '검은 점·흰 점 합산 여부', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
+  { id: 'dot', en: 'Black & White dot', ko: '검은 점 · 흰 점', def: '이물이나 점 모양 결함입니다. 검은 점은 빛을 막고, 흰 점은 빛이 새거나 반사합니다. DLPQ 답: 둘을 합쳐서 셉니다.', chk: '', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
   { id: 'vac', en: 'Vacuoles', ko: '내부 기포', def: '기포 모양 결함으로 흔히 설명합니다(재료 내부 기포 등).', chk: 'Pore와의 구분 · 판정 예시', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
   { id: 'stain', en: 'Stain & Discoloration', ko: '얼룩 · 변색', def: '얼룩이나 색 변화입니다. 원본은 크기·개수와 관계없이 허용하지 않습니다.', chk: '판정 조건(조명·거리)', subs: ['Not allowed'] },
 ];
@@ -2093,6 +2099,25 @@ function dlpqItems() {
       der: { t1: '65', p1: '100', p1asm: true, t2: '85', p2: '50', mean: 'unk', base: '', sensor: '', tolTarget: '', before: '', after: '' } }),
   };
 }
+// after the review meeting with DLPQ: their answers, on top of the sheet as received
+const DLPQ_REV = 2;
+function dlpqAgreed() {
+  const d = dlpqItems(), up = (id, o) => Object.assign(d[id], o);
+  up('disparity', { st: 'cond', note: 'DLPQ: 좌우 양안 시차 기준' });
+  up('visize', { tolType: 'rel', st: 'cond', note: 'DLPQ: 공차는 % (상대). 적용 대상(대각선·가로/세로·FOV)은 미확인' });
+  up('aspect', { tolType: 'rel', st: 'cond', note: 'DLPQ: 공차는 % (상대) → 2.85:1 ~ 3.15:1' });
+  up('lda', { st: 'cond', note: 'DLPQ: 편차는 아이박스 중심점 기준 (중심점 대비 최대 차이)' });
+  up('bright', { tolType: 'rel', st: 'cond', note: 'DLPQ: 사용 기간 전체 허용 하락 −20% (상대 %). 지속 정격 ≥ 8,000 · 피크 ≥ 9,600 nit 모두 만족. 두 값을 같은 선상에서 비교하지 않음 (지속 정격이 더 중요)' });
+  up('sun', { tolType: 'rel', st: 'cond', note: 'DLPQ: 공차는 % (상대) → ≥ 960 nit' });
+  up('black', { tolType: 'pp', st: 'cond', note: 'DLPQ: 공차는 %p → ≥ 75%' });
+  up('ctol', { cond: '전 온도 범위 −40 ~ 85℃', st: 'cond', note: 'DLPQ: 흰색 기준(흰 화면 측정), 온도 −40 ~ 85℃. 기준 흰색의 좌표값은 미확인' });
+  up('sat', { tolType: 'pp', st: 'cond', note: 'DLPQ: 색역 면적비로 계산하고 전체 커버리지도 봄 (채도 지표가 아니라 색역 수치). 공차 %p → ≥ 85%' });
+  up('gamut', { tolType: 'pp', cond: '괄호: ≥ 70% NTSC (−5%p → ≥ 65%) · 두 기준 동시 만족', st: 'cond', note: 'DLPQ: sRGB·NTSC 두 값을 동시에 만족. 서로 환산한 값이 아님. 기하 면적비 하나만 보는 것도 아님. 공차 %p' });
+  up('derating', { st: 'cond', note: 'DLPQ: ±3은 온도 공차. 기준 온도 65℃(시작), 85℃는 검사 때 극한값 적용용. 온도는 TFT 기판 표면. 50%의 기준 휘도는 미확인' });
+  Object.assign(d.derating.der, { sensor: 'TFT 기판 표면', tolTarget: '온도 (±3℃)' });
+  return d;
+}
+const dlpqIssAgreed = () => { const i = dlpqIss(); i.dot.note = 'DLPQ: 검은 점 + 흰 점 합쳐 5개 이하'; return i; };
 const dlpqIss = () => ({ scratch: { l: '≤ 0.5', w: '≤ 0.05', n: '≤ 2 / 100cm²', note: '' }, pore: { l: '≤ 0.2', w: '≤ 0.2', n: '≤ 3 / 100cm²', note: '' }, dot: { l: '≤ 0.15', w: '≤ 0.15', n: '≤ 5 / 100cm²', note: '' }, vac: { l: '≤ 0.3', w: '≤ 0.3', n: '≤ 2 / 100cm²', note: '' }, stain: { l: 'Not allowed', w: 'Not allowed', n: 'Not allowed', note: '' } });
 const newId = () => 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const mkSet = (name, items, iss) => ({ id: newId(), name, items: items || {}, iss: iss || blankIss(), updated: new Date().toISOString() });
@@ -2112,7 +2137,10 @@ function migrateOld() {
 let EXP_SAVED = true;
 const EXP = (() => {
   let d = null; try { d = JSON.parse(localStorage.getItem(EXP_KEY) || 'null'); } catch {}
-  if (!d || !Array.isArray(d.sets) || !d.sets.length) { d = { sets: [mkSet('DLPQ 전문가 값', dlpqItems(), dlpqIss())], cmp: [] }; const old = migrateOld(); if (old) d.sets.push(old); d.active = d.sets[0].id; }
+  const agreed = () => Object.assign(mkSet('DLPQ 전문가 값 (협의 반영)', dlpqAgreed(), dlpqIssAgreed()), { rev: DLPQ_REV });
+  if (!d || !Array.isArray(d.sets) || !d.sets.length) { d = { sets: [agreed(), mkSet('DLPQ 전문가 값 (받은 원본)', dlpqItems(), dlpqIss())], cmp: [] }; const old = migrateOld(); if (old) d.sets.push(old); d.active = d.sets[0].id; }
+  // a browser that saved sets before the meeting keeps them untouched and gets the agreed set added on top
+  else if (!d.sets.some(x => x.rev >= DLPQ_REV)) { const a = agreed(); d.sets.unshift(a); d.active = a.id; }
   d.sets.forEach(normSet); d.cmp = (d.cmp || []).filter(id => d.sets.some(s => s.id === id)); if (!d.sets.some(s => s.id === d.active)) d.active = d.sets[0].id;
   return d;
 })();
@@ -2349,15 +2377,18 @@ const SPEC_TXT = {
   disparity: { one: '같은 점이 두 방향으로 갈라져 보이는 정도를 각도로 나타낸 값입니다. mrad(밀리라디안)는 약 0.057°입니다.',
     def: 'HUD에서 이 이름은 보통 둘 중 하나를 뜻합니다. 왼눈과 오른눈이 보는 상의 방향 차이(양안 시차), 또는 실제 상과 앞유리 뒷면 반사로 생기는 희미한 복제 상(고스트) 사이의 각도입니다. 그림에서 둘을 바꿔 볼 수 있습니다.',
     why: ['양안 시차가 크면 두 상이 합쳐지지 않아 겹쳐 보이거나 눈이 피로해집니다.', '고스트 간격이 크면 글자 옆에 흐린 그림자가 생겨 번져 보입니다.'],
-    qs: ['Disparity는 양안 시차인가요, 주상–고스트 간격인가요?'] },
+    ans: ['좌우 양안 시차 기준입니다. 주상–고스트 간격이 아닙니다.'],
+    qs: [] },
   visize: { one: '실제로 보이는 허상 크기가 기준 크기의 몇 %인지입니다.',
     def: '기준 크기를 100%로 두고 실제 크기를 비교합니다. 공차가 ±5%면 95~105% 사이가 합격입니다. 목표가 100%라서 ±5%(목표의 5%)와 ±5%p(5를 더하고 빼기)가 같은 결과가 나오지만, 목표가 100%가 아닌 항목에서는 둘이 달라집니다. 허상 크기(인치·cm)는 거리에 따라 달라지고, FOV(°)는 눈에서 본 각도로 나타낸 크기입니다.',
     why: ['AR 그래픽은 도로 위 물체에 겹쳐야 해서, 크기가 틀리면 가장자리일수록 많이 어긋납니다.'],
-    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
+    ans: ['Tolerance ±5%는 % (목표의 상대 %)입니다. 목표가 100%라 95~105%입니다.'],
+    qs: ['±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
   aspect: { one: '허상의 가로 : 세로 비율입니다.',
     def: '3:1이면 가로가 세로의 3배입니다. ±5%를 비율값 3에 적용하면(목표의 5% = 0.15) 2.85:1 ~ 3.15:1입니다. 비율값에는 %p가 자연스럽지 않아서, %로 읽는 것이 일반적입니다.',
     why: ['비율이 틀어지면 원이 타원으로, 정사각 아이콘이 납작하게 보입니다.'],
-    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
+    ans: ['Tolerance ±5%는 % (상대)입니다 → 2.85:1 ~ 3.15:1.'],
+    qs: ['±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
   edge: { one: '허상 네 변이 수평·수직 기준선에서 기울어진 각도입니다.',
     def: '허상 전체가 돌아간 "회전"과, 위아래 폭이 다른 "사다리꼴"이 이 값으로 드러납니다.',
     why: ['기울어진 허상은 도로와 대시보드의 수평선과 어긋나 바로 눈에 띕니다.'],
@@ -2365,7 +2396,8 @@ const SPEC_TXT = {
   lda: { one: '운전자 눈에서 허상 중심을 바라보는 방향의 각도입니다. 위아래가 LookDown, 좌우가 LookOver입니다.',
     def: '이 항목의 "편차"는 같은 차에서 눈 위치를 아이박스 안에서 옮길 때 이 각도가 얼마나 달라지는지입니다. 그림의 네 단계에서 각도, 눈 이동, 편차를 세는 방법을 차례로 봅니다.',
     why: ['편차가 크면 머리를 움직일 때 AR 그래픽이 도로에서 어긋나 보입니다.'],
-    qs: ['편차는 중심점 대비 최대 차이인가요, 측정점 간 최대–최소인가요?', '±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
+    ans: ['편차는 <b>아이박스 중심점</b>을 기준으로 계산합니다. 그림 4단계의 방법 ① (중심점 대비 최대 차이)입니다.'],
+    qs: ['±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
   res: { one: '시야각 1° 안에 구분해서 보이는 선 쌍(밝은 선 + 어두운 선)의 수입니다.',
     def: '선 쌍 하나를 그리려면 이상적으로 화소 2개가 필요합니다. 실제로 선이 구분되는지는 광학 흐림과 "대비가 얼마나 남아야 구분된 것으로 보는지"에 따라 달라집니다.',
     why: ['글자와 아이콘이 또렷한지를 정합니다. 시력 1.0은 대략 30 lp/deg 수준입니다.'],
@@ -2373,7 +2405,8 @@ const SPEC_TXT = {
   bright: { one: '운전자 눈 위치에서 보이는 허상의 밝기입니다. 단위 nit = cd/m².',
     def: '계속 낼 수 있는 "지속" 밝기와 잠깐 낼 수 있는 "피크" 밝기를 구분합니다. LED와 패널은 오래 쓰면 조금씩 어두워지는데, "사용 기간 내 감쇠 허용 −20%"는 수명 끝에 처음보다 20%까지 어두워져도 된다는 뜻으로 읽힙니다. 이 −20%를 지속 10,000 nit와 피크 12,000 nit에 각각 적용하면 수명 말기 하한은 8,000 nit와 9,600 nit입니다.',
     why: ['맑은 낮 도로·하늘을 배경으로도 보여야 해서 높은 휘도가 필요합니다. 밤에는 크게 낮춥니다.'],
-    qs: ['−20%는 수명 말기에 초기 대비 최대 20% 감소를 허용한다는 뜻인가요?', '지속 10,000 nit와 피크 12,000 nit에 각각 적용해 수명 말기 하한이 8,000 nit와 9,600 nit인가요?', '허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
+    ans: ['−20%는 % (상대)이고, 제품 전체 사용 기간 중 허용되는 하락값입니다.', '지속 정격과 순간 피크 모두 기준을 만족해야 합니다(수명 말기 8,000 · 9,600 nit). 다만 두 수치를 같은 선상에 놓고 비교하면 안 되고, <b>지속 정격이 더 중요</b>합니다.'],
+    qs: ['허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
   grad: { one: '아이박스 안에서 눈을 1 cm 옮길 때 허상 밝기가 몇 % 변하는지입니다.',
     def: '화면 안 위치별 밝기 차이(균일도)와는 다릅니다. 같은 화면 지점을 보면서 눈 위치만 옮길 때의 변화입니다.',
     why: ['고개를 움직일 때 화면이 어두워졌다 밝아지면 거슬립니다.'],
@@ -2381,6 +2414,7 @@ const SPEC_TXT = {
   sun: { one: '선글라스를 쓰고 볼 때의 허상 밝기입니다.',
     def: 'HUD 빛은 한 방향으로 진동하는 빛(편광)이라, 편광 선글라스를 쓰면 축 방향에 따라 많이 어두워질 수 있습니다. 일반 선글라스는 렌즈 투과율만큼 어두워집니다.',
     why: ['선글라스를 쓰는 순간 HUD가 사라지면 안전 정보가 안 보입니다.'],
+    ans: ['−20%는 % (상대)입니다 → ≥ 960 nit.'],
     qs: ['어떤 선글라스(편광 여부, 투과율) 기준인가요?'] },
   white: { one: '흰 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지입니다.',
     def: '여러 지점의 밝기를 재서 가장 어두운 곳 ÷ 가장 밝은 곳 같은 식으로 계산합니다. 85% → 80%처럼 % 값끼리 빼는 것을 %p(퍼센트포인트)라고 합니다.',
@@ -2389,7 +2423,8 @@ const SPEC_TXT = {
   black: { one: '검은 화면을 띄웠을 때 화면 안 위치별 밝기가 얼마나 고른지입니다.',
     def: 'LCD는 검은색에서도 빛이 조금 샙니다. 그 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 보입니다.',
     why: ['밤에 검은 바탕이 얼룩져 보이면 거슬립니다.'],
-    qs: ['−5%는 상대 %인가요, %p인가요?'] },
+    ans: ['−5%는 %p입니다 → ≥ 75%.'],
+    qs: [] },
   contrast: { one: '흰 상태 밝기 ÷ 검은 상태 밝기입니다.',
     def: '명암비가 400:1이면 흰색이 검은색보다 400배 밝습니다. 뒤집으면 검은 부분 밝기 = 흰 밝기 ÷ 명암비라서, 그래픽이 없는 곳이 얼마나 빛날지를 정합니다. 암실은 외부 빛을 막은 측정 환경입니다.',
     why: ['명암비가 낮으면 밤에 허상 크기의 희미한 회색 사각형("포스트카드")이 보입니다.'],
@@ -2397,19 +2432,23 @@ const SPEC_TXT = {
   ctol: { one: '흰색의 색좌표가 기준 색좌표에서 벗어나도 되는 범위입니다.',
     def: 'Cx와 Cy를 각각 ±0.01 이내로 봅니다. 두 축을 따로 보므로 허용 범위는 원이 아니라 네모 모양입니다. ΔCx·ΔCy는 "기준 색좌표에서 얼마나 벗어났나"라서, 기준점(예: 흰색 D65 = 0.3127, 0.3290, 또는 설계 목표 흰색)이 정해져야 계산할 수 있습니다. "전 온도 범위 유지"는 차가 견뎌야 하는 저온~고온 전체에서 이 범위를 지켜야 한다는 뜻인데, 몇 ℃부터 몇 ℃까지인지는 적혀 있지 않습니다.',
     why: ['차마다 흰색이 노랗거나 푸르게 보이면 다른 화면과 색이 안 맞습니다.'],
-    qs: ['ΔCx·ΔCy를 재는 기준 색좌표는 무엇인가요?', '"전 온도 범위"는 몇 ℃부터 몇 ℃까지인가요?'] },
+    ans: ['기준은 <b>흰색</b>입니다 (흰 화면을 띄워 측정).', '"전 온도 범위"는 <b>−40 ~ 85℃</b>입니다.'],
+    qs: ['기준 흰색의 좌표는 정해진 목표값(예: D65 = 0.3127, 0.3290)인가요, 같은 제품을 상온에서 잰 값인가요?'] },
   sat: { one: '한 가지 색(예: 빨강)이 흰빛 없이 얼마나 선명한지입니다.',
     def: '채도는 색 하나의 선명도이고, 색역은 낼 수 있는 색 전체의 범위입니다. 그래서 "90% sRGB"는 두 가지로 읽힙니다. ① 채도 지표: 빨강·초록·파랑 원색 각각이 sRGB 원색만큼 선명한 정도(그림처럼 백색점에서 원색까지 거리의 %). ② 색역 수치: Gamut 행처럼 HUD 삼각형을 sRGB 삼각형과 비교한 값. ②라면 Gamut 행과 같은 측정인지, 면적비인지 커버리지인지가 남고, ①이라면 어떤 색을 어떤 식으로 계산하는지가 필요합니다. 디자인 도구의 채도(HSV) 값과 측정값은 같은 것이 아닙니다.',
     why: ['선명도가 떨어지면 빨간 경고가 분홍처럼, 초록 표시가 연두처럼 보입니다.'],
-    qs: ['90% sRGB는 채도 지표인가요, sRGB 대비 색역 수치인가요?', '색역 수치라면 Gamut 행의 90% sRGB와 같은 측정값인가요? 면적비인가요, 커버리지인가요?', '채도 지표라면 어떤 색을 어떤 방식으로 계산하나요?'] },
+    ans: ['색역(Gamut)의 <b>면적비</b>를 기준으로 계산하고, 색역 전체의 <b>커버리지</b>도 봅니다. 색 하나의 채도 지표가 아니라 색역 수치로 읽힙니다.', '−5%는 %p입니다 → ≥ 85% (sRGB).', '일반적으로 sRGB는 일상용, NTSC는 전통적으로 요구되어 온 기준이고, 고객사는 보통 두 기준을 모두 요구합니다.'],
+    qs: ['Gamut 행과 같은 측정값인가요, 별도 측정인가요?'] },
   gamut: { one: '디스플레이가 낼 수 있는 색의 범위입니다. 색 지도 위에서 R·G·B 세 원색이 만드는 삼각형입니다.',
     def: '"90% sRGB"는 HUD 삼각형을 sRGB 삼각형과 비교한 값입니다. 비교하는 방법이 둘이고(면적비: 넓이만 비교, 커버리지: 겹쳐서 덮인 만큼), 기준도 여럿이라(sRGB, NTSC 등) 같은 화면도 다른 숫자가 나옵니다. 넓이로 환산하면 sRGB 90%는 NTSC 약 ' + Math.round(90 * RS) + '%라서, 괄호의 70% NTSC는 단순 환산값과 맞지 않습니다. 그림의 ②~⑤에서 차례로 봅니다.',
     why: [`같은 조건이면 sRGB 넓이는 NTSC의 약 ${Math.round(RS * 100)}%입니다. 그래서 같은 화면도 기준에 따라 숫자가 다르게 적힙니다.`, '색역이 좁으면 빨강↔주황, 초록↔청록처럼 비슷한 색을 구분하기 어려워집니다.'],
-    qs: ['90% sRGB와 70% NTSC는 각각 면적비인가요, 커버리지인가요?', '두 값을 각각 만족해야 하나요, 하나를 다른 기준으로 환산해 괄호에 적은 건가요?', 'Tolerance −5%는 %인가요, %p인가요?'] },
+    ans: ['sRGB와 NTSC 두 값을 <b>동시에</b> 만족해야 합니다. 서로 <b>환산한 값이 아닙니다</b>.', '기하 면적비 하나만 보는 것도, NTSC 70% 하나만 보는 것도 아닙니다.', '−5%는 %p입니다 → ≥ 85% sRGB, ≥ 65% NTSC.'],
+    qs: ['면적비와 커버리지를 각각 어떤 값으로 판정하나요?'] },
   derating: { one: '온도가 오르면 부품을 보호하려고 밝기(출력)의 허용 한계를 낮추는 것입니다.',
     def: '정해진 온도부터 출력 한계를 조금씩 낮춥니다. 예를 들어 70℃부터 낮추기 시작해 90℃에서 50%가 되면, 그 사이 80℃에서는 75%입니다. 온도는 재는 위치(TFT 근처 온도 센서, PCB, 하우징 안 공기 등)에 따라 같은 순간에도 다릅니다. "50%"도 무엇의 절반인지에 따라 실제 밝기가 다릅니다: 지속 정격 10,000 nit의 50%인지, 낮추기 시작하는 65℃에서 내던 밝기의 50%인지. ±3은 온도(℃)의 공차로 읽힙니다.',
     why: ['여름 햇볕 아래 대시보드 속은 매우 뜨겁습니다. 저감이 일찍 시작되면 가장 밝아야 할 때 어두워집니다.'],
-    qs: ['65℃와 85℃는 어느 위치의 온도인가요? (TFT 근처 온도 센서 등)', '85℃에서 50%는 65℃의 휘도를 100%로 본 것인가요? 기준 휘도는 지속 정격 10,000 nit인가요?', '±3은 온도(℃) 공차인가요?'] },
+    ans: ['±3은 <b>온도(℃)</b> 공차입니다.', '기준 온도는 <b>65℃</b>(저감 시작)이고, 85℃는 검사 때 극한값을 적용하기 위한 수치입니다.', '온도는 <b>TFT 기판 표면</b> 온도입니다.'],
+    qs: ['85℃에서 50%는 65℃의 휘도를 100%로 본 것인가요? 기준 휘도는 지속 정격 10,000 nit인가요?'] },
 };
 SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 
@@ -2582,7 +2621,8 @@ function render() {
       <div class="cards"><div class="card"><h3>① 중심점 대비 최대 차이</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 큰 값 <b>${f1(mCenter)}°</b></p><p><span class="verdict ${pA ? 'v-ok' : 'v-bad'}">${pA ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div>
       <div class="card"><h3>② 측정점 간 최대 − 최소</h3><p>${f1(mx)} − ${f1(mn)} = <b>${f1(mRange)}°</b></p><p><span class="verdict ${pB ? 'v-ok' : 'v-bad'}">${pB ? '합격' : '불합격'}</span> <span class="note">가상 기준 ${f1(S.crit)}° 대비</span></p></div></div>
       <div class="ls-ctl">${slider('crit', '합격 기준', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}는 계산 차이를 보여 주기 위한 가상 기준이며 전문가 스펙이 아닙니다.</p></div>
-      <div class="card"><h3>그래서 묻는 것</h3><p>원본의 "≤ 1.0° (Eye-box 내 시야각 편차)"가 ①인지 ②인지에 따라 같은 제품이 합격도, 불합격도 될 수 있습니다. 그래서 "중심점 대비 차이인가요, 측정점 간 최대–최소인가요?"를 확인하는 것입니다.</p></div>`;
+      <div class="card"><h3>그래서 묻는 것</h3><p>원본의 "≤ 1.0° (Eye-box 내 시야각 편차)"가 ①인지 ②인지에 따라 같은 제품이 합격도, 불합격도 될 수 있습니다. 그래서 "중심점 대비 차이인가요, 측정점 간 최대–최소인가요?"를 확인하는 것입니다.</p></div>
+      <div class="card" style="border-left:3px solid #2a7d4f"><h3>DLPQ 답</h3><p><b>아이박스 중심점</b>이 기준입니다. 위의 ① 중심점 대비 최대 차이로 계산합니다.</p></div>`;
   }
   if (st === 6) {
     fig.innerHTML = errVsDev();
@@ -2674,7 +2714,7 @@ function gamutRuler(g, w, h, v) {
     g.fillStyle = on ? '#eef3fd' : '#f6f8fa'; g.fillRect(x0 - 10, y - 18, w - x0, 80); g.fillStyle = c; g.fillRect(x0 - 10, y - 18, 4, 80);
     g.fillStyle = '#4a5560'; g.font = GF(600, 13); g.fillText(t, x0, y + 2); g.fillStyle = on ? '#1c2228' : '#8a949e'; g.font = GF(800, 34); g.fillText(`${Math.round(val)}%`, x0, y + 44); });
   g.fillStyle = '#4a5560'; g.font = GF(500, 12.5); g.fillText(`sRGB % × ${f2(RS)} ≈ NTSC %`, x0, 270); g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText('(넓이 기준, CIE 1931 xy)', x0, 290);
-  return `HUD는 그대로 두고 <b>자(기준)만 ${rn}로 바꿨습니다.</b> 같은 화면이 sRGB로는 <b>${Math.round(rS)}%</b>, NTSC로는 <b>${Math.round(rN)}%</b>입니다.<br>그래서 "≥ 90% sRGB (≥ 70% NTSC)"의 괄호가 단순히 환산한 값이라면 90 × ${f2(RS)} ≈ <b>${Math.round(90 * RS)}%</b>여야 하는데 원본은 70%입니다. 숫자가 맞지 않으니 "두 조건을 각각 따로 만족해야 하는지, 하나를 환산해 적은 것인지"를 묻게 됩니다.`;
+  return `HUD는 그대로 두고 <b>자(기준)만 ${rn}로 바꿨습니다.</b> 같은 화면이 sRGB로는 <b>${Math.round(rS)}%</b>, NTSC로는 <b>${Math.round(rN)}%</b>입니다.<br>그래서 "≥ 90% sRGB (≥ 70% NTSC)"의 괄호가 단순히 환산한 값이라면 90 × ${f2(RS)} ≈ <b>${Math.round(90 * RS)}%</b>여야 하는데 원본은 70%입니다. 숫자가 맞지 않으니 "두 조건을 각각 따로 만족해야 하는지, 하나를 환산해 적은 것인지"를 묻게 됩니다.<br><b>DLPQ 답:</b> 두 값은 환산 관계가 아니고, sRGB와 NTSC를 동시에 만족해야 합니다.`;
 }
 // ④ area ratio vs coverage, side by side: compare sizes apart, then lay one on the other
 function gamutAreaCov(g, w, h, v) {
@@ -2711,11 +2751,11 @@ function gamutRead(g, w, h, v) {
   [['sRGB (≥ 90)', V.sa, V.sc, 90], ['NTSC (≥ 70)', V.na, V.nc, 70]].forEach(([t, a, c, lim], i) => { const y = 74 + i * 40;
     g.fillStyle = '#1c2228'; g.font = GF(600, 12.5); g.fillText(t, x0, y);
     [[a, 0], [c, 1]].forEach(([val, k]) => { const pass = ok(val, lim); g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.font = GF(800, 18); g.fillText(`${Math.round(val)}%`, x0 + 90 + k * cw, y + 2); g.font = GF(600, 11); g.fillText(pass ? '충족' : '미달', x0 + 90 + k * cw + 52, y); }); });
-  const rd = [['A. 둘 다 면적비, 각각 만족', ok(V.sa, 90) && ok(V.na, 70)], ['B. 둘 다 커버리지, 각각 만족', ok(V.sc, 90) && ok(V.nc, 70)], ['C. sRGB 면적비만 판정 (괄호는 참고 환산)', ok(V.sa, 90)]];
+  const rd = [['A. 둘 다 면적비, 각각 만족', ok(V.sa, 90) && ok(V.na, 70)], ['B. 둘 다 커버리지, 각각 만족', ok(V.sc, 90) && ok(V.nc, 70)], ['C. sRGB만 판정, 괄호는 환산 (DLPQ: 아님)', ok(V.sa, 90)]];
   g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('읽는 방법에 따라 판정', x0, 186);
   rd.forEach(([t, pass], i) => { const y = 212 + i * 26; g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.beginPath(); g.arc(x0 + 6, y - 4, 6, 0, 7); g.fill(); g.fillStyle = '#1c2228'; g.font = GF(500, 12.5); g.fillText(`${t} → ${pass ? '합격' : '불합격'}`, x0 + 20, y); });
   const same = new Set(rd.map(r => r[1])).size === 1;
-  return `원본 "≥ 90% sRGB (≥ 70% NTSC)"를 어떻게 읽느냐에 따라 같은 HUD의 판정이 ${same ? '지금은 같지만, 크기·모양을 바꾸면 달라집니다' : '<b>달라집니다</b>'}. 크기를 90%로 두면 sRGB는 통과하지만 NTSC는 약 ${Math.round(90 * RS)}%라 70%에 못 미칩니다.<br>공차 −5%도 읽는 방법이 둘입니다. 상대 %면 90 × 0.95 = 85.5%, %p면 90 − 5 = 85%입니다. HUD 모양은 설명용입니다.`;
+  return `원본 "≥ 90% sRGB (≥ 70% NTSC)"를 어떻게 읽느냐에 따라 같은 HUD의 판정이 ${same ? '지금은 같지만, 크기·모양을 바꾸면 달라집니다' : '<b>달라집니다</b>'}. 크기를 90%로 두면 sRGB는 통과하지만 NTSC는 약 ${Math.round(90 * RS)}%라 70%에 못 미칩니다.<br>공차 −5%도 읽는 방법이 둘입니다. 상대 %면 90 × 0.95 = 85.5%, %p면 90 − 5 = 85%입니다. HUD 모양은 설명용입니다.<br><b>DLPQ 답:</b> 두 기준을 동시에 만족해야 하고(C는 아님), 면적비 하나만 보지 않으며, 공차는 %p(→ ≥ 85% sRGB, ≥ 65% NTSC)입니다.`;
 }
 const DEMOS = {
   disparity: { ctl: [['mode', '해석', 0, 1, 1, 0, 'sel:양안 시차인 경우 (예시)|주상–고스트 간격인 경우 (예시)'], ['d', '어긋난 각도', 0, 5, .1, 1, 'mrad'], ['ax', '방향', 0, 1, 1, 0, 'sel:수평|수직']],
@@ -2945,7 +2985,7 @@ function sideEntry(id) {
 function renderSpecDetail() {
   const s = SPECS.find(x => x.id === SP.cur), cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
   el.style.setProperty('--cat', CAT_COL[s.cat]); el.style.setProperty('--sideW', sideW() + 'px');
-  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div><p class="one">${s.one}</p></div>
+  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div><p class="one">${s.one}</p>${s.ans ? `<div class="sp-ans"><h4>DLPQ 답변 <span>협의 반영</span></h4><ul>${s.ans.map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}</div>
       <div class="demo"><div class="demo-h">그림으로 이해 <span class="note">숫자는 예시</span></div><canvas id="demoCv" aria-label="수치를 바꾸면 운전자에게 어떻게 보이는지 보여 주는 그림"></canvas><div class="demo-ctl" id="demoCtl"></div><div class="demo-out" id="demoOut"></div></div>
       <div class="sp-more"><h3>조금 더</h3><p>${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
         <details><summary>이 값을 좌우하는 부품</summary><figure class="schem">${schematic(s)}<figcaption>칠한 곳을 누르면 3D 구조도에서 보여 줍니다.</figcaption></figure><div class="sp-key"><div class="chips">${s.key.ids.map(id => `<button class="pchip lv2" ${id === 'ws' ? 'data-ws' : `data-part="${id}"`}>${SPEC_PART(id).name}</button>`).join('')}${s.key.sys ? '<span class="sys">+ 광로 전체</span>' : ''}</div><p>${s.key.why}</p></div></details></div></section>
@@ -3023,7 +3063,7 @@ async function copyText(t, btn) {
   let ok = false; try { await navigator.clipboard.writeText(t); ok = true; } catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch {} ta.remove(); }
   if (btn) { const o = btn.textContent; btn.textContent = ok ? '복사됨' : '복사 실패'; setTimeout(() => { btn.textContent = o; }, 1400); }
 }
-const ISS_QS = ['각 기준은 어느 부품·표면(앞/뒤)·내부·검사 영역(유효 영역, A/B Zone)에 적용하나요?', 'Pore와 Vacuoles는 어떻게 구분하나요? 판정 예시(사진)가 있나요?', '검은 점과 흰 점은 합산해서 세나요, 따로 세나요?', '길이와 폭을 둘 다 만족해야 하나요? 결함 사이 최소 간격 규정이 있나요?', '검사 면적이 100 cm²보다 작을 때 허용 개수는 어떻게 정하나요?', '검사 조명(lux)·거리·각도·배율·시간 조건은?', 'Stain & Discoloration "허용 안 함"은 어떤 조건에서 보이는 것을 기준으로 하나요?'];
+const ISS_QS = ['각 부품의 유효 통광 영역은 무엇으로 정하나요? 도면에 표시된 영역인가요?', '조립 뒤 전체 검사는 최종 허상을 보고 판정하나요? 판정 방법(육안 거리, 카메라)은?', 'Pore와 Vacuoles는 어떻게 구분하나요? 판정 예시(사진)가 있나요?', '길이와 폭을 둘 다 만족해야 하나요? 결함 사이 최소 간격 규정이 있나요?', '면적 비율로 계산한 허용 개수의 소수점은 어떻게 처리하나요?', '검사 조명(lux)·거리·각도·배율·시간 조건은?', 'Stain & Discoloration "허용 안 함"은 어떤 조건에서 보이는 것을 기준으로 하나요?'];
 const qsText = id => { if (id === 'iss') return '[외관 결함 (ISS)]\n' + ISS_QS.map((q, i) => `${i + 1}. ${q}`).join('\n'); const s = SPECS.find(x => x.id === id); return `[${s.ko} · ${s.en}]\n` + s.qs.map((q, i) => `${i + 1}. ${q}`).join('\n'); };
 function refreshItem(id, rebuildRead) {
   const it = curSet().items[id], r = document.querySelector(`tr[data-erow="${id}"]`); if (r) r.innerHTML = rowCells(id);
@@ -3041,7 +3081,8 @@ function issHTML() {
     <h3 class="sec" style="margin-top:0">원본 기준 · ${esc(set.name)} <span class="note">고치면 이 세트에 저장</span></h3>
     <div class="tablewrap"><table class="etab isst"><thead><tr><th>결함</th><th>길이 (mm)</th><th>폭 (mm)</th><th>허용 개수</th><th>비고</th></tr></thead><tbody>${ISS.map(d => `<tr><td class="nm"><b>${d.en}</b><small>${d.ko}</small></td><td>${cell(d.id, 'l')}</td><td>${cell(d.id, 'w')}</td><td>${cell(d.id, 'n')}</td><td>${cell(d.id, 'note')}</td></tr>`).join('')}</tbody></table></div>
     ${sets.length > 1 ? `<div class="tablewrap"><table class="etab cmpt"><thead><tr><th>결함</th>${sets.map((st, i) => `<th><i style="background:${SETCOL[i % 5]}"></i>${esc(st.name)}</th>`).join('')}</tr></thead><tbody>${ISS.map(d => `<tr><td class="nm">${d.en}</td>${sets.map(st => { const v = st.iss[d.id]; return `<td>${esc([v.l, v.w, v.n].filter(Boolean).join(' · ')) || '—'}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>` : ''}
-    <p class="note">적용 부품·표면·내부·검사 영역은 원본에서 확정되지 않았습니다 ${TC('적용 대상')}. "개/100 cm²"는 100 cm²(10 cm × 10 cm) 면적마다 허용되는 개수입니다. 검사 면적이 100 cm²보다 작을 때의 환산·반올림·최소 허용 개수 규칙은 원본에 없어서 이 화면에서 만들어 적용하지 않습니다.</p>
+    <div class="sp-ans"><h4>DLPQ 답변 <span>협의 반영</span></h4><ul><li>TFT만이 아니라 광학 필름·렌즈를 포함해 <b>빛이 통과하는 모든 광학 부품</b>의 유효 통광 영역에 적용합니다. 비통광 영역과 하우징 같은 비광학 부품은 제외합니다.</li><li>부품이 <b>들어올 때 하나씩</b> 검사하고, <b>조립 뒤에도 전체</b> 검사를 합니다.</li><li>검은 점과 흰 점은 <b>합쳐서 5개 이하</b>입니다.</li><li>100 cm²보다 작은 부품은 <b>면적 비율</b>로 허용 개수를 계산합니다. 예: 통광 면적 40 cm² → 검은·흰 점 5 × 0.4 = 2개 (소수점 처리 ${TC('반올림 규칙')}).</li></ul></div>
+    <p class="note">"개/100 cm²"는 100 cm²(10 cm × 10 cm) 면적마다 허용되는 개수입니다.</p>
     <h3 class="sec">결함 뜻</h3><div class="iss-grid">${ISS.map(d => `<div class="iss"><h3>${d.ko} <span class="en">${d.en}</span></h3><p>${d.def}</p>${d.chk ? `<p>${TC(d.chk)}</p>` : ''}</div>`).join('')}</div>
     <h3 class="sec">확인할 질문 <button class="mini" data-copyq="iss">복사</button></h3><ol class="qs">${ISS_QS.map(q => `<li>${q}</li>`).join('')}</ol></section>
     <section class="iss-r"><h3 class="sec" style="margin-top:0">설명용 모델: 같은 결함이 위치에 따라 얼마나 보이나</h3>
