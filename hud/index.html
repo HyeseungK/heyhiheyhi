@@ -1505,7 +1505,7 @@ const motor = {};
   for (let k = 0; k < 4; k++) { const o = (k - 1.5) * .22; g.add(wire([from.clone().add(V(o, 0, 0)), V(from.x + 3 + o, 1.6, from.z - 2.4), V(19.6 + o, 2, -10), V(to.x + 1.2 + o, 2.4, to.z - 3), to.clone().add(V(o, 0, 0))], .09, M.wire)); }
   const lf = V(PCB_POS.x + 11, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + LCDR.w * .32, 1.05, PG.cz - PG.d / 2 - 2.05);
   for (let k = 0; k < 2; k++) g.add(wire([lf.clone().add(V(0, 0, k * .22)), V(lf.x + 2, 1.6, lf.z + 3), V(lt.x + 1.2, 1.4, lt.z - 3), lt.clone().add(V(0, 0, k * .22))], .08, M.wire));
-  const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.position.set(-4, 3.6, -22.8); lab.rotation.y = Math.PI; g.add(lab);
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.position.set(-4, 3.6, -23.3); lab.rotation.y = Math.PI; g.add(lab);
   for (const [x, z] of [[-20.5, -21], [20.5, -21], [-20.5, 8.5], [20.5, 8.5], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
   register('misc', g); }
 
@@ -1528,72 +1528,58 @@ const cutPlane = new THREE.Plane(V(-1, 0, 0), 0);
 function slab(a, b, t, width, mat, parent, xOff = 0) { const dz = b.z - a.z, dy = b.y - a.y; const m = new THREE.Mesh(new THREE.BoxGeometry(width, t, Math.hypot(dz, dy)), mat); m.position.set(xOff, (a.y + b.y) / 2, (a.z + b.z) / 2); m.rotation.x = Math.atan2(-dy, dz); parent.add(m); return m; }
 function addEdges(g) { const ms = []; g.traverse(o => o.isMesh && ms.push(o)); ms.forEach(o => { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: 0x5b6672, transparent: true, opacity: .5 })); o.add(e); housingEdges.push(e); }); }
 const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zmax: C.z + 4.5, hw: Math.max(CONC.w / 2 + 3, FOLD.w / 2 + 2) };
-{ const g = new THREE.Group(), t = .4, W = UH.hw * 2, z0 = UH.zmin, z1 = UH.zmax;
-  const prof = [{ z: z0, y: YFLOOR }, { z: z1, y: YFLOOR }, { z: z1 + 2.2, y: 17 }, { z: z1 - .5, y: YTOP }, { z: z0 + 5, y: YTOP }, { z: z0, y: YTOP - 6 }];
-  slab({ z: z0, y: YFLOOR }, { z: HOLE.z0, y: YFLOOR }, t, W, M.plastic, g); slab({ z: HOLE.z1, y: YFLOOR }, { z: z1, y: YFLOOR }, t, W, M.plastic, g);
-  for (const s of [-1, 1]) slab({ z: HOLE.z0, y: YFLOOR }, { z: HOLE.z1, y: YFLOOR }, t, UH.hw - HOLE.x, M.plastic, g, s * (HOLE.x + (UH.hw - HOLE.x) / 2));
-  slab(prof[1], prof[2], t, W, M.plastic, g); slab(prof[5], prof[0], t, W, M.plastic, g);
-  const a0 = Math.max(AP.z0, z0 + 5.2), a1 = Math.min(AP.z1, z1 - .7), tc = new THREE.Group();
-  // top cover: the window frame around the dust cover plus the slanted faces front and back
-  slab(prof[2], prof[3], t, W, M.plastic, tc); slab(prof[3], { z: a1, y: YTOP }, t, W, M.plastic, tc); slab({ z: a0, y: YTOP }, prof[4], t, W, M.plastic, tc);
-  for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, tc, s * (AP.x + (UH.hw - AP.x) / 2));
-  slab(prof[4], prof[5], t, W, M.plastic, tc);
+{ const g = new THREE.Group(), tc = new THREE.Group(), t = .4, W = UH.hw * 2, z0 = UH.zmin, z1 = UH.zmax, SEAM = 18;
+  // side profile (z, y) traced from the end photos: chamfered floor edges, a stepped back, a sloped front; prof[5]→prof[6] is the window edge
+  const prof = [{ z: z0 + 1.2, y: YFLOOR }, { z: z1 - 1, y: YFLOOR }, { z: z1 + 2.2, y: 12 }, { z: z1 + 2.2, y: SEAM + .5 }, { z: z1, y: 24 }, { z: z1 - 2.5, y: YTOP },
+    { z: z0 + 5, y: YTOP }, { z: z0 + 1.5, y: 24.5 }, { z: z0, y: 21 }, { z: z0, y: 10 }];
+  const a0 = Math.max(AP.z0, z0 + 5.7), a1 = Math.min(AP.z1, z1 - 3.2);
+  prof.forEach((p, i) => { const q = prof[(i + 1) % prof.length];
+    if (i === 0) { slab(p, { z: HOLE.z0, y: YFLOOR }, t, W, M.plastic, g); slab({ z: HOLE.z1, y: YFLOOR }, q, t, W, M.plastic, g);
+      for (const s of [-1, 1]) slab({ z: HOLE.z0, y: YFLOOR }, { z: HOLE.z1, y: YFLOOR }, t, UH.hw - HOLE.x, M.plastic, g, s * (HOLE.x + (UH.hw - HOLE.x) / 2)); }
+    else if (i === 5) { slab(p, { z: a1, y: YTOP }, t, W, M.plastic, tc); slab({ z: a0, y: YTOP }, q, t, W, M.plastic, tc);
+      for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, tc, s * (AP.x + (UH.hw - AP.x) / 2)); }
+    else slab(p, q, t, W, M.plastic, p.y >= SEAM && q.y >= SEAM ? tc : g); });
+  // side walls: the same profile, split at the seam between base and top cover
+  const cutY = (poly, keepAbove) => { const out = []; poly.forEach((p, i) => { const q = poly[(i + 1) % poly.length], pa = p.y >= SEAM, qa = q.y >= SEAM;
+    if (pa === keepAbove) out.push(p); if (pa !== qa) { const k = (SEAM - p.y) / (q.y - p.y); out.push({ z: p.z + (q.z - p.z) * k, y: SEAM }); } }); return out; };
+  for (const [part, above] of [[g, false], [tc, true]]) { const sh = new THREE.Shape(cutY(prof, above).map(p => new THREE.Vector2(p.z, p.y)));
+    for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.y = -Math.PI / 2; m.position.x = s > 0 ? UH.hw + t : -UH.hw; part.add(m); } }
+  // window rim on the top cover, light-trap ribs inside the base
   for (const s of [-1, 1]) { box(W, .7, .5, M.plastic, 0, YTOP + .1, s > 0 ? a1 + .2 : a0 - .2, tc); box(.5, .7, a1 - a0, M.plastic, s * (AP.x + .2), YTOP + .1, (a0 + a1) / 2, tc); }
-  { const f0 = prof[4], f1 = prof[5], mz = (f0.z + f1.z) / 2, my = (f0.y + f1.y) / 2, ang = Math.atan2(f0.y - f1.y, f0.z - f1.z);
-    for (const x of [-9, 9]) { const m = box(7, 1.4, Math.hypot(f0.z - f1.z, f0.y - f1.y) * .7, M.plastic, x, my + .6, mz + .4, tc); m.rotation.x = -ang; } }
-  cbox(W - 6, 1.6, Math.max(1, z1 - .5 - a1 - .6), .4, M.plastic, 0, YTOP + .7, (a1 + z1 - .5) / 2, tc); // raised hood behind the window
-  cbox(8, 1, 1.4, .25, M.plastic, 6, YTOP + 1.8, (a1 + z1 - .5) / 2, tc);
-  for (const s of [-1, 1]) { cbox(2.2, 1.2, a1 - a0 + 1, .3, M.plastic, s * (UH.hw - 1.4), YTOP + .5, (a0 + a1) / 2, tc); for (const z of [a0 + 2, a1 - 2]) cbox(1.2, .8, 1.2, .2, M.plastic, s * (UH.hw - 1.4), YTOP + 1.4, z, tc); }
+  for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
   addEdges(tc); register('topcover', tc);
-  // mounting ears: a ribbed plate with three holes at each end of the base
+  // mounting ears: a plate with two holes and a locating pin at each end of the base
   for (const s of [-1, 1]) { const ex = s * (UH.hw + 2.6), ez = (z0 + z1) / 2 - 2, ey = YFLOOR + 1.2;
-    box(4.6, .6, 13, M.plastic, ex, ey, ez, g); box(.5, 3.4, 13, M.plastic, ex - s * 2.1, ey + 1.4, ez, g); box(4.6, .45, .35, M.plastic, ex, ey + .5, ez - 6.3, g); box(4.6, .45, .35, M.plastic, ex, ey + .5, ez + 6.3, g);
-    for (const dz of [-2.2, 2.2]) box(4.2, .35, .25, M.plastic, ex, ey + .45, ez + dz, g);
+    box(4.6, .6, 13, M.plastic, ex, ey, ez, g); box(.5, 3.4, 13, M.plastic, ex - s * 2.1, ey + 1.4, ez, g);
     for (const dz of [-4.5, 4.5]) { cyl(.95, .7, M.plastic, ex + s * .4, ey + .1, ez + dz, g); cyl(.55, .76, M.black, ex + s * .4, ey + .1, ez + dz, g); }
     cyl(.35, 1.4, M.plastic, ex + s * .4, ey - .6, ez, g); }
-  // moulded ribs on the side walls and screw bosses along the seam, as on the part
-  for (const s of [-1, 1]) { for (const z of [-15, -9, -3, 3, 9]) box(.35, 7, .45, M.plastic, s * (UH.hw + .55), YFLOOR + 4.5, z, g);
-    for (const z of [-19, -6, 7]) { box(1.2, 1.6, 1.4, M.plastic, s * (UH.hw + .6), YFLOOR + .8, z, g); cyl(.3, .2, M.black, s * (UH.hw + 1.25), YFLOOR + .8, z, g, 'x'); } }
-  const shape = new THREE.Shape(prof.map(p => new THREE.Vector2(p.z, p.y)));
-  for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.y = -Math.PI / 2; m.position.x = s > 0 ? UH.hw + t : -UH.hw; g.add(m); }
-  for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
-  { const hw = UH.hw; // faceted side panels, gussets and snap hooks, after the teardown photos
-    for (const s of [-1, 1]) { const o = s > 0 ? [hw + .2, hw + 1.1] : [-hw - 1.1, -hw - .2], o2 = s > 0 ? [hw + 1, hw + 1.6] : [-hw - 1.6, -hw - 1];
-      prism([[z0 + 3, 9], [z1 - 3.5, 9], [z1 - 3.5, 18.5], [z1 - 9, 24.5], [z0 + 9, 24.5], [z0 + 3, 19.5]], o[0], o[1], M.plastic, g, .2);
-      prism([[z0 + 12, 11.5], [z1 - 12, 11.5], [z1 - 12, 17], [z1 - 16, 21], [z0 + 15, 21], [z0 + 12, 18]], o2[0], o2[1], M.plastic, g, .15);
-      for (const k of [0, 1, 2]) gusset(2.6, 6 - k * 1.2, .3, M.plastic, s * (hw + .2), YFLOOR + .2, z0 + .6 + k * 1.1, s < 0, g);
-      for (const z of [z1 - 5, z0 + 10]) clip(s * (hw + 1.2), 18.8, z, 'x', M.plastic, g);
-      cbox(1.4, 3.2, 5, .3, M.plastic, s * (hw + .7), YFLOOR + 1.6, z1 - 6, g); }
-    // front face: a raised plate with a centre rib pair; back face: a ledge and a hump
-    cbox(22, 6.5, 1.1, .35, M.plastic, 0, 14, z0 - .5, g); for (const x of [-1.2, 1.2]) cbox(.5, 6.5, .9, .1, M.plastic, x, 14, z0 - 1.2, g);
-    for (const x of [-13, 13]) clip(x, 19.5, z0 - .5, 'z', M.plastic, g);
-    cbox(UH.hw * 2 - 4, 1.2, 1.6, .3, M.plastic, 0, 12, z1 + 1.2, g); cbox(14, 4, 1.6, .5, M.plastic, -4, 15.5, z1 + 1.5, g); }
   addEdges(g); register('upper', g); }
-{ const g = new THREE.Group(), t = .45, x0 = -22, x1 = 22, z0 = -22.5, z1 = 11, y0 = -1, y1 = YFLOOR;
+{ // motor cover: the uneven outline seen in the opened photo (PCB strip along the front, PGU in the middle, motor bay out at the right end)
+  const g = new THREE.Group(), t = .45, y0 = -1, y1 = YFLOOR, h = y1 - y0, ym = (y0 + y1) / 2, cz = PCB_POS.z;
+  // PCB strip along the front (connector end at −x), the PGU/TFT body in the middle, the motor bay stepping out at +x, a slanted −x side and a notch at the −x front corner
+  const OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]];
   const hx0 = PG.cx - PG.w / 2 - 1.2, hx1 = PG.cx + PG.w / 2 + 1.2, hz0 = PG.cz - PG.d / 2 - .6, hz1 = PG.cz + PG.d / 2 + .6;
-  box(x1 - x0, t, hz0 - z0, M.plastic, 0, y0, (z0 + hz0) / 2, g); box(x1 - x0, t, z1 - hz1, M.plastic, 0, y0, (hz1 + z1) / 2, g);
-  box(hx0 - x0, t, hz1 - hz0, M.plastic, (x0 + hx0) / 2, y0, (hz0 + hz1) / 2, g); box(x1 - hx1, t, hz1 - hz0, M.plastic, (hx1 + x1) / 2, y0, (hz0 + hz1) / 2, g);
-  const h = y1 - y0, ym = (y0 + y1) / 2;
-  box(x1 - x0, h, t, M.plastic, 0, ym, z0, g); box(x1 - x0, h, t, M.plastic, 0, ym, z1, g); box(t, h, z1 - z0, M.plastic, x1, ym, (z0 + z1) / 2, g);
-  const cz = PCB_POS.z; box(t, h, cz - 2.6 - z0, M.plastic, x0, ym, (z0 + cz - 2.6) / 2, g); box(t, h, z1 - cz - 2.6, M.plastic, x0, ym, (cz + 2.6 + z1) / 2, g); box(t, h - 3.2, 5.2, M.plastic, x0, y1 - (h - 3.2) / 2, cz, g);
-  box(x1 - x0, t, UH.zmin - z0 + .4, M.plastic, 0, y1, (z0 + UH.zmin + .4) / 2, g);
-  for (const s of [-1, 1]) box(Math.abs(x1) - UH.hw, t, z1 - z0, M.plastic, s * (UH.hw + (Math.abs(x1) - UH.hw) / 2), y1, (z0 + z1) / 2, g);
-  { const bx0 = motor.x - 3.4, bz0 = motor.z0 - 3.2, bz1 = z1, bh = 2.6; // stepped bay over the motor and its worm
-    box(x1 - bx0, t, bz1 - bz0, M.plastic, (bx0 + x1) / 2, y1 + bh, (bz0 + bz1) / 2, g); box(t, bh, bz1 - bz0, M.plastic, bx0, y1 + bh / 2, (bz0 + bz1) / 2, g);
-    box(x1 - bx0, bh, t, M.plastic, (bx0 + x1) / 2, y1 + bh / 2, bz0, g); box(x1 - bx0, bh, t, M.plastic, (bx0 + x1) / 2, y1 + bh / 2, bz1, g); box(t, bh, bz1 - bz0, M.plastic, x1, y1 + bh / 2, (bz0 + bz1) / 2, g); }
-  for (const [a, b, c, d] of [[hx0 - .7, hx1 + .7, hz0 - .7, hz0 - .2], [hx0 - .7, hx1 + .7, hz1 + .2, hz1 + .7]]) box(b - a, 1.2, d - c, M.plastic, (a + b) / 2, y0 - .5, (c + d) / 2, g);
-  for (const x of [hx0 - .45, hx1 + .45]) box(.5, 1.2, hz1 - hz0 + 1.4, M.plastic, x, y0 - .5, (hz0 + hz1) / 2, g);
-  box(9, 1, 2.2, M.plastic, PG.cx + 3, y0 - .5, hz0 - 1.8, g); // the tab over the window edge seen in the photos
-  box(1.4, 2.4, 2.4, M.white, x0 - .7, 2.6, cz - 1.4, g); cyl(.7, 1.6, M.black, x0 - .8, 2.6, cz + 1.6, g, 'x'); cyl(.35, 1.8, M.silver, x0 - .9, 2.6, cz + 1.6, g, 'x');
-  for (const [x, z] of [[-19, -20], [19, -20], [-19, 8.5], [hx0 - 2, hz1 + 2], [hx1 + 2, hz1 + 2], [hx0 - 2, hz0 - 2], [hx1 + 2, hz0 - 2]]) cyl(.32, .2, M.black, x, y0 - .3, z, g);
-  for (const z of [-17, -11, -5, 1, 7]) for (const s of [-1, 1]) box(.3, 2.2, .5, M.plastic, s * (x1 + .3), y1 - 1.4, z, g);
-  // stepped tiers under the floor, as in the bottom view: a sloped front plate with a nose, a tall end block, a block under the motor bay
-  prism([[z0, y0], [z0 + 1.6, y0 - 1.8], [hz0 - 2.4, y0 - 1.8], [hz0 - 1.4, y0]], -16, 16, M.plastic, g, .15);
-  cbox(3.2, 1.2, 1.6, .3, M.plastic, 0, y0 - 2.1, z0 + 1.6, g); cbox(20, .5, 6, .1, M.matte, 0, y0 - 1.85, (z0 + hz0) / 2 - 1, g);
-  prism([[hz1 + 1.2, y0], [hz1 + 2, y0 - 1.3], [z1 - 1.2, y0 - 1.3], [z1, y0]], -14, 14, M.plastic, g, .15);
-  cbox(7, 2.8, 17, .45, M.plastic, x0 + 3.6, y0 - 1.3, (z0 + hz0) / 2 + 2, g); cbox(6.4, 2, 15, .4, M.plastic, x1 - 3.4, y0 - 1, 2.5, g);
-  for (const s of [-1, 1]) cbox(.7, 5, 18, .25, M.plastic, s * (x1 + .35), 3.4, -3, g);
-  for (const x of [-10, 10]) clip(x, 4.6, z0 - .4, 'z', M.plastic, g);
+  // floor with the heatsink window cut out
+  { const sh = new THREE.Shape(OUT.map(([x, z]) => new THREE.Vector2(x, z))), hole = new THREE.Path([[hx0, hz0], [hx1, hz0], [hx1, hz1], [hx0, hz1]].map(([x, z]) => new THREE.Vector2(x, z)));
+    sh.holes.push(hole); const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: false }), M.plastic); m.rotation.x = Math.PI / 2; m.position.y = y0 + t / 2; g.add(m); }
+  // walls along the outline
+  OUT.forEach(([xa, za], i) => { const [xb, zb] = OUT[(i + 1) % OUT.length], dx = xb - xa, dz = zb - za, len = Math.hypot(dx, dz);
+    const m = box(len + t, h, t, M.plastic, (xa + xb) / 2, ym, (za + zb) / 2, g); m.rotation.y = Math.atan2(-dz, dx); });
+  // top: closes what the base does not cover
+  box(23.5 - UH.hw, t, 11.8, M.plastic, -(UH.hw + 23.5) / 2, y1, -17.1, g); box(UH.hw + 9.5, t, 23 + UH.zmin, M.plastic, (9.5 - UH.hw) / 2, y1, (UH.zmin - 23) / 2, g);
+  box(22.5 - UH.hw, t, 22.5, M.plastic, (UH.hw + 22.5) / 2, y1, -1.25, g);
+  // rim round the fin window and the tab over its edge
+  for (const [a, b, c, d] of [[hx0 - .7, hx1 + .7, hz0 - .7, hz0 - .2], [hx0 - .7, hx1 + .7, hz1 + .2, hz1 + .7]]) cbox(b - a, 1.2, d - c, .15, M.plastic, (a + b) / 2, y0 - .5, (c + d) / 2, g);
+  for (const x of [hx0 - .45, hx1 + .45]) cbox(.5, 1.2, hz1 - hz0 + 1.4, .12, M.plastic, x, y0 - .5, (hz0 + hz1) / 2, g);
+  cbox(9, 1, 2.2, .25, M.plastic, PG.cx + 3, y0 - .5, hz0 - 1.8, g);
+  // stepped tiers under the floor
+  prism([[-23, y0], [-21.4, y0 - 1.8], [hz0 - 2.4, y0 - 1.8], [hz0 - 1.4, y0]], -14, 10, M.plastic, g, .15);
+  cbox(3.2, 1.2, 1.6, .3, M.plastic, -2, y0 - 2.1, -21.4, g); cbox(16, .5, 6, .1, M.matte, -2, y0 - 1.85, -16, g);
+  prism([[hz1 + 1.2, y0], [hz1 + 2, y0 - 1.3], [9.8, y0 - 1.3], [10.6, y0]], -12, 12, M.plastic, g, .15);
+  cbox(6, 2.8, 10, .45, M.plastic, -19.5, y0 - 1.3, -17, g); cbox(6.4, 2.2, 15, .4, M.plastic, 18.6, y0 - 1.1, 1, g);
+   
+  // connectors on the end face beside the main PCB: the white power/LIN plug and the coax video socket
+  cbox(1.6, 2.6, 2.6, .2, M.white, -24.3, 2.6, cz - 1.6, g); cyl(.75, 1.6, M.black, -24.4, 2.6, cz + 1.8, g, 'x'); cyl(.35, 1.8, M.silver, -24.5, 2.6, cz + 1.8, g, 'x');
   addEdges(g); register('lower', g); }
 
 /* ───────────────────────── car environment ───────────────────────── */
