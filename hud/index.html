@@ -1015,7 +1015,7 @@ const P = {
   fpcb: { name:'Bare PCB', full:'Bare PCB (Flexible)', en:'Flexible driver board · narrow strip + wide board, one piece', mat:'', conf:'photo', ex:[0,16,-6], photos:['tft-fpcb-map','fpcb-acf','tft-board','tcon-mounted'],
     desc:'TFT 유리 아래쪽에 붙은 주황색 연성 기판 한 장입니다. 유리 가장자리로 이어지는 좁은 띠와, 부품이 실장된 넓은 기판이 하나로 이어져 있습니다. Custom FPCB(회색 케이블)로 들어온 영상 신호를 TFT 구동 신호로 바꿔 좁은 띠를 통해 유리로 보냅니다.',
     points:['좁은 띠에 비치는 가는 선들이 TFT 유리로 가는 신호선입니다.','넓은 기판의 큰 인덕터 두 개는 TFT 구동 전압을 만드는 DC-DC 부분입니다.','라벨: CUS PN 123420000260 · TM PN TL051XFKP01-01 · SN 05165.'],
-    specs:[['구성','좁은 띠 + 넓은 기판 (한 장)'],['기판','폴리이미드 연성 기판'],['입력','LVDS (실크 T_LVDS)']] },
+    specs:[['크기','96.2 × 33 mm · 두께 0.05T'],['동박 · 표면처리','½ oz · ENIG · 노란색 솔더'],['구성','좁은 띠 + 넓은 기판 (한 장)'],['기판','폴리이미드 연성 기판'],['입력','LVDS (실크 T_LVDS)']] },
   acf: { name:'ACF', full:'ACF (유리–FPC 접합 경계선)', en:'Anisotropic conductive film bond line', mat:'', conf:'photo', ex:[0,16,-3], photos:['tft-fpcb-map','fpcb-acf'],
     desc:'Bare PCB의 좁은 띠 끝이 TFT 유리 가장자리 전극에 겹쳐 붙은 경계선입니다. 이방성 도전 필름(ACF)을 사이에 두고 열과 압력으로 붙여서, 위아래로 마주 보는 전극끼리만 전기가 통합니다.',
     points:['ACF는 수십 µm 두께라 눈에는 유리 가장자리의 가는 선으로만 보입니다. 모델에서는 진한 선으로 표시했습니다.','이 선이 들뜨거나 갈라지면 화면의 일부 줄이 안 나오는 불량이 생깁니다.'],
@@ -1053,7 +1053,7 @@ const P = {
   pcb: { name:'Main PCB', full:'Main PCB', en:'Main board HATZK630-0100', mat:'', conf:'photo', ex:[-8,4,-16], photos:['pcb-front','pcb-shield','pcb-noshield','pcb-out','pcb-back','pcb-back-out','pcb-back-detail','lower-pcb'],
     desc:'HUD의 두뇌입니다. 전자부품을 연결하고 신호와 전력을 전달합니다. 차량에서 영상과 전원을 받아 왜곡을 보정해 TFT로 보내고, 백라이트 밝기와 미러 모터를 제어합니다.',
     points:['왼쪽 끝은 외부 커넥터와 전원부, 가운데는 차폐 캔 아래 영상처리·왜곡처리 IC, 오른쪽은 MCU와 내부 커넥터입니다. EEPROM은 뒷면에 있습니다.','실크 표기: 123015032578 / HATZK630-0100 / 2023-12-24 / VER:V03 / TW-8 2530 / UL E340729 94V0. TW는 기판 제조사 Trustwin 표기로 보입니다.','외부 커넥터는 두 개입니다. 검은 원통은 영상용 동축 커넥터(GMSL), 흰 4핀은 전원과 LIN 통신입니다.','기판은 AEC-Q100 대상이 아닙니다. 대신 화재 안전 등급 94V-0(UL 난연)을 받았습니다.'],
-    specs:[['품번','HATZK630-0100 V03'],['제조사','Huizhou Trustwin Electronics'],['기판 P/N','미확인 (TW-8 · ASP1 계열 추정)'],['난연 등급','UL 94V-0'],['설계일','2023-12-24 (실크)']] },
+    specs:[['크기','170 × 60 mm · 두께 1.6T'],['동박 · 표면처리','1 oz · OSP · 녹색 솔더'],['품번','HATZK630-0100 V03'],['제조사','Huizhou Trustwin Electronics'],['기판 P/N','미확인 (TW-8 · ASP1 계열 추정)'],['난연 등급','UL 94V-0'],['설계일','2023-12-24 (실크)']] },
   epson: { name:'왜곡처리 IC', full:'왜곡처리 IC (Warp 보정)', en:'EPSON S2D13V42F00A100', conf:'photo', on:'pcb', maker:'EPSON', pn:'S2D13V42F00A100', grade:'Grade 2', photos:['pcb-warp','pcb-mcu','pcb-noshield'],
     desc:'전면유리 곡률과 광학계 때문에 생기는 영상 왜곡을 보정하는 HUD 전용 칩입니다. 영상을 실시간으로 미리 거꾸로 휘어 둡니다.',
     points:['윈드실드는 곡면이고 미러는 비스듬히 놓여 있어서, 영상을 그대로 띄우면 사다리꼴이나 활 모양으로 휩니다. 이 칩이 프레임마다 반대 방향으로 휜 영상을 만듭니다. 보기 설정의 워프 보정을 꺼 보세요.','미러 각도가 바뀌면 왜곡도 바뀌므로 각도별 보정값을 EEPROM에 두는 것이 일반적입니다.','마킹: EPSON / S2D13V42F00A1 / G25279358 / JAPAN. 차폐 캔 아래에 있습니다.'],
@@ -1191,17 +1191,17 @@ const grid = new THREE.GridHelper(160, 32, 0xc5ccd3, 0xd5dade); grid.position.y 
 /* ───────────────────────── textures ───────────────────────── */
 function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.userData.redraw = () => { draw(c.getContext('2d'), w, h); t.needsUpdate = true; }; t.userData.redraw(); return t; }
 const castTex = canvasTex(512, 256, (g, w, h) => { const r = rng(7); g.fillStyle = '#a2a6a9'; g.fillRect(0, 0, w, h); for (let i = 0; i < 4000; i++) { const x = r() * w, y = r() * h, l = 2 + r() * 7, a = r() * 7; g.strokeStyle = r() < .6 ? `rgba(60,64,68,${.15 + r() * .3})` : `rgba(235,238,240,${.2 + r() * .3})`; g.lineWidth = .6 + r(); g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); } });
-const PCB_L = 28, PCB_W = 6.5;
+const PCB_L = 17, PCB_W = 6; // HJW main PCB 170 × 60 mm, 1.6T
 const pcbTex = canvasTex(1400, 325, (g, w, h) => {
   const r = rng(3), sx = w / PCB_L, sz = h / PCB_W, Pp = (x, z) => [(x + PCB_L / 2) * sx, (z + PCB_W / 2) * sz];
   g.fillStyle = '#1d6a3c'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(70,150,90,.55)'; g.lineWidth = 2.2;
   for (let i = 0; i < 160; i++) { let x = r() * w, y = r() * h; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 3; k++) { if (r() < .5) x += (r() - .5) * 220; else y += (r() - .5) * 120; g.lineTo(x, y); } g.stroke(); }
   for (let i = 0; i < 500; i++) { g.fillStyle = 'rgba(200,205,200,.85)'; g.beginPath(); g.arc(r() * w, r() * h, 2.2 + r() * 2, 0, 7); g.fill(); }
-  let [a, b] = Pp(-2.2, -2.2), [c, d] = Pp(3.2, 1.8); g.strokeStyle = '#c9884f'; g.lineWidth = 9; g.strokeRect(a, b, c - a, d - b);
+  let [a, b] = Pp(-1.4, -2), [c, d] = Pp(2.2, 1.6); g.strokeStyle = '#c9884f'; g.lineWidth = 9; g.strokeRect(a, b, c - a, d - b);
   g.fillStyle = '#f2f2ee'; g.font = '600 30px "IBM Plex Mono", monospace';
-  ['123015032578', 'HATZK630-0100', '2023-12-24', 'VER:V03'].forEach((t, i) => { const [x, y] = Pp(-7.4, -2.5 + i * .62); g.fillText(t, x, y); });
-  g.font = '500 24px "IBM Plex Mono", monospace'; let [tx, ty] = Pp(-7.4, .3); g.fillText('TW-8 2530  E340729 94V0', tx, ty);
-  for (const [x, z] of [[-13.2, 2.6], [12.9, 2.6], [12.9, -2.6]]) { const [px, py] = Pp(x, z); g.fillStyle = '#d9a26a'; g.beginPath(); g.arc(px, py, 18, 0, 7); g.fill(); g.fillStyle = '#0a0a0a'; g.beginPath(); g.arc(px, py, 9, 0, 7); g.fill(); }
+  ['123015032578', 'HATZK630-0100', '2023-12-24', 'VER:V03'].forEach((t, i) => { const [x, y] = Pp(-5.2, -2.5 + i * .62); g.fillText(t, x, y); });
+  g.font = '500 24px "IBM Plex Mono", monospace'; let [tx, ty] = Pp(-5.2, .3); g.fillText('TW-8 2530  E340729 94V0', tx, ty);
+  for (const [x, z] of [[-8, 2.5], [7.9, 2.5], [7.9, -2.5]]) { const [px, py] = Pp(x, z); g.fillStyle = '#d9a26a'; g.beginPath(); g.arc(px, py, 18, 0, 7); g.fill(); g.fillStyle = '#0a0a0a'; g.beginPath(); g.arc(px, py, 9, 0, 7); g.fill(); }
 });
 function chipTex(lines, big) { return canvasTex(256, 256, (g, w) => { g.fillStyle = '#16171a'; g.fillRect(0, 0, w, w); g.fillStyle = '#2a2b2f'; g.beginPath(); g.arc(34, 34, 12, 0, 7); g.fill(); g.fillStyle = '#c3c6cc'; g.textAlign = 'center'; lines.forEach((t, i) => { g.font = (i === 0 && big ? '700 46px ' : '500 28px ') + '"IBM Plex Mono", monospace'; g.fillText(t, w / 2, 100 + i * 42); }); }); }
 const fpcTex = canvasTex(1024, 256, (g, w, h) => { const r = rng(11); g.fillStyle = '#c96a1c'; g.fillRect(0, 0, w, h); g.fillStyle = '#a8501a'; g.fillRect(60, 40, 900, 170); for (let i = 0; i < 260; i++) { g.fillStyle = r() < .7 ? '#d8d2c8' : '#2a2a2a'; g.fillRect(80 + r() * 860, 50 + r() * 150, 8 + r() * 6, 5 + r() * 4); } g.fillStyle = '#f4f2ee'; g.fillRect(110, 150, 300, 90); g.fillStyle = '#222'; g.font = '500 17px "IBM Plex Mono", monospace'; ['CUS PN:123420000260', 'TM PN:TL051XFKP01-01', 'DATE:25-09-12', 'SN:05165'].forEach((t, i) => g.fillText(t, 190, 172 + i * 20)); });
@@ -1441,7 +1441,7 @@ const LEDS = [];
 
 
 // main PCB with its chips
-const PCB_POS = V(-7.5, 1.4, -18), shieldMeshes = [];
+const PCB_POS = V(-13.5, 1.4, -18), shieldMeshes = [];
 { const g = new THREE.Group(); g.position.copy(PCB_POS); const T = .08;
   g.add(new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]));
   const chip = (id, w, d, h, lines, big, x, z, pinStyle = 'qfp', back = false) => {
@@ -1451,28 +1451,28 @@ const PCB_POS = V(-7.5, 1.4, -18), shieldMeshes = [];
     if (lines) topPlane(w * .96, d * .96, new THREE.MeshBasicMaterial({ map: chipTex(lines, big), toneMapped: false }), 0, T + h + .035, 0, q);
     q.position.set(x, 0, z); if (back) q.rotation.x = Math.PI; g.add(tag(q, id)); chipCenters[id] = V(x, back ? -(T + h) : T + h, z);
   };
-  chip('epson', 1.7, 1.7, .2, ['EPSON', 'S2D13V42', 'F00A1', 'JAPAN'], true, -.6, -.6);
-  chip('max', .9, .9, .15, ['MAX9278A', 'GTM/V'], false, 1.9, .7);
-  chip('mcu', 1.8, 1.8, .2, ['TF25910', '1TC2523', '16843'], false, 6.6, -.9);
-  chip('eeprom', .5, .4, .15, ['P4C08C1'], false, 8.6, -1.6, 'so', true);
-  chip('opamp', .21, .2, .09, null, false, 3.9, 2.4, 'so');
-  chip('ldolv', .29, .16, .11, null, false, 4.6, -2.5, 'so');
-  chip('ldohv', .5, .4, .15, ['MPQ2019'], false, -8.2, -.2, 'so');
-  chip('dcdc', .3, .3, .09, null, false, -5.2, -1.2);
-  chip('ledchip', .4, .4, .09, null, false, 10.6, .4);
-  chip('lin', .5, .4, .15, ['TJA1021'], false, -11, -1.9, 'so');
-  { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(5.1, 0, -2.1); g.add(tag(xt, 'xtal')); chipCenters.xtal = V(5.1, T + .2, -2.1); }
-  { const s = new THREE.Group(), cw = 5.4, cd = 3.9; box(cw, .05, cd, M.silver, 0, T + .62, 0, s); for (const k of [-1, 1]) { box(cw, .6, .05, M.silver, 0, T + .3, k * cd / 2, s); box(.05, .6, cd, M.silver, k * cw / 2, T + .3, 0, s); } s.position.set(.5, 0, -.2); g.add(s); s.traverse(c => c.isMesh && shieldMeshes.push(c)); }
+  chip('epson', 1.7, 1.7, .2, ['EPSON', 'S2D13V42', 'F00A1', 'JAPAN'], true, -.3, -.5);
+  chip('max', .9, .9, .15, ['MAX9278A', 'GTM/V'], false, 1.4, .8);
+  chip('mcu', 1.8, 1.8, .2, ['TF25910', '1TC2523', '16843'], false, 3.9, -.7);
+  chip('eeprom', .5, .4, .15, ['P4C08C1'], false, 5.4, -1.4, 'so', true);
+  chip('opamp', .21, .2, .09, null, false, 2.6, 2.3, 'so');
+  chip('ldolv', .29, .16, .11, null, false, 2.1, -2.6, 'so');
+  chip('ldohv', .5, .4, .15, ['MPQ2019'], false, -4.3, -.4, 'so');
+  chip('dcdc', .3, .3, .09, null, false, -3.3, .4);
+  chip('ledchip', .4, .4, .09, null, false, 6.2, .6);
+  chip('lin', .5, .4, .15, ['TJA1021'], false, -6.4, -2.5, 'so');
+  { const xt = new THREE.Group(); box(.5, .18, .35, M.silver, 0, T + .09, 0, xt); xt.position.set(3.4, 0, -2.4); g.add(tag(xt, 'xtal')); chipCenters.xtal = V(3.4, T + .2, -2.4); }
+  { const s = new THREE.Group(), cw = 3.6, cd = 3.6; box(cw, .05, cd, M.silver, 0, T + .62, 0, s); for (const k of [-1, 1]) { box(cw, .6, .05, M.silver, 0, T + .3, k * cd / 2, s); box(.05, .6, cd, M.silver, k * cw / 2, T + .3, 0, s); } s.position.set(.4, 0, -.2); g.add(s); s.traverse(c => c.isMesh && shieldMeshes.push(c)); }
   // parts identified on the board photo (pcb-noshield / pcb-out); each is its own pickable group
   const onBoard = (id, at, build) => { const q = new THREE.Group(); build(q); g.add(tag(q, id)); chipCenters[id] = at; };
-  onBoard('ecap', V(-8.6, T + .7, 1.7), q => [[-9.8, 2.2], [-8.9, 2.2], [-8, 2.2], [-9.2, 1.2], [-7.6, 1.2], [-5.6, 1.3]].forEach(([x, z]) => { cyl(.33, .62, M.silver, x, T + .31, z, q); cyl(.3, .02, M.black, x, T + .63, z, q); }));
-  onBoard('ind', V(-7, T + .5, -.2), q => [[-11.2, .8], [-9.6, -.4], [-6.3, -1.9], [-4.3, -.4], [-3.6, 1.5]].forEach(([x, z]) => box(.95, .45, .95, std(0x5d6166, .7), x, T + .22, z, q)));
-  onBoard('hsd', V(-13.6, 1.5, -1.4), q => { cyl(.75, 2.4, M.black, -14.3, .7, -1.4, q, 'x'); box(1.4, 1.4, 1.4, M.silver, -12.6, .78, -1.4, q); });
-  onBoard('pwrcon', V(-13.6, 1.5, 1.3), q => box(2.4, 1.4, 2, M.white, -13.6, .78, 1.3, q));
-  onBoard('wcon', V(9.8, T + .6, -.3), q => [[9.6, -2.3, 1.6], [11, -1, 1.1], [11.4, 1.6, 1.8], [5.2, 2.4, 1.7]].forEach(([x, z, w]) => box(w, .55, .6, M.white, x, T + .28, z, q)));
-  onBoard('fpccon', V(8.6, T + .35, 2.55), q => box(2.5, .32, .65, M.kapton, 8.6, T + .16, 2.55, q));
-  onBoard('sclip', V(.5, T + .5, -2.3), q => [[-2.35, -.2], [3.35, -.2], [-.6, -2.3], [1.7, 1.9]].forEach(([x, z]) => box(.32, .22, .24, M.silver, x, T + .11, z, q)));
-  { const r = rng(5), n = 140, inst = new THREE.InstancedMesh(new THREE.BoxGeometry(.18, .08, .1), M.black, n), mm = new THREE.Matrix4(); for (let i = 0; i < n; i++) { mm.makeTranslation(-11 + r() * 24, T + .04, -3 + r() * 6); inst.setMatrixAt(i, mm); } g.add(inst); }
+  onBoard('ecap', V(-4.8, T + .7, 1.9), q => [[-6, 2.3], [-5.3, 2.3], [-4.6, 2.3], [-4.9, 1.4], [-3.9, 1.3], [-3.1, 2.2]].forEach(([x, z]) => { cyl(.33, .62, M.silver, x, T + .31, z, q); cyl(.3, .02, M.black, x, T + .63, z, q); }));
+  onBoard('ind', V(-4.4, T + .5, -.2), q => [[-6.3, .9], [-5.6, -.5], [-3.8, -1.9], [-2.6, -.5], [-2, 1.3]].forEach(([x, z]) => box(.95, .45, .95, std(0x5d6166, .7), x, T + .22, z, q)));
+  onBoard('hsd', V(-8.2, 1.5, -1.4), q => { cyl(.75, 2.4, M.black, -8.9, .7, -1.4, q, 'x'); box(1.4, 1.4, 1.4, M.silver, -7.4, .78, -1.4, q); });
+  onBoard('pwrcon', V(-8, 1.5, 1.3), q => box(2.4, 1.4, 2, M.white, -8, .78, 1.3, q));
+  onBoard('wcon', V(7, T + .6, -.3), q => [[6.4, -2.3, 1.2], [7.6, -1.2, 1], [7.7, 1.2, 1.6], [3.3, 2.4, 1.4]].forEach(([x, z, w]) => box(w, .55, .6, M.white, x, T + .28, z, q)));
+  onBoard('fpccon', V(5.6, T + .35, 2.55), q => box(2.5, .32, .65, M.kapton, 5.6, T + .16, 2.55, q));
+  onBoard('sclip', V(.4, T + .5, -2.1), q => [[-1.45, -.2], [2.25, -.2], [-.3, -2.05], [1.2, 1.65]].forEach(([x, z]) => box(.32, .22, .24, M.silver, x, T + .11, z, q)));
+  { const r = rng(5), n = 140, inst = new THREE.InstancedMesh(new THREE.BoxGeometry(.18, .08, .1), M.black, n), mm = new THREE.Matrix4(); for (let i = 0; i < n; i++) { mm.makeTranslation(-7.8 + r() * 15.6, T + .04, -2.8 + r() * 5.6); inst.setMatrixAt(i, mm); } g.add(inst); }
   register('pcb', g); }
 
 // motor in the corner of the lower housing beside the PGU; link up to the mirror ear (link estimated)
@@ -1495,15 +1495,15 @@ const motor = {};
 
 // misc: wiring, label, screws
 { const gc = new THREE.Group();
-  const a = V(PCB_POS.x + 8.6, PCB_POS.y + .35, PCB_POS.z + 2.55), b = V(PG.cx - 1.2, Ly + .35, zFp + 1.1);
+  const a = V(PCB_POS.x + 5.6, PCB_POS.y + .35, PCB_POS.z + 2.55), b = V(PG.cx - 1.2, Ly + .35, zFp + 1.1);
   // flat grey band as in the photo: leaves the Bare PCB connector straight, then slopes gently down to the main PCB (no twist)
   const along = (k, dy) => b.clone().lerp(a, k).add(V(0, dy, 0)); // points spaced along the straight run, so the band never doubles back
   gc.add(flatBand([b, along(.2, .25), along(.55, .35), along(.85, .25), a], 2.2, M.ffc));
   box(2.6, .45, .8, M.black, a.x, a.y + .1, a.z, gc); register('cfpcb', gc); }
 { const g = new THREE.Group();
-  const from = V(PCB_POS.x + 9.6, PCB_POS.y + .5, PCB_POS.z - 2.3), to = V(motor.x - 1, motor.y, motor.z0 - 1.6);
+  const from = V(PCB_POS.x + 6.4, PCB_POS.y + .5, PCB_POS.z - 2.3), to = V(motor.x - 1, motor.y, motor.z0 - 1.6);
   for (let k = 0; k < 4; k++) { const o = (k - 1.5) * .22; g.add(wire([from.clone().add(V(o, 0, 0)), V(from.x + 3 + o, 1.6, from.z - 2.4), V(19.6 + o, 2, -10), V(to.x + 1.2 + o, 2.4, to.z - 3), to.clone().add(V(o, 0, 0))], .09, M.wire)); }
-  const lf = V(PCB_POS.x + 11, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + LCDR.w * .32, 1.05, PG.cz - PG.d / 2 - 2.05);
+  const lf = V(PCB_POS.x + 7.6, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + LCDR.w * .32, 1.05, PG.cz - PG.d / 2 - 2.05);
   for (let k = 0; k < 2; k++) g.add(wire([lf.clone().add(V(0, 0, k * .22)), V(lf.x + 2, 1.6, lf.z + 3), V(lt.x + 1.2, 1.4, lt.z - 3), lt.clone().add(V(0, 0, k * .22))], .08, M.wire));
   const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.position.set(-4, 3.6, -23.3); lab.rotation.y = Math.PI; g.add(lab);
   for (const [x, z] of [[-20.5, -21], [20.5, -21], [-20.5, 8.5], [20.5, 8.5], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
