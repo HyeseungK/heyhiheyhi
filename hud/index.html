@@ -790,6 +790,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 .sp-ans h4 span { font-weight: 500; font-size: 11.5px; color: #4a8a66; }
 .sp-ans ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
 .sp-ans li { font-size: 13.5px; line-height: 1.55; }
+.bm-kpi:empty, .bm-wt:empty { display: none; }
 /* ── phone layer (≤640px): desktop is untouched. Only the core of each tab stays. ── */
 @media (max-width: 640px) {
   :root { --hdr: 96px; }
@@ -933,12 +934,12 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 </div>
 
 <main id="bomPage" hidden>
-  <div class="bm-head"><h2>BOM</h2><span class="note">Zeekr_EX-1423940 · BoM KR 시트</span>
-    <div class="seg" id="bmFilt"><button data-bf="all" aria-pressed="true">전체</button><button data-bf="mech" aria-pressed="false">기구</button><button data-bf="opt" aria-pressed="false">광학</button><button data-bf="elec" aria-pressed="false">전자</button></div>
-    <input id="bomQ" class="bm-q" type="search" placeholder="부품명 · 제조사 · P/N 검색" aria-label="BOM 검색"></div>
+  <div class="bm-head"><h2>BOM</h2><span class="note">S2G1870 외부자재 · 부품과 중량 (2026-11-04)</span>
+    <div class="seg" id="bmFilt"><button data-bf="all" aria-pressed="true">전체</button><button data-bf="mech" aria-pressed="false">기구</button><button data-bf="opt" aria-pressed="false">광학</button></div>
+    <input id="bomQ" class="bm-q" type="search" placeholder="부품명 검색" aria-label="BOM 검색"></div>
   <div class="bm-kpi" id="bmKpi"></div>
   <div class="bm-wt" id="bmWt"></div>
-  <div class="bm-tbl"><table><thead><tr><th>부품</th><th class="n">수량</th><th class="n">중량 g</th><th class="bm-hide2">크기 mm</th><th>소재 · 규격</th><th class="bm-hide">제조사</th><th class="bm-hide">공정</th><th>3D</th></tr></thead><tbody id="bomBody"></tbody></table></div>
+  <div class="bm-tbl"><table><thead><tr><th>부품</th><th class="n">중량 g</th><th>3D</th></tr></thead><tbody id="bomBody"></tbody></table></div>
 </main>
 
 <main id="specPage" hidden>
@@ -971,13 +972,13 @@ const PHOTO = {
   'heatsink-back':'방열판 정면','upper-inside':'상부 하우징 안쪽','opening':'상·하부 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
   'motor-bay':'모터 베이','ffc':'Custom FPCB (회색 케이블)와 커넥터','tft-fpcb-map':'① TFT · ② Bare PCB (Flexible) · ③ ACF 접합선 · ④ Custom FPCB','tcon-mounted':'TFT와 Bare PCB 장착 상태','pcb-shield':'메인 PCB (차폐 캔 장착)','pcb-noshield':'메인 PCB (차폐 캔 제거)',
   'pcb-out':'메인 PCB 단품','pcb-back-out':'메인 PCB 뒷면 단품','heatsink-fins':'방열판 핀과 Base Plate','bracket-inside':'하우징 속 방열판과 PGU','pgu-pad':'PGU 뒷면 실리콘 패드',
-  'lens-array':'렌즈 어레이 (PC)','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'육각 패턴 광학 필름','mirror-housing':'미러 하우징 (곡면경·평면경)','pcb-housing':'하부 하우징 전체',
+  'lens-array':'렌즈 어레이 (PC)','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'2차 렌즈 (허니콤) · TFT 브래킷에 장착','lens1-s2g':'1차 렌즈 (돔) 단품','film-s2g':'광학 필름 단품 (0.25 mm)','lens2-s2g':'2차 렌즈 (허니콤) 단품','blframe-s2g':'백라이트 프레임 (추정)','tftholder-s2g':'TFT 지지대 단품','motorcover-s2g':'모터 커버 + 방열판 A','base-s2g':'하부 베이스 곡면경 (보호 필름 부착)','mirror-housing':'미러 하우징 (곡면경·평면경)','pcb-housing':'하부 하우징 전체',
   'pcb-front':'메인 PCB 앞면','pcb-mcu':'MCU와 EPSON IC','pcb-warp':'EPSON 왜곡처리 IC · MAX9278A','pcb-power':'커넥터와 전원부','pcb-back':'메인 PCB 뒷면','pcb-back-detail':'뒷면 상세 (SOIC-8)',
   'tft-board':'Bare PCB (Flexible)','tft-panel':'TFT 모서리 (방진 폼)','motor':'모터와 웜','bracket-back':'방열판(다이캐스트) 뒷면','bracket-front':'방열판(다이캐스트) 앞면',
   'bracket-mark':'각인 HA-DZK-617 / ADC12','pgu-module':'PGU와 실리콘 패드','cover-top':'방진 커버 (보호필름)','fpcb-acf':'Bare PCB의 좁은 띠 · ACF 접합선 · LED 전원 탭'
 };
 const P = {
-  upper: { name:'상부 하우징', full:'상부 하우징 (미러 기구, 대형)', en:'Upper housing · mirror carrier', mat:'PP', conf:'photo', housing:true, ex:[0,34,0], photos:['top-housing','mirror-housing','upper-inside','housing-detail','rear-angle'],
+  upper: { name:'상부 하우징', full:'상부 하우징 (미러 기구, 대형)', en:'Upper housing · mirror carrier', mat:'PP', conf:'photo', housing:true, ex:[0,34,0], photos:['base-s2g','top-housing','mirror-housing','upper-inside','housing-detail','rear-angle'],
     desc:'곡면경과 평면경을 정해진 각도로 잡아 주는 가장 큰 케이스입니다. 안쪽은 무광 검정이고, 바닥 가운데 사각 구멍으로 PGU 빛이 올라옵니다. 위쪽 개구부는 방진 커버가 막습니다.',
     points:['광학 부품 사이 거리와 각도를 고정하는 것이 역할입니다. 미러가 0.1° 틀어져도 허상 위치가 눈에 띄게 움직입니다.','안쪽의 무광 검정과 리브는 미광을 흡수해 고스트 이미지와 빛샘을 줄입니다.'],
     specs:[['소재','PP (BOM)'],['내부','무광 검정 · 광 트랩 리브']] },
@@ -989,7 +990,7 @@ const P = {
     desc:'방열판을 하우징 바닥에 고정하는 작은 플라스틱 받침입니다. 방열판 핀이 이 틀의 창으로 밖에 드러납니다.',
     points:['유리섬유 10% 강화 PP로 열에 덜 휘고 가볍습니다.','방열판 단품 사진에서 핀을 감싸는 검은 틀입니다.'],
     specs:[['소재','PP+GF10 (BOM)']] },
-  heatsink: { name:'방열판', full:'방열판', en:'Die-cast heatsink HA-DZK-617', mat:'ADC12', conf:'photo', ex:[0,-10,0], photos:['bracket-front','bracket-mark','bracket-back','bracket-inside','heatsink-fins','heatsink-top'],
+  heatsink: { name:'방열판', full:'방열판', en:'Die-cast heatsink HA-DZK-617', mat:'ADC12', conf:'photo', ex:[0,-10,0], photos:['motorcover-s2g','bracket-front','bracket-mark','bracket-back','bracket-inside','heatsink-fins','heatsink-top'],
     desc:'PGU 바로 아래에서 LED 열을 받아 핀으로 내보내는 알루미늄 다이캐스트 부품입니다. 위쪽 판이 PGU를 받치고, 아래쪽 핀이 대시보드 속 공기로 열을 버립니다.',
     points:['각인: HA-DZK-617, >ADC12<(알루미늄 다이캐스트 합금), 생산 연·월 날짜 휠.','팬이 보이지 않아 자연대류로 식히는 구조입니다. 핀 면적과 간격이 중요합니다.','사진에서는 판과 핀이 따로 보여서 일체형인지 조립형인지 확인이 필요합니다. 모델은 한 부품으로 그렸습니다.'],
     specs:[['품번','HA-DZK-617 (각인)'],['소재','ADC12 (각인·BOM)']] },
@@ -1004,7 +1005,7 @@ const P = {
     desc:'곡면경 각도를 바꾸는 구동부입니다. 은색 원통이 스텝 모터, 검은 나선이 웜(파란 것은 그리스), 옆의 작은 보드가 원점 감지 보드입니다.',
     points:['운전자가 차량 화면에서 HUD 높이를 바꾸면 LIN 명령이 오고 MCU가 이 모터를 돌려 곡면경을 기울입니다.','웜이 돌면 너트가 앞뒤로 움직이고 링크가 곡면경 아래쪽을 밀거나 당깁니다. 감속비가 커서 정밀하고, 전원이 꺼져도 각도가 유지됩니다.','작은 보드(HATDF579-0200, Ver:V01)는 원점 위치를 감지하는 센서 보드로 보입니다(추정).','모터가 하부 하우징 모서리에 있는 것은 사진으로 확인했습니다. 곡면경과 잇는 링크는 보이지 않아 추정으로 그렸습니다.'],
     specs:[['모터','PM 스텝 모터 추정'],['전달','웜 + 너트 + 링크 (링크 추정)'],['센서 보드','HATDF579-0200 V01']] },
-  motorcover: { name:'모터 커버', full:'모터 커버', en:'Motor cover', mat:'', conf:'bom', ex:[20,8,8], photos:['motor-bay'],
+  motorcover: { name:'모터 커버', full:'모터 커버', en:'Motor cover', mat:'', conf:'bom', ex:[20,8,8], photos:['motorcover-s2g','motor-bay'],
     desc:'모터와 웜을 덮는 플라스틱 커버입니다. 그리스가 튀거나 먼지가 들어가는 것을 막고 구동 소음을 줄입니다.',
     points:['모양은 BOM 항목만 보고 단순한 상자로 그렸습니다.'], specs:[] },
   tft: { name:'TFT', full:'TFT (Tianma)', en:'Tianma 5.1" TFT-LCD panel · TL051XFKP01', mat:'', conf:'photo', maker:'Tianma (天马)', ex:[0,16,0], photos:['tft-fpcb-map','tft-panel','tft-board','lower-open'],
@@ -1030,15 +1031,19 @@ const P = {
   ledboard: { name:'LED 기판', full:'LED 기판 (추정)', en:'LED board + metal back plate', mat:'', conf:'guess', ex:[0,2,0], photos:['pgu-module','pgu-pad','fpcb-acf'],
     desc:'LED가 실장된 기판과 금속 백플레이트입니다. 뒷면이 실리콘 패드를 거쳐 방열판에 닿습니다. Bare PCB 아래로 튀어나온 흰 작은 기판이 LED 전원 입력부로 보입니다.',
     points:['열을 잘 전하는 금속 기판(MCPCB)일 가능성이 큽니다(추정).','Bare PCB 사진의 (c) 흰 기판: 커넥터에 검은 전선이 꽂혀 있고 GD60과 비슷한 글씨가 보입니다. PGU 뒷면 QR 라벨(65-GD-60)과 같은 표기라 LED 기판의 전원 탭으로 봤습니다(추정). 전선은 메인 PCB의 LED 칩에서 오는 LED 전원선입니다.'], specs:[] },
-  lens: { name:'렌즈', full:'렌즈', en:'Collimator lens array', mat:'PC', conf:'photo', ex:[0,7,0], photos:['lens-array','lens-array-angle'],
-    desc:'LED 하나마다 작은 렌즈가 하나씩 놓인 투명 판입니다. 사방으로 퍼지는 LED 빛을 거의 평행한 빛으로 모읍니다.',
+  lens: { name:'1차 렌즈', full:'1차 렌즈 (돔 렌즈 어레이)', en:'Primary dome lens array', mat:'PC', conf:'photo', ex:[0,7,0], photos:['lens1-s2g','lens-array','lens-array-angle'],
+    desc:'LED 하나마다 반구 모양 볼록 렌즈가 하나씩 놓인 투명 판입니다. 사방으로 퍼지는 LED 빛을 위쪽으로 모읍니다. 실물 134.7 × 49 × 28 mm, 9 g.',
     points:['평행광이어야 TFT를 거의 수직으로 지나고, 미러들이 받아낼 수 있는 각도 안에 들어옵니다. 각도를 벗어난 빛은 그대로 버려집니다.'],
-    specs:[['소재','PC (BOM)'],['렌즈 수','약 100개 (사진)']] },
-  film: { name:'광학 필름', full:'광학 필름', en:'Diffuser / brightness films', mat:'', conf:'photo', ex:[0,11,0], photos:['hex-diffuser'],
-    desc:'렌즈를 지난 빛을 고르게 펴고 방향을 다듬는 필름입니다. 사진의 육각 패턴 시트가 여기에 해당합니다.',
+    specs:[['렌즈 수','약 100개 (사진)'],['중량','9 g']] },
+  lens2: { name:'2차 렌즈', full:'2차 렌즈 (허니콤 렌즈 어레이)', en:'Secondary honeycomb (fly-eye) lens array', mat:'', conf:'photo', ex:[0,9,0], photos:['lens2-s2g','hex-diffuser'],
+    desc:'육각형 렌즈 셀이 벌집처럼 이어진 투명 판입니다. 1차 렌즈를 지난 빛을 섞어 LED 점 무늬를 지우고, TFT 전체에 고르게 퍼지게 합니다. 실물 138.3 × 48.5 × 24 mm, 13 g.',
+    points:['셀 하나하나가 작은 렌즈라 들어온 빛을 여러 방향으로 나눠 겹칩니다(플라이아이 방식). 그래서 LED 사이의 어두운 틈이 메워집니다.'],
+    specs:[['중량','13 g']] },
+  film: { name:'광학 필름', full:'광학 필름 (확산 시트)', en:'Diffuser / brightness film', mat:'', conf:'photo', ex:[0,11,0], photos:['film-s2g'],
+    desc:'2차 렌즈 위, TFT 바로 아래에 놓이는 0.25 mm 투명 시트입니다. 빛을 마지막으로 고르게 펴고 방향을 다듬습니다. 실물 127.7 × 53 × 0.25 mm, 2 g.',
     points:['확산 필름은 LED 점광원의 얼룩을 지웁니다.','HUD PGU에는 보통 휘도 향상 필름(BEF, DBEF)도 들어갑니다. DBEF는 TFT가 버릴 편광을 되돌려 재활용해 밝기를 높입니다. 이 제품의 정확한 필름 구성은 확인하지 못했습니다.'],
-    specs:[['확인','육각 패턴 시트 (사진)']] },
-  tftholder: { name:'TFT 지지대', full:'TFT 지지대 (브래킷)', en:'Backlight frame', mat:'', conf:'photo', ex:[0,13.5,0], photos:['tft-panel','pgu-module','lens-array'],
+    specs:[['두께','0.25 mm'],['중량','2 g']] },
+  tftholder: { name:'TFT 지지대', full:'TFT 지지대 (브래킷)', en:'Backlight frame', mat:'', conf:'photo', ex:[0,13.5,0], photos:['tftholder-s2g','tft-panel','pgu-module','lens-array'],
     desc:'LED 기판, 렌즈, 필름, TFT를 한 덩어리로 쌓아 잡아 주는 검은 플라스틱 틀입니다. 네 모서리 나사로 방열판에 고정됩니다.',
     points:['층 사이 간격이 광학 성능을 정하므로 지지대 치수가 중요합니다.'], specs:[] },
   concave: { name:'곡면경', full:'곡면경', en:'Concave freeform mirror', mat:'', conf:'photo', ex:[0,26,18], photos:['mirror-housing'],
@@ -1121,7 +1126,7 @@ const P = {
     points:['라벨: ZEEKR HA1SZK63E, EPC 검사 스티커.'], specs:[] },
 };
 const GROUPS = {
-  backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','film','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
+  backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','lens2','film','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
   board: { name:'기판 실장 부품', kids:['hsd','pwrcon','wcon','fpccon','ecap','ind','xtal','sclip'], desc:'메인 PCB 사진에서 위치를 확인한 커넥터, 커패시터, 인덕터 등입니다. 저항·커패시터 같은 아주 작은 칩 부품(수백 개)은 위치를 하나씩 표시하지 않았습니다.' },
   chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
@@ -1136,7 +1141,7 @@ const STEPS = [
     run: () => { state.sel = { id:'max' }; partView('ghost'); focus(['max']); cam.gr = 38; } },
   { seg:-1, t:'왜곡 미리 보정', s:'왜곡처리 IC가 미러와 윈드실드가 만들 휘어짐을 계산해 영상을 반대로 휘어 둡니다. 다음 단계에서 TFT 위 영상이 휘어 있는 이유입니다.',
     run: () => { state.sel = { id:'epson' }; partView('ghost'); focus(['epson']); cam.gr = 38; } },
-  { seg:0, t:'백라이트', bl: true, s:'가운데 LED 한 줄을 자른 단면입니다. LED 빛(주황)은 사방으로 퍼집니다. 렌즈가 그 빛을 위로 모으고 광학 필름이 고르게 폅니다. 렌즈가 받지 못한 넓은 각도의 빛은 TFT 지지대의 검은 벽에 흡수됩니다.',
+  { seg:0, t:'백라이트', bl: true, s:'가운데 LED 한 줄을 자른 단면입니다. LED 빛(주황)은 사방으로 퍼집니다. 1차 렌즈(돔)가 그 빛을 위로 모으고, 2차 렌즈(허니콤)가 섞어서 고르게 펴며, 광학 필름이 마지막으로 다듬습니다. 렌즈가 받지 못한 넓은 각도의 빛은 TFT 지지대의 검은 벽에 흡수됩니다.',
     run: () => { state.sel = null; enterBL(true); state.blT = .55; } },
   { seg:0, t:'TFT', bl: true, s:'TFT는 그림이 있는 픽셀에서만 빛을 통과시킵니다(파랑). 검은 픽셀에서는 빛이 멈춥니다. 편광판 때문에 백라이트 빛의 약 5%만 나가서, 백라이트는 아주 밝아야 합니다.',
     run: () => { state.sel = null; enterBL(true); state.blT = .2; setCam(V(PG.cx, Ly - .9, PG.cz), 27, .0001, Math.PI / 2 - .16); } },
@@ -1247,7 +1252,8 @@ const M = {
   // PC lens array: tinted blue so the domes read against the white LED board
   lensPlate: new THREE.MeshPhysicalMaterial({ color: 0xbfd7f7, roughness: .12, clearcoat: 1, transparent: true, opacity: .45, side: THREE.DoubleSide, depthWrite: false }),
   lensDome: new THREE.MeshPhysicalMaterial({ color: 0x2a6ee6, emissive: 0x0d2e73, emissiveIntensity: .35, roughness: .06, clearcoat: 1, clearcoatRoughness: .04, transparent: true, opacity: .92 }),
-  film: std(0xffffff, .3, 0, { map: hexTex, transparent: true, opacity: .7, side: THREE.DoubleSide, depthWrite: false }),
+  film: std(0xf4f7fa, .3, 0, { transparent: true, opacity: .55, side: THREE.DoubleSide, depthWrite: false }),
+  lens2: new THREE.MeshPhysicalMaterial({ color: 0x9cc3f5, roughness: .08, clearcoat: 1, transparent: true, opacity: .6, side: THREE.DoubleSide, depthWrite: false }),
   glass: new THREE.MeshPhysicalMaterial({ color: 0x3a4a5a, roughness: .03, metalness: .1, transparent: true, opacity: .32, side: THREE.DoubleSide, depthWrite: false }),
   mirrorBig: std(0xcfc4e2, .06, 1), mirrorFold: std(0xe6f2f0, .06, 1), glassEdge: std(0x6fcfbf, .2, .1),
 };
@@ -1394,7 +1400,13 @@ const zFp = PG.cz - PG.d / 2 - 2.1;
   register('fpcb', g);
   // ACF: the bond seam where the strip overlaps the glass electrodes
   const ga = new THREE.Group(); box(w + .2, .1, .3, M.acf, PG.cx, Ly + .09, z1 + .12, ga); register('acf', ga); }
-{ const g = new THREE.Group(); box(LCDR.w + 1.5, .16, LCDR.d + 1.4, M.film, PG.cx, 2.5, PG.cz, g); box(LCDR.w + 1.5, .06, LCDR.d + 1.4, M.clear, PG.cx, 2.85, PG.cz, g); register('film', g); }
+{ const g = new THREE.Group(); box(LCDR.w + 1.5, .05, LCDR.d + 1.4, M.film, PG.cx, 2.5, PG.cz, g); register('film', g); }
+// 2차 렌즈: hexagonal cells packed like a honeycomb on a thin clear base
+{ const g = new THREE.Group(), r = .4, W = LCDR.w + 1.2, D = LCDR.d + 1, dx = Math.sqrt(3) * r, dz = 1.5 * r, cells = [];
+  box(W + .2, .1, D + .2, M.lens2, PG.cx, 1.98, PG.cz, g);
+  for (let j = 0, z = -D / 2 + r; z <= D / 2 - r * .5; j++, z += dz) for (let x = -W / 2 + dx / 2 + (j % 2 ? dx / 2 : 0); x <= W / 2 - dx / 2 + 1e-6; x += dx) cells.push([PG.cx + x, PG.cz + z]);
+  const inst = new THREE.InstancedMesh(new THREE.CylinderGeometry(r * .96, r * .96, .2, 6), M.lens2, cells.length), mm = new THREE.Matrix4(), q = new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), Math.PI / 6);
+  cells.forEach(([x, z], k) => { mm.compose(V(x, 2.13, z), q, V(1, 1, 1)); inst.setMatrixAt(k, mm); }); g.add(inst); register('lens2', g); }
 const LEDS = [];
 { const nx = 14, nz = 7, sx = (LCDR.w + .4) / (nx - 1), sz = (LCDR.d + .2) / (nz - 1);
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { if (j % 2 && i === nx - 1) continue; LEDS.push(V(PG.cx - (LCDR.w + .4) / 2 + i * sx + (j % 2 ? sx / 2 : 0), .8, PG.cz - (LCDR.d + .2) / 2 + j * sz)); }
@@ -1627,12 +1639,12 @@ function rebuildLight() {
 
 
 /* ───────────────────────── backlight close-up: section through the middle LED row ───────────────────────── */
-const BL_SET = ['led', 'ledboard', 'lens', 'film', 'tftholder', 'tft', 'pad', 'heatsink', 'baseplate', 'foam', 'fpcb', 'acf'];
-const BL_OFF = { heatsink: -3.2, baseplate: -3.2, pad: -1.3, lens: 1.6, film: 3.2, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
+const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftholder', 'tft', 'pad', 'heatsink', 'baseplate', 'foam', 'fpcb', 'acf'];
+const BL_OFF = { heatsink: -3.2, baseplate: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, film: 3.6, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
 const blCut = new THREE.Plane(V(0, 0, -1), PG.cz + .001);
 const BL_LABELS = [
-  ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산', 'film', 2.5, 'L'],
-  ['TFT 지지대 · 필름 받침 턱', 'tftholder', 2.34, 'R'], ['렌즈 (PC) · LED마다 1개', 'lens', 1.5, 'L'], ['TFT 지지대 · 렌즈 받침 턱', 'tftholder', 1.11, 'R'],
+  ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산 시트', 'film', 2.5, 'L'], ['2차 렌즈 · 허니콤', 'lens2', 2.1, 'R'],
+  ['TFT 지지대 · 필름 받침 턱', 'tftholder', 2.34, 'R'], ['1차 렌즈 · LED마다 돔 1개', 'lens', 1.5, 'L'], ['TFT 지지대 · 렌즈 받침 턱', 'tftholder', 1.11, 'R'],
   ['LED', 'led', .86, 'L'], ['LED 기판', 'ledboard', .62, 'R'], ['방열 실리콘 패드', 'pad', .38, 'R'], ['방열판 (ADC12)', 'heatsink', -1.6, 'L'],
 ];
 const blPaths = [];
@@ -1643,7 +1655,7 @@ const blPaths = [];
     const ang = a * Math.PI / 180, dx = Math.tan(ang) * (1.19 - .86), base = [[p.x, .86, 'led'], [p.x + dx, 1.19, 'lens']];
     if (Math.abs(dx) < .34) { // caught by its lens: bent upright, then spread a little by the film
       const xl = p.x + dx * .25, xs = xl + (r() - .5) * .3, sc = (r() - .5) * .3, xt = xs + Math.tan(sc) * 1.06;
-      const pts = [...base, [xl, 1.74, 'lens'], [xl, 2.42, 'film'], [xs, 2.58, 'film'], [xt, 3.64, 'tft']];
+      const pts = [...base, [xl, 1.74, 'lens'], [xl, 2.04, 'lens2'], [xl + (r() - .5) * .2, 2.24, 'lens2'], [xl, 2.47, 'film'], [xs, 2.58, 'film'], [xt, 3.64, 'tft']];
       blPaths.push({ k: nearestRay(xt), pass: mk([...pts, [xt + Math.tan(sc) * .3, 3.94, 'tft'], [xt + Math.tan(sc) * 2.8, 6.6, 'tft']]), block: mk([...pts, [xt, 3.74, 'tft']]), blue: 6 });
     } else { // too wide for its lens: crosses the plate bent and is soaked up by the black wall or the ledge
       const x1 = p.x + dx, a2 = ang * .62, xw = a < 0 ? wallL : wallR, x2 = x1 + Math.tan(a2) * .22, yw = 1.41 + (xw - x2) / Math.tan(a2), ye = Math.min(yw, 2.3);
@@ -1848,12 +1860,13 @@ function renderInfo() {
       <div class="actions"><button class="btn" data-blexit>단면 닫기</button></div>
       <h3 class="sec">위에서 아래로</h3><ol class="layers">
         <li><b>TFT</b> 편광판 두 장 사이의 액정이 픽셀마다 빛을 통과시키거나 막습니다. 지지대 맨 위 턱에 얹히고 방진 폼이 눌러 고정합니다.</li>
-        <li><b>광학 필름</b> 빛을 고르게 펴서 LED 점 무늬를 지웁니다. 지지대 가운데 턱에 얹힙니다.</li>
-        <li><b>렌즈 (PC)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다.</li>
+        <li><b>광학 필름</b> 0.25 mm 확산 시트. 빛을 마지막으로 고르게 폅니다.</li>
+        <li><b>2차 렌즈 (허니콤)</b> 육각 렌즈 셀이 빛을 나눠 겹쳐 LED 점 무늬를 지웁니다.</li>
+        <li><b>1차 렌즈 (돔)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다.</li>
         <li><b>LED · LED 기판</b> 빛을 냅니다. 열은 기판 뒤로 빠집니다.</li>
         <li><b>실리콘 패드 → 방열판</b> 열을 핀으로 보내 공기로 버립니다.</li>
         <li><b>TFT 지지대</b> 위 층들을 정해진 간격으로 쌓아 잡는 검은 틀. 모서리 나사와 옆면 걸쇠로 고정합니다.</li></ol>
-      <p class="note">층 순서와 렌즈·필름·TFT는 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
+      <p class="note">층 순서(1차 렌즈 → 2차 렌즈 → 필름 → TFT)와 각 부품은 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
     return;
   }
   if (!sel || play.on) {
@@ -2056,7 +2069,8 @@ const ISS = [
 const ISS_PARTS = [
   ['tft', 'TFT', 0, '허상 그 자체에 맺힙니다. 확대되어 또렷하게 보여서 가장 엄격합니다.'],
   ['film', '광학 필름', .25, 'TFT 바로 뒤라 거의 또렷하게, 약간 번져 보입니다.'],
-  ['lens', '렌즈', .5, 'TFT 뒤 수 mm. 번진 얼룩(밝기 불균일)으로 보입니다.'],
+  ['lens2', '2차 렌즈 (허니콤)', .4, 'TFT 뒤 가까이. 조금 번진 얼룩으로 보입니다.'],
+  ['lens', '1차 렌즈 (돔)', .55, 'TFT 뒤 수 mm. 번진 얼룩(밝기 불균일)으로 보입니다.'],
   ['fold', '1차 미러', .75, 'TFT에서 멀어 크게 번집니다. 작은 결함은 희미한 그늘 정도입니다.'],
   ['concave', '2차 미러 (곡면경)', .92, '많이 번져 거의 안 보이지만, 큰 결함은 영역 밝기를 떨어뜨립니다.'],
   ['cover', '방진 커버', -1, '허상에는 맺히지 않습니다. 운전자가 대시보드를 볼 때 직접 보이고, 햇빛을 산란시켜 미광과 눈부심을 만듭니다.'],
@@ -3175,85 +3189,24 @@ $('#vidIn').addEventListener('input', e => { const v = +e.target.value; if (v > 
 addEventListener('resize', () => { if (curTab === 'spec' && SP.redraw) SP.redraw(); });
 
 /* ───────────────────────── BOM (Zeekr_EX-1423940_BoM_Full, BoM KR sheet) ───────────────────────── */
+// S2G1870 외부자재 (2026-11-04): part and weight only; r = page in the sheet
+// S2G1870 외부자재 (2026-11-04): part and weight only; r = page in the sheet
 const BOM = [
-  {"r": 4, "lv": 1, "sec": "asm", "ko": "헤드업 디스플레이", "cn": "抬头显示器", "pn": "6608351499", "qty": "1", "unit": "대", "src": "자체 제작", "w": "2048", "dim": ["418", "268", "203"], "proc": "조립", "asm": "기타", "look": "Y"},
-  {"r": 5, "lv": 2, "sec": "mech", "ko": "상부 커버", "cn": "上盖", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "336", "dim": ["354.8", "253.4", "113.2"], "maker": "Juwei (聚威)", "spec": "100G4U/BK135", "surf": "무늬 가공", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "upper"},
-  {"r": 6, "lv": 2, "sec": "mech", "ko": "베이스", "cn": "底座", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "630", "dim": ["418", "253.4", "132.4"], "maker": "Juwei (聚威)", "spec": "80GL8/BK177", "surf": "도장", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "lower"},
-  {"r": 7, "lv": 2, "sec": "mech", "ko": "모터 커버", "cn": "马达盖", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2.5", "w": "185", "dim": ["298", "173", "78"], "maker": "Juwei (聚威)", "spec": "100G4U/BK135", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8kgCO2eq/kg", "look": "Y", "id": "motorcover"},
-  {"r": 8, "lv": 2, "sec": "mech", "ko": "TFT브래킷", "cn": "TFT支架", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "29", "dim": ["153", "68", "27"], "maker": "Juwei (聚威)", "spec": "70CM/BK446", "proc": "사출 성형", "asm": "열접합 성형", "co2": "3.8 kgCO2eq/kg", "look": "N", "id": "tftholder"},
-  {"r": 9, "lv": 2, "sec": "mech", "ko": "방열판A", "cn": "散热器A", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "214", "dim": ["174", "101", "48"], "maker": "Guangdong Aluminum Alloy (广东铝合金) / Others", "spec": "ADC12", "surf": "탈지", "proc": "다이캐스팅", "asm": "압착", "co2": "2.1 kgCO2eq/kg", "look": "Y", "id": "heatsink"},
-  {"r": 10, "lv": 2, "sec": "mech", "ko": "스프링 접점", "cn": "弹片", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "0.3", "w": "0.5", "dim": ["35", "7.5", "1.1"], "maker": "Guangzhou Douyuan (广州斗原) / Others", "spec": "SUS304", "proc": "프레스 가공", "asm": "압착", "co2": "2.1 kgCO2eq/kg", "look": "Y"},
-  {"r": 11, "lv": 2, "sec": "mech", "ko": "조정 기구 어셈블리", "cn": "调整机构组件", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "w": "50", "dim": ["49", "", ""], "maker": "Leili (雷利)", "proc": "조립", "asm": "열접합 성형", "co2": "6.3 kgCO2eq/kg", "look": "N", "id": "motor"},
-  {"r": 12, "lv": 2, "sec": "mech", "ko": "5.1인치 쇼트 백라이트", "cn": "5.1吋短背光", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "w": "75", "dim": ["155", "", ""], "mtype": "복합 재료", "maker": "Liangyu (亮宇) & Jufei (聚飞)", "surf": "조립", "proc": "조립", "asm": "스폿 용접", "co2": "2.7 kgCO2eq/kg", "look": "N", "id": "g:backlight"},
-  {"r": 13, "lv": 2, "sec": "mech", "ko": "TFT디스플레이", "cn": "TFT屏", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["128.6", "", ""], "maker": "Tianma (天马)", "spec": "TL051XFKP01-00", "proc": "SMT", "asm": "접착", "look": "N", "id": "tft"},
-  {"r": 14, "lv": 2, "sec": "mech", "ko": "2차 곡면 미러", "cn": "二级曲面镜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "8.5", "w": "283", "dim": ["314", "", ""], "maker": "Mitsubishi", "spec": "S3000UR", "surf": "도금", "proc": "도금", "asm": "스프레이 코팅", "co2": "2.7 kgCO2eq/kg", "look": "N", "id": "concave"},
-  {"r": 15, "lv": 2, "sec": "mech", "ko": "1차 곡면 미러", "cn": "一级曲面镜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "2", "w": "45", "dim": ["174.5", "", ""], "maker": "CSG Holding (南玻集团) / Others", "spec": "유리", "surf": "도금", "proc": "진공 코팅", "asm": "스프레이 코팅", "co2": "2.38 kgCO2eq/kg", "look": "N", "id": "fold"},
-  {"r": 16, "lv": 2, "sec": "mech", "ko": "방진 필름", "cn": "防尘膜", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "t": "1", "w": "30", "dim": ["324", "", ""], "maker": "Sunnypol (三利谱)", "spec": "SLP/HCPC/X3", "surf": "재단", "proc": "다이 커팅", "asm": "접착", "co2": "2.9kgCO2eq/kg", "look": "Y", "id": "cover"},
-  {"r": 17, "lv": 3, "sec": "pcb", "ko": "PCB", "cn": "PCB", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "dim": ["134", "", ""], "mtype": "복합 재료", "mat": "FR4", "maker": "Kingboard (建滔)", "grade": "FR4", "spec": "메인 제어 PCB", "surf": "OSP", "proc": "SMT", "asm": "납땜", "co2": "4.55 kgCO2eq/kg", "look": "N", "id": "pcb"},
-  {"r": 18, "lv": 3, "sec": "pcb", "ko": "0402커패시터", "cn": "0402电容", "qty": "144", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Samsung / Murata", "spec": "10pF-1uF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 19, "lv": 3, "sec": "pcb", "ko": "0603커패시터", "cn": "0603电容", "qty": "21", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Samsung / Murata", "spec": "220nF-10uF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 20, "lv": 3, "sec": "pcb", "ko": "0805커패시터", "cn": "0805电容", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.25", "1.25"], "mtype": "복합 재료", "maker": "Samsung / Taiyo Yuden", "spec": "10uF/22uF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 21, "lv": 3, "sec": "pcb", "ko": "1206커패시터", "cn": "1206电容", "qty": "15", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "1.6", "1.6"], "mtype": "복합 재료", "maker": "Murata / Taiyo Yuden", "spec": "1uF-22uF", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 22, "lv": 3, "sec": "pcb", "ko": "전해 커패시터", "cn": "电解电容", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["7.7", "6.3", "6.3"], "mtype": "복합 재료", "maker": "Huaguan (华冠)", "spec": "100uF 35V", "asm": "납땜", "look": "N", "id": "ecap"},
-  {"r": 23, "lv": 3, "sec": "pcb", "ko": "0402저항", "cn": "0402电阻", "qty": "172", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.32"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 24, "lv": 3, "sec": "pcb", "ko": "0603저항", "cn": "0603电阻", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.45"], "mtype": "복합 재료", "maker": "Yageo", "spec": "0Ω-220KΩ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 25, "lv": 3, "sec": "pcb", "ko": "2512저항", "cn": "2512电阻", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.35", "3.1", "0.55"], "mtype": "복합 재료", "maker": "Yageo", "spec": "50mΩ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 26, "lv": 3, "sec": "pcb", "ko": "0630인덕터", "cn": "0630电感", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6.8", "3"], "mtype": "복합 재료", "maker": "Masuo (玛索) / Sanli (三礼)", "spec": "10uH 22uH", "asm": "납땜", "look": "N", "id": "ind"},
-  {"r": 27, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "6", "unit": "pcs", "src": "외주 구매", "dim": ["2", "1.2", "1.2"], "mtype": "복합 재료", "maker": "Murata", "spec": "DLW21SZ,2012,90Ω,280mA", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 28, "lv": 3, "sec": "pcb", "ko": "공통 모드 인덕터", "cn": "共模电感", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["7.3", "6", "3.8"], "mtype": "복합 재료", "maker": "Nianying (年盈)", "spec": "WBHWP,1KΩ,3A", "asm": "납땜", "look": "N", "id": "ind"},
-  {"r": 29, "lv": 3, "sec": "pcb", "ko": "0603페라이트 비드", "cn": "0603磁珠", "qty": "3", "unit": "pcs", "src": "외주 구매", "dim": ["1.6", "0.8", "0.8"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM18PG121SH1,120Ω,2A", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 30, "lv": 3, "sec": "pcb", "ko": "0402페라이트 비드", "cn": "0402磁珠", "qty": "19", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Murata", "spec": "BLM15AG121SH1,120Ω,500mA", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 31, "lv": 3, "sec": "pcb", "ko": "다이오드", "cn": "二极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["2.7", "1.3", "0.8"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "BAS316,250mA", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 32, "lv": 3, "sec": "pcb", "ko": "TVS 소자", "cn": "TVS管", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.9", "4.7", "2.6"], "mtype": "복합 재료", "maker": "Zhengxin (正芯)", "spec": "SMBJ30CA", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 33, "lv": 3, "sec": "pcb", "ko": "쇼트키 다이오드", "cn": "肖特基管", "qty": "3", "unit": "pcs", "src": "외주 구매", "dim": ["3.5", "1.6", "0.8"], "mtype": "복합 재료", "maker": "ROHM", "spec": "RBR3MM60ATFTR", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 34, "lv": 3, "sec": "pcb", "ko": "제너 다이오드", "cn": "稳压管", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.7", "1.35", "1.1"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "BZX384-C15", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 35, "lv": 3, "sec": "pcb", "ko": "ESD 소자", "cn": "ESD管", "qty": "9", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.62", "0.5"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "PESD5V0V1BL", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 36, "lv": 3, "sec": "pcb", "ko": "PMOS 소자", "cn": "PMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["10.7", "6.8", "2.5"], "mtype": "복합 재료", "maker": "Jiangzhi (江智)", "spec": "JST15P60T2-Q", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 37, "lv": 3, "sec": "pcb", "ko": "트랜지스터", "cn": "三极管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Nexperia", "spec": "PDTC114ET", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 38, "lv": 3, "sec": "pcb", "ko": "NMOS 소자", "cn": "NMOS管", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["3", "2.5", "1.1"], "mtype": "복합 재료", "maker": "Yangjie (扬杰)", "spec": "YJL03N06AQ", "asm": "납땜", "look": "N", "on": "pcb"},
-  {"r": 39, "lv": 3, "sec": "pcb", "ko": "커넥터9P", "cn": "插座9P", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0901-5001", "asm": "납땜", "look": "N", "id": "wcon"},
-  {"r": 40, "lv": 3, "sec": "pcb", "ko": "커넥터8P", "cn": "插座8P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["16.5", "7.6", "5.8"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "61098-0801-5001", "asm": "납땜", "look": "N", "id": "wcon"},
-  {"r": 41, "lv": 3, "sec": "pcb", "ko": "커넥터4P", "cn": "插座4P", "qty": "2", "unit": "pcs", "src": "외주 구매", "dim": ["9.8", "3.4", "5.3"], "mtype": "복합 재료", "maker": "Xinfuer (新富尔)", "spec": "1.25T-4AB-P", "asm": "납땜", "look": "N", "id": "wcon"},
-  {"r": 42, "lv": 3, "sec": "pcb", "ko": "HSD커넥터", "cn": "HSD插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["18.85", "9.1", "11.05"], "mtype": "복합 재료", "maker": "Rosenberger", "spec": "D4S20L-40MA5-A", "asm": "납땜", "look": "N", "id": "hsd"},
-  {"r": 43, "lv": 3, "sec": "pcb", "ko": "전원 커넥터", "cn": "电源插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["24.5", "14.2", "17.2"], "mtype": "복합 재료", "maker": "TE", "spec": "1376350-9", "asm": "납땜", "look": "N", "id": "pwrcon"},
-  {"r": 44, "lv": 3, "sec": "pcb", "ko": "FPC커넥터", "cn": "FPC插座", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["20.3", "6.75", "2.55"], "mtype": "복합 재료", "maker": "Aurora (奥罗拉)", "spec": "F31L-1A7H1", "asm": "납땜", "look": "N", "id": "fpccon"},
-  {"r": 45, "lv": 3, "sec": "pcb", "ko": "실드 클립", "cn": "屏蔽夹", "qty": "4", "unit": "pcs", "src": "외주 구매", "dim": ["9.6", "2.4", "3"], "mtype": "복합 재료", "maker": "Longyou (龙友)", "spec": "L0169-T1SMP-0WV-L", "asm": "납땜", "look": "N", "id": "sclip"},
-  {"r": 46, "lv": 3, "sec": "pcb", "ko": "액티브 오실레이터", "cn": "有源晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.5", "2", "0.95"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "16M SMAF", "asm": "납땜", "look": "N", "id": "xtal"},
-  {"r": 47, "lv": 3, "sec": "pcb", "ko": "크리스털 오실레이터", "cn": "晶振", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3.2", "2.5", "0.75"], "mtype": "복합 재료", "maker": "Anji (安基)", "spec": "CXF,16M", "asm": "납땜", "look": "N", "id": "xtal"},
-  {"r": 48, "lv": 3, "sec": "pcb", "ko": "MCU칩", "cn": "MCU芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["16.8", "16.8", "1.3"], "mtype": "복합 재료", "maker": "Renesas", "spec": "R7F7016843AFP-C", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "mcu"},
-  {"r": 49, "lv": 3, "sec": "pcb", "ko": "연산증폭기 칩", "cn": "运放芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.1", "2.4", "1.1"], "mtype": "복합 재료", "maker": "TI", "spec": "INA199B1QDCKRQ1", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "opamp"},
-  {"r": 50, "lv": 3, "sec": "pcb", "ko": "EEPROM칩", "cn": "EEPROM芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.1", "5", "1.3"], "mtype": "복합 재료", "maker": "Puya (普冉)", "spec": "P24C08C-SSH-MAR", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "eeprom"},
-  {"r": 51, "lv": 3, "sec": "pcb", "ko": "디시리얼라이저 칩", "cn": "解串器芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["8.2", "8.2", "0.65"], "mtype": "복합 재료", "maker": "ADI", "spec": "MAX9278AGTM/V+T", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "max"},
-  {"r": 52, "lv": 3, "sec": "pcb", "ko": "LDO칩", "cn": "LDO芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.2", "5", "1.75"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ2019GN-AEC1-Z", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ldohv"},
-  {"r": 53, "lv": 3, "sec": "pcb", "ko": "LED칩", "cn": "LED芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["4", "4", "1"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ3367GR-AEC1-C04J", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ledchip"},
-  {"r": 54, "lv": 3, "sec": "pcb", "ko": "DC/DC칩", "cn": "DC/DC芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["3", "4", "1"], "mtype": "복합 재료", "maker": "MPS", "spec": "MPQ9840GL-AEC1-C835-Z", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "dcdc"},
-  {"r": 55, "lv": 3, "sec": "pcb", "ko": "LDO칩", "cn": "LDO芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["2.9", "2.8", "1.1"], "mtype": "복합 재료", "maker": "RICOH", "spec": "RP111N001D-TR-AE", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "ldolv"},
-  {"r": 56, "lv": 3, "sec": "pcb", "ko": "Warp칩", "cn": "Warp芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["14", "14", "1.7"], "mtype": "복합 재료", "maker": "EPSON", "spec": "S2D13V42F00A100", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "epson"},
-  {"r": 57, "lv": 3, "sec": "pcb", "ko": "LIN칩", "cn": "LIN芯片", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["6.2", "5", "1.75"], "mtype": "복합 재료", "maker": "NXP", "spec": "TJA1021T/20/CM", "proc": "포토리소그래피", "asm": "납땜", "look": "N", "id": "lin"},
-  {"r": 58, "lv": 3, "sec": "sw", "ko": "PCB", "cn": "PCB", "qty": "1", "unit": "pcs", "src": "외주 구매+자체 제작", "dim": ["30", "9", "4.25"], "mtype": "복합 재료", "mat": "FR4", "maker": "Kingboard (建滔)", "grade": "FR4", "spec": "스위치 PCB", "surf": "OSP", "proc": "SMT", "asm": "납땜", "co2": "4.55 kgCO2eq/kg", "look": "N", "id": "motor"},
-  {"r": 59, "lv": 3, "sec": "sw", "ko": "서미스터", "cn": "热敏电阻", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["1", "0.5", "0.5"], "mtype": "복합 재료", "maker": "Murata", "spec": "NCP15XH103F03RC", "proc": "SMT", "asm": "납땜", "look": "N"},
-  {"r": 60, "lv": 3, "sec": "sw", "ko": "위치 감지 스위치", "cn": "到位开关", "qty": "1", "unit": "pcs", "src": "외주 구매", "dim": ["8.5", "5.6", "2.4"], "mtype": "복합 재료", "maker": "ALPS", "spec": "SPVT210101", "proc": "SMT", "asm": "납땜", "look": "N", "id": "motor"}
+  {"lv": 2, "sec": "mech", "cn": "", "r": 1, "ko": "1차 렌즈 (돔 렌즈 어레이)", "w": "9", "id": "lens", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 2, "ko": "광학 필름", "w": "2", "id": "film", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 3, "ko": "2차 렌즈 (허니콤 렌즈 어레이)", "w": "13", "id": "lens2", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "백라이트 프레임 (렌즈·필름 홀더, 추정)", "w": "22", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 5, "ko": "TFT 지지대", "w": "28", "id": "tftholder", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 6, "ko": "모터 커버 + 방열판 A", "w": "467", "id": "motorcover", "cat": "mech", "note": "플라스틱 모터 커버에 금속 방열판 A를 조립한 상태의 무게입니다."},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 6.5, "pg": 6, "ko": "└ 방열판 A (금속)", "wt": "위 467 g에 포함", "id": "heatsink", "cat": "mech"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 7, "ko": "하부 베이스 (곡면경·평면경 장착)", "w": "1366", "id": "upper", "cat": "mech"},
 ];
-const BOM_NOTE = {
-  5: '외관 부품. 대시보드 개구부로 보이는 면이라 표면에 무늬(텍스처) 가공을 합니다.',
-  6: 'HUD 전체 폭(418 mm)을 차지하는 가장 무거운 부품입니다. 3D에서는 하부 하우징에 연결했습니다.',
-  8: 'BOM에는 백라이트와 별도 부품으로 올라 있습니다. TFT를 받치는 사출 브래킷입니다.',
-  10: '3D 모델에 없는 부품입니다. 0.5 g짜리 SUS304 프레스 스프링으로, 접지나 접촉용으로 보입니다.',
-  11: '모터·웜기어·감속 기구를 묶어 외주로 받는 어셈블리입니다.',
-  12: '백라이트는 LED·렌즈·필름을 묶은 모듈 하나(75 g)로 들어옵니다. 3D에서는 Backlight 그룹 전체가 선택됩니다.',
-  13: 'Tianma 5.1" TFT 패널입니다. 길이 128.6 mm는 사진에서 잰 약 12 cm와 맞습니다.',
-  14: 'S3000UR은 Mitsubishi의 PC(폴리카보네이트) 수지 등급으로 보입니다. 유리가 아니라 사출한 수지 위에 반사막을 도금한 미러라는 뜻입니다.',
-  15: 'BOM 명칭은 "1차 곡면 미러"입니다. 3D에서는 평면경으로 그렸지만, 실제로는 약한 곡률이 있을 수 있습니다. 소재는 유리, 진공 코팅입니다.',
-  16: '편광 필름 제조사(Sunnypol)의 소재입니다. 단순 투명 커버가 아니라 햇빛 반사를 줄이는 기능성 필름일 수 있습니다.',
-  17: '메인 제어 PCB입니다. 아래 LV3 부품이 모두 이 기판에 실장됩니다.',
-  58: '모터 원점을 감지하는 작은 스위치 PCB입니다. 3D에서는 모터 쪽을 선택합니다.',
-  59: '3D 모델에 없는 부품입니다. 위치 감지 PCB와 같은 묶음에 있지만 정확한 위치는 미확인입니다.',
-};
-const BOM_SEC = { asm: ['완제품', 'LV1'], mech: ['기구', '하우징 · 방열판 · 조정 기구 · 방진 필름'], opt: ['광학', 'TFT · 백라이트 · 미러'], elec: ['전자', 'Main PCB와 실장 부품 · 위치 감지 PCB'] };
+const BOM_NOTE = {};
+const BOM_SEC = { opt: ['광학', '렌즈 · 필름 · TFT 브래킷'], mech: ['기구', '커버 · 하우징'] };
 const BOM_ORD = Object.keys(BOM_SEC);
 /* same grouping as the 3D 구조도 parts list; parts the 3D model lacks fall back to their BOM level */
 BOM.forEach(b => { const k = b.id?.replace('g:', ''), t = k && TREE.find(x => x.items.some(it => it === k || it.g === k));
-  b.cat = b.lv === 1 ? 'asm' : b.sec !== 'mech' ? 'elec' : t?.t === '광학' ? 'opt' : 'mech'; });
+  b.cat ||= b.lv === 1 ? 'asm' : b.sec !== 'mech' ? 'elec' : t?.t === '광학' ? 'opt' : 'mech'; });
 BOM.sort((a, b) => BOM_ORD.indexOf(a.cat) - BOM_ORD.indexOf(b.cat) || a.r - b.r);
 const BOM_KIND = { upper: 'pl', lower: 'pl', motorcover: 'pl', tftholder: 'pl', heatsink: 'mt', 'g:backlight': 'bl', motor: 'mo', tft: 'op', concave: 'op', fold: 'op', cover: 'op' };
 const BOM_COL = { pl: ['#7f93a8', '수지 하우징'], mt: ['#a77d4a', '금속'], op: ['#4f7fd6', '광학'], bl: ['#d39a2c', '백라이트'], mo: ['#5e9e80', '조정 기구'] };
@@ -3276,22 +3229,14 @@ function renderBOM() {
   let sec = '';
   $('#bomBody').innerHTML = rows.length ? rows.map(b => {
     let h = '';
-    if (b.cat !== sec) { sec = b.cat; const n = BOM.filter(x => x.cat === sec), sum = n.reduce((a, x) => a + (+x.qty || 0), 0); h = `<tr class="sec"><td colspan="8">${BOM_SEC[sec][0]}<span>${n.length}종${sum !== n.length ? ` · ${sum.toLocaleString('ko-KR')}개` : ''}${BOM_SEC[sec][1] ? ' · ' + BOM_SEC[sec][1] : ''}</span></td></tr>`; }
+    if (b.cat !== sec) { sec = b.cat; const n = BOM.filter(x => x.cat === sec), sum = n.reduce((a, x) => a + (+x.qty || 0), 0); h = `<tr class="sec"><td colspan="3">${BOM_SEC[sec][0]}<span>${n.length}종${BOM_SEC[sec][1] ? ' · ' + BOM_SEC[sec][1] : ''}</span></td></tr>`; }
     const on = BM.r === b.r, s3 = bomSelOf(b);
-    h += `<tr data-r="${b.r}" class="${on ? 'on' : ''}" aria-expanded="${on}"><td class="nm"><b>${b.ko}</b><small>${b.cn} · LV${b.lv}${b.sec === 'sw' ? ' · 위치 감지 PCB' : ''}</small></td><td class="n">${b.qty || ''}</td><td class="n">${num(b.w)}</td><td class="mono bm-hide2">${(b.dim || []).filter(Boolean).join('×')}</td><td class="mono">${b.spec || b.mat || b.mtype || ''}</td><td class="bm-hide">${(b.maker || '').replace(/\s*\/\s*Others$/, '')}</td><td class="bm-hide" style="white-space:nowrap">${b.proc || ''}</td><td><span class="lk ${b.id ? 'y' : ''}">${b.id ? '연결' : s3 ? 'PCB' : '—'}</span></td></tr>`;
-    if (on) h += `<tr class="det"><td colspan="8">${bomDetail(b)}</td></tr>`;
+    h += `<tr data-r="${b.r}" class="${on ? 'on' : ''}"><td class="nm"><b>${b.ko}</b><small>S2G1870 외부자재 p.${b.pg || b.r}</small></td><td class="n">${b.wt ? `<span class="note">${b.wt}</span>` : num(b.w)}</td><td><span class="lk ${b.id ? 'y' : ''}">${b.id ? '연결' : '—'}</span></td></tr>`;
     return h;
-  }).join('') : '<tr><td colspan="8" class="bm-none">검색 결과가 없습니다.</td></tr>';
+  }).join('') : '<tr><td colspan="3" class="bm-none">검색 결과가 없습니다.</td></tr>';
   $('#bmWt').querySelectorAll('[data-r]').forEach(e => e.classList.toggle('on', +e.dataset.r === BM.r));
 }
-function bomStatic() {
-  const top = BOM[0], parts = BOM.filter(b => b.lv > 1), qty = parts.reduce((a, b) => a + (+b.qty || 0), 0);
-  $('#bmKpi').innerHTML = `<div><b>${num(top.w)} g</b><span>총 중량 (BOM)</span></div><div><b>${top.dim.join(' × ')}</b><span>외형 mm (L × W × H)</span></div><div><b>${parts.length}종 · ${qty.toLocaleString('ko-KR')}개</b><span>하위 부품 행 · 수량 합</span></div>`;
-  const lv2 = BOM.filter(b => b.sec === 'mech' && +b.w >= 1), sum = lv2.reduce((a, b) => a + +b.w, 0), rest = +top.w - sum;
-  $('#bmWt').innerHTML = `<div class="lab"><span>LV2 부품 중량 비율 · 막대를 누르면 선택</span><span>합 ${num(sum)} g + 기타 ${num(rest)} g</span></div>
-    <div class="bm-bar">${lv2.sort((a, b) => b.w - a.w).map(b => `<button data-r="${b.r}" style="flex:${b.w};background:${BOM_COL[BOM_KIND[b.id]]?.[0] || '#8b97a3'}" title="${b.ko} ${b.w} g (${(b.w / top.w * 100).toFixed(1)}%)">${b.w / top.w > .06 ? `${b.ko} ${Math.round(b.w / top.w * 100)}%` : ''}</button>`).join('')}<button class="rest" style="flex:${rest}" title="기타: PCB · TFT · 나사 · 패드 등 BOM에 중량이 없는 부품 ${rest} g">${rest / top.w > .06 ? '기타' : ''}</button></div>
-    <div class="bm-leg">${Object.values(BOM_COL).map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}<span><i style="background:#c9cfd6"></i>기타 (중량 미기재)</span></div>`;
-}
+function bomStatic() { $('#bmKpi').innerHTML = ''; $('#bmWt').innerHTML = ''; }
 function bomPick(r, from3d) {
   BM.r = BM.r === r && !from3d ? null : r; renderBOM();
   const b = bomOf(BM.r);
@@ -3318,9 +3263,8 @@ $('#bomPage').addEventListener('click', e => {
 bomStatic();
 /* BOM facts for the 3D-structure info window */
 function bomInfo(key) {
-  const rows = bomFor(key); if (key === 'pcb') { const on = BOM.filter(b => b.on === 'pcb' || (b.sec === 'pcb' && b.id && b.id !== 'pcb')); rows.push({ r: 0, extra: `실장 부품 ${on.length}종 · ${on.reduce((a, b) => a + (+b.qty || 0), 0)}개 (저항 177 · 커패시터 190 · 칩 10 등)` }); }
-  if (!rows.length) return '';
-  return `<h3 class="sec">BOM 정보</h3>${rows.map(b => b.extra ? `<p class="note">${b.extra}</p>` : `<dl class="specs"><dt>BOM 명칭</dt><dd>${b.ko} <span class="note">${b.cn}</span></dd>${b.w ? `<dt>중량</dt><dd>${num(b.w)} g</dd>` : ''}${dimTxt(b) ? `<dt>크기</dt><dd>${dimTxt(b)} mm${b.t ? ` · 두께 ${b.t}` : ''}</dd>` : ''}${b.spec || b.mat ? `<dt>${b.sec === 'mech' ? '소재 등급' : '규격'}</dt><dd>${b.spec || b.mat}</dd>` : ''}${b.maker ? `<dt>제조사</dt><dd>${b.maker.replace(/\s*\/\s*Others$/, '')}</dd>` : ''}${b.surf && b.surf !== b.proc ? `<dt>표면처리</dt><dd>${b.surf}</dd>` : ''}${b.proc ? `<dt>공정</dt><dd>${b.proc}${b.asm ? ` → ${b.asm}` : ''}</dd>` : ''}</dl>${BOM_NOTE[b.r] ? `<p class="note">${BOM_NOTE[b.r]}</p>` : ''}`).join('')}<div class="actions"><button class="btn" data-gobom="${rows[0].r || ''}">BOM 표에서 보기</button></div>`;
+  const rows = bomFor(key); if (!rows.length) return '';
+  return `<h3 class="sec">BOM</h3><dl class="specs">${rows.map(b => `<dt>부품</dt><dd>${b.ko}</dd><dt>중량</dt><dd>${b.wt || num(b.w) + ' g'}</dd>`).join('')}</dl>`;
 }
 
 /* tabs */
