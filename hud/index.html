@@ -1142,9 +1142,9 @@ const STEPS = [
   { seg:0, t:'TFT', bl: true, s:'TFT는 그림이 있는 픽셀에서만 빛을 통과시킵니다(파랑). 검은 픽셀에서는 빛이 멈춥니다. 편광판 때문에 백라이트 빛의 약 5%만 나가서, 백라이트는 아주 밝아야 합니다.',
     run: () => { state.sel = null; enterBL(true); state.blT = .2; setCam(V(PG.cx, Ly - .9, PG.cz), 27, .0001, Math.PI / 2 - .16); } },
   { seg:1, t:'평면경', s:'위로 올라온 빛을 평면경이 곡면경 쪽으로 꺾습니다. 광로를 접어 긴 거리를 좁은 대시보드 안에 넣습니다.',
-    run: () => { state.sel = { id:'fold' }; partView('cut'); setCam(V(0, 12, -2), 72, Math.PI / 2, Math.PI / 2 - .05); } },
+    run: () => { state.sel = { id:'fold' }; partView('cut'); setCam(V(0, 9, -1), 52, Math.PI / 2, Math.PI / 2 - .05); } },
   { seg:2, t:'곡면경', s:'곡면경이 영상을 확대하고 허상을 수 m 앞으로 띄웁니다. 모터가 각도를 바꾸면 아이박스가 위아래로 움직입니다. 아이박스는 운전자 눈이 있어야 영상 전체가 보이는 공간입니다(보통 가로 12~13 cm, 세로 4~6 cm).', wiggle: true,
-    run: () => { state.sel = { id:'concave' }; partView('cut'); setCam(V(0, 14, 3), 72, Math.PI / 2, Math.PI / 2 - .05); } },
+    run: () => { state.sel = { id:'concave' }; partView('cut'); setCam(V(0, 10, 2), 52, Math.PI / 2, Math.PI / 2 - .05); } },
   { seg:3, t:'윈드실드 반사', s:'빛은 방진 커버를 지나 대시보드 위로 나가고, 윈드실드 안쪽 면에서 운전자 쪽으로 반사됩니다. 이중상을 막기 위해 HUD용 유리는 중간막을 아주 약한 쐐기 모양으로 만듭니다.',
     run: () => { state.sel = null; goView('car'); } },
   { seg:4, t:'허상', s:'운전자 눈에는 영상이 유리 너머 도로 위 약 4.8 m 앞(모델 값)에 떠 보입니다. 눈의 초점을 멀리 둔 채로 정보를 읽을 수 있습니다. 눈이 아이박스(파란 선 상자) 밖으로 나가면 영상 가장자리가 잘립니다.',
@@ -1268,7 +1268,8 @@ const wire = (pts, r, mat) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.Ca
 /* ───────────────────────── optics (cm; x lateral, y up, z toward the nose) ─────────────────────────
    Layout follows the usual two-mirror HUD: panel facing up → flat fold mirror → motorised concave mirror under the
    dust cover → windshield inner surface → driver. Positions are fitted to the photos; reflections are traced exactly. */
-const Ly = 3.95, L = V(0, Ly, -4.6), F = V(0, 15.5, -11), C = V(0, 15, 13);
+// real envelope 418 × 268 × 203 mm (BOM): motor cover 72 mm tall, base + top cover above it, 253 mm deep
+const Ly = 3.95, L = V(0, Ly, -3.5), F = V(0, 12.2, -8.8), C = V(0, 10.2, 7.6);
 const OUT = V(0, .777, -.629).normalize();
 const W0 = C.clone().addScaledVector(OUT, (60 - C.y) / OUT.y);
 const WS = 27 * Math.PI / 180, nW = V(0, -Math.cos(WS), -Math.sin(WS)), wsAlong = V(0, Math.sin(WS), -Math.cos(WS));
@@ -1325,9 +1326,9 @@ const bF = { x: X.clone(), z: nF.clone() }; bF.y = bF.z.clone().cross(bF.x);
 const bC = { x: X.clone(), z: nC0.clone() }; bC.y = bC.z.clone().cross(bC.x);
 const fb = localBox(OPT.rays.map(r => r.p3), F, bF.x, bF.y);
 const cb = localBox([trace(-.04), OPT, trace(.04)].flatMap(t => t.rays.map(r => r.p2)), C, bC.x, bC.y);
-const FOLD = { w: fb.a1 - fb.a0 + 2.4, h: fb.b1 - fb.b0 + 1.8, cx: (fb.a0 + fb.a1) / 2, cy: (fb.b0 + fb.b1) / 2 };
-const CONC = { w: Math.max(-cb.a0, cb.a1) * 2 + 2.6, h: Math.max(-cb.b0, cb.b1) * 2 + 2 };
-const YTOP = 28, YFLOOR = 8;
+const FOLD = { w: fb.a1 - fb.a0 + 1.4, h: fb.b1 - fb.b0 + .8, cx: (fb.a0 + fb.a1) / 2, cy: (fb.b0 + fb.b1) / 2 };
+const CONC = { w: Math.max(-cb.a0, cb.a1) * 2 + 1.2, h: Math.max(-cb.b0, cb.b1) * 2 + .6 };
+const YTOP = 17.6, YFLOOR = 6.2, YFRONT = 1.2; // the base drops to YFRONT in front of the motor cover, where the concave mirror hangs
 const crossY = (a, b, y) => a.clone().lerp(b, (y - a.y) / (b.y - a.y));
 const apPts = OPT.rays.map(r => crossY(r.p2, r.p1, YTOP)), holePts = OPT.rays.map(r => crossY(r.p4, r.p3, YFLOOR));
 const AP = { z0: Math.min(...apPts.map(p => p.z)) - 2, z1: Math.max(...apPts.map(p => p.z)) + 2, x: Math.max(...apPts.map(p => Math.abs(p.x))) + 2 };
@@ -1430,18 +1431,19 @@ const LEDS = [];
   register('foam', g); }
 { const g = new THREE.Group(); box(PG.w - .6, .14, PG.d - .8, M.pad, PG.cx, .38, PG.cz, g); register('pad', g); }
 { // die-cast heatsink: plate under the PGU + fins below
-  const g = new THREE.Group(), bw = PG.w + 6, bd = PG.d + 3.2, y = .12;
+  const g = new THREE.Group(), bw = 17.4, bd = 10.1, y = .12; // 174 × 101 mm
   box(bw, .4, bd, M.cast, PG.cx, y, PG.cz, g); box(4.6, .7, bd, M.cast, PG.cx + bw / 2 - 2.3, y + .15, PG.cz, g);
   for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(1.5, .3, 1.8, M.cast, PG.cx + sx * (bw / 2 - 1.8), y, PG.cz + sz * (bd / 2 + .8), g);
   const tagT = canvasTex(256, 96, (c, w, h) => { c.fillStyle = '#9da1a4'; c.fillRect(0, 0, w, h); c.strokeStyle = '#6d7174'; c.lineWidth = 3; c.strokeRect(4, 4, w - 8, h - 8); c.fillStyle = '#4d5154'; c.font = '600 26px "IBM Plex Mono", monospace'; c.fillText('HA-DZK-617', 60, 40); c.font = '500 18px "IBM Plex Mono", monospace'; c.fillText('>ADC12<', 14, 80); });
   topPlane(4, 1.5, std(0xffffff, .6, .6, { map: tagT }), PG.cx + bw / 2 - 2.3, y + .51, PG.cz, g);
   const hw = PG.w + 2, hd = PG.d + 1; box(hw, .6, hd, M.alu, PG.cx, -.45, PG.cz, g);
-  for (let i = 0; i < 20; i++) box(.16, 5.2, hd - .4, M.alu, PG.cx - hw / 2 + .4 + i * (hw - .8) / 19, -3.4, PG.cz, g);
+  for (let i = 0; i < 20; i++) box(.16, 2.1, hd - .4, M.alu, PG.cx - hw / 2 + .4 + i * (hw - .8) / 19, -1.8, PG.cz, g); // 48 mm overall
   register('heatsink', g); }
 
 
 // main PCB with its chips
-const PCB_POS = V(-13.5, 1.4, -18), shieldMeshes = [];
+const MCB = { MX0: -13, MX1: 16.6, MZ0: -12.5, MZ1: 4.9 }; // motor cover footprint, 296 × 174 mm
+const PCB_POS = V(-3.6, 4.4, -9.4), shieldMeshes = [];
 { const g = new THREE.Group(); g.position.copy(PCB_POS); const T = .08;
   g.add(new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]));
   const chip = (id, w, d, h, lines, big, x, z, pinStyle = 'qfp', back = false) => {
@@ -1479,7 +1481,7 @@ const PCB_POS = V(-13.5, 1.4, -18), shieldMeshes = [];
 const motor = {};
 { const g = new THREE.Group(); concPivot.updateMatrixWorld(true);
   const ear = concTilt.localToWorld(V(CONC.w / 2 + .3, CONC.h / 2 * .82, -.9));
-  motor.x = ear.x + 1.6; motor.y = 4.2; motor.z0 = 1; motor.z1 = 9;
+  motor.x = 14.4; motor.y = 2.6; motor.z0 = -5.2; motor.z1 = .8; // the bay at the +x end of the motor cover
   const s = new THREE.Group(); s.position.set(motor.x, motor.y, (motor.z0 + motor.z1) / 2); const len = motor.z1 - motor.z0;
   cyl(.28, len, M.black, 0, 0, 0, s, 'z');
   const pts = []; for (let i = 0; i <= 200; i++) { const t = i / 200, a = t * Math.PI * 2 * 12; pts.push(V(Math.cos(a) * .42, Math.sin(a) * .42, -len / 2 + t * len)); }
@@ -1488,7 +1490,7 @@ const motor = {};
   s.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gp), 200, .14, 5), M.grease)); g.add(s); motor.screw = s;
   cyl(1.15, 1.9, M.silver, motor.x, motor.y, motor.z0 - 1.5, g, 'z', 32);
   box(1.4, 1.4, .8, M.plastic, motor.x, motor.y, motor.z0 - .2, g); box(1.4, 1.4, .8, M.plastic, motor.x, motor.y, motor.z1 + .2, g);
-  const sb = new THREE.Group(); box(.1, 1.1, 3.6, M.black, 0, 0, 0, sb); box(.2, .45, .45, M.white, .12, .1, -1.1, sb); sb.position.set(motor.x - 1.1, motor.y, motor.z0 + 2.2); g.add(sb);
+  const sb = new THREE.Group(); box(.1, 1.1, 3, M.black, 0, 0, 0, sb); box(.2, .45, .45, M.white, .12, .1, -1.1, sb); sb.position.set(motor.x - 1.1, motor.y, motor.z0 + 2.2); g.add(sb);
   motor.nut = box(1.1, 1.1, 1.2, M.white, motor.x, motor.y, ear.z, g);
   motor.link = cyl(.18, 1, M.silver, 0, 0, 0, g);
   register('motor', g); }
@@ -1502,11 +1504,11 @@ const motor = {};
   box(2.6, .45, .8, M.black, a.x, a.y + .1, a.z, gc); register('cfpcb', gc); }
 { const g = new THREE.Group();
   const from = V(PCB_POS.x + 6.4, PCB_POS.y + .5, PCB_POS.z - 2.3), to = V(motor.x - 1, motor.y, motor.z0 - 1.6);
-  for (let k = 0; k < 4; k++) { const o = (k - 1.5) * .22; g.add(wire([from.clone().add(V(o, 0, 0)), V(from.x + 3 + o, 1.6, from.z - 2.4), V(19.6 + o, 2, -10), V(to.x + 1.2 + o, 2.4, to.z - 3), to.clone().add(V(o, 0, 0))], .09, M.wire)); }
+  for (let k = 0; k < 4; k++) { const o = (k - 1.5) * .22; g.add(wire([from.clone().add(V(o, 0, 0)), V(from.x + 3 + o, 1.6, from.z - 2.4), V(motor.x - 3 + o, 4.2, -9), V(to.x + 1.2 + o, 3.4, to.z - 2), to.clone().add(V(o, 0, 0))], .09, M.wire)); }
   const lf = V(PCB_POS.x + 7.6, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + LCDR.w * .32, 1.05, PG.cz - PG.d / 2 - 2.05);
   for (let k = 0; k < 2; k++) g.add(wire([lf.clone().add(V(0, 0, k * .22)), V(lf.x + 2, 1.6, lf.z + 3), V(lt.x + 1.2, 1.4, lt.z - 3), lt.clone().add(V(0, 0, k * .22))], .08, M.wire));
-  const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.position.set(-4, 3.6, -23.3); lab.rotation.y = Math.PI; g.add(lab);
-  for (const [x, z] of [[-20.5, -21], [20.5, -21], [-20.5, 8.5], [20.5, 8.5], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.scale.setScalar(.7); lab.position.set(-2, 2.6, MCB.MZ0 - .3); lab.rotation.y = Math.PI; g.add(lab);
+  for (const [x, z] of [[MCB.MX0 + .8, MCB.MZ0 + .8], [MCB.MX1 - .8, MCB.MZ0 + .8], [MCB.MX0 + 2, MCB.MZ1 - .8], [MCB.MX1 - .8, MCB.MZ1 - .8], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
   register('misc', g); }
 
 // moulded details: chamfered blocks, faceted plates (profile in z–y, extruded along x), thin gussets
@@ -1527,16 +1529,17 @@ function clip(x, y, z, axis, mat, parent) { // the U-shaped snap hooks along the
 const cutPlane = new THREE.Plane(V(-1, 0, 0), 0);
 function slab(a, b, t, width, mat, parent, xOff = 0) { const dz = b.z - a.z, dy = b.y - a.y; const m = new THREE.Mesh(new THREE.BoxGeometry(width, t, Math.hypot(dz, dy)), mat); m.position.set(xOff, (a.y + b.y) / 2, (a.z + b.z) / 2); m.rotation.x = Math.atan2(-dy, dz); parent.add(m); return m; }
 function addEdges(g) { const ms = []; g.traverse(o => o.isMesh && ms.push(o)); ms.forEach(o => { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: 0x5b6672, transparent: true, opacity: .5 })); o.add(e); housingEdges.push(e); }); }
-const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zmax: C.z + 4.5, hw: Math.max(CONC.w / 2 + 3, FOLD.w / 2 + 2) };
-{ const g = new THREE.Group(), tc = new THREE.Group(), t = .4, W = UH.hw * 2, z0 = UH.zmin, z1 = UH.zmax, SEAM = 18;
+const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // body 354 × 256 mm; ears take it to 418
+{ const g = new THREE.Group(), tc = new THREE.Group(), t = .4, W = UH.hw * 2, z0 = UH.zmin, z1 = UH.zmax, HH = YTOP - YFLOOR, SEAM = YFLOOR + HH * .5;
   // side profile (z, y) traced from the end photos: chamfered floor edges, a stepped back, a sloped front; prof[5]→prof[6] is the window edge
-  const prof = [{ z: z0 + 1.2, y: YFLOOR }, { z: z1 - 1, y: YFLOOR }, { z: z1 + 2.2, y: 12 }, { z: z1 + 2.2, y: SEAM + .5 }, { z: z1, y: 24 }, { z: z1 - 2.5, y: YTOP },
-    { z: z0 + 5, y: YTOP }, { z: z0 + 1.5, y: 24.5 }, { z: z0, y: 21 }, { z: z0, y: 10 }];
-  const a0 = Math.max(AP.z0, z0 + 5.7), a1 = Math.min(AP.z1, z1 - 3.2);
+  const Yr = k => YFLOOR + HH * k;
+  const prof = [{ z: z0 + 1, y: YFLOOR }, { z: MCB.MZ1 + .6, y: YFLOOR }, { z: MCB.MZ1 + .6, y: YFRONT + 1 }, { z: MCB.MZ1 + 1.6, y: YFRONT }, { z: z1 - 1.2, y: YFRONT }, { z: z1 + 1.4, y: YFRONT + 2.4 }, { z: z1 + 2.2, y: Yr(.25) }, { z: z1 + 2.2, y: SEAM + .4 }, { z: z1, y: Yr(.8) }, { z: z1 - 2.2, y: YTOP },
+    { z: z0 + 4, y: YTOP }, { z: z0 + 1.2, y: Yr(.82) }, { z: z0, y: Yr(.65) }, { z: z0, y: Yr(.12) }];
+  const a0 = Math.max(AP.z0, z0 + 4.6), a1 = Math.min(AP.z1, z1 - 2.8);
   prof.forEach((p, i) => { const q = prof[(i + 1) % prof.length];
     if (i === 0) { slab(p, { z: HOLE.z0, y: YFLOOR }, t, W, M.plastic, g); slab({ z: HOLE.z1, y: YFLOOR }, q, t, W, M.plastic, g);
       for (const s of [-1, 1]) slab({ z: HOLE.z0, y: YFLOOR }, { z: HOLE.z1, y: YFLOOR }, t, UH.hw - HOLE.x, M.plastic, g, s * (HOLE.x + (UH.hw - HOLE.x) / 2)); }
-    else if (i === 5) { slab(p, { z: a1, y: YTOP }, t, W, M.plastic, tc); slab({ z: a0, y: YTOP }, q, t, W, M.plastic, tc);
+    else if (i === 9) { slab(p, { z: a1, y: YTOP }, t, W, M.plastic, tc); slab({ z: a0, y: YTOP }, q, t, W, M.plastic, tc);
       for (const s of [-1, 1]) slab({ z: a1, y: YTOP }, { z: a0, y: YTOP }, t, UH.hw - AP.x, M.plastic, tc, s * (AP.x + (UH.hw - AP.x) / 2)); }
     else slab(p, q, t, W, M.plastic, p.y >= SEAM && q.y >= SEAM ? tc : g); });
   // side walls: the same profile, split at the seam between base and top cover
@@ -1549,15 +1552,16 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
   addEdges(tc); register('topcover', tc);
   // mounting ears: a plate with two holes and a locating pin at each end of the base
-  for (const s of [-1, 1]) { const ex = s * (UH.hw + 2.6), ez = (z0 + z1) / 2 - 2, ey = YFLOOR + 1.2;
-    box(4.6, .6, 13, M.plastic, ex, ey, ez, g); box(.5, 3.4, 13, M.plastic, ex - s * 2.1, ey + 1.4, ez, g);
-    for (const dz of [-4.5, 4.5]) { cyl(.95, .7, M.plastic, ex + s * .4, ey + .1, ez + dz, g); cyl(.55, .76, M.black, ex + s * .4, ey + .1, ez + dz, g); }
-    cyl(.35, 1.4, M.plastic, ex + s * .4, ey - .6, ez, g); }
+  for (const s of [-1, 1]) { const ex = s * (UH.hw + 1.5), ez = (z0 + z1) / 2 - 1, ey = YFLOOR + 1;
+    box(3, .5, 9.5, M.plastic, ex, ey, ez, g); box(.45, 2.6, 9.5, M.plastic, ex - s * 1.3, ey + 1.1, ez, g);
+    for (const dz of [-3.3, 3.3]) { cyl(.7, .6, M.plastic, ex + s * .3, ey + .05, ez + dz, g); cyl(.4, .66, M.black, ex + s * .3, ey + .05, ez + dz, g); }
+    cyl(.3, 1.2, M.plastic, ex + s * .3, ey - .5, ez, g); }
   addEdges(g); register('upper', g); }
 { // motor cover: the uneven outline seen in the opened photo (PCB strip along the front, PGU in the middle, motor bay out at the right end)
   const g = new THREE.Group(), t = .45, y0 = -1, y1 = YFLOOR, h = y1 - y0, ym = (y0 + y1) / 2, cz = PCB_POS.z;
   // PCB strip along the front (connector end at −x), the PGU/TFT body in the middle, the motor bay stepping out at +x, a slanted −x side and a notch at the −x front corner
-  const OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]];
+  const { MX0, MX1, MZ0, MZ1 } = MCB, mx = x => MX0 + (x + 23.5) / 46 * (MX1 - MX0), mz = z => MZ0 + (z + 23) / 36 * (MZ1 - MZ0); // 296 × 174 mm
+  const OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]].map(([x, z]) => [mx(x), mz(z)]);
   const hx0 = PG.cx - PG.w / 2 - 1.2, hx1 = PG.cx + PG.w / 2 + 1.2, hz0 = PG.cz - PG.d / 2 - .6, hz1 = PG.cz + PG.d / 2 + .6;
   // floor with the heatsink window cut out
   { const sh = new THREE.Shape(OUT.map(([x, z]) => new THREE.Vector2(x, z))), hole = new THREE.Path([[hx0, hz0], [hx1, hz0], [hx1, hz1], [hx0, hz1]].map(([x, z]) => new THREE.Vector2(x, z)));
@@ -1565,21 +1569,17 @@ const UH = { zmin: Math.min(F.z - FOLD.h, ...OPT.rays.map(r => r.p3.z)) - 3, zma
   // walls along the outline
   OUT.forEach(([xa, za], i) => { const [xb, zb] = OUT[(i + 1) % OUT.length], dx = xb - xa, dz = zb - za, len = Math.hypot(dx, dz);
     const m = box(len + t, h, t, M.plastic, (xa + xb) / 2, ym, (za + zb) / 2, g); m.rotation.y = Math.atan2(-dz, dx); });
-  // top: closes what the base does not cover
-  box(23.5 - UH.hw, t, 11.8, M.plastic, -(UH.hw + 23.5) / 2, y1, -17.1, g); box(UH.hw + 9.5, t, 23 + UH.zmin, M.plastic, (9.5 - UH.hw) / 2, y1, (UH.zmin - 23) / 2, g);
-  box(22.5 - UH.hw, t, 22.5, M.plastic, (UH.hw + 22.5) / 2, y1, -1.25, g);
   // rim round the fin window and the tab over its edge
   for (const [a, b, c, d] of [[hx0 - .7, hx1 + .7, hz0 - .7, hz0 - .2], [hx0 - .7, hx1 + .7, hz1 + .2, hz1 + .7]]) cbox(b - a, 1.2, d - c, .15, M.plastic, (a + b) / 2, y0 - .5, (c + d) / 2, g);
   for (const x of [hx0 - .45, hx1 + .45]) cbox(.5, 1.2, hz1 - hz0 + 1.4, .12, M.plastic, x, y0 - .5, (hz0 + hz1) / 2, g);
   cbox(9, 1, 2.2, .25, M.plastic, PG.cx + 3, y0 - .5, hz0 - 1.8, g);
-  // stepped tiers under the floor
-  prism([[-23, y0], [-21.4, y0 - 1.8], [hz0 - 2.4, y0 - 1.8], [hz0 - 1.4, y0]], -14, 10, M.plastic, g, .15);
-  cbox(3.2, 1.2, 1.6, .3, M.plastic, -2, y0 - 2.1, -21.4, g); cbox(16, .5, 6, .1, M.matte, -2, y0 - 1.85, -16, g);
-  prism([[hz1 + 1.2, y0], [hz1 + 2, y0 - 1.3], [9.8, y0 - 1.3], [10.6, y0]], -12, 12, M.plastic, g, .15);
-  cbox(6, 2.8, 10, .45, M.plastic, -19.5, y0 - 1.3, -17, g); cbox(6.4, 2.2, 15, .4, M.plastic, 18.6, y0 - 1.1, 1, g);
-   
+  // stepped tiers under the floor: sloped front plate with a nose, a tall block at the connector end, a block under the motor bay
+  prism([[MZ0, y0], [MZ0 + 1, y0 - 1.2], [hz0 - 1.6, y0 - 1.2], [hz0 - .9, y0]], MX0 + 5, MX1 - 7, M.plastic, g, .12);
+  cbox(2.2, .8, 1.1, .2, M.plastic, (MX0 + MX1) / 2 - 2, y0 - 1.4, MZ0 + 1, g);
+  prism([[hz1 + .8, y0], [hz1 + 1.3, y0 - .9], [MZ1 - .9, y0 - .9], [MZ1 - .2, y0]], MX0 + 5, MX1 - 6, M.plastic, g, .12);
+  cbox(4, 1.8, 6, .3, M.plastic, MX0 + 2.4, y0 - .9, MZ0 + 3.4, g); cbox(4, 1.5, 9, .3, M.plastic, MX1 - 2.4, y0 - .75, (MZ0 + MZ1) / 2 + 1.5, g);
   // connectors on the end face beside the main PCB: the white power/LIN plug and the coax video socket
-  cbox(1.6, 2.6, 2.6, .2, M.white, -24.3, 2.6, cz - 1.6, g); cyl(.75, 1.6, M.black, -24.4, 2.6, cz + 1.8, g, 'x'); cyl(.35, 1.8, M.silver, -24.5, 2.6, cz + 1.8, g, 'x');
+  cbox(1.4, 2.2, 2.2, .2, M.white, MX0 - .6, 3, cz - 1.3, g); cyl(.6, 1.4, M.black, MX0 - .7, 3, cz + 1.5, g, 'x'); cyl(.28, 1.6, M.silver, MX0 - .8, 3, cz + 1.5, g, 'x');
   addEdges(g); register('lower', g); }
 
 /* ───────────────────────── car environment ───────────────────────── */
@@ -1714,7 +1714,7 @@ function updateBL(dt) {
   bGeo.attributes.position.needsUpdate = bGeo.attributes.color.needsUpdate = true;
 }
 function enterBL(quiet) { state.bl = true; state.blT = .55; state.car = false; markViews(''); setExplode(0); state.iso = false; setCam(V(PG.cx, 1.8, PG.cz), 33, .0001, Math.PI / 2 - .14); applyVisual(); if (!quiet) { setPanel('info', true); renderCard(); } }
-function exitBL(quiet) { state.bl = false; state.blT = 0; applyVisual(); if (!quiet) { setCam(V(0, 9, -3), 100, .85, 1.05); renderCard(); } }
+function exitBL(quiet) { state.bl = false; state.blT = 0; applyVisual(); if (!quiet) { setCam(V(0, 7, -1), 70, .85, 1.05); renderCard(); } }
 
 /* ───────────────────────── state + visuals ───────────────────────── */
 const state = { explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
@@ -1742,15 +1742,15 @@ function applyVisual() {
 }
 
 /* ───────────────────────── camera ───────────────────────── */
-const cam = { t: V(0, 9, -3), r: 100, th: .85, ph: 1.05, gt: V(0, 9, -3), gr: 100, gth: .85, gph: 1.05 };
+const cam = { t: V(0, 7, -1), r: 70, th: .85, ph: 1.05, gt: V(0, 7, -1), gr: 70, gth: .85, gph: 1.05 };
 function setCam(t, r, th, ph) { cam.gt.copy(t); cam.gr = r; cam.gth = th; cam.gph = ph; }
 function goView(v) {
   if (state.bl) { state.bl = false; state.blT = 0; }
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
   state.car = v === 'car' || v === 'driver';
-  if (v === 'iso') setCam(V(0, 9, -3), 100, .85, 1.05);
-  if (v === 'side') { setCam(V(0, 13, -2), 88, Math.PI / 2, Math.PI / 2 - .04); setHousing('cut'); }
-  if (v === 'top') setCam(V(0, 6, -4), 96, .001, .06);
+  if (v === 'iso') setCam(V(0, 7, -1), 70, .85, 1.05);
+  if (v === 'side') { setCam(V(0, 9, -1), 62, Math.PI / 2, Math.PI / 2 - .04); setHousing('cut'); }
+  if (v === 'top') setCam(V(0, 5, -2), 66, .001, .06);
   if (v === 'car') { setCam(V(0, 34, -38), 250, Math.PI / 2, Math.PI / 2 - .12); setHousing('cut'); }
   if (v === 'driver') { const tg = OPT.eye.clone().addScaledVector(OPT.v0, OPT.vid), d = OPT.eye.clone().sub(tg); setCam(tg, d.length(), Math.atan2(d.x, d.z), Math.acos(d.y / d.length())); }
   applyVisual();

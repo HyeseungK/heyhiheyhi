@@ -780,6 +780,13 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 .pnav { float: right; display: inline-flex; align-items: center; gap: 4px; margin: -2px 0 4px 8px; font: 500 12px/1 var(--mono); color: var(--muted); }
 .pnav .btn { width: 30px; height: 28px; padding: 0; display: grid; place-items: center; font-size: 17px; line-height: 1; }
 .pnav span { min-width: 44px; text-align: center; }
+/* DLPQ answers on an item page */
+.sp-ans { margin: 12px 0 0; padding: 10px 14px; border-radius: var(--r); background: #eef6f1; border-left: 3px solid #2a7d4f; }
+.sp-ans h4 { margin: 0 0 4px; font-size: 13px; color: #1f6b43; display: flex; gap: 8px; align-items: baseline; }
+.sp-ans h4 span { font-weight: 500; font-size: 11.5px; color: #4a8a66; }
+.sp-ans ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.sp-ans li { font-size: 13.5px; line-height: 1.55; }
+.bm-kpi:empty, .bm-wt:empty { display: none; }
 /* ── phone layer (≤640px): desktop is untouched. Only the core of each tab stays. ── */
 @media (max-width: 640px) {
   :root { --hdr: 96px; }
@@ -906,9 +913,9 @@ const $ = s => document.querySelector(s);
 const mobile = () => innerWidth <= 900, phone = () => innerWidth <= 640;
 let curTab = 'spec';
 const P = {}, setTab = () => {}, select = () => {}, goView = () => {};
-const OPT0 = { vid: 480, v0: { y: -0.052178987401167394 } };
-let RAD = 83.50203570306664, HFOV = 0.174904591372566, VFOV = 0.06427354040624975;
-const LCDR = { w: 12.000000782785996, d: 3.095815799437556 };
+const OPT0 = { vid: 420, v0: { y: -0.05217898740116744 } };
+let RAD = 58.20834650081151, HFOV = 0.20368025469260131, VFOV = 0.07490697896214626;
+const LCDR = { w: 12.00049748256162, d: 2.730479561595165 };
 const HUD_W = 1200, HUD_H = 440, ASPECT = HUD_W / HUD_H;
 const hudCanvas = document.createElement('canvas'), hudClear = document.createElement('canvas');
 hudCanvas.width = hudClear.width = HUD_W; hudCanvas.height = hudClear.height = HUD_H;
@@ -1018,7 +1025,7 @@ const SPECS = [
 const ISS = [
   { id: 'scratch', en: 'Scratch', ko: '긁힘', def: '선 모양의 표면 결함입니다.', chk: '길이·폭 동시 만족 여부', subs: ['Length (mm): 긁힌 자국 길이 한도', 'Width (mm): 폭 한도', 'n/A: 지정 영역 안 허용 개수'] },
   { id: 'pore', en: 'Pore', ko: '미세 구멍 (핀홀)', def: '작은 구멍 모양 결함으로 흔히 설명합니다(표면 구멍, 코팅이 빠진 자리 등).', chk: 'Vacuoles와의 구분 · 판정 예시', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
-  { id: 'dot', en: 'Black & White dot', ko: '검은 점 · 흰 점', def: '이물이나 점 모양 결함입니다. 검은 점은 빛을 막고, 흰 점은 빛이 새거나 반사합니다.', chk: '검은 점·흰 점 합산 여부', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
+  { id: 'dot', en: 'Black & White dot', ko: '검은 점 · 흰 점', def: '이물이나 점 모양 결함입니다. 검은 점은 빛을 막고, 흰 점은 빛이 새거나 반사합니다. DLPQ 답: 둘을 합쳐서 세고, 1개라도 넘으면 불합격입니다.', chk: '', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
   { id: 'vac', en: 'Vacuoles', ko: '내부 기포', def: '기포 모양 결함으로 흔히 설명합니다(재료 내부 기포 등).', chk: 'Pore와의 구분 · 판정 예시', subs: ['Length (mm): 장경', 'Width (mm): 단경', 'n/A: 허용 개수'] },
   { id: 'stain', en: 'Stain & Discoloration', ko: '얼룩 · 변색', def: '얼룩이나 색 변화입니다. 원본은 크기·개수와 관계없이 허용하지 않습니다.', chk: '판정 조건(조명·거리)', subs: ['Not allowed'] },
 ];
@@ -1027,7 +1034,8 @@ const ISS = [
 const ISS_PARTS = [
   ['tft', 'TFT', 0, '허상 그 자체에 맺힙니다. 확대되어 또렷하게 보여서 가장 엄격합니다.'],
   ['film', '광학 필름', .25, 'TFT 바로 뒤라 거의 또렷하게, 약간 번져 보입니다.'],
-  ['lens', '렌즈', .5, 'TFT 뒤 수 mm. 번진 얼룩(밝기 불균일)으로 보입니다.'],
+  ['lens2', '2차 렌즈 (허니콤)', .4, 'TFT 뒤 가까이. 조금 번진 얼룩으로 보입니다.'],
+  ['lens', '1차 렌즈 (돔)', .55, 'TFT 뒤 수 mm. 번진 얼룩(밝기 불균일)으로 보입니다.'],
   ['fold', '1차 미러', .75, 'TFT에서 멀어 크게 번집니다. 작은 결함은 희미한 그늘 정도입니다.'],
   ['concave', '2차 미러 (곡면경)', .92, '많이 번져 거의 안 보이지만, 큰 결함은 영역 밝기를 떨어뜨립니다.'],
   ['cover', '방진 커버', -1, '허상에는 맺히지 않습니다. 운전자가 대시보드를 볼 때 직접 보이고, 햇빛을 산란시켜 미광과 눈부심을 만듭니다.'],
@@ -1061,15 +1069,38 @@ function dlpqItems() {
     grad: mkItem({ raw: { t: '≤ 3', tol: '상한 5' }, unit: '%/cm', op: '≤', tv: '3', tolType: 'unk', stated: { op: '≤', v: '5', v2: '' }, st: 'cond', note: '기준 휘도, 측정 방향·위치 확인 필요' }),
     sun: mkItem({ raw: { t: '≥ 1,200', tol: '−20%' }, unit: 'nit', op: '≥', tv: '1200', tolType: 'rel', tm: '20', tp: '', st: 'check', note: '960 nit는 −20% 적용 추정 하한. 선글라스 종류·조건 확인 필요' }),
     white: mkItem({ raw: { t: '≥ 85', tol: '−5% ( ≥80 )' }, unit: '%', op: '≥', tv: '85', tolType: 'pp', tm: '5', tp: '', stated: { op: '≥', v: '80', v2: '' }, st: 'cond', note: '85 → 80은 −5%p. 계산식·측정점 확인 필요' }),
-    black: mkItem({ raw: { t: '≥ 80', tol: '−5%' }, unit: '%', op: '≥', tv: '80', tolType: 'unk', tm: '5', tp: '', st: 'check', note: '−5%가 상대 %(76)인지 %p(75)인지 미확정' }),
+    black: mkItem({ raw: { t: '≥ 80', tol: '−5%p' }, unit: '%', op: '≥', tv: '80', tolType: 'unk', tm: '5', tp: '', st: 'check', note: '−5%가 상대 %(76)인지 %p(75)인지 미확정' }),
     contrast: mkItem({ raw: { t: '≥ 400 : 1 ( 암실 정적 )', tol: '−10% ( ≥360 )' }, unit: ':1', sfx: ':1', op: '≥', tv: '400', tolType: 'rel', tm: '10', tp: '', stated: { op: '≥', v: '360', v2: '' }, cond: '암실 정적', st: 'cond', note: '측정 방식(순차/체커보드) 확인 필요' }),
     ctol: mkItem({ raw: { t: 'ΔCx ≤ ±0.01 ; ΔCy ≤ ±0.01', tol: '全温度范围内保持' }, unit: 'Cx, Cy', sfx: '-', op: '=', tv: '0', tt: 'ΔCx, ΔCy 각각 0', tolType: 'abs', tm: '0.01', tp: '0.01', stated: { op: '범위', v: '-0.01', v2: '0.01' }, cond: '전 온도 범위 유지 (이 행에만 적용)', st: 'cond', note: '측정값은 "ΔCx, ΔCy" 두 수로 입력. 기준 색좌표·온도 범위 확인 필요' }),
-    sat: mkItem({ raw: { t: '≥ 90% ( sRGB )', tol: '−5%' }, unit: '% (sRGB)', sfx: '%', op: '≥', tv: '90', tolType: 'unk', tm: '5', tp: '', st: 'check', note: '채도 지표인지, Gamut 행과 같은 값인지 미확정' }),
-    gamut: mkItem({ raw: { t: '≥ 90% sRGB ( ≥70% NTSC )', tol: '−5%' }, unit: '% (sRGB)', sfx: '%', op: '≥', tv: '90', tolType: 'unk', tm: '5', tp: '', cond: '괄호: ≥70% NTSC', st: 'check', note: '면적비/커버리지, 병기 의미 미확정' }),
-    derating: mkItem({ raw: { t: '65℃부터 선형 디레이팅 ( 85℃에서 약 50%로 감소 )', tol: '±3' }, unit: '℃ / 출력 비율', sfx: '℃', op: '', tt: '65℃ 시작 · 85℃ ≈ 50%', tolType: 'abs', tm: '3', tp: '3', st: 'check', note: '50%의 대상, 기준 휘도, 센서 위치, ±3℃ 적용 대상 확인 필요',
+    sat: mkItem({ raw: { t: '≥ 90% ( sRGB )', tol: '−5%p' }, unit: '% (sRGB)', sfx: '%', op: '≥', tv: '90', tolType: 'unk', tm: '5', tp: '', st: 'check', note: '채도 지표인지, Gamut 행과 같은 값인지 미확정' }),
+    gamut: mkItem({ raw: { t: '≥ 90% sRGB ( ≥70% NTSC )', tol: '−5%p' }, unit: '% (sRGB)', sfx: '%', op: '≥', tv: '90', tolType: 'unk', tm: '5', tp: '', cond: '괄호: ≥70% NTSC', st: 'check', note: '면적비/커버리지, 병기 의미 미확정' }),
+    derating: mkItem({ raw: { t: '65℃부터 선형 디레이팅 ( 85℃에서 약 50%로 감소 )', tol: '±3℃' }, unit: '℃ / 출력 비율', sfx: '℃', op: '', tt: '65℃ 시작 · 85℃ ≈ 50%', tolType: 'abs', tm: '3', tp: '3', st: 'check', note: '50%의 대상, 기준 휘도, 센서 위치, ±3℃ 적용 대상 확인 필요',
       der: { t1: '65', p1: '100', p1asm: true, t2: '85', p2: '50', mean: 'unk', base: '', sensor: '', tolTarget: '', before: '', after: '' } }),
   };
 }
+// after the review meeting with DLPQ: their answers, on top of the sheet as received
+const DLPQ_REV = 6;
+function dlpqAgreed() {
+  const d = dlpqItems(), up = (id, o) => Object.assign(d[id], o);
+  up('disparity', { st: 'cond', note: 'DLPQ: 좌우 눈에 맺히는 상의 각도 차이(양안 시차). 주 이미지–고스트 이중상은 별도 고스트 지표' });
+  up('visize', { tolType: 'rel', st: 'cond', note: 'DLPQ: 상대 % (%p 아님). 적용 대상 미확인 → 통상 공칭 대각선 36.21″ (가정). 인터뷰 노트의 "16.21인치"는 오기로 보임' });
+  up('aspect', { tolType: 'rel', st: 'cond', note: 'DLPQ: 상대 % → 2.85:1 ~ 3.15:1' });
+  up('lda', { st: 'cond', note: 'DLPQ: 아이박스 중심점을 영점으로, 각 샘플링 포인트의 중심 대비 각도 편차. 최대–최소 방식 아님' });
+  up('bright', { tolType: 'rel', st: 'cond', note: 'DLPQ: 상대 %. 출하 초기 100% → 수명 말기 ≥ 80%. 지속 10,000 · 피크 12,000 nit는 독립 관리·상쇄 불가 → 각각 ≥ 8,000 · ≥ 9,600 nit. 수명 시험은 지속 정격 점등 후 둘 다 재측정' });
+  up('sun', { tolType: 'rel', st: 'cond', note: 'DLPQ: 공칭값 대비 상대 % → ≥ 960 nit' });
+  up('white', { tolType: 'pp', st: 'cond', note: 'DLPQ: %p (균일도는 차이값) → ≥ 80%' });
+  up('black', { tolType: 'pp', st: 'cond', note: 'DLPQ: %p (균일도는 차이값) → ≥ 75%' });
+  up('ctol', { cond: '전 온도 범위 −40 ~ 85℃', st: 'cond', note: 'DLPQ: 화이트 필드를 CIE 1931의 약정된 화이트 포인트와 비교, Cx·Cy 각각 ±0.01, −40 ~ 85℃ 전 구간. 화이트 포인트 좌표값 미기재 → 통상 D65 (0.3127, 0.3290) (가정)' });
+  up('sat', { tolType: 'pp', st: 'cond', note: 'DLPQ: 합격 여부는 Gamut Coverage 기준으로 판정, 마지노선 ≥ 85% sRGB. RGB 단색 채도는 별도 합격 기준이 아니라 내부 색 조정 참고용 (추가 확인 필요)' });
+  up('gamut', { tolType: 'pp', cond: '괄호: ≥ 70% NTSC (−5%p → ≥ 65%) · 두 기준 동시 만족', st: 'cond', note: 'DLPQ: 표준 색역 대비 커버 면적비(커버리지). 목표 sRGB 90 · NTSC 70, 공차 −5%p를 적용한 마지노선 ≥ 85% sRGB · ≥ 65% NTSC 동시 만족. 서로 환산하지 않음' });
+  up('derating', { st: 'cond', note: 'DLPQ: 65℃ 지속 정격 휘도 = 100%, 85℃는 극한 고온 검증점(약 50%). 측온점 TFT LCM 기판 표면, ±3℃는 측온 공차. 지속 정격에만 적용, 순간 피크는 미적용' });
+  up('edge', { st: 'cond', note: '최종: 각 변 ≤ 0.6° (0.3 + 0.3)' });
+  up('grad', { tolType: 'abs', tm: '0', tp: '2', stated: { op: '≤', v: '5', v2: '' }, st: 'cond', note: '공차 +2 → 최종 ≤ 5 %/cm' });
+  up('contrast', { st: 'cond', note: '암실 조건에서 잰 정적 명암비 기준 → ≥ 360 : 1' });
+  Object.assign(d.derating.der, { sensor: 'TFT LCM 기판 표면', tolTarget: '측온점 온도 (±3℃)', mean: 'lum', base: '65℃에서의 지속 정격 10,000 nit = 100%' });
+  return d;
+}
+const dlpqIssAgreed = () => { const i = dlpqIss(); i.dot.note = 'DLPQ: 흑점 + 백점 합산 100 cm²당 5개 이하, 1개라도 넘으면 불합격'; return i; };
 const dlpqIss = () => ({ scratch: { l: '≤ 0.5', w: '≤ 0.05', n: '≤ 2 / 100cm²', note: '' }, pore: { l: '≤ 0.2', w: '≤ 0.2', n: '≤ 3 / 100cm²', note: '' }, dot: { l: '≤ 0.15', w: '≤ 0.15', n: '≤ 5 / 100cm²', note: '' }, vac: { l: '≤ 0.3', w: '≤ 0.3', n: '≤ 2 / 100cm²', note: '' }, stain: { l: 'Not allowed', w: 'Not allowed', n: 'Not allowed', note: '' } });
 const newId = () => 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const mkSet = (name, items, iss) => ({ id: newId(), name, items: items || {}, iss: iss || blankIss(), updated: new Date().toISOString() });
@@ -1089,7 +1120,17 @@ function migrateOld() {
 let EXP_SAVED = true;
 const EXP = (() => {
   let d = null; try { d = JSON.parse(localStorage.getItem(EXP_KEY) || 'null'); } catch {}
-  if (!d || !Array.isArray(d.sets) || !d.sets.length) { d = { sets: [mkSet('DLPQ 전문가 값', dlpqItems(), dlpqIss())], cmp: [] }; const old = migrateOld(); if (old) d.sets.push(old); d.active = d.sets[0].id; }
+  const agreed = () => Object.assign(mkSet('DLPQ 전문가 값', dlpqAgreed(), dlpqIssAgreed()), { rev: DLPQ_REV });
+  if (!d || !Array.isArray(d.sets) || !d.sets.length) { d = { sets: [agreed()], cmp: [] }; const old = migrateOld(); if (old) d.sets.push(old); d.active = d.sets[0].id; }
+  else {
+    // only the agreed DLPQ values are kept: the sheet as received and pre-meeting copies are dropped, the agreed set is refreshed (typed measurements stay)
+    d.sets = d.sets.filter(x => x.rev >= 2 || !/^DLPQ 전문가 값/.test(x.name || ''));
+    let a = d.sets.find(x => x.rev >= 2);
+    if (a && a.rev < DLPQ_REV) { const fresh = dlpqAgreed(); Object.keys(fresh).forEach(k => { const m = a.items?.[k]?.meas; a.items[k] = fresh[k]; if (m) a.items[k].meas = m; }); a.iss = dlpqIssAgreed(); a.name = 'DLPQ 전문가 값'; a.rev = DLPQ_REV; }
+    d.sets.filter(x => x.rev >= 2 && x !== a).forEach(x => { x.rev = 1; x.name = (x.name || '').replace(/^DLPQ 전문가 값.*/, 'DLPQ 사본'); });
+    if (!a) { a = agreed(); d.sets.unshift(a); }
+    if (!d.sets.some(x => x.id === d.active)) d.active = a.id;
+  }
   d.sets.forEach(normSet); d.cmp = (d.cmp || []).filter(id => d.sets.some(s => s.id === id)); if (!d.sets.some(s => s.id === d.active)) d.active = d.sets[0].id;
   return d;
 })();
@@ -1324,33 +1365,38 @@ const RS = triArea(SRGB) / triArea(NTSC); // sRGB area ÷ NTSC 1953 area, CIE 19
 // plain-language text per item: one line, a short explanation, why it matters, and only the questions that change the definition
 const SPEC_TXT = {
   disparity: { one: '同一个点看起来分成两个方向的程度，用角度表示。mrad（毫弧度）约等于 0.057°。',
-    def: '在 HUD 中这个名称通常指两者之一：左眼和右眼看到的像的方向差（双眼视差），或者实际像与挡风玻璃另一面反射产生的淡淡复制像（鬼影）之间的角度。图中可以切换两种情况。',
+    def: '왼눈과 오른눈에 맺히는 상의 방향(각도) 차이, 즉 양안 시차입니다. 주 이미지와 앞유리 뒷면 반사로 생기는 희미한 복제 상(고스트) 사이의 이중상은 이 항목이 아니라 별도의 고스트 지표로 관리합니다.',
     why: ['双眼视差大时两个像无法融合，会看到重影或感到眼睛疲劳。', '鬼影间距大时文字旁边会出现模糊的影子，看起来发虚。'],
-    qs: ['Disparity는 양안 시차인가요, 주상–고스트 간격인가요?'] },
+    ans: ['좌우 눈에 맺히는 상의 각도 차이, 즉 <b>양안 시차</b>。', '주 이미지–고스트 이미지 사이의 이중상(크로스토크)은 <b>별도의 고스트 지표</b>로 관리하며, 이 항목에 들어가지 않습니다.'],
+    qs: [] },
   visize: { one: '实际看到的虚像大小是基准大小的百分之几。',
-    def: '以基准大小为 100%，与实际大小比较。公差为 ±5% 时，95~105% 之间为合格。由于目标是 100%，±5%（目标的 5%）和 ±5%p（直接加减 5）结果相同；但目标不是 100% 的项目，两者就会不同。虚像大小（英寸·cm）随距离变化，FOV（°）是从眼睛看去的角度大小。',
+    def: '기준 크기를 100%로 두고 실제 크기를 상대 %로 비교합니다. ±5%면 95~105%이고, 공칭 대각선 36.21″로는 34.40 ~ 38.02″입니다. 허상 크기(인치·cm)는 거리에 따라 달라지고, FOV(°)는 눈에서 본 각도로 나타낸 크기입니다.',
     why: ['AR 图形需要叠加在道路上的物体上，大小不对时越靠边缘偏差越大。'],
-    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?'] },
+    ans: ['Tolerance ±5%는 <b>상대 %</b>입니다 (%p 아님). 기준 허상 크기 대비 크기 비율로 봅니다.'],
+    qs: ['±5%는 대각선, 가로·세로, FOV 중 무엇에 적용하나요?', '인터뷰 노트의 "16.21인치"는 사양서의 36.21″를 잘못 적은 것인가요?'] },
   aspect: { one: '虚像的宽 : 高比例。',
-    def: '3:1 表示宽是高的 3 倍。把 ±5% 用在比值 3 上（目标的 5% = 0.15），范围是 2.85:1 ~ 3.15:1。比值一般不用 %p，通常按 % 理解。',
+    def: '3:1이면 가로가 세로의 3배입니다. ±5%는 비율값 3에 대한 상대 %라서(3 × 0.05 = 0.15) 2.85:1 ~ 3.15:1입니다.',
     why: ['比例失真时，圆形会变成椭圆，正方形图标会变扁。'],
-    qs: ['Tolerance ±5%는 %인가요, %p인가요?', '±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
+    ans: ['Tolerance ±5%는 <b>상대 %</b>입니다 → 2.85:1 ~ 3.15:1.'],
+    qs: ['±5%는 비율값에 적용하나요, 가로·세로 길이 각각에 적용하나요?'] },
   edge: { one: '虚像四条边相对于水平·垂直基准线倾斜的角度。',
     def: '虚像整体转动的 "旋转"，以及上下宽度不同的 "梯形"，都会通过这个值体现出来。',
     why: ['倾斜的虚像会与道路和仪表台的水平线错开，很容易被注意到。'],
     qs: ['최종 합격선은 0.3°인가요, 공차를 더한 0.6°인가요?'] },
   lda: { one: '从驾驶员眼睛看向虚像中心的方向角度。上下方向是 LookDown，左右方向是 LookOver。',
-    def: '这个项目中的 "偏差"指的是在同一辆车里，眼睛在眼盒内移动时这个角度变化了多少。图中的四个步骤依次说明角度、眼睛移动以及偏差的计算方法。',
+    def: '这个项目中的 "偏差"는 아이박스 중심점을 영점으로, 아이박스 안 각 샘플링 포인트의 각도가 중심점에서 얼마나 벗어나는지입니다. 측정점끼리의 최대–최소가 아닙니다. 그림의 네 단계에서 각도, 눈 이동, 편차 계산을 차례로 봅니다.',
     why: ['偏差大时，头部移动会让 AR 图形看起来偏离道路。'],
-    qs: ['편차는 중심점 대비 최대 차이인가요, 측정점 간 최대–최소인가요?', '±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
+    ans: ['眼盒 <b>중심점</b>을 기준(영점)으로 봅니다. 아이박스 안에 정해 둔 여러 측정 위치(샘플링 포인트, 예: 중심과 위·아래·좌·우·모서리)에 측정 카메라를 차례로 놓고 LookDown·LookOver를 잰 뒤, 각 위치의 값이 중심점 값에서 얼마나 벗어나는지 구합니다. 그중 가장 큰 차이가 편차입니다.', '측정점 간 최대–최소 방식은 <b>아닙니다</b>.'],
+    qs: ['±0.5°를 적용한 최종 상한은 1.5°인가요?'] },
   res: { one: '视角 1° 内能分辨出的线对（亮线 + 暗线）数量。',
     def: '理想情况下画一个线对需要 2 个像素。实际能否分辨线条，取决于光学模糊以及 "对比度剩多少才算分辨出来"。',
     why: ['决定文字和图标是否清晰。视力 1.0 大约相当于 30 lp/deg。'],
     qs: ['몇 % 대비(MTF)에서 구분된 것으로 보나요?'] },
   bright: { one: '在驾驶员眼睛位置看到的虚像亮度。单位 nit = cd/m²。',
-    def: '区分可以持续输出的 "持续" 亮度和可以短时间输出的 "峰值" 亮度。LED 和面板用久了会逐渐变暗， "使用期间允许衰减 −20%"可理解为：到寿命末期允许比初始最多暗 20%。把这个 −20% 分别用于持续 10,000 nit 和峰值 12,000 nit，寿命末期下限就是 8,000 nit 和 9,600 nit。',
+    def: '区分可以持续输出的 "持续" 밝기(10,000 nit)와 경고 알림 같은 짧은 상황에서만 켜지는 "峰值" 밝기(12,000 nit)를 따로 관리하며, 서로 상쇄할 수 없습니다. −20%는 공칭값 대비 상대 %로, 출하 때를 100%로 두고 수명 말기에 80% 이상이어야 합니다. 그래서 하한은 지속 8,000 nit, 피크 9,600 nit이고, 수명 시험 뒤 둘 다 다시 재서 각각 넘어야 합니다.',
     why: ['晴天白天以道路·天空为背景也要看得见，所以需要很高的亮度。夜间会大幅调低。'],
-    qs: ['−20%는 수명 말기에 초기 대비 최대 20% 감소를 허용한다는 뜻인가요?', '지속 10,000 nit와 피크 12,000 nit에 각각 적용해 수명 말기 하한이 8,000 nit와 9,600 nit인가요?', '허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
+    ans: ['−20%는 <b>상대 %</b>입니다. 출하 때 초기 휘도를 100%로 두고 수명 말기에 최소 80%를 유지해야 합니다 (예: 70%로 떨어지면 불합격).', '지속 정격 10,000 nit와 순간 피크 12,000 nit는 <b>따로 관리</b>하며 서로 상쇄할 수 없습니다. 각자 공칭값으로 −20%를 계산해 수명 말기 하한은 <b>8,000 nit</b>와 <b>9,600 nit</b>。', '수명 시험은 지속 정격(10,000 nit)으로 점등하고, 끝난 뒤 정격·피크를 각각 다시 재서 둘 다 하한을 넘어야 합니다.', '순간 피크는 경고 알림 같은 짧은 상황에서만 켜집니다.'],
+    qs: ['허상(눈 위치) 휘도인가요, 광원·패널 휘도인가요?'] },
   grad: { one: '在眼盒内眼睛移动 1 cm 时，虚像亮度变化百分之几。',
     def: '与画面内不同位置的亮度差（均匀性）不同。是看着画面同一点、只移动眼睛位置时的变化。',
     why: ['头部移动时画面忽暗忽亮会让人分心。'],
@@ -1358,35 +1404,42 @@ const SPEC_TXT = {
   sun: { one: '戴太阳镜观看时的虚像亮度。',
     def: 'HUD 的光是沿一个方向振动的光（偏振光），戴偏光太阳镜时会因轴向不同而明显变暗。普通太阳镜按镜片透过率变暗。',
     why: ['戴上太阳镜的一瞬间如果 HUD 消失，安全信息就看不到了。'],
+    ans: ['−20%는 공칭값 대비 <b>상대 %</b>입니다 → ≥ 960 nit.'],
     qs: ['어떤 선글라스(편광 여부, 투과율) 기준인가요?'] },
   white: { one: '显示白画面时，画面内不同位置的亮度有多均匀。',
     def: '测量多个点的亮度，用"最暗处 ÷ 最亮处"之类的方式计算。像 85% → 80% 这样百分比数值直接相减，叫做 %p（百分点）。',
     why: ['不均匀时，画面局部会出现斑驳，或边缘看起来偏暗。'],
+    ans: ['−5%는 <b>%p</b>입니다 (균일도는 차이값) → ≥ 80%.'],
     qs: ['균일도 계산식은 최소/최대인가요, 최소/평균인가요?'] },
   black: { one: '显示黑画面时，画面内不同位置的亮度有多均匀。',
-    def: 'LCD 在黑色时也会漏一点光。如果漏光集中在一侧，夜间虚像区域的一部分会显得发灰。',
+    def: 'LCD는 검은색에서도 빛이 조금 샙니다. 그 샘이 한쪽에 몰리면 밤에 허상 영역 일부가 뿌옇게 보입니다. 균일도는 차이값이라 공차는 %p입니다(80% − 5%p = 75%).',
     why: ['夜间黑底出现斑驳会让人分心。'],
-    qs: ['−5%는 상대 %인가요, %p인가요?'] },
+    ans: ['−5%는 <b>%p</b>입니다 (균일도는 차이값) → ≥ 75%.'],
+    qs: [] },
   contrast: { one: '白态亮度 ÷ 黑态亮度。',
     def: '对比度为 400:1 表示白色比黑色亮 400 倍。反过来，黑色部分亮度 = 白色亮度 ÷ 对比度，它决定没有图形的地方会有多亮。暗室是挡住外部光线的测量环境。',
     why: ['对比度低时，夜间会看到一个与虚像同样大小的淡灰色矩形（"明信片效应"）。'],
     qs: ['흑백을 차례로 재나요, 바둑판 패턴으로 동시에 재나요?'] },
   ctol: { one: '白色的色坐标允许偏离基准色坐标的范围。',
-    def: 'Cx 和 Cy 分别控制在 ±0.01 以内。两个轴分开判断，所以允许范围是方形而不是圆形。ΔCx·ΔCy 表示 "相对基准色坐标偏离了多少"，因此必须先确定基准点（例如白色 D65 = 0.3127, 0.3290，或设计目标白色）才能计算。 "全温度范围内保持"的意思是在车辆需要承受的低温到高温整个范围内都要保持该范围，但原文没有写明是从几 ℃ 到几 ℃。',
+    def: '관리 대상은 화이트 필드(HUD 결상의 바탕색)입니다. CIE 1931 색도도에서 약정된 화이트 포인트를 기준으로 실측 Cx·Cy가 각각 ±0.01 이내여야 하고, 차량용 AR-HUD 작동 온도 −40 ~ 85℃ 전 구간에서 지켜야 합니다. 두 축을 따로 보므로 허용 범위는 원이 아니라 네모 모양입니다. 색역과는 별개 지표입니다.',
     why: ['每辆车的白色如果偏黄或偏蓝，就会和其他屏幕颜色不一致。'],
-    qs: ['ΔCx·ΔCy를 재는 기준 색좌표는 무엇인가요?', '"전 온도 범위"는 몇 ℃부터 몇 ℃까지인가요?'] },
+    ans: ['관리 대상은 <b>화이트 필드</b>(HUD 결상의 바탕색)입니다. CIE 1931 색도도에서 <b>약정된 화이트 포인트</b>를 기준 좌표로 두고, 실측 Cx·Cy가 각각 ±0.01 이내인지 봅니다.', '차량용 AR-HUD 작동 온도 <b>−40 ~ 85℃ 전 구간</b>에서 만족해야 합니다.', '색역과는 별개 지표입니다.'],
+    qs: ['약정된 화이트 포인트의 좌표값은 얼마인가요? (통상 D65 = 0.3127, 0.3290)'] },
   sat: { one: '单一颜色（例如红色）在不掺白光的情况下有多鲜艳。',
-    def: '饱和度是单个颜色的鲜艳程度，色域是能显示的全部颜色范围。因此 "90% sRGB"有两种理解。① 饱和度指标：红·绿·蓝各原色与 sRGB 原色相比的鲜艳程度（如图，从白点到原色距离的 %）。② 色域数值：像 Gamut 一行那样，把 HUD 三角形与 sRGB 三角形比较的值。若是②，还需要确认是否与 Gamut 一行为同一测量、是面积比还是覆盖率；若是①，则需要知道针对哪些颜色、用什么方法计算。设计软件里的饱和度（HSV）数值与测量值不是一回事。',
+    def: '채도는 색 하나의 선명도이고, 색역은 낼 수 있는 색 전체의 범위입니다. DLPQ는 R·G·B 원색마다 "백색점–색점 거리 ÷ 같은 색상에서 표준 색역 경계까지의 최대 거리"로 포화도를 구하고, 그중 가장 낮은 값을 봅니다(그림의 "示例定义"와 같은 방식). 이 값은 합격 기준선 없이 실측 원시 데이터와 내부 색 조정용으로 쓰고, 합격 판정은 색역 커버리지로 합니다. 사양서의 "90% (sRGB)"도 색역 커버리지를 뜻합니다.',
     why: ['鲜艳度下降时，红色警告看起来像粉色，绿色显示像浅黄绿色。'],
-    qs: ['90% sRGB는 채도 지표인가요, sRGB 대비 색역 수치인가요?', '색역 수치라면 Gamut 행의 90% sRGB와 같은 측정값인가요? 면적비인가요, 커버리지인가요?', '채도 지표라면 어떤 색을 어떤 방식으로 계산하나요?'] },
+    ans: ['RGB 단색 채도는 <b>합격 기준선이 없습니다</b>. 실측 보고서의 원시 데이터와 내부 색 조정(color tuning) 참고용입니다.', '사양서의 "90% (sRGB)"는 단색 채도가 아니라 <b>색역 커버리지</b>를 뜻하며, "sRGB" 단위 표기는 오기로 확인됐습니다.', '합격 여부는 Gamut Coverage 기준으로 판정하며, 공차 −5%p를 적용한 마지노선은 <b>≥ 85% sRGB</b>입니다. RGB 단색 채도는 내부 색 조정 참고용이며, 이 점은 추가 확인이 필요합니다.'],
+    qs: ['채도 행은 합격 판정에 쓰지 않는 참고 항목이 맞나요? 그렇다면 −5%p 공차는 어디에 적용하나요?'] },
   gamut: { one: '显示器能显示的颜色范围。在色度图上是 R·G·B 三个原色构成的三角形。',
-    def: '"90% sRGB"是把 HUD 三角形与 sRGB 三角形比较得到的值。比较方法有两种（面积比：只比较面积；覆盖率：叠在一起后被覆盖的部分），基准也有多种（sRGB、NTSC 等），所以同一块屏幕会得到不同的数字。按面积换算，sRGB 90% 约等于 NTSC ' + Math.round(90 * RS) + '%，因此括号里的 70% NTSC 与简单换算值并不一致。图中的 ②~⑤ 依次说明。',
-    why: [`在相同条件下，sRGB 的面积约为 NTSC 的 ${Math.round(RS * 100)}%。所以同一块屏幕，基准不同，写出的数字也不同。`, '色域窄时，红↔橙、绿↔青这样相近的颜色更难区分。'],
-    qs: ['90% sRGB와 70% NTSC는 각각 면적비인가요, 커버리지인가요?', '두 값을 각각 만족해야 하나요, 하나를 다른 기준으로 환산해 괄호에 적은 건가요?', 'Tolerance −5%는 %인가요, %p인가요?'] },
+    def: 'HUD 색역이 표준 색역(sRGB, NTSC) 면적의 몇 %를 덮는지, 즉 커버리지(커버 면적비)입니다. sRGB ≥ 90%와 NTSC ≥ 70%를 동시에 만족해야 하고, 두 기준은 크기·모양이 다른 별개의 틀이라 서로 환산하지 않습니다. 같은 측정에서 색좌표를 모아 두 커버리지를 한 번에 계산합니다. 그림의 ②~⑤에서 차례로 봅니다.',
+    why: ['같은 화면도 기준에 따라 숫자가 다르게 나옵니다. sRGB 넓이는 NTSC의 약 ' + Math.round(RS * 100) + '%。', '色域窄时，红↔橙、绿↔青这样相近的颜色更难区分。'],
+    ans: ['표준 색역 면적 대비 <b>커버 면적비</b>입니다. 제품의 색 영역이 표준 색역을 얼마나 차지하는지로, 그림 ④의 커버리지에 해당합니다.', 'sRGB ≥ 90%와 NTSC ≥ 70%를 <b>동시에</b> 만족해야 합니다. 크기·모양이 다른 두 틀이라 <b>서로 환산할 수 없습니다</b>.', '같은 측정에서 색좌표를 모아 두 커버리지를 한 번에 계산합니다.', '목표는 90% · 70%이고, 공차 −5%p를 적용한 <b>마지노선은 ≥ 85% sRGB, ≥ 65% NTSC</b>。'],
+    qs: [] },
   derating: { one: '温度升高时，为保护部件而降低亮度（输出）的允许上限。',
-    def: '从设定的温度开始逐步降低输出上限。例如从 70℃ 开始降低、到 90℃ 降到 50%，那么中间 80℃ 时为 75%。温度会因测量位置（TFT 附近的温度传感器、PCB、壳体内空气等）不同，在同一时刻也不一样。 "50%"是谁的一半，实际亮度也会不同：是持续额定 10,000 nit 的 50%，还是开始降额的 65℃ 时亮度的 50%。±3 可理解为温度（℃）的公差。',
+    def: '온도가 오르면 LED 백라이트 전력을 낮춰 밝기 한계를 줄입니다. 기준은 65℃에서의 지속 정격 휘도(10,000 nit) = 100%이고, 85℃는 극한 고온 검증점으로 이때 약 50%를 유지합니다. 온도는 TFT LCM 기판 표면에서 기판 센서로 재며, ±3℃는 그 측온점의 공차입니다. 순간 피크 휘도에는 적용하지 않습니다.',
     why: ['夏季阳光下仪表台内部非常热。如果降额开始得太早，在最需要亮的时候反而会变暗。'],
-    qs: ['65℃와 85℃는 어느 위치의 온도인가요? (TFT 근처 온도 센서 등)', '85℃에서 50%는 65℃의 휘도를 100%로 본 것인가요? 기준 휘도는 지속 정격 10,000 nit인가요?', '±3은 온도(℃) 공차인가요?'] },
+    ans: ['기준은 <b>65℃에서의 지속 정격 휘도 = 100%</b>입니다. 65℃는 장시간 작동 때 광원의 정상 상태 온도로, 고온·저온의 기준점입니다.', '85℃는 <b>극한 고온 검증점</b>이며, 이때 지속 정격 대비 약 50%를 유지합니다 (LED 백라이트 전력을 낮춤).', '온도는 <b>TFT LCM 기판 표면</b>에서 기판 센서로 재고, ±3℃는 그 측온점의 온도 공차입니다.', '디레이팅은 <b>지속 정격 휘도에만</b> 적용하고, 순간 피크 휘도에는 적용하지 않습니다.'],
+    qs: [] },
 };
 SPECS.forEach(s => Object.assign(s, SPEC_TXT[s.id]));
 
@@ -1395,7 +1448,7 @@ const LDALESSON = (() => {
 
 const STEPS = ['原始规格', 'LookDown', 'LookOver', '眼盒与眼睛移动', '角度与偏差', '两种计算', '误差 vs 偏差', '总结'];
 // the item page shows only what the open question needs: the two angles, the eye moving, and how the change is counted
-const ORDER = [1, 2, 3, 5], LABELS = ['LookDown', 'LookOver', '眼睛移动时', '偏差怎么算'];
+const ORDER = [1, 2, 3, 5], LABELS = ['LookDown', 'LookOver', '眼睛移动时', '편차 계산'];
 // every number below is an example for understanding, not a Zeekr 7X value
 const S = { step: 0, ld: LDA0, lo: 0.0, ez: 0, ex: 0, ebw: 130, ebh: 50, c: 3.0, a: 3.8, b: 2.8, crit: 0.9, err: 0.4, mv: 25 };
 const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI, f1 = n => (Math.round(n * 10) / 10).toFixed(1), f2 = n => (Math.round(n * 100) / 100).toFixed(2);
@@ -1552,14 +1605,14 @@ function render() {
       <div class="ls-ctl"><div class="nums"><label for="lsn-c">中心<input id="lsn-c" type="number" step="0.1" value="${S.c}" data-lk="c"></label><label for="lsn-a">位置 A<input id="lsn-a" type="number" step="0.1" value="${S.a}" data-lk="a"></label><label for="lsn-b">位置 B<input id="lsn-b" type="number" step="0.1" value="${S.b}" data-lk="b"></label></div><p class="note">측정 예시 숫자입니다 ${ASM('')}. 바꾸면 그림과 차이가 함께 바뀝니다.</p></div>`;
   }
   if (st === 5) {
-    const pA = mCenter <= S.crit, pB = mRange <= S.crit;
-    fig.innerHTML = `${svg(640, 260, numberLine('center'), '相对中心点的差')}<p class="note" style="margin:0 6px 10px">方法 ① 相对中心点：分别求中心与其他各点的差，取最大值。</p>${svg(640, 260, numberLine('range'), '最大减最小的差')}<p class="note" style="margin:0 6px 4px">方法 ② 最大 − 最小：用所有测量值中的最大值减去最小值。</p>`;
-    text.innerHTML = `<h2>偏差怎么算</h2>
-      <p>假设在眼盒内三个位置测得 LookDown：中心 ${f1(S.c)}°，位置 A ${f1(S.a)}°，位置 B ${f1(S.b)}° ${ASM('')}. "偏差" <b>以哪个点为基准</b> 来计算，同样的测量值会得到不同的数字。</p>
-      <div class="cards"><div class="card"><h3>① 相对中心点的最大差</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 较大值 <b>${f1(mCenter)}°</b></p><p><span class="verdict ${pA ? 'v-ok' : 'v-bad'}">${pA ? '合格' : '不合格'}</span> <span class="note">假想基准 ${f1(S.crit)}°</span></p></div>
-      <div class="card"><h3>② 测量点之间的最大 − 最小</h3><p>${f1(mx)} − ${f1(mn)} = <b>${f1(mRange)}°</b></p><p><span class="verdict ${pB ? 'v-ok' : 'v-bad'}">${pB ? '合格' : '不合格'}</span> <span class="note">假想基准 ${f1(S.crit)}°</span></p></div></div>
-      <div class="ls-ctl">${slider('crit', '合格基准', .3, 1.6, .1, '°')}<p class="note" style="margin:0">${HYP(`${f1(S.crit)}°`)}是为展示计算差异而设的假想基准，不是专家规格。</p></div>
-      <div class="card"><h3>所以要问的是</h3><p>原文中的 "≤ 1.0°（Eye-box 内视角偏差）"到底是①还是②，会让同一个产品既可能合格也可能不合格。所以要确认 "是相对中心点的差，还是测量点之间的最大–最小？"。</p></div>`;
+    const ok1 = mCenter <= 1.0 + 1e-9, ok2 = mCenter <= 1.5 + 1e-9;
+    fig.innerHTML = `${svg(640, 260, numberLine('center'), '相对中心点的差')}<p class="note" style="margin:0 6px 10px">중심점을 영점으로, 각 위치가 중심에서 벗어난 만큼을 구하고 가장 큰 값을 편차로 봅니다.</p>`;
+    text.innerHTML = `<h2>편차 계산: 아이박스 중심점 기준</h2>
+      <p>DLPQ 기준에서 편차의 영점은 <b>아이박스 중심점</b>입니다. 각 샘플링 포인트의 각도가 중심점에서 얼마나 벗어났는지 구하고, 그중 가장 큰 값이 편차입니다. 측정점끼리의 최대–최소는 쓰지 않습니다.</p>
+      <p>예: 중심 ${f1(S.c)}°，位置 A ${f1(S.a)}°，位置 B ${f1(S.b)}° ${ASM('')}</p>
+      <div class="card"><h3>계산</h3><p>|${f1(S.a)} − ${f1(S.c)}| = ${f1(Math.abs(S.a - S.c))}, |${f1(S.b)} − ${f1(S.c)}| = ${f1(Math.abs(S.b - S.c))} → 편차 <b>${f1(mCenter)}°</b></p>
+        <p><span class="verdict ${ok1 ? 'v-ok' : 'v-bad'}">${ok1 ? '목표 ≤ 1.0° 충족' : '목표 1.0° 초과'}</span> <span class="verdict ${ok2 ? 'v-ok' : 'v-bad'}">${ok2 ? '공차 포함 ≤ 1.5° 충족' : '1.5° 초과'}</span></p></div>
+      <div class="ls-ctl">${slider('a', '위치 A의 LookDown', 1.5, 4.5, .1, '°')}${slider('b', '위치 B의 LookDown', 1.5, 4.5, .1, '°')}</div>`;
   }
   if (st === 6) {
     fig.innerHTML = errVsDev();
@@ -1651,7 +1704,7 @@ function gamutRuler(g, w, h, v) {
     g.fillStyle = on ? '#eef3fd' : '#f6f8fa'; g.fillRect(x0 - 10, y - 18, w - x0, 80); g.fillStyle = c; g.fillRect(x0 - 10, y - 18, 4, 80);
     g.fillStyle = '#4a5560'; g.font = GF(600, 13); g.fillText(t, x0, y + 2); g.fillStyle = on ? '#1c2228' : '#8a949e'; g.font = GF(800, 34); g.fillText(`${Math.round(val)}%`, x0, y + 44); });
   g.fillStyle = '#4a5560'; g.font = GF(500, 12.5); g.fillText(`sRGB % × ${f2(RS)} ≈ NTSC %`, x0, 270); g.fillStyle = '#66717c'; g.font = GF(400, 11.5); g.fillText('（按面积，CIE 1931 xy）', x0, 290);
-  return `HUD 保持不变， <b>只把尺子（基准）换成 ${rn}。</b> 同一块屏幕用 sRGB 测是 <b>${Math.round(rS)}%</b>，用 NTSC 测是 <b>${Math.round(rN)}%</b>。<br>所以 "≥ 90% sRGB (≥ 70% NTSC)"中括号里的值如果只是简单换算，就应该是 90 × ${f2(RS)} ≈ <b>${Math.round(90 * RS)}%</b>，但原文写的是 70%。数字对不上，所以会问： "两个条件是要分别满足，还是其中一个是换算后写上的"。`;
+  return `HUD 保持不变， <b>只把尺子（基准）换成 ${rn}。</b> 同一块屏幕用 sRGB 测是 <b>${Math.round(rS)}%</b>，用 NTSC 测是 <b>${Math.round(rN)}%</b>。<br>所以 "≥ 90% sRGB (≥ 70% NTSC)"의 두 숫자는 서로 환산한 값이 아니라 <b>각각 따로 재서 둘 다 만족해야 하는 조건</b>입니다. 넓이로 단순 환산하면 sRGB 90%는 NTSC 약 ${Math.round(90 * RS)}%라서, NTSC 70%는 별도로 정한 기준입니다.`;
 }
 // ④ area ratio vs coverage, side by side: compare sizes apart, then lay one on the other
 function gamutAreaCov(g, w, h, v) {
@@ -1675,34 +1728,32 @@ function gamutAreaCov(g, w, h, v) {
   g.font = GF(600, 12); g.fillStyle = '#2a9d6a'; g.fillText(`绿色 = 覆盖部分 ${Math.round(C)}`, pw + 34, h - 34); g.fillStyle = '#d1493f'; g.fillText(`红色 = 未覆盖 ${Math.round(100 - C)}`, pw + 34 + 130, h - 34);
   g.fillStyle = '#1c2228'; g.font = GF(800, 20); g.fillText(`= ${Math.round(C)}%`, pw + 30, h - 8);
   g.strokeStyle = '#e6ebf0'; g.lineWidth = 1; g.beginPath(); g.moveTo(pw + 15, 10); g.lineTo(pw + 15, h - 10); g.stroke();
-  return `同一个 HUD， <b>面积比 ${Math.round(R)}%</b>, <b>覆盖率 ${Math.round(C)}%</b>。面积比只比较面积，覆盖率是 ${rn}的颜色中 HUD 实际能显示的比例。<br>"HUD 形状"改歪后，面积（面积比）不变，但被覆盖的部分（覆盖率）减少。所以仅凭 "90% sRGB"无法判断是哪一种，而是哪一种会改变合格与否。`;
+  return `同一个 HUD， <b>面积比 ${Math.round(R)}%</b>, <b>覆盖率 ${Math.round(C)}%</b>。面积比只比较面积，覆盖率是 ${rn}的颜色中 HUD 实际能显示的比例。<br>"HUD 形状"을 비뚤게 바꾸면 넓이(면적비)는 그대로인데 덮는 부분(커버리지)만 줄어듭니다. DLPQ 판정은 표준 색역 대비 <b>커버 면적비</b>, 즉 오른쪽의 <b>覆盖率</b>。`;
 }
-// ⑤ reading "≥ 90% sRGB (≥ 70% NTSC)": the same example HUD under each reading
+// ⑤ how DLPQ judges it: coverage against sRGB and NTSC, both at once; the floor is target − 5%p
 function gamutRead(g, w, h, v) {
-  const H = hudTri(v.p, v.shape), V = { sa: gRatio(H, SRGB), sc: gCover(H, SRGB), na: gRatio(H, NTSC), nc: gCover(H, NTSC) };
-  const tw = Math.min(w * .4, h * .98), m = cie(g, tw, h); tri(g, m, NTSC, '#4a5560', null, [5, 4]); tri(g, m, SRGB, '#c8780f', null, [2, 3]); polyPath(g, m, H); g.fillStyle = 'rgba(31,98,209,.25)'; g.fill(); g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.stroke();
+  const H = hudTri(v.p, v.shape), cS = gCover(H, SRGB), cN = gCover(H, NTSC);
+  const tw = Math.min(w * .42, h * .98), m = cie(g, tw, h); tri(g, m, NTSC, '#4a5560', null, [5, 4]); tri(g, m, SRGB, '#c8780f', null, [2, 3]); polyPath(g, m, H); g.fillStyle = 'rgba(31,98,209,.25)'; g.fill(); g.strokeStyle = '#1f62d1'; g.lineWidth = 2; g.stroke();
   g.font = GF(500, 11); g.fillStyle = '#4a5560'; g.fillText('灰色 NTSC · 橙色 sRGB · 蓝色 HUD', 30, 14);
-  const x0 = tw + 24, cw = (w - x0 - 90) / 2, ok = (val, lim) => val >= lim - 1e-9;
-  g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('测量这个 HUD', x0, 20);
-  g.font = GF(600, 12); g.fillStyle = '#66717c'; g.fillText('面积比', x0 + 90, 44); g.fillText('覆盖率', x0 + 90 + cw, 44);
-  [['sRGB (≥ 90)', V.sa, V.sc, 90], ['NTSC (≥ 70)', V.na, V.nc, 70]].forEach(([t, a, c, lim], i) => { const y = 74 + i * 40;
-    g.fillStyle = '#1c2228'; g.font = GF(600, 12.5); g.fillText(t, x0, y);
-    [[a, 0], [c, 1]].forEach(([val, k]) => { const pass = ok(val, lim); g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.font = GF(800, 18); g.fillText(`${Math.round(val)}%`, x0 + 90 + k * cw, y + 2); g.font = GF(600, 11); g.fillText(pass ? '满足' : '未达到', x0 + 90 + k * cw + 52, y); }); });
-  const rd = [['A. 都按面积比，分别满足', ok(V.sa, 90) && ok(V.na, 70)], ['B. 都按覆盖率，分别满足', ok(V.sc, 90) && ok(V.nc, 70)], ['C. 只按 sRGB 面积比判定（括号为参考换算）', ok(V.sa, 90)]];
-  g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('不同理解下的判定', x0, 186);
-  rd.forEach(([t, pass], i) => { const y = 212 + i * 26; g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.beginPath(); g.arc(x0 + 6, y - 4, 6, 0, 7); g.fill(); g.fillStyle = '#1c2228'; g.font = GF(500, 12.5); g.fillText(`${t} → ${pass ? '合格' : '不合格'}`, x0 + 20, y); });
-  const same = new Set(rd.map(r => r[1])).size === 1;
-  return `原文 "≥ 90% sRGB (≥ 70% NTSC)"怎么理解，同一个 HUD 的判定 ${same ? '目前相同，但改变大小·形状后就会不同' : '<b>就会不同</b>'}。大小设为 90% 时 sRGB 通过，但 NTSC 约为 ${Math.round(90 * RS)}%，达不到 70%。<br>公差 −5% 也有两种理解：按相对 % 是 90 × 0.95 = 85.5%，按 %p 是 90 − 5 = 85%。HUD 形状仅用于说明。`;
+  const x0 = tw + 28, ok = (x, l) => x >= l - 1e-9, rows = [['sRGB 커버리지', cS, 90, 85, '#c8780f'], ['NTSC 커버리지', cN, 70, 65, '#4a5560']];
+  g.fillStyle = '#1c2228'; g.font = GF(700, 13); g.fillText('판정: 둘 다 마지노선 이상', x0, 22);
+  rows.forEach(([t, val, tgt, lim, c], i) => { const y = 64 + i * 86, pass = ok(val, lim);
+    g.fillStyle = '#f6f8fa'; g.fillRect(x0 - 10, y - 22, w - x0, 74); g.fillStyle = c; g.fillRect(x0 - 10, y - 22, 4, 74);
+    g.fillStyle = '#4a5560'; g.font = GF(600, 12.5); g.fillText(`${t} · 목표 ${tgt}% · 마지노선 ${lim}%`, x0, y - 2); g.fillStyle = pass ? '#2a7d4f' : '#d1493f'; g.font = GF(800, 28); g.fillText(`${Math.round(val)}%`, x0, y + 34);
+    g.font = GF(600, 12); g.fillText(pass ? (ok(val, tgt) ? '목표까지 충족' : '마지노선 충족') : `마지노선 ${lim}% 미달`, x0 + 96, y + 30); });
+  const all = ok(cS, 85) && ok(cN, 65);
+  g.fillStyle = all ? '#2a7d4f' : '#d1493f'; g.font = GF(800, 16); g.fillText(all ? '合格' : '不合格', x0, 262);
+  return `HUD 색역이 sRGB와 NTSC를 각각 얼마나 덮는지(커버리지)를 같은 측정에서 계산하고, 목표는 90% · 70%이고, 공차 −5%p를 적용한 마지노선 <b>≥ 85% sRGB와 ≥ 65% NTSC를 동시에</b> 넘으면 합격입니다. 지금 예시는 sRGB <b>${Math.round(cS)}%</b>, NTSC <b>${Math.round(cN)}%</b>。<br>HUD 크기·모양은 설명용입니다.`;
 }
 const DEMOS = {
-  disparity: { ctl: [['mode', '解读', 0, 1, 1, 0, 'sel:双眼视差的情况（示例）|主像–鬼影间距的情况（示例）'], ['d', '偏差角度', 0, 5, .1, 1, 'mrad'], ['ax', '方向', 0, 1, 1, 0, 'sel:水平|垂直']],
+  disparity: { ctl: [['d', '偏差角度', 0, 5, .1, 1, 'mrad'], ['ax', '方向', 0, 1, 1, 0, 'sel:水平|垂直']],
     draw(g, w, h, v) { road(g, w, h, .8); const hw = w * .46, hh = hw / ASPECT, x = (w - hw) / 2, y = h * .42 - hh / 2, px = v.d * (w / (24 * 17.453)) * 6, ox = v.ax ? 0 : px, oy = v.ax ? px : 0, mm = v.d * SP.vid;
       const tag = (t, tx, ty, c) => { g.font = '600 12px "Pretendard Variable", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "WenQuanYi Zen Hei", sans-serif'; const tw = g.measureText(t).width + 14; g.fillStyle = c; g.fillRect(tx, ty, tw, 20); g.fillStyle = '#fff'; g.fillText(t, tx + 7, ty + 14); return tw; };
       g.setLineDash([6, 5]); g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 1.5; g.strokeRect(x - 8, y - 8, hw + 16, hh + 16); g.setLineDash([]);
       if (!v.mode) { hud(g, x - ox / 2, y - oy / 2, hw, hh, .6); hud(g, x + ox / 2, y + oy / 2, hw, hh, .6); g.lineWidth = 2; g.strokeStyle = '#ff6b5e'; g.strokeRect(x - ox / 2, y - oy / 2, hw, hh); g.strokeStyle = '#4fc3ff'; g.strokeRect(x + ox / 2, y + oy / 2, hw, hh);
         const a = tag('左眼看到的像', x, y + hh + 18, '#d1493f'); tag('右眼看到的像', x + a + 8, y + hh + 18, '#1f7fbf'); }
       else { hud(g, x + ox, y + oy, hw, hh, .22); hud(g, x, y, hw, hh, .95); const a = tag('主像（实际像）', x, y + hh + 18, '#2a7d4f'); tag('鬼影（淡淡的复制像）', x + a + 8, y + hh + 18, '#66717c'); }
-      tag(`${v.mode ? '主像–鬼影间距情况的示例' : '双眼视差情况的示例'} · 间距放大 6 倍 · 虚线 = 设计目标位置`, 8, 8, 'rgba(0,0,0,.6)');
+      tag(`양안 시차 예시 · 간격 6배 과장 · 점선 = 설계상 목표 위치`, 8, 8, 'rgba(0,0,0,.6)');
       const conv = `${TA('虚像距离 ' + f1(SP.vid) + ' m')} 处约 <b>${f1(mm)} mm</b>（示例换算：mrad × m）`;
       return (v.mode ? `在一个眼睛位置，实际像与淡淡的鬼影相距 <b>${f1(v.d)} mrad</b> 的示例。若虚像在 ${f1(SP.vid)} m 前方，约为 <b>${f1(mm)} mm</b> 的间距。鬼影是由挡风玻璃内、外两个表面分别反射形成的。`
         : `左眼（红框）和右眼（蓝框）看到的像错开 <b>${f1(v.d)} mrad</b> 的示例。若虚像在 ${f1(SP.vid)} m 前方，约为 <b>${f1(mm)} mm</b> 的差。 ${v.ax ? '上下错位眼睛几乎无法自行校正，更难受。' : '左右错位会让图形看起来前后浮动。'}`) + '<br>虚线为设计目标位置，深色像为实际看到的像。'; } },
@@ -1826,7 +1877,7 @@ const DEMOS = {
         g.fillText(`示例定义 ${Math.round(ks[i] * 100)}%`, cx, h * .62 + 42); g.fillStyle = '#8a4fd1'; g.fillText(`HSV 饱和度 ${hsv(c)}%`, cx, h * .62 + 60); g.textAlign = 'start'; });
       return `饱和度是单个颜色的鲜艳程度。这里按 "从白点到原色的距离走了百分之几"来计算，R·G·B 可以各不相同。<br>用设计软件的 HSV 饱和度测同样的颜色，会得到紫色数字那样不同的值。计算方法不同，数字也不同。`; } },
 
-  gamut: { minW: 540, ctl: [['step', '步骤', 0, 5, 1, 0, 'sel:① 什么是色域|② 基准三角形（sRGB·NTSC）|③ 同一屏幕，不同基准|④ 面积比 vs 覆盖率|⑤ 解读我们的规格|⑥ 驾驶员眼中的变化'], ['std', '基准三角形', 0, 1, 1, 0, 'sel:sRGB · 网页·显示器|NTSC · 老式电视'], ['b', '测量基准', 0, 1, 1, 0, 'sel:用 sRGB 测量|用 NTSC 测量'], ['p', 'HUD 大小（相对 sRGB 面积）', 50, 140, 1, 90, '%'], ['shape', 'HUD 形状（说明用）', 0, 2, 1, 1, 'sel:与基准同方向|稍微歪斜|明显歪斜']],
+  gamut: { minW: 540, ctl: [['step', '步骤', 0, 5, 1, 0, 'sel:① 색역이 뭔가요|② 기준 삼각형 (sRGB·NTSC)|③ 같은 화면, 다른 기준|④ 면적비 vs 커버리지|⑤ 우리 스펙 판정|⑥ 운전자 눈에서 달라지는 것'], ['std', '基准三角形', 0, 1, 1, 0, 'sel:sRGB · 网页·显示器|NTSC · 老式电视'], ['b', '测量基准', 0, 1, 1, 0, 'sel:用 sRGB 测量|用 NTSC 测量'], ['p', 'HUD 大小（相对 sRGB 面积）', 50, 140, 1, 90, '%'], ['shape', 'HUD 形状（说明用）', 0, 2, 1, 1, 'sel:与基准同方向|稍微歪斜|明显歪斜']],
     show: v => [['step'], ['step', 'std'], ['step', 'b', 'p'], ['step', 'b', 'p', 'shape'], ['step', 'p', 'shape'], ['step', 'p']][v.step],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       if (v.step === 0) { const tw = Math.min(w * .5, h * .98), m = cie(g, tw, h); cieFill(g, m, tw, h, 1); tri(g, m, SRGB, '#1c2228', null);
@@ -1840,7 +1891,7 @@ const DEMOS = {
       if (v.step === 4) return gamutRead(g, w, h, v);
       return gamutHud(g, w, h, Math.round(v.p * RS));
     } },
-  derating: { minW: 540, ctl: [['src', '曲线', 0, 1, 1, 0, 'sel:示例曲线|DLPQ 专家值'], ['t1', '开始降低', 50, 100, 1, 70, '℃'], ['t2', '降到 50% 的温度', 60, 110, 1, 90, '℃'], ['t', '当前温度', 20, 110, 1, 80, '℃']],
+  derating: { minW: 540, ctl: [['src', '曲线', 0, 1, 1, 1, 'sel:예시 곡선|DLPQ 값'], ['t1', '开始降低', 50, 100, 1, 70, '℃'], ['t2', '降到 50% 的温度', 60, 110, 1, 90, '℃'], ['t', '当前温度', 20, 110, 1, 80, '℃']],
     show: v => v.src ? ['src', 't'] : ['src', 't1', 't2', 't'],
     draw(g, w, h, v) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
       const sets = v.src ? shownSets().map(st => ({ name: st.name, d: st.items.derating.der })) : [{ name: '示例', d: { t1: v.t1, p1: 100, t2: Math.max(v.t2, v.t1 + 1), p2: 50 } }];
@@ -1922,7 +1973,7 @@ function sideEntry(id) {
 function renderSpecDetail() {
   const s = SPECS.find(x => x.id === SP.cur), cat = SPEC_CATS.find(c => c[0] === s.cat)[1], el = $('#spDetail');
   el.style.setProperty('--cat', CAT_COL[s.cat]); el.style.setProperty('--sideW', sideW() + 'px');
-  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div><p class="one">${s.one}</p></div>
+  el.innerHTML = `<section class="sp-main"><div class="sp-hero"><div class="eyebrow">${cat}</div><div class="sp-title"><h2>${s.ko}</h2><span class="en">${s.en}</span></div><p class="one">${s.one}</p>${s.ans ? `<div class="sp-ans"><h4>DLPQ 확인</h4><ul>${s.ans.map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}</div>
       <div class="demo"><div class="demo-h">图解 <span class="note">数字为示例</span></div><canvas id="demoCv" aria-label="改变数值时，展示驾驶员看到的变化的图"></canvas><div class="demo-ctl" id="demoCtl"></div><div class="demo-out" id="demoOut"></div></div>
       <div class="sp-more"><h3>更多说明</h3><p>${s.def}</p><ul>${s.why.map(t => `<li>${t}</li>`).join('')}</ul>
         </div></section>
@@ -2000,7 +2051,7 @@ async function copyText(t, btn) {
   let ok = false; try { await navigator.clipboard.writeText(t); ok = true; } catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch {} ta.remove(); }
   if (btn) { const o = btn.textContent; btn.textContent = ok ? '복사됨' : '복사 실패'; setTimeout(() => { btn.textContent = o; }, 1400); }
 }
-const ISS_QS = ['각 기준은 어느 부품·표면(앞/뒤)·내부·검사 영역(유효 영역, A/B Zone)에 적용하나요?', 'Pore와 Vacuoles는 어떻게 구분하나요? 판정 예시(사진)가 있나요?', '검은 점과 흰 점은 합산해서 세나요, 따로 세나요?', '길이와 폭을 둘 다 만족해야 하나요? 결함 사이 최소 간격 규정이 있나요?', '검사 면적이 100 cm²보다 작을 때 허용 개수는 어떻게 정하나요?', '검사 조명(lux)·거리·각도·배율·시간 조건은?', 'Stain & Discoloration "허용 안 함"은 어떤 조건에서 보이는 것을 기준으로 하나요?'];
+const ISS_QS = ['각 부품의 유효 통광 영역은 무엇으로 정하나요? 도면에 표시된 영역인가요?', '최종 결상 검사는 어떤 방법(육안 거리, 카메라)과 조건으로 판정하나요?', 'Pore와 Vacuoles는 어떻게 구분하나요? 판정 예시(사진)가 있나요?', '길이와 폭을 둘 다 만족해야 하나요? 결함 사이 최소 간격 규정이 있나요?',  '검사 조명(lux)·거리·각도·배율·시간 조건은?', 'Stain & Discoloration "허용 안 함"은 어떤 조건에서 보이는 것을 기준으로 하나요?'];
 const qsText = id => { if (id === 'iss') return '[외관 결함 (ISS)]\n' + ISS_QS.map((q, i) => `${i + 1}. ${q}`).join('\n'); const s = SPECS.find(x => x.id === id); return `[${s.ko} · ${s.en}]\n` + s.qs.map((q, i) => `${i + 1}. ${q}`).join('\n'); };
 function refreshItem(id, rebuildRead) {
   const it = curSet().items[id], r = document.querySelector(`tr[data-erow="${id}"]`); if (r) r.innerHTML = rowCells(id);
@@ -2018,7 +2069,8 @@ function issHTML() {
     <h3 class="sec" style="margin-top:0">원본 기준 · ${esc(set.name)} <span class="note">고치면 이 세트에 저장</span></h3>
     <div class="tablewrap"><table class="etab isst"><thead><tr><th>결함</th><th>길이 (mm)</th><th>폭 (mm)</th><th>허용 개수</th><th>비고</th></tr></thead><tbody>${ISS.map(d => `<tr><td class="nm"><b>${d.en}</b><small>${d.ko}</small></td><td>${cell(d.id, 'l')}</td><td>${cell(d.id, 'w')}</td><td>${cell(d.id, 'n')}</td><td>${cell(d.id, 'note')}</td></tr>`).join('')}</tbody></table></div>
     ${sets.length > 1 ? `<div class="tablewrap"><table class="etab cmpt"><thead><tr><th>결함</th>${sets.map((st, i) => `<th><i style="background:${SETCOL[i % 5]}"></i>${esc(st.name)}</th>`).join('')}</tr></thead><tbody>${ISS.map(d => `<tr><td class="nm">${d.en}</td>${sets.map(st => { const v = st.iss[d.id]; return `<td>${esc([v.l, v.w, v.n].filter(Boolean).join(' · ')) || '—'}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>` : ''}
-    <p class="note">적용 부품·표면·내부·검사 영역은 원본에서 확정되지 않았습니다 ${TC('적용 대상')}. "개/100 cm²"는 100 cm²(10 cm × 10 cm) 면적마다 허용되는 개수입니다. 검사 면적이 100 cm²보다 작을 때의 환산·반올림·최소 허용 개수 규칙은 원본에 없어서 이 화면에서 만들어 적용하지 않습니다.</p>
+    <div class="sp-ans"><h4>DLPQ 확인</h4><ul><li>TFT만이 아니라 광학 필름·렌즈를 포함해 <b>빛이 통과하는 모든 광학 부품</b>의 유효 통광 영역에 적용합니다. 비통광 영역과 하우징 같은 비광학 부품은 제외합니다.</li><li><b>입고·공정·최종 검사</b>에 같은 기준을 씁니다. 입고: 렌즈·필름·패널 등 부품마다 통광면 검사(불합격 시 반품). 공정: 필름 한 장, 렌즈 하나 조립할 때마다 새 먼지·긁힘 점검. 최종: 완제품 결상 검사에서 광로 전체 재점검.</li><li>검은 점과 흰 점은 <b>합쳐서</b> 100 cm²당 5개 이하이며, <b>1개라도 넘으면 불합격</b>。</li><li>100 cm²보다 작은 부품은 <b>면적 비율</b>로 환산하고 <b>소수점은 내림</b>합니다. 예: 통광 면적 50 cm² → 5 × 0.5 = 2.5 → 2개.</li></ul></div>
+    <p class="note">"개/100 cm²"는 100 cm²(10 cm × 10 cm) 면적마다 허용되는 개수입니다.</p>
     <h3 class="sec">결함 뜻</h3><div class="iss-grid">${ISS.map(d => `<div class="iss"><h3>${d.ko} <span class="en">${d.en}</span></h3><p>${d.def}</p>${d.chk ? `<p>${TC(d.chk)}</p>` : ''}</div>`).join('')}</div>
     <h3 class="sec">확인할 질문 <button class="mini" data-copyq="iss">복사</button></h3><ol class="qs">${ISS_QS.map(q => `<li>${q}</li>`).join('')}</ol></section>
     <section class="iss-r"><h3 class="sec" style="margin-top:0">설명용 모델: 같은 결함이 위치에 따라 얼마나 보이나</h3>

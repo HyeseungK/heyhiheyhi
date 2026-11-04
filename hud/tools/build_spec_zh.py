@@ -22,9 +22,9 @@ def cut(s, a, b, keep_b=False):
 
 # Values the spec pictures borrow from the 3D optics model (virtual image distance, FOV, TFT size).
 # Read from the running Korean page; update them if the model changes.
-MODEL = """const OPT0 = { vid: 480, v0: { y: -0.052178987401167394 } };
-let RAD = 83.50203570306664, HFOV = 0.174904591372566, VFOV = 0.06427354040624975;
-const LCDR = { w: 12.000000782785996, d: 3.095815799437556 };"""
+MODEL = """const OPT0 = { vid: 420, v0: { y: -0.05217898740116744 } };
+let RAD = 58.20834650081151, HFOV = 0.20368025469260131, VFOV = 0.07490697896214626;
+const LCDR = { w: 12.00049748256162, d: 2.730479561595165 };"""
 
 css = cut(src, '<style>', '</style>', True)
 spec_markup = cut(src, '<main id="specPage" hidden>', '</main>', True).replace('<main id="specPage" hidden>', '<main id="specPage">')
