@@ -909,6 +909,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 <div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
   <div class="phead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span>보기 설정</span><button class="x" id="setClose" aria-label="보기 설정 접기">접기 ▴</button></div>
   <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
+  <label class="ctl" for="selOp">선택 부품 불투명도 <input id="selOp" type="range" min="0.2" max="1" step="0.05" value="0.9"><output id="selOpOut">90%</output></label>
   <div class="ls-ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
   <div class="ls-ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
   <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
@@ -1730,21 +1731,23 @@ function enterBL(quiet) { state.bl = true; state.blT = .55; state.car = false; m
 function exitBL(quiet) { state.bl = false; state.blT = 0; applyVisual(); if (!quiet) { setCam(V(0, 7, -1), 70, .85, 1.05); renderCard(); } }
 
 /* ───────────────────────── state + visuals ───────────────────────── */
-const state = { explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
+const state = { selOp: .9, explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
 const selIds = () => !state.sel ? [] : state.sel.g ? GROUPS[state.sel.g].kids : [state.sel.id];
-function setOpacity(o, f) { if (!o.material || o.userData.keepMat) return; (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { const tr = f < .999 || m.userData.tr; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = (m.userData.op ?? 1) * f; m.depthWrite = f < .6 ? false : (m.userData.dw ?? true); }); }
+function setOpacity(o, f, boost = null) { if (!o.material || o.userData.keepMat) return; (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { const op0 = m.userData.op ?? 1, op = boost == null ? op0 * f : boost;
+  const tr = op < .999 || (boost == null && m.userData.tr); if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = op; m.depthWrite = boost != null ? op >= .6 : f < .6 ? false : (m.userData.dw ?? true); }); }
 const HL = new THREE.Color(0x1f62d1).multiplyScalar(.12);
 const outlineMat = new THREE.LineBasicMaterial({ color: 0x1f62d1, transparent: true, opacity: .9, depthTest: false });
 function applyVisual() {
   const ids = state.bl ? [] : selIds(), owners = new Set(ids.map(ownerOf));
   for (const id in objs) {
-    const o = objs[id], isH = P[id].housing; let f = isH && state.housing === 'ghost' ? .16 : 1;
-    if (owners.size && !owners.has(id)) f = Math.min(f, isH ? .03 : .07);
+    const o = objs[id], isH = P[id].housing, picked = owners.has(id) && !state.bl; let f = isH && state.housing === 'ghost' && !picked ? .16 : 1;
+    if (owners.size && !owners.has(id)) f = Math.min(f, isH ? .02 : .045);
     o.obj.visible = !state.hidden.has(id) && !(state.iso && owners.size && !owners.has(id)) && (!state.bl || BL_SET.includes(id)); o.fade = f;
     if (BL_SET.includes(id)) o.obj.traverse(m => { if (m.material) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => { mm.clippingPlanes = state.bl ? [blCut] : []; }); });
-    o.obj.traverse(m => { if (m.isMesh) setOpacity(m, f); if (m.material && (isH || id === 'cover')) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => mm.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
+    o.obj.traverse(m => { if (m.isMesh) setOpacity(m, f, picked ? state.selOp : null); if (m.material && (isH || id === 'cover')) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => mm.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
   }
-  housingEdges.forEach(e => { e.visible = true; e.material.opacity = state.housing === 'solid' ? .32 : .5; e.material.color.setHex(state.housing === 'solid' ? 0x8a96a3 : 0x5b6672); });
+  const hPicked = [...owners].some(id => P[id]?.housing);
+  housingEdges.forEach(e => { e.visible = true; e.material.opacity = owners.size && !hPicked ? .05 : state.housing === 'solid' ? .32 : .5; e.material.color.setHex(state.housing === 'solid' ? 0x8a96a3 : 0x5b6672); });
   const under = ids.includes('epson') || ids.includes('max'); shieldMeshes.forEach(m => setOpacity(m, under ? .1 : (objs.pcb.fade ?? 1)));
   pickables.forEach(o => { const on = ids.includes(o.userData.pid); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.emissive && m.userData.em) m.emissive.copy(on ? HL : m.userData.em); }); });
   carG.visible = state.car; grid.visible = !state.car; virtMesh.visible = state.light !== 'off';
@@ -1994,6 +1997,7 @@ addEventListener('keydown', e => {
 });
 function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
 $('#explode').addEventListener('input', e => setExplode(+e.target.value));
+$('#selOp').addEventListener('input', e => { state.selOp = +e.target.value; $('#selOpOut').textContent = Math.round(state.selOp * 100) + '%'; applyVisual(); });
 function setHousing(h) { state.housing = h; document.querySelectorAll('#housing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h === h)); applyVisual(); }
 $('#housing').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setHousing(b.dataset.h); });
 $('#lightMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.light = b.dataset.l; document.querySelectorAll('#lightMode button').forEach(x => x.setAttribute('aria-pressed', x === b)); applyVisual(); });
