@@ -909,8 +909,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 <div id="settings" class="float" hidden role="dialog" aria-label="보기 설정">
   <div class="phead"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span>보기 설정</span><button class="x" id="setClose" aria-label="보기 설정 접기">접기 ▴</button></div>
   <label class="ctl" for="explode">분해 <input id="explode" type="range" min="0" max="1" step="0.01" value="0"><output id="explodeOut">0%</output></label>
-  <label class="ctl" for="selOp">선택 부품 불투명도 <input id="selOp" type="range" min="0.2" max="1" step="0.05" value="0.9"><output id="selOpOut">90%</output></label>
-  <div class="ls-ctl">하우징 <div class="seg" id="housing"><button data-h="solid" aria-pressed="false">불투명</button><button data-h="ghost" aria-pressed="true">반투명</button><button data-h="cut" aria-pressed="false">단면</button></div><span></span></div>
+  <label class="ctl" for="dimOthers" title="부품을 선택했을 때 나머지 부품을 얼마나 흐리게 할지">나머지 흐리게 <input id="dimOthers" type="range" min="0" max="1" step="0.05" value="0.9"><output id="dimOut">90%</output></label>
   <div class="ls-ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
   <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
   <div class="chks"><label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label><label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label></div>
@@ -1731,7 +1730,7 @@ function enterBL(quiet) { state.bl = true; state.blT = .55; state.car = false; m
 function exitBL(quiet) { state.bl = false; state.blT = 0; applyVisual(); if (!quiet) { setCam(V(0, 7, -1), 70, .85, 1.05); renderCard(); } }
 
 /* ───────────────────────── state + visuals ───────────────────────── */
-const state = { selOp: .9, explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
+const state = { selOp: 1, dim: .9, explode: 0, explodeT: 0, bl: false, blT: 0, blS: 0, housing: 'ghost', light: 'anim', tilt: 0, tiltT: 0, warp: true, sun: false, car: false, sel: null, iso: false, hidden: new Set(), step: -1 };
 const selIds = () => !state.sel ? [] : state.sel.g ? GROUPS[state.sel.g].kids : [state.sel.id];
 function setOpacity(o, f, boost = null) { if (!o.material || o.userData.keepMat) return; (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { const op0 = m.userData.op ?? 1, op = boost == null ? op0 * f : boost;
   const tr = op < .999 || (boost == null && m.userData.tr); if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = op; m.depthWrite = boost != null ? op >= .6 : f < .6 ? false : (m.userData.dw ?? true); }); }
@@ -1741,15 +1740,15 @@ function applyVisual() {
   const ids = state.bl ? [] : selIds(), owners = new Set(ids.map(ownerOf));
   for (const id in objs) {
     const o = objs[id], isH = P[id].housing, picked = owners.has(id) && !state.bl; let f = isH && state.housing === 'ghost' && !picked ? .16 : 1;
-    if (owners.size && !owners.has(id)) f = Math.min(f, isH ? .02 : .045);
-    o.obj.visible = !state.hidden.has(id) && !(state.iso && owners.size && !owners.has(id)) && (!state.bl || BL_SET.includes(id)); o.fade = f;
+    if (owners.size && !owners.has(id)) f = Math.min(f, (isH ? .2 : .45) * (1 - state.dim)); // 나머지 흐리게: 100% hides the rest
+    o.obj.visible = !state.hidden.has(id) && !((state.iso || state.dim >= .999) && owners.size && !owners.has(id)) && (!state.bl || BL_SET.includes(id)); o.fade = f;
     if (BL_SET.includes(id)) o.obj.traverse(m => { if (m.material) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => { mm.clippingPlanes = state.bl ? [blCut] : []; }); });
     o.obj.traverse(m => { if (m.isMesh) setOpacity(m, f, picked ? state.selOp : null); if (m.material && (isH || id === 'cover')) (Array.isArray(m.material) ? m.material : [m.material]).forEach(mm => mm.clippingPlanes = state.housing === 'cut' ? [cutPlane] : []); });
   }
   const hPicked = [...owners].some(id => P[id]?.housing);
-  housingEdges.forEach(e => { e.visible = true; e.material.opacity = owners.size && !hPicked ? .05 : state.housing === 'solid' ? .32 : .5; e.material.color.setHex(state.housing === 'solid' ? 0x8a96a3 : 0x5b6672); });
+  housingEdges.forEach(e => { e.visible = true; e.material.opacity = owners.size && !hPicked ? .5 * (1 - state.dim) : state.housing === 'solid' ? .32 : .5; e.material.color.setHex(state.housing === 'solid' ? 0x8a96a3 : 0x5b6672); });
   const under = ids.includes('epson') || ids.includes('max'); shieldMeshes.forEach(m => setOpacity(m, under ? .1 : (objs.pcb.fade ?? 1)));
-  pickables.forEach(o => { const on = ids.includes(o.userData.pid); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.emissive && m.userData.em) m.emissive.copy(on ? HL : m.userData.em); }); });
+  pickables.forEach(o => { const on = ids.includes(o.userData.pid); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.emissive && m.userData.em) m.emissive.copy(m.userData.em); /* the picked part keeps its own colours; the blue outline marks it */ }); });
   carG.visible = state.car; grid.visible = !state.car; virtMesh.visible = state.light !== 'off';
   sunLines.visible = hotSpot.visible = state.sun && state.explode < .05;
   M.led.color.setHex(state.light === 'off' ? 0x6a655c : 0xfff1d6); lcdWarpMesh.material.color.setScalar(state.light === 'off' ? .05 : 1);
@@ -1997,9 +1996,8 @@ addEventListener('keydown', e => {
 });
 function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
 $('#explode').addEventListener('input', e => setExplode(+e.target.value));
-$('#selOp').addEventListener('input', e => { state.selOp = +e.target.value; $('#selOpOut').textContent = Math.round(state.selOp * 100) + '%'; applyVisual(); });
+$('#dimOthers').addEventListener('input', e => { state.dim = +e.target.value; $('#dimOut').textContent = Math.round(state.dim * 100) + '%'; applyVisual(); });
 function setHousing(h) { state.housing = h; document.querySelectorAll('#housing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h === h)); applyVisual(); }
-$('#housing').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setHousing(b.dataset.h); });
 $('#lightMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.light = b.dataset.l; document.querySelectorAll('#lightMode button').forEach(x => x.setAttribute('aria-pressed', x === b)); applyVisual(); });
 $('#warp').addEventListener('change', e => { state.warp = e.target.checked; rebuildLight(); });
 $('#sun').addEventListener('change', e => { state.sun = e.target.checked; applyVisual(); if (state.sun) focus(['concave', 'tft']); });
@@ -3339,7 +3337,7 @@ const TOUR_D = [
   { tab: 'struct', el: '.viewbar', t: '시점', p: '정해 둔 각도로 바로 이동합니다. "차량 장착"과 "운전자 시점"에서는 앞유리와 허상까지 함께 보입니다.' },
   { tab: 'struct', el: '#play', before: () => openPanel('#play', '#playBtn'), t: 'HUD 작동 원리', p: '재생을 누르면 영상 수신부터 허상까지 빛이 지나가는 순서를 단계별로 보여 줍니다. 단계 이름을 눌러 바로 갈 수도 있습니다.' },
   { tab: 'struct', el: '#info', before: () => openPanel('#info', '#infoBtn'), t: '상세 정보', p: '선택한 부품의 역할, 사진, BOM 정보가 여기에 나옵니다. 아무것도 고르지 않으면 제품 정보가 보입니다.' },
-  { tab: 'struct', el: '#setBtn', t: '보기 설정', p: '분해 정도, 하우징 투명도, 빛 표시 방식, 미러 각도를 바꿉니다.' },
+  { tab: 'struct', el: '#setBtn', t: '보기 설정', p: '분해 정도, 부품을 골랐을 때 나머지를 얼마나 흐리게 할지, 빛 표시 방식, 미러 각도를 바꿉니다.' },
   { tab: 'spec', el: '#spList', before: () => { if (SP.view !== 'items') document.querySelector('[data-spview="items"]').click(); }, t: '광학 스펙 항목', p: '항목을 고르면 가운데에 그 스펙의 뜻과 그림이, 오른쪽에 전문가 값이 나옵니다. 점 색은 확인 상태입니다.' },
   { tab: 'spec', el: '.sp-main', t: '그림으로 이해', p: '예시 숫자로 개념을 보여 줍니다. 슬라이더를 움직이면 그림과 설명이 함께 바뀝니다.' },
   { tab: 'spec', el: '#spSide', t: '전문가 값 입력', p: '전문가가 적은 원문을 붙여 넣으면 목표·공차·최종 합격 조건으로 읽어 줍니다. 측정값을 넣으면 판정합니다. 가운데와의 경계를 끌어 너비를 바꿀 수 있습니다.' },
