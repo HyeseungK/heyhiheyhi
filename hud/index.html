@@ -373,7 +373,11 @@ body[data-tab="bom"] .col, body[data-tab="bom"] .hint { display: none; }
 .bm-det dl { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 12px; }
 .bm-det dt { color: var(--muted); }
 .bm-det dd { margin: 0; overflow-wrap: anywhere; }
-.bm-det .acts { width: 236px; }
+.bm-det .acts { width: 96px; }
+.bm-ph { position: relative; display: block; width: 96px; height: 64px; padding: 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--line-2); cursor: zoom-in; }
+.bm-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bm-ph span { position: absolute; right: 4px; bottom: 4px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: rgba(16,20,24,.78); color: #fff; font: 600 11.5px/20px var(--sans); text-align: center; }
+.bm-ph:hover { box-shadow: 0 0 0 2px var(--accent); }
 .bm-det .acts .thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .bm-det p { grid-column: 1 / -1; margin: 2px 0 0; }
 .bm-none { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
@@ -3266,7 +3270,7 @@ function bomDetail(b) {
     ['재질', esc(b.mat || '')], ['사양', esc(b.spec && SIZE_RE.test(b.spec) && b.spec.length > 24 ? b.spec : '')], ['개수', b.qty && b.qty + ' EA'], ['중량', b.w && `${num(b.w)} g`], ['치수', dimOf(b) && dimOf(b) + ' mm'], ['공급사', esc(supOf(b))]].filter(x => x[1]);
   const sel = bomSelOf(b), ph = !sel ? [] : sel.g ? [...new Set(GROUPS[sel.g].kids.flatMap(k => P[k].photos))] : P[sel.id].photos;
   const note = b.note || (b.on && !b.id ? `3D에서 위치를 하나씩 표시하지 않고 ${P[b.on].name} 전체를 강조합니다.` : '');
-  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? thumbs(ph.slice(0, 4)) : ''}</div>${note ? `<p class="note">${note}</p>` : ''}</div>`;
+  return `<div class="bm-det"><dl>${f.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="acts">${ph.length ? `<button class="bm-ph" data-photo="0" data-set="${ph.join(',')}" aria-label="사진 ${ph.length}장 크게 보기" title="${PHOTO[ph[0]]}"><img src="photos/${ph[0]}.jpg" alt="${PHOTO[ph[0]]}" loading="lazy">${ph.length > 1 ? `<span>${ph.length}</span>` : ''}</button>` : ''}</div>${note ? `<p class="note">${note}</p>` : ''}</div>`;
 }
 function renderBOM() {
   const q = ($('#bomQ').value || '').trim().toLowerCase();
