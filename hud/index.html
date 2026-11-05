@@ -1039,9 +1039,12 @@ const P = {
     desc:'2차 렌즈 위, TFT 바로 아래에 놓이는 0.25 mm 투명 시트입니다. 빛을 마지막으로 고르게 펴고 방향을 다듬습니다. 실물 127.7 × 53 × 0.25 mm, 2 g.',
     points:['확산 필름은 LED 점광원의 얼룩을 지웁니다.','HUD PGU에는 보통 휘도 향상 필름(BEF, DBEF)도 들어갑니다. DBEF는 TFT가 버릴 편광을 되돌려 재활용해 밝기를 높입니다. 이 제품의 정확한 필름 구성은 확인하지 못했습니다.'],
     specs:[['두께','0.25 mm'],['중량','2 g']] },
-  tftholder: { name:'TFT 지지대', full:'TFT 지지대 (브래킷)', en:'Backlight frame', mat:'', conf:'photo', ex:[0,13.5,0], photos:['tftholder-s2g','tft-panel','pgu-module','lens-array'],
-    desc:'LED 기판, 렌즈, 필름, TFT를 한 덩어리로 쌓아 잡아 주는 검은 플라스틱 틀입니다. 네 모서리 나사로 방열판에 고정됩니다.',
-    points:['층 사이 간격이 광학 성능을 정하므로 지지대 치수가 중요합니다.'], specs:[] },
+  tftframe: { name:'TFT 프레임', full:'TFT 프레임 (렌즈 홀더)', en:'Backlight lens frame', mat:'', conf:'photo', ex:[0,9.5,0], photos:['blframe-s2g','pgu-module','lens-array'],
+    desc:'LED 기판에 나사로 붙는 얕은 검은 틀입니다. 안쪽 턱에 1차 렌즈(돔)를 LED 바로 위에, 그 위에 2차 렌즈(허니콤)를 얹어 LED와 렌즈 사이 간격을 고정합니다. 실물 155 × 64 × 21 mm, 22 g.',
+    points:['뒷면은 LED 기판(알루미늄)과 파란 방열 패드가 막고, 그 패드가 방열판 A에 닿습니다.','TFT에는 닿지 않습니다. TFT는 위의 TFT 지지대가 잡습니다.'], specs:[['중량','22 g'],['크기','155 × 64 × 21 mm']] },
+  tftholder: { name:'TFT 지지대', full:'TFT 지지대 (브래킷)', en:'TFT bracket · light tunnel', mat:'', conf:'photo', ex:[0,13.5,0], photos:['tftholder-s2g','tft-panel'],
+    desc:'TFT 프레임 위에 얹혀 광학 필름과 TFT를 잡는 검은 틀입니다. TFT 위로는 벽이 비스듬히 벌어지며 올라가, TFT를 나온 빛이 옆으로 새지 않게 가두는 통로 역할을 합니다. 실물 143 × 64 × 24 mm, 28 g.',
+    points:['TFT는 방진 폼으로 눌러 고정합니다.','한쪽 위의 칸막이 돌출부로 Bare PCB(FPC)가 빠져나갑니다(추정).'], specs:[['중량','28 g'],['크기','143 × 64 × 24 mm']] },
   concave: { name:'곡면경', full:'곡면경', en:'Concave freeform mirror', mat:'', conf:'photo', ex:[0,26,18], photos:['mirror-housing'],
     desc:'HUD 광학계의 핵심입니다. 작은 TFT 영상을 크게 확대하고, 영상이 운전자 앞 수 m 거리에 떠 있는 것처럼 보이게 만듭니다. 모터가 각도를 바꿔 운전자 눈높이에 맞춥니다.',
     points:['TFT가 곡면경의 초점거리보다 조금 안쪽에 있으면 확대된 허상이 생깁니다(돋보기 원리). 초점에 가까울수록 허상이 멀어집니다.','실제 곡면경은 자유곡면(freeform)이고 윈드실드 곡률까지 함께 보정합니다. 이 모델은 구면으로 근사했습니다.','사진에서 보랏빛으로 비치는 코팅은 적외선을 투과시켜 햇빛 열이 TFT로 모이는 것을 줄이는 콜드 미러 코팅일 가능성이 큽니다(추정).'],
@@ -1122,7 +1125,7 @@ const P = {
     points:['라벨: ZEEKR HA1SZK63E, EPC 검사 스티커.'], specs:[] },
 };
 const GROUPS = {
-  backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','lens2','film','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
+  backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','lens2','film','tftframe','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
   board: { name:'기판 실장 부품', kids:['hsd','pwrcon','wcon','fpccon','ecap','ind','xtal','sclip'], desc:'메인 PCB 사진에서 위치를 확인한 커넥터, 커패시터, 인덕터 등입니다. 저항·커패시터 같은 아주 작은 칩 부품(수백 개)은 위치를 하나씩 표시하지 않았습니다.' },
   chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
@@ -1415,16 +1418,26 @@ const LEDS = [];
 { const g = new THREE.Group(); box(PG.w - .2, .14, PG.d - .2, M.sheet, PG.cx, .52, PG.cz, g); box(3.2, .14, 1.6, M.sheet, PG.cx - 1.5, .52, PG.cz - PG.d / 2 - .7, g); box(LCDR.w + 1.6, .14, LCDR.d + 1.4, M.ledBoard, PG.cx, .66, PG.cz, g);
   const tx = PG.cx + LCDR.w * .32, tz = PG.cz - PG.d / 2 - 1.3; box(3, .12, 2.8, M.ledBoard, tx, .66, tz, g); box(1.9, .55, .7, M.white, tx, 1, tz - .7, g);
   register('ledboard', g); }
-{ // TFT holder: black frame; inner ledges carry the lens plate and the film, a top lip carries the TFT; corner screws and side snap hooks (ledges/hooks estimated from photos)
-  const g = new THREE.Group(), fw = PG.w, fd = PG.d, y0 = .6, y1 = Ly - .3, h = y1 - y0, ym = (y0 + y1) / 2, t = .7;
+{ // TFT frame (22 g, 155 × 64 × 21 mm): shallow black frame screwed to the LED board; inner ledges carry the 1st (dome) and 2nd (honeycomb) lens
+  const g = new THREE.Group(), fw = PG.w + .3, fd = PG.d + .1, y0 = .6, y1 = 2.42, h = y1 - y0, ym = (y0 + y1) / 2, t = .55;
   box(fw, h, t, M.plastic, PG.cx, ym, PG.cz - fd / 2 + t / 2, g); box(fw, h, t, M.plastic, PG.cx, ym, PG.cz + fd / 2 - t / 2, g);
   box(t, h, fd, M.plastic, PG.cx - fw / 2 + t / 2, ym, PG.cz, g); box(t, h, fd, M.plastic, PG.cx + fw / 2 - t / 2, ym, PG.cz, g);
-  const ledge = (y, inset) => { const iw = fw - 2 * t, id = fd - 2 * t;
-    box(iw, .16, inset, M.plastic, PG.cx, y, PG.cz - id / 2 + inset / 2, g); box(iw, .16, inset, M.plastic, PG.cx, y, PG.cz + id / 2 - inset / 2, g);
-    box(inset, .16, id, M.plastic, PG.cx - iw / 2 + inset / 2, y, PG.cz, g); box(inset, .16, id, M.plastic, PG.cx + iw / 2 - inset / 2, y, PG.cz, g); };
-  ledge(1.11, .45); ledge(2.34, .5); ledge(y1 - .08, .3);
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const x = PG.cx + sx * (fw / 2 + .2), z = PG.cz + sz * (fd / 2 - .6); cyl(.45, h + .3, M.plastic, x, ym, z, g); cyl(.3, .14, M.silver, x, y1 + .22, z, g); }
-  for (const sz of [-1, 1]) for (const k of [-1, 0, 1]) box(.9, .7, .35, M.plastic, PG.cx + k * fw / 3, y1 - .6, PG.cz + sz * (fd / 2 + .15), g);
+  const iw = fw - 2 * t, id = fd - 2 * t, ledge = (y, inset) => { box(iw, .14, inset, M.plastic, PG.cx, y, PG.cz - id / 2 + inset / 2, g); box(iw, .14, inset, M.plastic, PG.cx, y, PG.cz + id / 2 - inset / 2, g); };
+  ledge(1.11, .4); ledge(1.86, .35);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const x = PG.cx + sx * (fw / 2 + .25), z = PG.cz + sz * (fd / 2 - .4); cyl(.4, h, M.plastic, x, ym, z, g); cyl(.26, .12, M.black, x, y1 + .06, z, g); }
+  for (const sx of [-1, 1]) { box(.5, .9, 1.1, M.plastic, PG.cx + sx * (fw / 2 + .25), ym, PG.cz, g); cyl(.2, .12, M.black, PG.cx + sx * (fw / 2 + .5), ym, PG.cz, g, 'x'); }
+  box(.15, .9, .9, M.plastic, PG.cx + fw / 2 + .55, ym, PG.cz - 1.5, g); box(.6, .15, .9, M.plastic, PG.cx + fw / 2 + .3, ym + .38, PG.cz - 1.5, g); // the U-hook on one end
+  register('tftframe', g); }
+{ // TFT holder (28 g, 143 × 64 × 24 mm): sits on the frame, holds the film and the TFT, then flares into a black light tunnel above the panel
+  const g = new THREE.Group(), fw = PG.w - .2, fd = PG.d, y0 = 2.42, y1 = Ly + .05, h = y1 - y0, ym = (y0 + y1) / 2, t = .5, top = Ly + 1.8, fl = .9;
+  box(fw, h, t, M.plastic, PG.cx, ym, PG.cz - fd / 2 + t / 2, g); box(fw, h, t, M.plastic, PG.cx, ym, PG.cz + fd / 2 - t / 2, g);
+  box(t, h, fd, M.plastic, PG.cx - fw / 2 + t / 2, ym, PG.cz, g); box(t, h, fd, M.plastic, PG.cx + fw / 2 - t / 2, ym, PG.cz, g);
+  const iw = fw - 2 * t, id = fd - 2 * t;
+  for (const sz of [-1, 1]) box(iw, .14, .35, M.plastic, PG.cx, y1 - .1, PG.cz + sz * (id / 2 - .175), g);
+  for (const sz of [-1, 1]) slab({ z: PG.cz + sz * (fd / 2 - t / 2), y: y1 }, { z: PG.cz + sz * (fd / 2 - t / 2 + fl), y: top }, .22, fw + fl, M.plastic, g); // tapered walls
+  for (const sx of [-1, 1]) { const m = box(.22, Math.hypot(top - y1, fl), fd + fl * 1.4, M.plastic, PG.cx + sx * (fw / 2 + fl / 2), (y1 + top) / 2, PG.cz, g); m.rotation.z = sx * Math.atan2(fl, top - y1); }
+  box(5, 1, 1.1, M.plastic, PG.cx, top - .3, PG.cz - fd / 2 - fl - .3, g); for (const k of [-1, 1]) box(.15, 1, 1.1, M.plastic, PG.cx + k * .8, top - .3, PG.cz - fd / 2 - fl - .3, g); // ribbed FPC tab
+  for (const sx of [-1, 1]) { cyl(.3, .4, M.plastic, PG.cx + sx * (fw / 2 + fl + .5), y1 + .4, PG.cz + .8, g, 'x'); }
   register('tftholder', g); }
 { const g = new THREE.Group(); for (const s of [-1, 1]) box(.7, .12, LCDR.d * .8, M.foam, PG.cx + s * (LCDR.w / 2 + .25), Ly + .02, PG.cz, g); box(LCDR.w * .9, .12, .6, M.foam, PG.cx, Ly + .02, PG.cz + LCDR.d / 2 + .3, g);
   for (const s of [-1, 1]) box(1.6, .3, HOLE.z1 - HOLE.z0, M.foam, s * (HOLE.x + .8), YFLOOR - .35, (HOLE.z0 + HOLE.z1) / 2, g);
@@ -1672,12 +1685,12 @@ function rebuildLight() {
 
 
 /* ───────────────────────── backlight close-up: section through the middle LED row ───────────────────────── */
-const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftholder', 'tft', 'pad', 'heatsink', 'foam', 'fpcb', 'acf'];
-const BL_OFF = { heatsink: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, film: 3.6, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
+const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftframe', 'tftholder', 'tft', 'pad', 'heatsink', 'foam', 'fpcb', 'acf'];
+const BL_OFF = { heatsink: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, tftframe: 1.4, film: 3.6, tftholder: 4.8, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
 const blCut = new THREE.Plane(V(0, 0, -1), PG.cz + .001);
 const BL_LABELS = [
   ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산 시트', 'film', 2.5, 'L'], ['2차 렌즈 · 허니콤', 'lens2', 2.1, 'R'],
-  ['TFT 지지대 · 필름 받침 턱', 'tftholder', 2.34, 'R'], ['1차 렌즈 · LED마다 돔 1개', 'lens', 1.5, 'L'], ['TFT 지지대 · 렌즈 받침 턱', 'tftholder', 1.11, 'R'],
+  ['TFT 지지대 · 필름·TFT 받침', 'tftholder', 3.2, 'R'], ['1차 렌즈 · LED마다 돔 1개', 'lens', 1.5, 'L'], ['TFT 프레임 · 렌즈 받침 턱', 'tftframe', 1.11, 'R'],
   ['LED', 'led', .86, 'L'], ['LED 기판', 'ledboard', .62, 'R'], ['방열 실리콘 패드', 'pad', .38, 'R'], ['방열판 (ADC12)', 'heatsink', -1.6, 'L'],
 ];
 const blPaths = [];
@@ -1692,7 +1705,7 @@ const blPaths = [];
       blPaths.push({ k: nearestRay(xt), pass: mk([...pts, [xt + Math.tan(sc) * .3, 3.94, 'tft'], [xt + Math.tan(sc) * 2.8, 6.6, 'tft']]), block: mk([...pts, [xt, 3.74, 'tft']]), blue: 6 });
     } else { // too wide for its lens: crosses the plate bent and is soaked up by the black wall or the ledge
       const x1 = p.x + dx, a2 = ang * .62, xw = a < 0 ? wallL : wallR, x2 = x1 + Math.tan(a2) * .22, yw = 1.41 + (xw - x2) / Math.tan(a2), ye = Math.min(yw, 2.3);
-      blPaths.push({ k: -1, wall: mk([...base, [x2, 1.41, 'lens'], [x2 + Math.tan(a2) * (ye - 1.41), ye, 'tftholder']]) });
+      blPaths.push({ k: -1, wall: mk([...base, [x2, 1.41, 'lens'], [x2 + Math.tan(a2) * (ye - 1.41), ye, 'tftframe']]) });
     } } }); }
 const NB = 380, bPos = new Float32Array(NB * 3), bCol = new Float32Array(NB * 3), bS = { path: new Int32Array(NB), s: new Float32Array(NB) };
 const bGeo = new THREE.BufferGeometry(); bGeo.setAttribute('position', new THREE.BufferAttribute(bPos, 3)); bGeo.setAttribute('color', new THREE.BufferAttribute(bCol, 3));
@@ -1898,7 +1911,7 @@ function renderInfo() {
         <li><b>1차 렌즈 (돔)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다.</li>
         <li><b>LED · LED 기판</b> 빛을 냅니다. 열은 기판 뒤로 빠집니다.</li>
         <li><b>실리콘 패드 → 방열판</b> 열을 핀으로 보내 공기로 버립니다.</li>
-        <li><b>TFT 지지대</b> 위 층들을 정해진 간격으로 쌓아 잡는 검은 틀. 모서리 나사와 옆면 걸쇠로 고정합니다.</li></ol>
+        <li><b>TFT 프레임 · TFT 지지대</b> 아래 TFT 프레임이 LED 기판에 나사로 붙어 렌즈 두 장을 잡고, 위 TFT 지지대가 필름과 TFT를 잡습니다.</li></ol>
       <p class="note">층 순서(1차 렌즈 → 2차 렌즈 → 필름 → TFT)와 각 부품은 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
     return;
   }
@@ -3228,7 +3241,7 @@ const BOM = [
   {"lv": 2, "sec": "mech", "cn": "", "r": 1, "ko": "1차 렌즈 (돔 렌즈 어레이)", "w": "9", "id": "lens", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 2, "ko": "광학 필름", "w": "2", "id": "film", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 3, "ko": "2차 렌즈 (허니콤 렌즈 어레이)", "w": "13", "id": "lens2", "cat": "opt"},
-  {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "TFT 프레임 (렌즈·필름 홀더)", "w": "22", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "TFT 프레임 (렌즈 홀더)", "w": "22", "id": "tftframe", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 5, "ko": "TFT 지지대", "w": "28", "id": "tftholder", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 6, "ko": "모터 커버 + 방열판 A", "w": "467", "id": "lower", "cat": "mech", "note": "플라스틱 모터 커버에 금속 방열판 A를 조립한 상태의 무게입니다."},
   {"lv": 2, "sec": "mech", "cn": "", "r": 6.5, "pg": 6, "ko": "└ 방열판 A (금속)", "wt": "위 467 g에 포함", "id": "heatsink", "cat": "mech"},
