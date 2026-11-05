@@ -3431,6 +3431,7 @@ for (let i = 0; i < NP; i++) spawn(i, true);
 rebuildLight(); for (let i = 0; i < NP; i++) spawn(i, true);
 resize(); applyVisual(); renderCard();
 const phoneLayout = () => { if (mobile()) { setPanel('play', false); setPanel('info', false); setPanel('left', false); } };
+if (!mobile()) setPanel('left', true); // desktop opens with the parts list showing
 phoneLayout(); matchMedia('(max-width: 900px)').addEventListener('change', phoneLayout);
 cam.t.copy(cam.gt); cam.r = cam.gr; cam.th = cam.gth; cam.ph = cam.gph;
 requestAnimationFrame(tick);
