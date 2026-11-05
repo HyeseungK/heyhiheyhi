@@ -972,7 +972,7 @@ const PHOTO = {
   'heatsink-back':'방열판 정면','upper-inside':'하부 베이스 안쪽','opening':'베이스·모터 커버 분리 순간','lower-open':'하부 하우징 내부','lower-pcb':'메인 PCB 장착 상태',
   'motor-bay':'모터 베이','ffc':'Custom FPCB (회색 케이블)와 커넥터','tft-fpcb-map':'① TFT · ② Bare PCB (Flexible) · ③ ACF 접합선 · ④ Custom FPCB','tcon-mounted':'TFT와 Bare PCB 장착 상태','pcb-shield':'메인 PCB (차폐 캔 장착)','pcb-noshield':'메인 PCB (차폐 캔 제거)',
   'pcb-out':'메인 PCB 단품','pcb-back-out':'메인 PCB 뒷면 단품','heatsink-fins':'방열판 핀과 Base Plate','bracket-inside':'하우징 속 방열판과 PGU','pgu-pad':'PGU 뒷면 실리콘 패드',
-  'lens-array':'렌즈 어레이 (PC)','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'2차 렌즈 (허니콤) · TFT 브래킷에 장착','lens1-s2g':'1차 렌즈 (돔) 단품','film-s2g':'광학 필름 단품 (0.25 mm)','lens2-s2g':'2차 렌즈 (허니콤) 단품','blframe-s2g':'렌즈 홀더 (백라이트 프레임)','tftholder-s2g':'TFT 지지대 단품','motorcover-s2g':'모터 커버 + 방열판 A','base-s2g':'하부 베이스 곡면경 (보호 필름 부착)','mirror-housing':'미러 하우징 (곡면경·평면경)','pcb-housing':'하부 하우징 전체',
+  'lens-array':'렌즈 어레이 (PC)','lens-array-angle':'렌즈 어레이 비스듬히','hex-diffuser':'2차 렌즈 (허니콤) · TFT 브래킷에 장착','lens1-s2g':'1차 렌즈 (돔) 단품','film-s2g':'광학 필름 단품 (0.25 mm)','lens2-s2g':'2차 렌즈 (허니콤) 단품','blframe-s2g':'TFT 프레임 (렌즈·필름 홀더)','tftholder-s2g':'TFT 지지대 단품','motorcover-s2g':'모터 커버 + 방열판 A','base-s2g':'하부 베이스 곡면경 (보호 필름 부착)','mirror-housing':'미러 하우징 (곡면경·평면경)','pcb-housing':'하부 하우징 전체',
   'pcb-front':'메인 PCB 앞면','pcb-mcu':'MCU와 EPSON IC','pcb-warp':'EPSON 왜곡처리 IC · MAX9278A','pcb-power':'커넥터와 전원부','pcb-back':'메인 PCB 뒷면','pcb-back-detail':'뒷면 상세 (SOIC-8)',
   'tft-board':'Bare PCB (Flexible)','tft-panel':'TFT 모서리 (방진 폼)','motor':'모터와 웜','bracket-back':'방열판(다이캐스트) 뒷면','bracket-front':'방열판(다이캐스트) 앞면',
   'bracket-mark':'각인 HA-DZK-617 / ADC12','pgu-module':'PGU와 실리콘 패드','cover-top':'방진 커버 (보호필름)','fpcb-acf':'Bare PCB의 좁은 띠 · ACF 접합선 · LED 전원 탭'
@@ -3228,7 +3228,7 @@ const BOM = [
   {"lv": 2, "sec": "mech", "cn": "", "r": 1, "ko": "1차 렌즈 (돔 렌즈 어레이)", "w": "9", "id": "lens", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 2, "ko": "광학 필름", "w": "2", "id": "film", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 3, "ko": "2차 렌즈 (허니콤 렌즈 어레이)", "w": "13", "id": "lens2", "cat": "opt"},
-  {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "렌즈 홀더 (백라이트 프레임)", "w": "22", "cat": "opt"},
+  {"lv": 2, "sec": "mech", "cn": "", "r": 4, "ko": "TFT 프레임 (렌즈·필름 홀더)", "w": "22", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 5, "ko": "TFT 지지대", "w": "28", "id": "tftholder", "cat": "opt"},
   {"lv": 2, "sec": "mech", "cn": "", "r": 6, "ko": "모터 커버 + 방열판 A", "w": "467", "id": "lower", "cat": "mech", "note": "플라스틱 모터 커버에 금속 방열판 A를 조립한 상태의 무게입니다."},
   {"lv": 2, "sec": "mech", "cn": "", "r": 6.5, "pg": 6, "ko": "└ 방열판 A (금속)", "wt": "위 467 g에 포함", "id": "heatsink", "cat": "mech"},
