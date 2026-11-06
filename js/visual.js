@@ -1,6 +1,8 @@
 import { visual } from './content.js';
 import { openModal, closeModal } from './modal.js';
 
+// photos under assets/photos have a small copy in a thumbs/ folder (scripts/thumbs.py); the full file is for the lightbox
+const thumb = (src = '') => (/^assets\/photos\/.+\.jpg$/.test(src) ? src.replace(/\/([^/]+)$/, '/thumbs/$1') : src);
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function parseVideo(url) {
@@ -54,7 +56,7 @@ export function renderVisual(root) {
             return [top, ...s.photos.filter((ph) => ph !== top).slice(0, 2)];
           })();
       const prints = covers
-        .map((c, k) => `<span class="print" style="--r:${covers[0].ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
+        .map((c, k) => `<span class="print" style="--r:${covers[0].ratio || 1.5};--k:${k}">${c.src ? `<img src="${esc(thumb(c.src))}" alt="" loading="lazy" decoding="async" />` : ''}${c.video ? '<span class="play"></span>' : ''}</span>`)
         .reverse() // first photo ends up on top
         .join('');
       const count = s.videos.length ? `${s.videos.length} film${s.videos.length > 1 ? 's' : ''}` : `${s.photos.length}`;
@@ -120,7 +122,7 @@ export function renderVisual(root) {
     grid.innerHTML = films + groups
       .map((g) => {
         const photoHTML = g.photos.map((p) => `<button class="spread-item${(p.ratio || 1) > 1.3 ? ' wide' : ''}" data-j="${j++}" style="--r:${p.ratio || 1.5}">
-          <img src="${esc(p.src)}" alt="${esc(p.caption)}" decoding="async" />
+          <img src="${esc(thumb(p.src))}" alt="${esc(p.caption)}" loading="lazy" decoding="async" />
           <span class="spread-cap">${esc(p.caption)}${p.year ? ` · ${esc(p.year)}` : ''}</span>
         </button>`);
         // diary scraps slot in after every few photos

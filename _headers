@@ -1,0 +1,10 @@
+# Cloudflare Pages response headers (hyeseungk.com).
+# Scripts and styles are versioned by scripts/version.py (?v=…), so browsers may keep them for good.
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+/vendor/*
+  Cache-Control: public, max-age=604800
+/assets/*
+  Cache-Control: public, max-age=604800

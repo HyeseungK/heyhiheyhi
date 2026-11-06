@@ -62,3 +62,8 @@ Settings → Pages → Branch에서 이 브랜치와 `/ (root)`를 선택하면 
 - 라이브러리는 `vendor/`에 넣어 두어 CDN 없이 동작합니다.
 
 `.claude/skills/`에는 이 작업에 쓴 Claude Code 스킬이 들어 있습니다. threejs-webgl, gsap-scrolltrigger, modern-web-design은 [freshtechbro/claudedesignskills](https://github.com/freshtechbro/claudedesignskills)(MIT), p5js는 Lord1Egypt/awesome-skill-forge(MIT), algorithmic-art는 Anthropic 예시 스킬(Apache-2.0)입니다.
+
+## 배포 · 속도
+
+- `hyeseungk.com`은 Cloudflare로 서비스됩니다. `_headers`가 캐시 규칙을 정합니다(버전이 붙는 JS·CSS는 1년, 사진·폰트·라이브러리는 1주).
+- 사진을 추가하면 `python3 scripts/thumbs.py`를 한 번 돌려 주세요. 사진 테이블과 펼친 화면은 900px 축소본(`thumbs/`)을 쓰고, 크게 볼 때만 원본을 불러옵니다.
