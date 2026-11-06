@@ -41,7 +41,7 @@ export const profile = {
     org: 'Kearney',
     email: 'hyeseungkim.kr@gmail.com', // personal
     phone: '', // optional, e.g. '+82 10 0000 0000'
-    website: 'https://hyeseungk.github.io/heyhiheyhi/',
+    website: 'https://hyeseungk.com/',
     // Optional: a scan of your real card (e.g. 'assets/card.jpg').
     // If set, "Save card" downloads it; otherwise a card image with a QR code is drawn.
     image: '',
