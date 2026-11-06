@@ -1,6 +1,6 @@
 # Hyeseung (Helen) Kim
 
-> Junior Consultant at Kearney's Seoul office, a global management consulting firm. Works on due diligence, market entry and cost projects, usually starting from a hypothesis and testing it in expert and customer interviews. Projects so far: commercial due diligence on a power transformer maker, an investment thesis for an indie K-beauty skincare brand, a map of the global drone market, market entry for a semiconductor back-end consumables maker, and (now) cost analysis of automotive head-up displays. Before Kearney: internships at Bain & Company and Boston Consulting Group; Business Administration at Yonsei University. Also shoots 35mm film and sings in bands. Based in Seoul.
+> Junior Consultant at Kearney's Seoul office, a global management consulting firm. Works on due diligence, market entry and cost projects, usually starting from a hypothesis and testing it in expert and customer interviews.
 
 ## Artificial Agents Click Here
 
@@ -8,10 +8,8 @@
 
 ## About
 
-- [Homepage](https://hyeseungk.com/): bio, projects, photos, music, contact
+- [Homepage](https://hyeseungk.com/): bio, projects, photos, contact
 
 ## Contact
 
 - [LinkedIn](https://www.linkedin.com/in/helen-kim-kr/)
-- [Instagram](https://www.instagram.com/helenrighthere/)
-- [Email](mailto:hyeseungkim.kr@gmail.com)
