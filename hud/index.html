@@ -1408,13 +1408,13 @@ const zFp = PG.cz - PG.d / 2 - 2.1;
   register('fpcb', g);
   // ACF: the bond seam where the strip overlaps the glass electrodes
   const ga = new THREE.Group(); box(w + .2, .1, .3, M.acf, PG.cx, Ly + .09, z1 + .12, ga); register('acf', ga); }
-{ const g = new THREE.Group(); box(LCDR.w + 1.5, .05, LCDR.d + 1.4, M.film, PG.cx, 2.5, PG.cz, g); register('film', g); }
-// 2차 렌즈: hexagonal cells packed like a honeycomb on a thin clear base
+{ const g = new THREE.Group(); box(LCDR.w + 1.5, .05, LCDR.d + 1.4, M.film, PG.cx, 2.86, PG.cz, g); register('film', g); }
+// 2차 렌즈: hexagonal cells packed like a honeycomb under a thin clear plate — the bumps face down, toward the 1st lens
 { const g = new THREE.Group(), r = .4, W = LCDR.w + 1.2, D = LCDR.d + 1, dx = Math.sqrt(3) * r, dz = 1.5 * r, cells = [];
-  box(W + .2, .1, D + .2, M.lens2, PG.cx, 1.98, PG.cz, g);
+  box(W + .2, .1, D + .2, M.lens2, PG.cx, 2.66, PG.cz, g);
   for (let j = 0, z = -D / 2 + r; z <= D / 2 - r * .5; j++, z += dz) for (let x = -W / 2 + dx / 2 + (j % 2 ? dx / 2 : 0); x <= W / 2 - dx / 2 + 1e-6; x += dx) cells.push([PG.cx + x, PG.cz + z]);
   const inst = new THREE.InstancedMesh(new THREE.CylinderGeometry(r * .96, r * .96, .2, 6), M.lens2, cells.length), mm = new THREE.Matrix4(), q = new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), Math.PI / 6);
-  cells.forEach(([x, z], k) => { mm.compose(V(x, 2.13, z), q, V(1, 1, 1)); inst.setMatrixAt(k, mm); }); g.add(inst); register('lens2', g); }
+  cells.forEach(([x, z], k) => { mm.compose(V(x, 2.51, z), q, V(1, 1, 1)); inst.setMatrixAt(k, mm); }); g.add(inst); register('lens2', g); }
 const LEDS = [];
 { const nx = 14, nz = 7, sx = (LCDR.w + .4) / (nx - 1), sz = (LCDR.d + .2) / (nz - 1);
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { if (j % 2 && i === nx - 1) continue; LEDS.push(V(PG.cx - (LCDR.w + .4) / 2 + i * sx + (j % 2 ? sx / 2 : 0), .8, PG.cz - (LCDR.d + .2) / 2 + j * sz)); }
@@ -1427,17 +1427,17 @@ const LEDS = [];
   const tx = PG.cx + LCDR.w * .32, tz = PG.cz - PG.d / 2 - 1.3; box(3, .12, 2.8, M.ledBoard, tx, .66, tz, g); box(1.9, .55, .7, M.white, tx, 1, tz - .7, g);
   register('ledboard', g); }
 { // TFT frame (22 g, 155 × 64 × 21 mm): shallow black frame screwed to the LED board; inner ledges carry the 1st (dome) and 2nd (honeycomb) lens
-  const g = new THREE.Group(), fw = PG.w + .3, fd = PG.d + .1, y0 = .6, y1 = 2.42, h = y1 - y0, ym = (y0 + y1) / 2, t = .55;
+  const g = new THREE.Group(), fw = PG.w + .3, fd = PG.d + .1, y0 = .6, y1 = 2.38, h = y1 - y0, ym = (y0 + y1) / 2, t = .55;
   box(fw, h, t, M.plastic, PG.cx, ym, PG.cz - fd / 2 + t / 2, g); box(fw, h, t, M.plastic, PG.cx, ym, PG.cz + fd / 2 - t / 2, g);
   box(t, h, fd, M.plastic, PG.cx - fw / 2 + t / 2, ym, PG.cz, g); box(t, h, fd, M.plastic, PG.cx + fw / 2 - t / 2, ym, PG.cz, g);
   const iw = fw - 2 * t, id = fd - 2 * t, ledge = (y, inset) => { box(iw, .14, inset, M.plastic, PG.cx, y, PG.cz - id / 2 + inset / 2, g); box(iw, .14, inset, M.plastic, PG.cx, y, PG.cz + id / 2 - inset / 2, g); };
-  ledge(1.11, .4); ledge(1.86, .35);
+  ledge(1.11, .4); ledge(y1 - .07, .35); // lower ledge: 1st lens · top rim: 2nd lens rests on it
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const x = PG.cx + sx * (fw / 2 + .25), z = PG.cz + sz * (fd / 2 - .4); cyl(.4, h, M.plastic, x, ym, z, g); cyl(.26, .12, M.black, x, y1 + .06, z, g); }
   for (const sx of [-1, 1]) { box(.5, .9, 1.1, M.plastic, PG.cx + sx * (fw / 2 + .25), ym, PG.cz, g); cyl(.2, .12, M.black, PG.cx + sx * (fw / 2 + .5), ym, PG.cz, g, 'x'); }
   box(.15, .9, .9, M.plastic, PG.cx + fw / 2 + .55, ym, PG.cz - 1.5, g); box(.6, .15, .9, M.plastic, PG.cx + fw / 2 + .3, ym + .38, PG.cz - 1.5, g); // the U-hook on one end
   register('tftframe', g); }
 { // TFT holder (28 g, 143 × 64 × 24 mm): sits on the frame, holds the film and the TFT, then flares into a black light tunnel above the panel
-  const g = new THREE.Group(), fw = PG.w - .2, fd = PG.d, y0 = 2.42, y1 = Ly + .05, h = y1 - y0, ym = (y0 + y1) / 2, t = .5, top = Ly + 1.8, fl = .9;
+  const g = new THREE.Group(), fw = PG.w - .2, fd = PG.d, y0 = 2.95, y1 = Ly + .05, h = y1 - y0, ym = (y0 + y1) / 2, t = .5, top = Ly + 1.8, fl = .9;
   box(fw, h, t, M.plastic, PG.cx, ym, PG.cz - fd / 2 + t / 2, g); box(fw, h, t, M.plastic, PG.cx, ym, PG.cz + fd / 2 - t / 2, g);
   box(t, h, fd, M.plastic, PG.cx - fw / 2 + t / 2, ym, PG.cz, g); box(t, h, fd, M.plastic, PG.cx + fw / 2 - t / 2, ym, PG.cz, g);
   const iw = fw - 2 * t, id = fd - 2 * t;
@@ -1694,11 +1694,11 @@ function rebuildLight() {
 
 /* ───────────────────────── backlight close-up: section through the middle LED row ───────────────────────── */
 const BL_SET = ['led', 'ledboard', 'lens', 'lens2', 'film', 'tftframe', 'tftholder', 'tft', 'pad', 'heatsink', 'foam', 'fpcb', 'acf'];
-const BL_OFF = { heatsink: -3.2, pad: -1.3, lens: 1.4, lens2: 2.6, tftframe: 1.4, film: 3.6, tftholder: 4.8, tft: 4.8, foam: 4.8, fpcb: 4.8, acf: 4.8 };
+const BL_OFF = { heatsink: -3.2, pad: -1.3, lens: 1.1, tftframe: 2.2, lens2: 3.3, film: 4.4, tftholder: 5.5, tft: 6.6, foam: 6.6, fpcb: 6.6, acf: 6.6 };
 const blCut = new THREE.Plane(V(0, 0, -1), PG.cz + .001);
 const BL_LABELS = [
-  ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산 시트', 'film', 2.5, 'L'], ['2차 렌즈 · 허니콤', 'lens2', 2.1, 'R'],
-  ['TFT 지지대 · 필름·TFT 받침', 'tftholder', 3.2, 'R'], ['1차 렌즈 · LED마다 돔 1개', 'lens', 1.5, 'L'], ['TFT 프레임 · 렌즈 받침 턱', 'tftframe', 1.11, 'R'],
+  ['TFT · 편광판 · 액정 · 컬러필터', 'tft', Ly - .15, 'L'], ['방진 폼 (TFT 고정)', 'foam', Ly + .05, 'R'], ['광학 필름 · 확산 시트', 'film', 2.86, 'L'], ['2차 렌즈 · 허니콤 (볼록면 아래)', 'lens2', 2.6, 'R'],
+  ['TFT 지지대 (TFT 받침)', 'tftholder', 3.3, 'R'], ['1차 렌즈 · LED마다 돔 1개 (볼록면 위)', 'lens', 1.5, 'L'], ['TFT 프레임', 'tftframe', 2.0, 'R'],
   ['LED', 'led', .86, 'L'], ['LED 기판', 'ledboard', .62, 'R'], ['방열 실리콘 패드', 'pad', .38, 'R'], ['방열판 (ADC12)', 'heatsink', -1.6, 'L'],
 ];
 const blPaths = [];
@@ -1709,7 +1709,7 @@ const blPaths = [];
     const ang = a * Math.PI / 180, dx = Math.tan(ang) * (1.19 - .86), base = [[p.x, .86, 'led'], [p.x + dx, 1.19, 'lens']];
     if (Math.abs(dx) < .34) { // caught by its lens: bent upright, then spread a little by the film
       const xl = p.x + dx * .25, xs = xl + (r() - .5) * .3, sc = (r() - .5) * .3, xt = xs + Math.tan(sc) * 1.06;
-      const pts = [...base, [xl, 1.74, 'lens'], [xl, 2.04, 'lens2'], [xl + (r() - .5) * .2, 2.24, 'lens2'], [xl, 2.47, 'film'], [xs, 2.58, 'film'], [xt, 3.64, 'tft']];
+      const pts = [...base, [xl, 1.74, 'lens'], [xl, 2.41, 'lens2'], [xl + (r() - .5) * .2, 2.71, 'lens2'], [xl, 2.84, 'film'], [xs, 2.9, 'film'], [xt, 3.64, 'tft']];
       blPaths.push({ k: nearestRay(xt), pass: mk([...pts, [xt + Math.tan(sc) * .3, 3.94, 'tft'], [xt + Math.tan(sc) * 2.8, 6.6, 'tft']]), block: mk([...pts, [xt, 3.74, 'tft']]), blue: 6 });
     } else { // too wide for its lens: crosses the plate bent and is soaked up by the black wall or the ledge
       const x1 = p.x + dx, a2 = ang * .62, xw = a < 0 ? wallL : wallR, x2 = x1 + Math.tan(a2) * .22, yw = 1.41 + (xw - x2) / Math.tan(a2), ye = Math.min(yw, 2.3);
@@ -1916,13 +1916,15 @@ function renderInfo() {
       <div class="actions"><button class="btn" data-blexit>단면 닫기</button></div>
       <h3 class="sec">위에서 아래로</h3><ol class="layers">
         <li><b>TFT</b> 편광판 두 장 사이의 액정이 픽셀마다 빛을 통과시키거나 막습니다. 지지대 맨 위 턱에 얹히고 방진 폼이 눌러 고정합니다.</li>
+        <li><b>TFT 지지대</b> TFT를 받치고, 위로 벌어지는 벽이 빛을 가둡니다.</li>
         <li><b>광학 필름</b> 0.25 mm 확산 시트. 빛을 마지막으로 고르게 폅니다.</li>
-        <li><b>2차 렌즈 (허니콤)</b> 육각 렌즈 셀이 빛을 나눠 겹쳐 LED 점 무늬를 지웁니다.</li>
-        <li><b>1차 렌즈 (돔)</b> LED마다 하나씩, 퍼지는 빛을 위로 모읍니다. 지지대 아래 턱에 얹힙니다.</li>
-        <li><b>LED · LED 기판</b> 빛을 냅니다. 열은 기판 뒤로 빠집니다.</li>
+        <li><b>2차 렌즈 (허니콤)</b> 볼록한 육각 셀이 아래(1차 렌즈 쪽)를 향합니다. 빛을 나눠 겹쳐 LED 점 무늬를 지웁니다.</li>
+        <li><b>TFT 프레임</b> LED 기판에 나사로 붙는 틀. 1차 렌즈를 안에 잡고, 윗면에 2차 렌즈가 얹힙니다.</li>
+        <li><b>1차 렌즈 (돔)</b> LED마다 하나씩, 볼록면이 위를 향해 퍼지는 빛을 위로 모읍니다.</li>
+        <li><b>LED · LED 기판</b> LED가 위를 향해 빛을 냅니다. 열은 알루미늄 기판 뒤로 빠집니다.</li>
         <li><b>실리콘 패드 → 방열판</b> 열을 핀으로 보내 공기로 버립니다.</li>
-        <li><b>TFT 프레임 · TFT 지지대</b> 아래 TFT 프레임이 LED 기판에 나사로 붙어 렌즈 두 장을 잡고, 위 TFT 지지대가 필름과 TFT를 잡습니다.</li></ol>
-      <p class="note">층 순서(1차 렌즈 → 2차 렌즈 → 필름 → TFT)와 각 부품은 사진으로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
+        </ol>
+      <p class="note">층 순서(LED → 1차 렌즈 → TFT 프레임 → 2차 렌즈 → 필름 → TFT 지지대 → TFT)는 분해로 확인했습니다. 지지대 안쪽 턱과 걸쇠 모양, 층 간격은 추정입니다.</p>`;
     return;
   }
   if (!sel || play.on) {
