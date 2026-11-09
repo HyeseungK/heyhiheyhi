@@ -893,7 +893,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   .bm-det dl { grid-template-columns: max-content minmax(0, 1fr) !important; font-size: 13.5px; }
 }
 </style>
-<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }</script>
 </head>
 <body>
 <header>
@@ -972,6 +972,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 
 <script type="module">
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /* ───────────────────────── content ───────────────────────── */
 const PHOTO = {
@@ -1648,8 +1649,29 @@ for (const [id, sc] of Object.entries(SHELLS)) {
     const a = sb2.getSize(V()), b = need.getSize(V()), ca = sb2.getCenter(V()), cb = need.getCenter(V());
     holder.scale.set(.1 * b.x / a.x, .1 * b.y / a.y, .1 * b.z / a.z); holder.updateMatrixWorld(true);
     const sb3 = new THREE.Box3().setFromObject(holder), c3 = sb3.getCenter(V()); holder.position.add(cb.sub(c3)); }
-  addEdges(holder); P[id].scan = sc.note;
+  addEdges(holder); P[id].scan = sc.note; o.shell = holder;
 }
+// the real housings: two photo scans per part (face up + turned over) merged, see-through holes patched (tools/scan_repair.py).
+// The faceted blocks above stay as the fallback; each scan takes over their box, so the parts stay inside.
+const SCANS = { upper: { file: 'scans/base.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 스캔 구멍 메움)' },
+  lower: { file: 'scans/motor.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 방열판 포함 · 스캔 구멍 메움)' },
+  topcover: { file: 'scans/upper.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 위쪽 큰 창은 방진 커버 자리)' } };
+const scanMat = std(0xffffff, .85, 0, { side: THREE.DoubleSide });
+// the published artifact cannot serve .glb, so each scan also ships as base64 in .glb.json
+const scanBytes = async f => { try { const r = await fetch(f); if (r.ok && !(r.headers.get('content-type') || '').includes('html')) return await r.arrayBuffer(); } catch {}
+  const j = await (await fetch(f + '.json')).json(), b = atob(j.b64), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; };
+for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new GLTFLoader().parseAsync(buf, '')).then(gltf => {
+  const o = objs[id], old = o?.shell; if (!old) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base); grp.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(old), size = box.getSize(V()), ctr = box.getCenter(V());
+  old.traverse(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); const e = housingEdges.indexOf(c); if (e >= 0) housingEdges.splice(e, 1); }); old.removeFromParent();
+  const holder = new THREE.Group(); holder.rotation.y = SHELLS[id].rotY; holder.scale.setScalar(.1); // mm → cm
+  gltf.scene.traverse(c => { if (!c.isMesh) return; const m = scanMat.clone(); m.map = c.material.map; if (m.map) { m.map.colorSpace = THREE.SRGBColorSpace; m.emissiveMap = m.map; m.emissive.setHex(0x6a6a6a); } m.needsUpdate = true; // photo texture, lifted so the black plastic still shows its shape
+    m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
+  holder.add(gltf.scene); grp.add(holder); holder.updateMatrixWorld(true);
+  const a = new THREE.Box3().setFromObject(holder).getSize(V()); holder.scale.set(.1 * size.x / a.x, .1 * size.y / a.y, .1 * size.z / a.z); holder.updateMatrixWorld(true);
+  holder.position.add(ctr.sub(new THREE.Box3().setFromObject(holder).getCenter(V()))); o.scanFit = [size.x / a.x, size.y / a.y, size.z / a.z];
+  grp.position.copy(pos); o.shell = holder; P[id].scan = sc.note; applyVisual(); if (state.sel) renderInfo();
+}).catch(() => {});
 
 /* ───────────────────────── car environment ───────────────────────── */
 const carG = new THREE.Group(); scene.add(carG); carG.visible = false;
@@ -3492,7 +3514,7 @@ phoneLayout(); matchMedia('(max-width: 900px)').addEventListener('change', phone
 cam.t.copy(cam.gt); cam.r = cam.gr; cam.th = cam.gth; cam.ph = cam.gph;
 requestAnimationFrame(tick);
 document.fonts && document.fonts.ready.then(() => { drawHUD(); rebuildLight(); [pcbTex, fpcTex, labelTex].forEach(t => t.userData.redraw()); });
-window.__hud = { OPT: () => OPT, RAD, LCDR, HFOV, VFOV, state };
+window.__hud = { OPT: () => OPT, RAD, LCDR, HFOV, VFOV, state, objs };
 </script>
 </body>
 </html>
