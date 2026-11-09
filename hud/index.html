@@ -1397,8 +1397,8 @@ let ledMesh, lcdWarpMesh, lcdRectMesh;
   rg.rotateX(-Math.PI / 2); rg.translate(PG.cx, Ly + .03, PG.cz);
   lcdRectMesh = new THREE.Mesh(rg, disp); lcdRectMesh.userData.keepMat = true; lcdRectMesh.visible = false; g.add(lcdRectMesh);
   register('tft', g); }
-const zFp = PG.cz - PG.d / 2 - 2.1;
-{ const g = new THREE.Group(); const top = new THREE.Mesh(new THREE.BoxGeometry(LCDR.w + 1.5, .08, 3.2), [M.fpcPlain, M.fpcPlain, M.fpc, M.fpcPlain, M.fpcPlain, M.fpcPlain]); top.position.set(PG.cx, Ly + .05, zFp); g.add(top);
+const zFp = PG.cz - PG.d / 2 - 1.1; // Bare PCB (96.2 × 33 mm) lies flat beside the TFT holder, between it and the Main PCB
+{ const g = new THREE.Group(); const top = new THREE.Mesh(new THREE.BoxGeometry(9.62, .08, 3.3), [M.fpcPlain, M.fpcPlain, M.fpc, M.fpcPlain, M.fpcPlain, M.fpcPlain]); top.position.set(PG.cx, Ly + .05, zFp); g.add(top);
   for (const s of [-1, 1]) box(.7, .4, .7, M.black, PG.cx + 2.4 + s * .5, Ly + .3, zFp + .3, g);
   box(2.6, .3, .6, M.kapton, PG.cx - 1.2, Ly + .25, zFp + 1.1, g);
   // the narrow strip: same flex sheet, running from the wide board up to the glass edge
@@ -1463,11 +1463,11 @@ const LEDS = [];
 
 
 // main PCB with its chips
-const MCB = { MX0: -13, MX1: 16.6, MZ0: -12.5, MZ1: 4.9 }; // motor cover footprint, 296 × 174 mm
+const MCB = { MX0: -13, MX1: 16.6, MZ0: -15, MZ1: 2.4 }; // motor cover footprint, 296 × 174 mm
 // motor cover outline traced from the opened photo: PCB strip along the front (connector end at −x), the TFT body in the middle, the motor bay stepping out at +x
 const MC_OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]]
   .map(([x, z]) => [MCB.MX0 + (x + 23.5) / 46 * (MCB.MX1 - MCB.MX0), MCB.MZ0 + (z + 23) / 36 * (MCB.MZ1 - MCB.MZ0)]);
-const PCB_POS = V(-3.6, 4.4, -9.4), shieldMeshes = [];
+const PCB_POS = V(-3.6, 4.4, -11.9), shieldMeshes = [];
 { const g = new THREE.Group(); g.position.copy(PCB_POS); const T = .08;
   g.add(new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]));
   const chip = (id, w, d, h, lines, big, x, z, pinStyle = 'qfp', back = false) => {
@@ -1591,7 +1591,7 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
     box(hx * 2, dh, t, M.plastic, PG.cx, y, PG.cz - hz, g); box(hx * 2, dh, t, M.plastic, PG.cx, y, PG.cz + hz, g);
     box(t, dh, hz * 2, M.plastic, PG.cx - hx, y, PG.cz, g); box(t, dh, hz * 2, M.plastic, PG.cx + hx, y, PG.cz, g); }
   // and a low rim that follows the motor cover outline; the cover's walls sit inside it, the PCB strip under the recessed floor
-  MC_OUT.forEach(([xa, za], i) => { const [xb, zb] = MC_OUT[(i + 1) % MC_OUT.length], len = Math.hypot(xb - xa, zb - za); const m = box(len + .25, .45, .22, M.plastic, (xa + xb) / 2, YFLOOR - .2, (za + zb) / 2, g); m.rotation.y = Math.atan2(-(zb - za), xb - xa); });
+  MC_OUT.forEach(([xa, za], i) => { const [xb, zb] = MC_OUT[(i + 1) % MC_OUT.length]; if (Math.min(za, zb) < UH.zmin) return; const len = Math.hypot(xb - xa, zb - za); const m = box(len + .25, .45, .22, M.plastic, (xa + xb) / 2, YFLOOR - .2, (za + zb) / 2, g); m.rotation.y = Math.atan2(-(zb - za), xb - xa); });
   addEdges(g); register('upper', g); }
 { // motor cover: the uneven outline seen in the opened photo (PCB strip along the front, PGU in the middle, motor bay out at the right end)
   const g = new THREE.Group(), t = .45, y0 = -1, y1 = YFLOOR, h = y1 - y0, ym = (y0 + y1) / 2, cz = PCB_POS.z;
