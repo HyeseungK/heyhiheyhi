@@ -1654,24 +1654,26 @@ for (const [id, sc] of Object.entries(SHELLS)) {
 // the real housings: two photo scans per part merged and patched (tools/scan_repair.py), then carved into a clean solid
 // from six directions with the holes in each view closed, smoothed into flat moulded faces (tools/scan_solid.py).
 // The faceted blocks above stay as the fallback; each scan takes over their box, so the parts stay inside.
-const SCANS = { upper: { file: 'scans/base.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메워 매끈하게 정리)' },
-  lower: { file: 'scans/motor.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 방열판 포함 · 구멍 메워 매끈하게 정리)' },
-  topcover: { file: 'scans/upper.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메워 매끈하게 정리)' } };
+const SCANS = { upper: { file: 'scans/base.glb', bounds: [[-214.7, -4.9, -132.9], [214.5, 137.1, 128.6]], note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메우고 평면·모서리 정리, 안 부품 감쌈)' },
+  lower: { file: 'scans/motor.glb', bounds: [[-149.4, -1.9, -95.2], [147.8, 58.4, 93.9]], note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 방열판 포함 · 구멍 메우고 평면·모서리 정리, 안 부품 감쌈)' },
+  topcover: { file: 'scans/upper.glb', bounds: [[-191.2, -4.5, -128.2], [191.1, 107.4, 127.7]], note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메우고 평면·모서리 정리, 안 부품 감쌈)' } };
 const scanMat = std(0x3b4046, .7, 0, { side: THREE.DoubleSide }); // moulded black plastic, a touch lighter so its shape reads
 // the published artifact cannot serve .glb, so each scan also ships as base64 in .glb.json
 const scanBytes = async f => { try { const r = await fetch(f); if (r.ok && !(r.headers.get('content-type') || '').includes('html')) return await r.arrayBuffer(); } catch {}
   const j = await (await fetch(f + '.json')).json(), b = atob(j.b64), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; };
 for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new GLTFLoader().parseAsync(buf, '')).then(gltf => {
   const o = objs[id], old = o?.shell; if (!old) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base); grp.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(old), size = box.getSize(V()), ctr = box.getCenter(V());
+  const box = new THREE.Box3().setFromObject(old), size = box.getSize(V()), ctr = box.getCenter(V()); o.fitBox = box.clone();
   old.traverse(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); const e = housingEdges.indexOf(c); if (e >= 0) housingEdges.splice(e, 1); }); old.removeFromParent();
   const holder = new THREE.Group(); holder.rotation.y = SHELLS[id].rotY; holder.scale.setScalar(.1); // mm → cm
   gltf.scene.traverse(c => { if (!c.isMesh) return; c.geometry.computeVertexNormals(); // the solid has no normals of its own
     const m = scanMat.clone(); m.needsUpdate = true;
     m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
   holder.add(gltf.scene); grp.add(holder); holder.updateMatrixWorld(true);
-  const a = new THREE.Box3().setFromObject(holder).getSize(V()); holder.scale.set(.1 * size.x / a.x, .1 * size.y / a.y, .1 * size.z / a.z); holder.updateMatrixWorld(true);
-  holder.position.add(ctr.sub(new THREE.Box3().setFromObject(holder).getCenter(V()))); o.scanFit = [size.x / a.x, size.y / a.y, size.z / a.z];
+  // the scan's own bounds (before parts were walled in) fill the housing box, the same mapping scan_solid.py used
+  const [b0, b1] = sc.bounds, a = V(b1[0] - b0[0], b1[1] - b0[1], b1[2] - b0[2]).multiplyScalar(.1), anchor = V((b0[0] + b1[0]) / 2, (b0[1] + b1[1]) / 2, (b0[2] + b1[2]) / 2);
+  holder.scale.set(.1 * size.x / a.x, .1 * size.y / a.y, .1 * size.z / a.z); holder.updateMatrixWorld(true);
+  holder.position.add(ctr.sub(holder.localToWorld(anchor))); o.scanFit = [size.x / a.x, size.y / a.y, size.z / a.z];
   grp.position.copy(pos); o.shell = holder; P[id].scan = sc.note; applyVisual(); if (state.sel) renderInfo();
 }).catch(() => {});
 
@@ -3516,7 +3518,7 @@ phoneLayout(); matchMedia('(max-width: 900px)').addEventListener('change', phone
 cam.t.copy(cam.gt); cam.r = cam.gr; cam.th = cam.gth; cam.ph = cam.gph;
 requestAnimationFrame(tick);
 document.fonts && document.fonts.ready.then(() => { drawHUD(); rebuildLight(); [pcbTex, fpcTex, labelTex].forEach(t => t.userData.redraw()); });
-window.__hud = { OPT: () => OPT, RAD, LCDR, HFOV, VFOV, state, objs };
+window.__hud = { OPT: () => OPT, RAD, LCDR, HFOV, VFOV, state, objs, SHELLS };
 </script>
 </body>
 </html>
