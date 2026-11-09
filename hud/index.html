@@ -1624,7 +1624,10 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
    frame and fitted to the box the drawn part used, then the drawn meshes are dropped. If a scan fails to load the drawing stays. */
 const SCANS = { upper: { file: 'scans/base.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면)' }, lower: { file: 'scans/motor.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면 · 방열판 A 포함)' } };
 const scanMat = std(0xffffff, .85, 0, { side: THREE.DoubleSide });
-for (const [id, sc] of Object.entries(SCANS)) new GLTFLoader().load(sc.file, gltf => {
+// the published artifact cannot serve .glb, so each scan also ships as base64 in .glb.json
+const scanBytes = async f => { try { const r = await fetch(f); if (r.ok && !(r.headers.get('content-type') || '').includes('html')) return await r.arrayBuffer(); } catch {}
+  const j = await (await fetch(f + '.json')).json(), b = atob(j.b64), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; };
+for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new GLTFLoader().parseAsync(buf, '')).then(gltf => {
   const o = objs[id]; if (!o) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base);
   grp.updateMatrixWorld(true); const target = new THREE.Box3().setFromObject(grp), tc = target.getCenter(V());
   const drawn = []; grp.traverse(c => { if (c !== grp && (c.isMesh || c.isLine)) drawn.push(c); });
@@ -1636,7 +1639,7 @@ for (const [id, sc] of Object.entries(SCANS)) new GLTFLoader().load(sc.file, glt
   const sb = new THREE.Box3().setFromObject(holder), sc0 = sb.getCenter(V());
   holder.position.set(tc.x - sc0.x, target.min.y - sb.min.y, tc.z - sc0.z);
   grp.position.copy(pos); P[id].scan = sc.note; applyVisual(); if (state.sel) renderInfo();
-}, undefined, () => {});
+}).catch(() => {});
 
 /* ───────────────────────── car environment ───────────────────────── */
 const carG = new THREE.Group(); scene.add(carG); carG.visible = false;
