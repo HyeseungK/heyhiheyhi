@@ -893,7 +893,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   .bm-det dl { grid-template-columns: max-content minmax(0, 1fr) !important; font-size: 13.5px; }
 }
 </style>
-<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body>
 <header>
@@ -972,7 +972,6 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /* ───────────────────────── content ───────────────────────── */
 const PHOTO = {
@@ -1619,28 +1618,38 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
   cbox(1.4, 2.2, 2.2, .2, M.white, MX0 - .6, 3, cz - 1.3, g); cyl(.6, 1.4, M.black, MX0 - .7, 3, cz + 1.5, g, 'x'); cyl(.28, 1.6, M.silver, MX0 - .8, 3, cz + 1.5, g, 'x');
   addEdges(g); register('lower', g); }
 
-/* ───────────────────────── 3D scans: real shapes replace the drawn housings ─────────────────────────
-   Each scan (KIRI / Polycam photo scan, tools/scan_obj2glb.py) is in mm, y up, bottom at y = 0. It is turned to this model's
-   frame and fitted to the box the drawn part used, then the drawn meshes are dropped. If a scan fails to load the drawing stays. */
-const SCANS = { upper: { file: 'scans/base.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면)' }, lower: { file: 'scans/motor.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면 · 방열판 A 포함)' },
-  topcover: { file: 'scans/upper.glb', rotY: Math.PI, note: '3D 스캔 (KIRI, 바깥 면 · 방진 커버 포함)' } };
-const scanMat = std(0xffffff, .85, 0, { side: THREE.DoubleSide });
-// the published artifact cannot serve .glb, so each scan also ships as base64 in .glb.json
-const scanBytes = async f => { try { const r = await fetch(f); if (r.ok && !(r.headers.get('content-type') || '').includes('html')) return await r.arrayBuffer(); } catch {}
-  const j = await (await fetch(f + '.json')).json(), b = atob(j.b64), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; };
-for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new GLTFLoader().parseAsync(buf, '')).then(gltf => {
-  const o = objs[id]; if (!o) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base);
-  grp.updateMatrixWorld(true); const target = new THREE.Box3().setFromObject(grp), tc = target.getCenter(V());
+/* ───────────────────────── housings from 3D scans ─────────────────────────
+   The photo scans (KIRI) set each housing's size and shape; tools/scan_shells.py turns a scan into stacked straight-edged layers
+   (mm, centred, bottom at y = 0): the outline of each height band, holes in the scan closed, drawn as solid blocks (the top cover's top band keeps its window).
+   Each shell is turned to this model's frame and fitted to the place the drawn part held, which it then replaces. */
+const SHELLS = {"upper":{"holds":["concave","fold"],"rotY":0,"note":"3D 스캔(안쪽 면)으로 크기·형상을 잡은 단순화 형상","layers":[{"y0":0.0,"y1":28.0,"outer":[[-116.4,100.0],[-167.4,100.0],[-174.9,92.5],[-180.9,11.5],[-167.4,-5.0],[-152.4,-2.0],[-132.9,-21.5],[-135.9,-39.5],[-92.4,-86.0],[-86.4,-74.0],[-56.4,-83.0],[-11.4,-77.0],[-2.4,-86.0],[27.6,-62.0],[51.6,-62.0],[65.1,-42.5],[68.1,-21.5],[122.1,26.5],[125.1,44.5],[117.6,52.0],[84.6,43.0],[27.6,70.0],[-53.4,73.0],[-80.4,97.0]],"inner":null},{"y0":28.0,"y1":56.0,"outer":[[105.6,109.0],[95.1,101.5],[107.1,89.5],[113.1,65.5],[96.6,52.0],[-47.4,73.0],[-71.4,97.0],[-170.4,103.0],[-201.9,32.5],[-195.9,-18.5],[-201.9,-33.5],[-185.4,-41.0],[-116.4,-113.0],[21.6,-125.0],[54.6,-86.0],[129.6,-59.0],[167.1,-33.5],[167.1,-12.5],[155.1,5.5],[140.1,71.5]],"inner":[[105.6,103.0],[119.1,65.5],[96.6,46.0],[-47.4,67.0],[-71.4,91.0],[-170.4,97.0],[-177.9,62.5],[-195.9,32.5],[-189.9,-18.5],[-195.9,-33.5],[-185.4,-35.0],[-116.4,-107.0],[21.6,-119.0],[54.6,-80.0],[129.6,-53.0],[161.1,-33.5],[161.1,-12.5],[149.1,5.5],[134.1,71.5]]},{"y0":56.0,"y1":84.0,"outer":[[12.6,127.0],[-182.4,121.0],[-198.9,104.5],[-198.9,71.5],[-213.9,56.5],[-210.9,-39.5],[-168.9,-69.5],[-143.4,-116.0],[33.6,-131.0],[66.6,-89.0],[171.6,-47.0],[198.6,-47.0],[209.1,-36.5],[203.1,-24.5],[209.1,-18.5],[203.1,38.5],[161.1,74.5],[144.6,100.0]],"inner":[[12.6,121.0],[-182.4,115.0],[-192.9,104.5],[-192.9,71.5],[-207.9,56.5],[-204.9,-39.5],[-188.4,-44.0],[-162.9,-69.5],[-143.4,-110.0],[33.6,-125.0],[66.6,-83.0],[162.6,-44.0],[203.1,-36.5],[197.1,-24.5],[203.1,-18.5],[197.1,38.5],[155.1,74.5],[144.6,94.0]]},{"y0":84.0,"y1":108.0,"outer":[[15.6,127.0],[-182.4,121.0],[-198.9,104.5],[-198.9,71.5],[-213.9,53.5],[-192.9,32.5],[-201.9,20.5],[-183.9,2.5],[-195.9,-9.5],[-177.9,-30.5],[-186.9,-51.5],[-143.4,-116.0],[27.6,-131.0],[66.6,-89.0],[183.6,-47.0],[209.1,-24.5],[209.1,35.5],[198.6,64.0],[177.6,64.0],[150.6,97.0]],"inner":[[15.6,121.0],[-182.4,115.0],[-192.9,104.5],[-192.9,71.5],[-207.9,53.5],[-186.9,32.5],[-195.9,20.5],[-177.9,2.5],[-189.9,-9.5],[-171.9,-30.5],[-180.9,-51.5],[-143.4,-110.0],[27.6,-125.0],[66.6,-83.0],[183.6,-41.0],[203.1,-24.5],[198.6,58.0],[177.6,58.0],[150.6,91.0]]},{"y0":108.0,"y1":132.0,"outer":[[9.6,127.0],[-194.4,118.0],[-201.9,110.5],[-198.9,56.5],[-179.4,37.0],[-171.9,44.5],[-177.9,62.5],[-158.4,82.0],[-53.4,97.0],[75.6,88.0],[129.6,70.0],[141.6,79.0],[156.6,64.0],[164.1,71.5],[164.1,86.5],[150.6,97.0]],"inner":[[9.6,121.0],[-194.4,112.0],[-192.9,56.5],[-179.4,43.0],[-183.9,62.5],[-158.4,88.0],[-53.4,103.0],[75.6,94.0],[129.6,76.0],[141.6,85.0],[158.1,71.5],[158.1,86.5],[141.6,94.0]]}]},"lower":{"holds":["pcb","motor","tftholder","tftframe","tft","fpcb","cfpcb","lens","lens2","film","ledboard"],"rotY":0,"note":"3D 스캔(안쪽 면)으로 크기·형상을 잡은 단순화 형상","layers":[{"y0":0.0,"y1":20.0,"outer":[[-19.4,86.1],[-52.4,86.1],[-59.9,78.6],[-71.9,33.6],[-88.4,14.1],[-130.4,20.1],[-140.9,3.6],[-146.9,-32.4],[-118.4,-51.9],[-34.4,-69.9],[55.6,-66.9],[121.6,-81.9],[141.1,-53.4],[144.1,0.6],[108.1,30.6],[111.1,45.6],[85.6,62.1]],"inner":null},{"y0":20.0,"y1":36.0,"outer":[[-64.4,62.1],[-74.9,30.6],[-91.4,14.1],[-127.4,23.1],[-137.9,15.6],[-149.9,-26.4],[-142.4,-48.9],[-109.4,-63.9],[-82.4,-60.9],[-55.4,-72.9],[1.6,-75.9],[13.6,-84.9],[37.6,-66.9],[85.6,-75.9],[93.1,-68.4],[87.1,-59.4],[99.1,-32.4],[99.1,-8.4],[115.6,8.1],[139.6,-12.9],[147.1,-5.4],[106.6,32.1],[85.6,11.1],[67.6,11.1],[-34.4,32.1]],"inner":[[-64.4,56.1],[-68.9,30.6],[-91.4,8.1],[-131.9,15.6],[-142.4,-42.9],[-109.4,-57.9],[-82.4,-54.9],[-55.4,-66.9],[1.6,-69.9],[13.6,-78.9],[37.6,-60.9],[87.1,-68.4],[81.1,-59.4],[93.1,-32.4],[93.1,-8.4],[117.1,15.6],[106.6,26.1],[85.6,5.1],[67.6,5.1],[-34.4,26.1]]},{"y0":36.0,"y1":52.0,"outer":[[-142.4,-24.9],[-149.9,-44.4],[-124.4,-63.9],[-76.4,-69.9],[-64.4,-78.9],[4.6,-93.9],[16.6,-93.9],[27.1,-83.4],[10.6,-72.9],[-100.4,-57.9]],"inner":[[-67.4,-63.9],[-70.4,-69.9],[-52.4,-75.9],[4.6,-87.9],[21.1,-83.4]]}]},"topcover":{"holds":["cover"],"rotY":3.141592653589793,"note":"3D 스캔(바깥 면)으로 크기·형상을 잡은 단순화 형상","layers":[{"y0":0.0,"y1":24.0,"outer":[[-95.4,72.4],[-122.4,66.4],[-176.4,36.4],[-189.9,22.9],[-189.9,10.9],[-176.4,3.4],[-149.4,15.4],[-134.4,3.4],[-117.9,13.9],[-107.4,33.4],[-92.4,36.4],[-80.4,24.4],[-72.9,40.9]],"inner":null},{"y0":24.0,"y1":48.0,"outer":[[-158.4,39.4],[-189.9,10.9],[-183.9,-1.1],[-189.9,-10.1],[-186.9,-31.1],[-167.4,-50.6],[-159.9,-43.1],[-168.9,-34.1],[-162.9,-19.1],[-155.4,-23.6],[-135.9,-13.1],[-167.4,0.4],[-176.4,-8.6],[-180.9,-4.1],[-147.9,25.9]],"inner":[[-167.4,-5.6],[-180.9,-13.1],[-173.4,-41.6],[-162.9,-13.1]]},{"y0":48.0,"y1":68.0,"outer":[[-2.4,-56.6],[-20.4,-62.6],[-29.4,-80.6],[-44.4,-77.6],[-39.9,-70.1],[-47.4,-62.6],[-59.4,-74.6],[-83.4,-62.6],[-108.9,-82.1],[-93.9,-91.1],[-114.9,-100.1],[-98.4,-119.6],[-74.4,-125.6],[-60.9,-112.1],[-72.9,-100.1],[-62.4,-89.6],[-56.4,-95.6],[-32.4,-83.6],[-11.4,-89.6],[-3.9,-82.1],[-9.9,-76.1],[5.1,-64.1]],"inner":[[153.6,15.4],[137.1,1.9],[149.1,-10.1],[149.1,-67.1],[174.6,-77.6],[179.1,-46.1],[161.1,-28.1]]},{"y0":68.0,"y1":88.0,"outer":[[66.6,102.4],[-53.4,102.4],[-161.4,87.4],[-168.9,79.9],[-162.9,46.9],[-168.9,34.9],[-168.9,-55.1],[-158.4,-65.6],[-146.4,-53.6],[-122.4,-50.6],[35.1,-58.1],[35.1,-76.1],[47.1,-97.1],[39.6,-104.6],[-50.4,-104.6],[-81.9,-115.1],[-53.4,-125.6],[33.6,-125.6],[180.6,-104.6],[188.1,-97.1],[188.1,-58.1],[167.1,-28.1],[149.1,73.9],[123.6,96.4]],"inner":[[66.6,96.4],[-53.4,96.4],[-161.4,81.4],[-162.9,-55.1],[-158.4,-59.6],[-146.4,-47.6],[-122.4,-44.6],[-101.4,-50.6],[21.6,-47.6],[41.1,-58.1],[41.1,-76.1],[53.1,-97.1],[39.6,-110.6],[-75.9,-115.1],[-53.4,-119.6],[33.6,-119.6],[180.6,-98.6],[182.1,-58.1],[161.1,-28.1],[143.1,73.9],[123.6,90.4]]},{"y0":88.0,"y1":108.0,"outer":[[162.6,-47.6],[123.6,-53.6],[102.6,-71.6],[66.6,-68.6],[42.6,-53.6],[-161.4,-50.6],[-168.9,-58.1],[-168.9,-82.1],[-152.4,-107.6],[-110.4,-110.6],[-86.4,-101.6],[-65.4,-110.6],[-41.4,-104.6],[165.6,-104.6],[176.1,-85.1]],"inner":[[162.6,-53.6],[123.6,-59.6],[102.6,-77.6],[66.6,-74.6],[42.6,-59.6],[-161.4,-56.6],[-162.9,-82.1],[-152.4,-101.6],[-110.4,-104.6],[-86.4,-95.6],[-65.4,-104.6],[-41.4,-98.6],[165.6,-98.6],[170.1,-85.1]]}]}};
+for (const [id, sc] of Object.entries(SHELLS)) {
+  const o = objs[id]; if (!o) continue; const grp = o.obj; grp.updateMatrixWorld(true);
+  const target = new THREE.Box3().setFromObject(grp), tc = target.getCenter(V());
   const drawn = []; grp.traverse(c => { if (c !== grp && (c.isMesh || c.isLine)) drawn.push(c); });
-  drawn.forEach(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); c.removeFromParent(); });
-  const holder = new THREE.Group(); holder.rotation.y = sc.rotY || 0; holder.scale.setScalar(.1); // mm → cm
-  gltf.scene.traverse(c => { if (!c.isMesh) return; const m = scanMat.clone(); m.map = c.material.map; if (m.map) { m.map.colorSpace = THREE.SRGBColorSpace; m.emissiveMap = m.map; m.emissive.setHex(0x6a6a6a); } m.needsUpdate = true; // photo texture, lifted so the black plastic still shows its shape
-    m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
-  holder.add(gltf.scene); grp.add(holder); holder.updateMatrixWorld(true);
-  const sb = new THREE.Box3().setFromObject(holder), sc0 = sb.getCenter(V());
-  holder.position.set(tc.x - sc0.x, target.min.y - sb.min.y, tc.z - sc0.z);
-  grp.position.copy(pos); P[id].scan = sc.note; applyVisual(); if (state.sel) renderInfo();
-}).catch(() => {});
+  drawn.forEach(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); const e = housingEdges.indexOf(c); if (e >= 0) housingEdges.splice(e, 1); c.removeFromParent(); });
+  const holder = new THREE.Group(); holder.rotation.y = sc.rotY; holder.scale.setScalar(.1); // mm → cm
+  const ring = pts => new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z)));
+  sc.layers.forEach((l, li) => {
+    // solid blocks, like the closed product; only the top cover's top band stays open as the window frame
+    const shp = ring(l.outer); if (l.inner && id === 'topcover' && li === sc.layers.length - 1) shp.holes.push(new THREE.Path(l.inner.map(([x, z]) => new THREE.Vector2(x, -z))));
+    const geo = new THREE.ExtrudeGeometry(shp, { depth: l.y1 - l.y0, bevelEnabled: true, bevelThickness: .01, bevelSize: 1.2, bevelSegments: 1 });
+    const mesh = new THREE.Mesh(geo, M.plastic.clone()); mesh.rotation.x = -Math.PI / 2; mesh.position.y = l.y0;
+    const mt = mesh.material; mt.userData.op = mt.opacity; mt.userData.tr = mt.transparent; mt.userData.dw = mt.depthWrite; if (mt.emissive) mt.userData.em = mt.emissive.clone();
+    mesh.userData.pid = id; pickables.push(mesh); holder.add(mesh);
+  });
+  grp.add(holder); holder.updateMatrixWorld(true);
+  const sb = new THREE.Box3().setFromObject(holder), s0 = sb.getCenter(V());
+  holder.position.set(tc.x - s0.x - grp.position.x, target.min.y - sb.min.y - grp.position.y, tc.z - s0.z - grp.position.z);
+  // the housing must hold its parts: stretch the shell (keeping its shape) until it encloses them with a 4 mm margin
+  const inside = (sc.holds || []).filter(k => objs[k]); if (inside.length) {
+    holder.updateMatrixWorld(true); const sb2 = new THREE.Box3().setFromObject(holder), need = sb2.clone();
+    inside.forEach(k => { const b = new THREE.Box3().setFromObject(objs[k].obj); b.expandByScalar(.4); need.union(b); });
+    const a = sb2.getSize(V()), b = need.getSize(V()), ca = sb2.getCenter(V()), cb = need.getCenter(V());
+    holder.scale.set(.1 * b.x / a.x, .1 * b.y / a.y, .1 * b.z / a.z); holder.updateMatrixWorld(true);
+    const sb3 = new THREE.Box3().setFromObject(holder), c3 = sb3.getCenter(V()); holder.position.add(cb.sub(c3)); }
+  addEdges(holder); P[id].scan = sc.note;
+}
 
 /* ───────────────────────── car environment ───────────────────────── */
 const carG = new THREE.Group(); scene.add(carG); carG.visible = false;
