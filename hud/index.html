@@ -1537,7 +1537,7 @@ const motor = {};
   const lf = V(PCB_POS.x + 7.6, PCB_POS.y + .5, PCB_POS.z - 1), lt = V(PG.cx + LCDR.w * .32, 1.05, PG.cz - PG.d / 2 - 2.05);
   for (let k = 0; k < 2; k++) g.add(wire([lf.clone().add(V(0, 0, k * .22)), V(lf.x + 2, 1.6, lf.z + 3), V(lt.x + 1.2, 1.4, lt.z - 3), lt.clone().add(V(0, 0, k * .22))], .08, M.wire));
   const lab = new THREE.Mesh(new THREE.PlaneGeometry(10, 5), std(0xffffff, .8, 0, { map: labelTex })); lab.scale.setScalar(.7); lab.position.set(-2, 2.6, MCB.MZ0 - .3); lab.rotation.y = Math.PI; g.add(lab);
-  for (const [x, z] of [[MCB.MX0 + .8, MCB.MZ0 + .8], [MCB.MX1 - .8, MCB.MZ0 + .8], [MCB.MX0 + 2, MCB.MZ1 - .8], [MCB.MX1 - .8, MCB.MZ1 - .8], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
+  if (false) for (const [x, z] of [[MCB.MX0 + .8, MCB.MZ0 + .8], [MCB.MX1 - .8, MCB.MZ0 + .8], [MCB.MX0 + 2, MCB.MZ1 - .8], [MCB.MX1 - .8, MCB.MZ1 - .8], [PG.cx - PG.w / 2 - .2, PG.cz - PG.d / 2 + .6], [PG.cx + PG.w / 2 + .2, PG.cz + PG.d / 2 - .6]]) { cyl(.35, .25, M.black, x, YFLOOR + .35, z, g); }
   register('misc', g); }
 
 // moulded details: chamfered blocks, faceted plates (profile in z–y, extruded along x), thin gussets
