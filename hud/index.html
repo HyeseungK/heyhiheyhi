@@ -1514,6 +1514,10 @@ const motor = {};
   const sb = new THREE.Group(); box(.1, 1.1, 3, M.black, 0, 0, 0, sb); box(.2, .45, .45, M.white, .12, .1, -1.1, sb); sb.position.set(motor.x - 1.1, motor.y, motor.z0 + 2.2); g.add(sb);
   motor.nut = box(1.1, 1.1, 1.2, M.white, motor.x, motor.y, ear.z, g);
   motor.link = cyl(.18, 1, M.silver, 0, 0, 0, g);
+  { const L = motor.z1 - motor.z0 + 1.4, zc = (motor.z0 + motor.z1) / 2, w = 1.7, h = 1.6, t = .14;
+    box(w, t, L, M.plastic, motor.x, motor.y - h / 2, zc, g); for (const sx of [-1, 1]) box(t, h, L, M.plastic, motor.x + sx * w / 2, motor.y, zc, g);
+    for (const ez of [motor.z0 - .6, motor.z1 + .6, zc]) box(w, h, t * 1.6, M.plastic, motor.x, motor.y, ez, g);
+    for (const sx of [-1, 1]) { box(.5, .5, .5, M.plastic, motor.x + sx * (w / 2 + .25), motor.y + h / 2 - .2, motor.z1 + .4, g); cyl(.14, .52, M.black, motor.x + sx * (w / 2 + .25), motor.y + h / 2 - .2, motor.z1 + .4, g); } }
   register('motor', g); }
 
 // misc: wiring, label, screws
@@ -1571,12 +1575,15 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
   // window rim on the top cover, light-trap ribs inside the base
   for (const s of [-1, 1]) { box(W, .7, .5, M.plastic, 0, YTOP + .1, s > 0 ? a1 + .2 : a0 - .2, tc); box(.5, .7, a1 - a0, M.plastic, s * (AP.x + .2), YTOP + .1, (a0 + a1) / 2, tc); }
   for (let k = 0; k < 3; k++) slab({ z: a0 - .2 - k * 1.1, y: YTOP - .2 }, { z: a0 - .9 - k * 1.1, y: YTOP - 2.2 }, .25, W - 1, M.matte, g);
+  { const z = a0 - 1.2, n = 11; for (let k = 0; k < n; k++) { const x = -W / 2 + 2.4 + k * (W - 4.8) / (n - 1); box(.18, 1.6, 1.8, M.matte, x, YTOP - .9, z, tc); } box(W - 4, .2, 1.8, M.matte, 0, YTOP - 1.7, z, tc); }
   addEdges(tc); register('topcover', tc);
   // mounting ears: a plate with two holes and a locating pin at each end of the base
   for (const s of [-1, 1]) { const ex = s * (UH.hw + 1.5), ez = (z0 + z1) / 2 - 1, ey = YFLOOR + 1;
     box(3, .5, 9.5, M.plastic, ex, ey, ez, g); box(.45, 2.6, 9.5, M.plastic, ex - s * 1.3, ey + 1.1, ez, g);
     for (const dz of [-3.3, 3.3]) { cyl(.7, .6, M.plastic, ex + s * .3, ey + .05, ez + dz, g); cyl(.4, .66, M.black, ex + s * .3, ey + .05, ez + dz, g); }
     cyl(.3, 1.2, M.plastic, ex + s * .3, ey - .5, ez, g); }
+  { const dh = .9, y = YFLOOR - dh / 2, x0 = -HOLE.x - .2, x1 = HOLE.x + .2, z0d = HOLE.z0 - .2, z1d = HOLE.z1 + .2;
+    box(x1 - x0, dh, .25, M.plastic, 0, y, z0d, g); box(x1 - x0, dh, .25, M.plastic, 0, y, z1d, g); box(.25, dh, z1d - z0d, M.plastic, x0, y, (z0d + z1d) / 2, g); box(.25, dh, z1d - z0d, M.plastic, x1, y, (z0d + z1d) / 2, g); }
   addEdges(g); register('upper', g); }
 { // motor cover: the uneven outline seen in the opened photo (PCB strip along the front, PGU in the middle, motor bay out at the right end)
   const g = new THREE.Group(), t = .45, y0 = -1, y1 = YFLOOR, h = y1 - y0, ym = (y0 + y1) / 2, cz = PCB_POS.z;
