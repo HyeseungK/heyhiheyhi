@@ -920,7 +920,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   <label class="ctl" for="dimOthers" title="부품을 선택했을 때 나머지 부품을 얼마나 흐리게 할지">나머지 흐리게 <input id="dimOthers" type="range" min="0" max="1" step="0.05" value="0.9"><output id="dimOut">90%</output></label>
   <div class="ls-ctl">빛 <div class="seg" id="lightMode"><button data-l="off" aria-pressed="false">끔</button><button data-l="path" aria-pressed="false">경로</button><button data-l="anim" aria-pressed="true">흐름</button></div><span></span></div>
   <label class="ctl" for="tilt">미러 각도 <input id="tilt" type="range" min="-2" max="2" step="0.1" value="0"><output id="tiltOut">0.0°</output></label>
-  <div class="chks"><label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label><label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label></div>
+  <div class="chks"><label class="chk"><input type="checkbox" id="solidShell"> 외관 불투명</label><label class="chk"><input type="checkbox" id="warp" checked> 워프 보정</label><label class="chk"><input type="checkbox" id="sun"> 햇빛 역유입</label></div>
 </div>
 <div class="stage" id="stage">
   <canvas id="c" aria-label="HUD 3D 모델. 드래그로 회전, 휠이나 핀치로 확대, 우클릭 또는 Shift 드래그로 이동."></canvas>
@@ -1631,7 +1631,7 @@ for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new
   const o = objs[id]; if (!o) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base);
   grp.updateMatrixWorld(true); const target = new THREE.Box3().setFromObject(grp), tc = target.getCenter(V());
   const drawn = []; grp.traverse(c => { if (c !== grp && (c.isMesh || c.isLine)) drawn.push(c); });
-  drawn.forEach(c => { const i = pickables.indexOf(c); if (i >= 0) pickables.splice(i, 1); c.removeFromParent(); });
+  drawn.forEach(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); c.removeFromParent(); });
   const holder = new THREE.Group(); holder.rotation.y = sc.rotY || 0; holder.scale.setScalar(.1); // mm → cm
   gltf.scene.traverse(c => { if (!c.isMesh) return; const m = scanMat.clone(); m.map = c.material.map; if (m.map) { m.map.colorSpace = THREE.SRGBColorSpace; m.emissiveMap = m.map; m.emissive.setHex(0x6a6a6a); } m.needsUpdate = true; // photo texture, lifted so the black plastic still shows its shape
     m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
@@ -2044,8 +2044,9 @@ addEventListener('keydown', e => {
 });
 function setExplode(v) { state.explodeT = v; $('#explode').value = v; $('#explodeOut').textContent = Math.round(v * 100) + '%'; }
 $('#explode').addEventListener('input', e => setExplode(+e.target.value));
+$('#solidShell').addEventListener('change', e => setHousing(e.target.checked ? 'solid' : 'ghost'));
 $('#dimOthers').addEventListener('input', e => { state.dim = +e.target.value; $('#dimOut').textContent = Math.round(state.dim * 100) + '%'; applyVisual(); });
-function setHousing(h) { state.housing = h; document.querySelectorAll('#housing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h === h)); applyVisual(); }
+function setHousing(h) { if ($('#solidShell')) $('#solidShell').checked = h === 'solid'; state.housing = h; document.querySelectorAll('#housing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h === h)); applyVisual(); }
 $('#lightMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.light = b.dataset.l; document.querySelectorAll('#lightMode button').forEach(x => x.setAttribute('aria-pressed', x === b)); applyVisual(); });
 $('#warp').addEventListener('change', e => { state.warp = e.target.checked; rebuildLight(); });
 $('#sun').addEventListener('change', e => { state.sun = e.target.checked; applyVisual(); if (state.sun) focus(['concave', 'tft']); });
