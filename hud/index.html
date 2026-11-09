@@ -893,7 +893,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
   .bm-det dl { grid-template-columns: max-content minmax(0, 1fr) !important; font-size: 13.5px; }
 }
 </style>
-<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }</script>
 </head>
 <body>
 <header>
@@ -972,6 +972,7 @@ h3.sec { font: 650 11.5px/1.2 var(--sans); letter-spacing: .03em; text-transform
 
 <script type="module">
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /* ───────────────────────── content ───────────────────────── */
 const PHOTO = {
@@ -1618,6 +1619,25 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
   cbox(1.4, 2.2, 2.2, .2, M.white, MX0 - .6, 3, cz - 1.3, g); cyl(.6, 1.4, M.black, MX0 - .7, 3, cz + 1.5, g, 'x'); cyl(.28, 1.6, M.silver, MX0 - .8, 3, cz + 1.5, g, 'x');
   addEdges(g); register('lower', g); }
 
+/* ───────────────────────── 3D scans: real shapes replace the drawn housings ─────────────────────────
+   Each scan (KIRI / Polycam photo scan, tools/scan_obj2glb.py) is in mm, y up, bottom at y = 0. It is turned to this model's
+   frame and fitted to the box the drawn part used, then the drawn meshes are dropped. If a scan fails to load the drawing stays. */
+const SCANS = { upper: { file: 'scans/base.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면)' }, lower: { file: 'scans/motor.glb', rotY: 0, note: '3D 스캔 (KIRI, 안쪽 면 · 방열판 A 포함)' } };
+const scanMat = std(0xffffff, .85, 0, { side: THREE.DoubleSide });
+for (const [id, sc] of Object.entries(SCANS)) new GLTFLoader().load(sc.file, gltf => {
+  const o = objs[id]; if (!o) return; const grp = o.obj, pos = grp.position.clone(); grp.position.copy(o.base);
+  grp.updateMatrixWorld(true); const target = new THREE.Box3().setFromObject(grp), tc = target.getCenter(V());
+  const drawn = []; grp.traverse(c => { if (c !== grp && (c.isMesh || c.isLine)) drawn.push(c); });
+  drawn.forEach(c => { const i = pickables.indexOf(c); if (i >= 0) pickables.splice(i, 1); c.removeFromParent(); });
+  const holder = new THREE.Group(); holder.rotation.y = sc.rotY || 0; holder.scale.setScalar(.1); // mm → cm
+  gltf.scene.traverse(c => { if (!c.isMesh) return; const m = scanMat.clone(); m.map = c.material.map; if (m.map) { m.map.colorSpace = THREE.SRGBColorSpace; m.emissiveMap = m.map; m.emissive.setHex(0x6a6a6a); } m.needsUpdate = true; // photo texture, lifted so the black plastic still shows its shape
+    m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
+  holder.add(gltf.scene); grp.add(holder); holder.updateMatrixWorld(true);
+  const sb = new THREE.Box3().setFromObject(holder), sc0 = sb.getCenter(V());
+  holder.position.set(tc.x - sc0.x, target.min.y - sb.min.y, tc.z - sc0.z);
+  grp.position.copy(pos); P[id].scan = sc.note; applyVisual(); if (state.sel) renderInfo();
+}, undefined, () => {});
+
 /* ───────────────────────── car environment ───────────────────────── */
 const carG = new THREE.Group(); scene.add(carG); carG.visible = false;
 const wsMesh = new THREE.Mesh(new THREE.PlaneGeometry(150, 110), new THREE.MeshPhysicalMaterial({ color: 0x9fc6e6, transparent: true, opacity: .18, roughness: .02, side: THREE.DoubleSide, depthWrite: false }));
@@ -1776,7 +1796,7 @@ function applyVisual() {
   sunLines.visible = hotSpot.visible = state.sun && state.explode < .05;
   M.led.color.setHex(state.light === 'off' ? 0x6a655c : 0xfff1d6); lcdWarpMesh.material.color.setScalar(state.light === 'off' ? .05 : 1);
   for (const [m, id] of [[lcdWarpMesh.material, 'tft'], [M.led, 'led']]) { const f = objs[id].fade ?? 1; m.transparent = f < 1; m.opacity = f; m.depthWrite = f >= .6; m.needsUpdate = true; }
-  pickables.forEach(o => { const on = ids.includes(o.userData.pid) && !o.isInstancedMesh; if (on && !o.userData.outline) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 25), outlineMat); e.renderOrder = 20; e.raycast = () => {}; o.add(e); o.userData.outline = e; } if (o.userData.outline) o.userData.outline.visible = on; });
+  pickables.forEach(o => { const on = ids.includes(o.userData.pid) && !o.isInstancedMesh && !o.userData.scan; if (on && !o.userData.outline) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 25), outlineMat); e.renderOrder = 20; e.raycast = () => {}; o.add(e); o.userData.outline = e; } if (o.userData.outline) o.userData.outline.visible = on; });
 }
 
 /* ───────────────────────── camera ───────────────────────── */
@@ -1967,7 +1987,7 @@ function renderInfo() {
   const p = P[sel.id], lv1 = TREE.find(b => b.items.some(it => it === sel.id || (it.g && GROUPS[it.g].kids.includes(sel.id)))), grp = Object.entries(GROUPS).find(([, g]) => g.kids.includes(sel.id));
   title.textContent = '부품 상세 정보'; $('#infoBtnLabel').textContent = '부품 상세 정보';
   el.innerHTML = `${pnavHTML(sel)}<div class="crumb">${lv1.t}${grp ? ' › ' + grp[1].name : ''}</div><div class="detail" style="padding:0"><h2>${p.full}</h2><div class="en">${p.en}</div>${badge(p.conf)}</div>
-    <p>${p.desc}</p><div class="actions">${iso}${blBtn}${back}</div>
+    <p>${p.desc}</p>${p.scan ? `<p class="note">형상: ${p.scan}</p>` : ''}<div class="actions">${iso}${blBtn}${back}</div>
     <ul>${p.points.map(t => `<li>${fill(t)}</li>`).join('')}</ul>${['concave', 'motor', 'tft', 'epson'].includes(sel.id) ? readout() : ''}
     ${(p.specs.length || p.mat) ? `<h3 class="sec">정보</h3><dl class="specs">${p.mat && !p.specs.some(s => s[0] === '소재') ? `<dt>소재</dt><dd>${p.mat} (BOM)</dd>` : ''}${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${fill(v)}</dd>`).join('')}</dl>` : ''}
     ${bomInfo(sel.id)}
