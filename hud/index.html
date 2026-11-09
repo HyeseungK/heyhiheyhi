@@ -1133,7 +1133,7 @@ const P = {
     points:['라벨: ZEEKR HA1SZK63E, EPC 검사 스티커.'], specs:[] },
 };
 const GROUPS = {
-  backlight: { name:'Backlight', kids:['led','fpcb','acf','cfpcb','ledboard','lens','lens2','film','tftframe','tftholder'], desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
+  backlight: { name:'Backlight', kids:['ledboard','led','lens','tftframe','lens2','film','tftholder','fpcb','acf','cfpcb'] /* bottom layer first */, desc:'TFT 뒤에서 빛을 만드는 부분입니다. LED → 렌즈 → 광학 필름 순서로 빛을 만들고 모아서 TFT로 보냅니다. BOM 분류에 따라 TFT 구동부(Bare PCB, ACF 접합선, Custom FPCB 케이블)도 여기에 포함했습니다.' },
   board: { name:'기판 실장 부품', kids:['hsd','pwrcon','wcon','fpccon','ecap','ind','xtal','sclip'], desc:'메인 PCB 사진에서 위치를 확인한 커넥터, 커패시터, 인덕터 등입니다. 저항·커패시터 같은 아주 작은 칩 부품(수백 개)은 위치를 하나씩 표시하지 않았습니다.' },
   chips: { name:'기타 칩', kids:['opamp','eeprom','ldohv','ldolv','ledchip','dcdc','lin'], desc:'Main PCB의 주변 칩들입니다. 주요 칩은 모두 AEC-Q100(차량용 반도체 신뢰성 인증)을 받은 Auto Grade 부품입니다. Grade 1은 −40~125 °C, Grade 2는 −40~105 °C 주변 온도에서 동작을 보증합니다. EEPROM은 PCB 뒷면에서 위치를 확인했고, 나머지 칩의 위치는 추정입니다.' },
 };
@@ -1464,6 +1464,9 @@ const LEDS = [];
 
 // main PCB with its chips
 const MCB = { MX0: -13, MX1: 16.6, MZ0: -12.5, MZ1: 4.9 }; // motor cover footprint, 296 × 174 mm
+// motor cover outline traced from the opened photo: PCB strip along the front (connector end at −x), the TFT body in the middle, the motor bay stepping out at +x
+const MC_OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]]
+  .map(([x, z]) => [MCB.MX0 + (x + 23.5) / 46 * (MCB.MX1 - MCB.MX0), MCB.MZ0 + (z + 23) / 36 * (MCB.MZ1 - MCB.MZ0)]);
 const PCB_POS = V(-3.6, 4.4, -9.4), shieldMeshes = [];
 { const g = new THREE.Group(); g.position.copy(PCB_POS); const T = .08;
   g.add(new THREE.Mesh(new THREE.BoxGeometry(PCB_L, .16, PCB_W), [M.pcbEdge, M.pcbEdge, M.pcb, M.pcbEdge, M.pcbEdge, M.pcbEdge]));
@@ -1583,14 +1586,18 @@ const UH = { zmin: -12.8, zmax: 10.6, hw: Math.max(17.7, CONC.w / 2 + .8) }; // 
     box(3, .5, 9.5, M.plastic, ex, ey, ez, g); box(.45, 2.6, 9.5, M.plastic, ex - s * 1.3, ey + 1.1, ez, g);
     for (const dz of [-3.3, 3.3]) { cyl(.7, .6, M.plastic, ex + s * .3, ey + .05, ez + dz, g); cyl(.4, .66, M.black, ex + s * .3, ey + .05, ez + dz, g); }
     cyl(.3, 1.2, M.plastic, ex + s * .3, ey - .5, ez, g); }
-  { const dh = .9, y = YFLOOR - dh / 2, x0 = -HOLE.x - .2, x1 = HOLE.x + .2, z0d = HOLE.z0 - .2, z1d = HOLE.z1 + .2;
-    box(x1 - x0, dh, .25, M.plastic, 0, y, z0d, g); box(x1 - x0, dh, .25, M.plastic, 0, y, z1d, g); box(.25, dh, z1d - z0d, M.plastic, x0, y, (z0d + z1d) / 2, g); box(.25, dh, z1d - z0d, M.plastic, x1, y, (z0d + z1d) / 2, g); }
+  // underside (teardown 61#5): a raised box that drops over the TFT holder — the TFT seat, through which the light enters the mirror chamber
+  { const hx = (PG.w - .2) / 2 + 1.25, hz = PG.d / 2 + 1.25, dh = YFLOOR - (Ly + .7), y = YFLOOR - dh / 2, t = .25;
+    box(hx * 2, dh, t, M.plastic, PG.cx, y, PG.cz - hz, g); box(hx * 2, dh, t, M.plastic, PG.cx, y, PG.cz + hz, g);
+    box(t, dh, hz * 2, M.plastic, PG.cx - hx, y, PG.cz, g); box(t, dh, hz * 2, M.plastic, PG.cx + hx, y, PG.cz, g); }
+  // and a low rim that follows the motor cover outline; the cover's walls sit inside it, the PCB strip under the recessed floor
+  MC_OUT.forEach(([xa, za], i) => { const [xb, zb] = MC_OUT[(i + 1) % MC_OUT.length], len = Math.hypot(xb - xa, zb - za); const m = box(len + .25, .45, .22, M.plastic, (xa + xb) / 2, YFLOOR - .2, (za + zb) / 2, g); m.rotation.y = Math.atan2(-(zb - za), xb - xa); });
   addEdges(g); register('upper', g); }
 { // motor cover: the uneven outline seen in the opened photo (PCB strip along the front, PGU in the middle, motor bay out at the right end)
   const g = new THREE.Group(), t = .45, y0 = -1, y1 = YFLOOR, h = y1 - y0, ym = (y0 + y1) / 2, cz = PCB_POS.z;
   // PCB strip along the front (connector end at −x), the PGU/TFT body in the middle, the motor bay stepping out at +x, a slanted −x side and a notch at the −x front corner
   const { MX0, MX1, MZ0, MZ1 } = MCB, mx = x => MX0 + (x + 23.5) / 46 * (MX1 - MX0), mz = z => MZ0 + (z + 23) / 36 * (MZ1 - MZ0); // 296 × 174 mm
-  const OUT = [[-23.5, -23], [7.5, -23], [9.5, -21], [9.5, -12.5], [21, -12.5], [22.5, -11], [22.5, 10], [15, 10.5], [15.5, 13], [-15.5, 13], [-13.5, -10], [-23.5, -11.2]].map(([x, z]) => [mx(x), mz(z)]);
+  const OUT = MC_OUT;
   const hx0 = PG.cx - PG.w / 2 - 1.2, hx1 = PG.cx + PG.w / 2 + 1.2, hz0 = PG.cz - PG.d / 2 - .6, hz1 = PG.cz + PG.d / 2 + .6;
   // floor with the heatsink window cut out
   { const sh = new THREE.Shape(OUT.map(([x, z]) => new THREE.Vector2(x, z))), hole = new THREE.Path([[hx0, hz0], [hx1, hz0], [hx1, hz1], [hx0, hz1]].map(([x, z]) => new THREE.Vector2(x, z)));
