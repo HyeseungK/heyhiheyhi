@@ -1651,12 +1651,13 @@ for (const [id, sc] of Object.entries(SHELLS)) {
     const sb3 = new THREE.Box3().setFromObject(holder), c3 = sb3.getCenter(V()); holder.position.add(cb.sub(c3)); }
   addEdges(holder); P[id].scan = sc.note; o.shell = holder;
 }
-// the real housings: two photo scans per part (face up + turned over) merged, see-through holes patched (tools/scan_repair.py).
+// the real housings: two photo scans per part merged and patched (tools/scan_repair.py), then carved into a clean solid
+// from six directions with the holes in each view closed, smoothed into flat moulded faces (tools/scan_solid.py).
 // The faceted blocks above stay as the fallback; each scan takes over their box, so the parts stay inside.
-const SCANS = { upper: { file: 'scans/base.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 스캔 구멍 메움)' },
-  lower: { file: 'scans/motor.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 방열판 포함 · 스캔 구멍 메움)' },
-  topcover: { file: 'scans/upper.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 위쪽 큰 창은 방진 커버 자리)' } };
-const scanMat = std(0xffffff, .85, 0, { side: THREE.DoubleSide });
+const SCANS = { upper: { file: 'scans/base.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메워 매끈하게 정리)' },
+  lower: { file: 'scans/motor.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 방열판 포함 · 구멍 메워 매끈하게 정리)' },
+  topcover: { file: 'scans/upper.glb', note: '3D 스캔 (KIRI, 안·바깥 두 번 찍어 합침 · 구멍 메워 매끈하게 정리)' } };
+const scanMat = std(0x3b4046, .7, 0, { side: THREE.DoubleSide }); // moulded black plastic, a touch lighter so its shape reads
 // the published artifact cannot serve .glb, so each scan also ships as base64 in .glb.json
 const scanBytes = async f => { try { const r = await fetch(f); if (r.ok && !(r.headers.get('content-type') || '').includes('html')) return await r.arrayBuffer(); } catch {}
   const j = await (await fetch(f + '.json')).json(), b = atob(j.b64), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; };
@@ -1665,7 +1666,8 @@ for (const [id, sc] of Object.entries(SCANS)) scanBytes(sc.file).then(buf => new
   const box = new THREE.Box3().setFromObject(old), size = box.getSize(V()), ctr = box.getCenter(V());
   old.traverse(c => { const k = pickables.indexOf(c); if (k >= 0) pickables.splice(k, 1); const e = housingEdges.indexOf(c); if (e >= 0) housingEdges.splice(e, 1); }); old.removeFromParent();
   const holder = new THREE.Group(); holder.rotation.y = SHELLS[id].rotY; holder.scale.setScalar(.1); // mm → cm
-  gltf.scene.traverse(c => { if (!c.isMesh) return; const m = scanMat.clone(); m.map = c.material.map; if (m.map) { m.map.colorSpace = THREE.SRGBColorSpace; m.emissiveMap = m.map; m.emissive.setHex(0x6a6a6a); } m.needsUpdate = true; // photo texture, lifted so the black plastic still shows its shape
+  gltf.scene.traverse(c => { if (!c.isMesh) return; c.geometry.computeVertexNormals(); // the solid has no normals of its own
+    const m = scanMat.clone(); m.needsUpdate = true;
     m.userData.op = 1; m.userData.tr = false; m.userData.dw = true; m.userData.em = m.emissive.clone(); c.material = m; c.userData.pid = id; c.userData.scan = true; pickables.push(c); });
   holder.add(gltf.scene); grp.add(holder); holder.updateMatrixWorld(true);
   const a = new THREE.Box3().setFromObject(holder).getSize(V()); holder.scale.set(.1 * size.x / a.x, .1 * size.y / a.y, .1 * size.z / a.z); holder.updateMatrixWorld(true);
